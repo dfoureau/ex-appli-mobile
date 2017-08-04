@@ -1,0 +1,69 @@
+#s-dd591de1-30ae-497c-87df-216dc4ce4fcf > #backgroundBox {
+  background-color: transparent;
+  background-image: none;
+  position: absolute;
+}
+#s-dd591de1-30ae-497c-87df-216dc4ce4fcf > #alignmentBox {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+#s-dd591de1-30ae-497c-87df-216dc4ce4fcf #s-Image_1 {
+  position: absolute;
+  top: 522px;
+  left: 0px;
+  width: 360px;
+  height: 118px;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  transform: rotate(0deg);
+  box-shadow: none;
+}
+#s-dd591de1-30ae-497c-87df-216dc4ce4fcf #s-Image_2 {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 360px;
+  height: 47px;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  transform: rotate(0deg);
+  box-shadow: none;
+}
+#s-dd591de1-30ae-497c-87df-216dc4ce4fcf #s-Image_3 {
+  position: absolute;
+  top: 46px;
+  left: 0px;
+  width: 360px;
+  height: 477px;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  transform: rotate(0deg);
+  box-shadow: none;
+}
+#s-dd591de1-30ae-497c-87df-216dc4ce4fcf #s-Image_71 > svg {
+  width: 46px;
+  height: 46px;
+}
+#s-dd591de1-30ae-497c-87df-216dc4ce4fcf #s-Image_71 {
+  position: absolute;
+  top: 569px;
+  left: 15px;
+  width: 46px;
+  height: 46px;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  transform: rotate(0deg);
+  box-shadow: none;
+}
+#jim-container .ui-page {
+  overflow-x: hidden;
+}
+.non_jim_mobile #simulation {
+  overflow-x: hidden;
+}
+#s-dd591de1-30ae-497c-87df-216dc4ce4fcf > #loadMark {
+  width: 1px;
+  visibility: hidden;
+  display: none;
+}

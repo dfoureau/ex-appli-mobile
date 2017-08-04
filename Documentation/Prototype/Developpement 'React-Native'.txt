@@ -1,0 +1,5 @@
+Pour développement de l'appli sur 'react-native' :
+
+Tutoriel installation et utilisation 'react-native' : https://facebook.github.io/react-native/
+
+Tutoriel vidéo avec dév d'une petite appli simple : https://www.grafikart.fr/tutoriels/javascript/react-native-introduction-893
