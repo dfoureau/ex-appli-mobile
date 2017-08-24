@@ -1,11 +1,13 @@
 import React from 'react'
-import Button from '../components/Button'
+import Button from '../components/Button/Button.js'
+
 import {
     Text,
     View,
     StyleSheet,
 	AppRegistry,
   } from 'react-native';
+
 import {StackNavigator} from 'react-navigation'; 
 import helloworld2 from './helloworld2';
 

@@ -1,10 +1,12 @@
 import React from 'react'
-import Button from '../components/Button'
+import Button from '../components/Button/Button.js'
+
 import {
     Text,
     View,
     StyleSheet
   } from 'react-native';
+
 const styles = StyleSheet.create({
     buttons: {
         flexDirection: 'row',
