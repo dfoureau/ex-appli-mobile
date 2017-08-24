@@ -7,7 +7,6 @@ import {
     StyleSheet,
 	AppRegistry,
   } from 'react-native';
-
 import {StackNavigator} from 'react-navigation'; 
 import helloworld2 from './helloworld2';
 
