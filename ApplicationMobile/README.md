@@ -1,8 +1,7 @@
-= Projet application mobile =
+# Projet application mobile
 
-== Compilation et lancement ==
+## Compilation et lancement
 
-```npm instatll```
+Pour installer les dépendances : ```npm instatll```
 
-Puis lancer l'émulateur Android ou brancher un téléphone Android (avec déboguage USB activé) et :
-```react-native run-android```
+Puis lancer l'émulateur Android ou brancher un téléphone Android (avec déboguage USB activé) et : ```react-native run-android```
