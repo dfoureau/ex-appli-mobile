@@ -1,5 +1,0 @@
-Les fichiers sont auto-générés par le logiciel 'Just in mind'
-
-Le fichier '.vp' peut être lu sur le logiciel just in mind (payant avec version essaie gratuite)
-Le prototype peut être lancé après installation d'une extension sur le navigateur (fonctionne avec Chrome)
-Les images et le pdf ont été générés par le logiciel et décrivent les intéractions entre chaque écran de la maquette.
