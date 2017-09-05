@@ -19,6 +19,8 @@ import ContainerAccueil from '../../components/containerAccueil/ContainerAccueil
 
 import Vierge from '../vierge/Vierge';
 
+import Reglages from '../reglages/Reglages';
+
 var {height, width} = Dimensions.get('window');
 
 class Accueil extends React.Component {
@@ -60,6 +62,12 @@ const navigation=StackNavigator({
 	},
 	Vierge:{
 		screen:Vierge,
+		navigationOptions: {
+			header: null
+		}
+	},
+	Reglages:{
+		screen:Reglages,
 		navigationOptions: {
 			header: null
 		}
