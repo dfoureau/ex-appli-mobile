@@ -44,7 +44,7 @@ class Reglages extends React.Component {
                 <View style={{height: 100, flexDirection: 'row', alignItems: 'flex-start'}}>
                     <Text style={{fontSize:20, marginBottom: 20,paddingVertical: 10, paddingHorizontal: 10}}>Recevoir les notifications ?</Text>
 					<Switch
-					style={{marginBottom: 20,paddingVertical: 10, paddingHorizontal: 40}}
+					style={{marginBottom: 20,paddingVertical: 10, paddingHorizontal: 20}}
 					onValueChange={(value) => this.setState ({switchValue: value})}
 					value={this.state.switchValue} />
                 </View>
