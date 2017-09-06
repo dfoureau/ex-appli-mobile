@@ -50,67 +50,83 @@ class Notifications extends Component {
               {
                 key: 1,
                 not: 'CRA à valider',
-                type: 'CRA'
+                type: 'CRA',
+                status: 1,
               }, {
                 key: 2,
                 not: 'NDF à saisir',
-                type: 'NDF'
+                type: 'NDF',
+                status: 2,
               }, {
                 key: 3,
                 not: 'Actualité demande de congé',
-                type: 'DC'
+                type: 'DC',
+                status: 1,
               }, {
                 key: 4,
                 not: 'Informations',
-                type: 'INF'
+                type: 'INF',
+                status: 2,
               }, {
                 key: 5,
                 not: 'CRA à valider',
-                type: 'CRA'
+                type: 'CRA',
+                status: 2,
               }, {
                 key: 6,
                 not: 'NDF à saisir',
-                type: 'NDF'
+                type: 'NDF',
+                status: 2,
               }, {
                 key: 7,
                 not: 'Informations',
-                type: 'INF'
+                type: 'INF',
+                status: 2,
               }, {
                 key: 8,
                 not: 'NDF à saisir',
-                type: 'NDF'
+                type: 'NDF',
+                status: 1,
               }, {
                 key: 9,
                 not: 'Actualité demande de congé',
-                type: 'DC'
+                type: 'DC',
+                status: 2,
               }, {
                 key: 10,
                 not: 'CRA à saisir',
-                type: 'CRA'
+                type: 'CRA',
+                status: 2,
               }, {
                 key: 11,
                 not: 'NDF à saisir',
-                type: 'NDF'
+                type: 'NDF',
+                status: 3,
               }, {
                 key: 12,
                 not: 'Informations',
-                type: 'INF'
+                type: 'INF',
+                status: 3,
               }, {
                 key: 13,
                 not: 'Actualité demande de congé',
-                type: 'DC'
+                type: 'DC',
+                status: 1,
               }, {
                 key: 14,
                 not: 'NDF à saisir',
-                type: 'NDF'
+                type: 'NDF',
+                status: 3,
               }, {
                 key: 15,
                 not: 'CRA à valider',
-                type: 'CRA'
+                type: 'CRA',
+                status: 3,
               }, {
                 key: 16,
                 not: 'NDF à saisir',
-                type: 'NDF'
+                type: 'NDF',
+                status: 2,
               }
             ]}
               renderItem={({item}) => <View>
@@ -130,7 +146,7 @@ class Notifications extends Component {
                     {item.not}</Text>
                 </View>
                 <View style={Style.thirdView}>
-                  <Image style={Style.listIcon} source={require('../../images/icons/check.png')}/>
+                  <Image style={Style.listIcon} source= { item.status == 1 ? require('../../images/icons/check2.png') : null}/>
                 </View>
               </View>
             </View>}/>
