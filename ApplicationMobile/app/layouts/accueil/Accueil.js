@@ -18,6 +18,7 @@ import Style from './Styles';
 import ContainerAccueil from '../../components/containerAccueil/ContainerAccueil';
 
 import Vierge from '../vierge/Vierge';
+import Notifications from '../notifications/Notifications';
 
 import Reglages from '../reglages/Reglages';
 
@@ -66,8 +67,8 @@ const navigation=StackNavigator({
 			header: null
 		}
 	},
-	Reglages:{
-		screen:Reglages,
+	Notifications:{
+		screen:Notifications,
 		navigationOptions: {
 			header: null
 		}
@@ -75,4 +76,4 @@ const navigation=StackNavigator({
 });
 
 //Il faut exporteer la na vigation ou bien la classe
-export default navigation; 
+export default navigation;

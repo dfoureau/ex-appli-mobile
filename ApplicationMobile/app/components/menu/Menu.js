@@ -125,6 +125,19 @@ export default class Menu extends Component{
 				
 				<View style={style.separateur}></View>
 
+				<TouchableHighlight onPress={()=>this.afficherEcran('Notifications')} 
+					style={style.vue} >
+					<View style={style.view}>
+						<Image
+							style={style.icone}
+							source={require('../../images/icons/calendar.png')}
+						/>
+						<Text style={style.libelle} >NOTIFICATIONS</Text>
+					</View>
+				</TouchableHighlight>
+				
+				<View style={style.separateur}></View>
+
 					
 				<TouchableHighlight onPress={()=>this.afficherEcran('Deconnexion')} 
 					style={style.vue} >
