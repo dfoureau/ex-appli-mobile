@@ -20,6 +20,8 @@ import ContainerAccueil from '../../components/containerAccueil/ContainerAccueil
 import Vierge from '../vierge/Vierge';
 import Notifications from '../notifications/Notifications';
 
+import Reglages from '../reglages/Reglages';
+
 var {height, width} = Dimensions.get('window');
 
 class Accueil extends React.Component {
