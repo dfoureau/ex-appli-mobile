@@ -3,11 +3,7 @@ import React, { Component } from 'react';
 import {View, TouchableHighlight, Text, Dimensions, StyleSheet, Image,ScrollView,
 Alert } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-/*
-import Accueil from './Accueil';
 
-import CRA from './CRA';
-*/
 var {height, width} = Dimensions.get('window')
 export default class Menu extends Component{
 	constructor (props) {
@@ -22,137 +18,215 @@ export default class Menu extends Component{
 		 this.props.afficherEcran(ecran);
 	}
 	
+	fermerMenu(){
+			this.props.fermerMenu();
+	}
+	
 	render(){	
 		return (
-		<View style={{position:'absolute', width:width,height:height,backgroundColor:"#BFAA8F69"}} >
-			<ScrollView style={{width:300, backgroundColor:"#fff"/*'#2298AA'*/, 
-								height:height,
-								borderRightColor:"#000",borderRightWidth:2,
-								borderTopColor:"#000",borderRightWidth:1}}>
-				<View style={{height: 60,backgroundColor:'#2224AA',
-                                    justifyContent: 'center',}}>
-					<Text style={{fontSize:30,color:"#fff",marginLeft:15,}}>Menu</Text>
+
+			<TouchableHighlight onPress={()=>this.fermerMenu()} 
+				style={{position:'absolute',flex:1, width:width,backgroundColor:"#BFAA8F00"}}  underlayColor='transparent' >
+				<View style={{flex:1, width:300,backgroundColor:"#FFF"}}>
+					<View style={{height: 60,backgroundColor:'#2224AA',
+										justifyContent: 'center',width:300,flexDirection:'row',}}>
+						<View style={{flex:1,}}>
+							<Text style={{fontSize:30,color:"#fff",marginLeft:15,}}>Menu</Text>
+						</View>
+						<View style={{width:60,height:60,}}>
+							<TouchableHighlight onPress={()=>this.fermerMenu()} 
+								style={style.vue} underlayColor='#BFAA8F00'>
+								
+									<Image
+										style={style.icone}
+										source={require('../../images/icons/retour.png')}
+									/>
+								
+							</TouchableHighlight>
+						</View>
+					</View>
+					<ScrollView style={{width:300, backgroundColor:"#fff"/*'#2298AA'*/, 
+					height:height-86,
+										borderRightColor:"#000",borderRightWidth:2,
+										borderTopColor:"#000",borderRightWidth:1}}>
+						<TouchableHighlight onPress={()=>this.afficherEcran('Accueil')} 
+							style={style.vue} >
+							<View style={style.view}>
+								<Image
+									style={style.icone}
+									source={require('../../images/icons/calendar.png')}
+								/>
+								<Text style={style.libelle} >ACCUEIL</Text>
+							</View>
+						</TouchableHighlight>
+						
+						<View style={style.separateur}></View>
+							
+						<TouchableHighlight onPress={()=>this.afficherEcran('Vierge')} 
+							style={style.vue} >
+							<View style={style.view}>
+								<Image
+									style={style.icone}
+									source={require('../../images/icons/calendar.png')}
+								/>
+								<Text style={style.libelle} >VIERGE</Text>
+							</View>
+						</TouchableHighlight>
+						
+						<View style={style.separateur}></View>
+
+						<TouchableHighlight onPress={()=>this.afficherEcran('CRA')} 
+							style={style.vue} >
+							<View style={style.view}>
+								<Image
+									style={style.icone}
+									source={require('../../images/icons/calendar.png')}
+								/>
+								<Text style={style.libelle} >CRA</Text>
+							</View>
+						</TouchableHighlight>
+						
+						<View style={style.separateur}></View>
+							
+						<TouchableHighlight onPress={()=>this.afficherEcran('Conges')} 
+							style={style.vue} >
+							<View style={style.view}>
+								<Image
+									style={style.icone}
+									source={require('../../images/icons/calendar.png')}
+								/>
+								<Text style={style.libelle} >CONGES</Text>
+							</View>
+						</TouchableHighlight>
+						
+						<View style={style.separateur}></View>
+						
+						<TouchableHighlight onPress={()=>this.afficherEcran('NoteDeFrais')} 
+							style={style.vue} >
+							<View style={style.view}>
+								<Image
+									style={style.icone}
+									source={require('../../images/icons/calendar.png')}
+								/>
+								<Text style={style.libelle} >NOTE DE FRAIS</Text>
+							</View>
+						</TouchableHighlight>
+						
+						<View style={style.separateur}></View>
+							
+						<TouchableHighlight onPress={()=>this.afficherEcran('Annuaire')} 
+							style={style.vue} >
+							<View style={style.view}>
+								<Image
+									style={style.icone}
+									source={require('../../images/icons/calendar.png')}
+								/>
+								<Text style={style.libelle} >ANNUAIRE</Text>
+							</View>
+						</TouchableHighlight>
+						
+						<View style={style.separateur}></View>
+							
+							
+						<TouchableHighlight onPress={()=>this.afficherEcran('Reglages')} 
+							style={style.vue} >
+							<View style={style.view}>
+								<Image
+									style={style.icone}
+									source={require('../../images/icons/calendar.png')}
+								/>
+								<Text style={style.libelle} >REGLAGES</Text>
+							</View>
+						</TouchableHighlight>
+						
+						<View style={style.separateur}></View>
+
+						<TouchableHighlight onPress={()=>this.afficherEcran('Notifications')} 
+							style={style.vue} >
+							<View style={style.view}>
+								<Image
+									style={style.icone}
+									source={require('../../images/icons/calendar.png')}
+								/>
+								<Text style={style.libelle} >NOTIFICATIONS</Text>
+							</View>
+						</TouchableHighlight>
+						
+						<View style={style.separateur}></View>
+						
+											
+							
+						<TouchableHighlight onPress={()=>this.afficherEcran('Deconnexion')} 
+							style={style.vue} >
+							<View style={style.view}>
+								<Image
+									style={style.icone}
+									source={require('../../images/icons/calendar.png')}
+								/>
+								<Text style={style.libelle} >DECONNEXION</Text>
+							</View>
+						</TouchableHighlight>
+						
+						<View style={style.separateur}></View>
+
+							
+						<TouchableHighlight onPress={()=>this.afficherEcran('Deconnexion')} 
+							style={style.vue} >
+							<View style={style.view}>
+								<Image
+									style={style.icone}
+									source={require('../../images/icons/calendar.png')}
+								/>
+								<Text style={style.libelle} >DECONNEXION</Text>
+							</View>
+						</TouchableHighlight>
+						
+						<View style={style.separateur}></View>
+
+							
+						<TouchableHighlight onPress={()=>this.afficherEcran('Deconnexion')} 
+							style={style.vue} >
+							<View style={style.view}>
+								<Image
+									style={style.icone}
+									source={require('../../images/icons/calendar.png')}
+								/>
+								<Text style={style.libelle} >DECONNEXION</Text>
+							</View>
+						</TouchableHighlight>
+						
+						<View style={style.separateur}></View>
+
+							
+						<TouchableHighlight onPress={()=>this.afficherEcran('Deconnexion')} 
+							style={style.vue} >
+							<View style={style.view}>
+								<Image
+									style={style.icone}
+									source={require('../../images/icons/calendar.png')}
+								/>
+								<Text style={style.libelle} >DECONNEXION</Text>
+							</View>
+						</TouchableHighlight>
+						
+						<View style={style.separateur}></View>
+
+						<TouchableHighlight onPress={()=>this.afficherEcran('Notifications')} 
+							style={style.vue} >
+							<View style={style.view}>
+								<Image
+									style={style.icone}
+									source={require('../../images/icons/calendar.png')}
+								/>
+								<Text style={style.libelle} >NOTIFICATIONS</Text>
+							</View>
+						</TouchableHighlight>
+						
+						<View style={style.separateur}></View>
+					</ScrollView>
 				</View>
-				<TouchableHighlight onPress={()=>this.afficherEcran('Accueil')} 
-					style={style.vue} >
-					<View style={style.view}>
-						<Image
-							style={style.icone}
-							source={require('../../images/icons/calendar.png')}
-						/>
-						<Text style={style.libelle} >ACCUEIL</Text>
-					</View>
-				</TouchableHighlight>
-				
-				<View style={style.separateur}></View>
-					
-				<TouchableHighlight onPress={()=>this.afficherEcran('Vierge')} 
-					style={style.vue} >
-					<View style={style.view}>
-						<Image
-							style={style.icone}
-							source={require('../../images/icons/calendar.png')}
-						/>
-						<Text style={style.libelle} >VIERGE</Text>
-					</View>
-				</TouchableHighlight>
-				
-				<View style={style.separateur}></View>
 
-				<TouchableHighlight onPress={()=>this.afficherEcran('CRA')} 
-					style={style.vue} >
-					<View style={style.view}>
-						<Image
-							style={style.icone}
-							source={require('../../images/icons/calendar.png')}
-						/>
-						<Text style={style.libelle} >CRA</Text>
-					</View>
-				</TouchableHighlight>
-				
-				<View style={style.separateur}></View>
-					
-				<TouchableHighlight onPress={()=>this.afficherEcran('Conges')} 
-					style={style.vue} >
-					<View style={style.view}>
-						<Image
-							style={style.icone}
-							source={require('../../images/icons/calendar.png')}
-						/>
-						<Text style={style.libelle} >CONGES</Text>
-					</View>
-				</TouchableHighlight>
-				
-				<View style={style.separateur}></View>
-				
-				<TouchableHighlight onPress={()=>this.afficherEcran('NoteDeFrais')} 
-					style={style.vue} >
-					<View style={style.view}>
-						<Image
-							style={style.icone}
-							source={require('../../images/icons/calendar.png')}
-						/>
-						<Text style={style.libelle} >NOTE DE FRAIS</Text>
-					</View>
-				</TouchableHighlight>
-				
-				<View style={style.separateur}></View>
-					
-				<TouchableHighlight onPress={()=>this.afficherEcran('Annuaire')} 
-					style={style.vue} >
-					<View style={style.view}>
-						<Image
-							style={style.icone}
-							source={require('../../images/icons/calendar.png')}
-						/>
-						<Text style={style.libelle} >ANNUAIRE</Text>
-					</View>
-				</TouchableHighlight>
-				
-				<View style={style.separateur}></View>
-					
-					
-				<TouchableHighlight onPress={()=>this.afficherEcran('Reglages')} 
-					style={style.vue} >
-					<View style={style.view}>
-						<Image
-							style={style.icone}
-							source={require('../../images/icons/calendar.png')}
-						/>
-						<Text style={style.libelle} >REGLAGES</Text>
-					</View>
-				</TouchableHighlight>
-				
-				<View style={style.separateur}></View>
-
-				<TouchableHighlight onPress={()=>this.afficherEcran('Notifications')} 
-					style={style.vue} >
-					<View style={style.view}>
-						<Image
-							style={style.icone}
-							source={require('../../images/icons/calendar.png')}
-						/>
-						<Text style={style.libelle} >NOTIFICATIONS</Text>
-					</View>
-				</TouchableHighlight>
-				
-				<View style={style.separateur}></View>
-
-					
-				<TouchableHighlight onPress={()=>this.afficherEcran('Deconnexion')} 
-					style={style.vue} >
-					<View style={style.view}>
-						<Image
-							style={style.icone}
-							source={require('../../images/icons/calendar.png')}
-						/>
-						<Text style={style.libelle} >DECONNEXION</Text>
-					</View>
-				</TouchableHighlight>
-				
-				<View style={style.separateur}></View>
-			</ScrollView>
-		</View>
+			</TouchableHighlight>
 		)
 	};
 }
