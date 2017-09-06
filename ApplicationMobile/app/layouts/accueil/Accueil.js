@@ -67,6 +67,12 @@ const navigation=StackNavigator({
 			header: null
 		}
 	},
+	Reglages:{
+		screen:Reglages,
+		navigationOptions: {
+			header: null
+		}
+	},
 	Notifications:{
 		screen:Notifications,
 		navigationOptions: {
