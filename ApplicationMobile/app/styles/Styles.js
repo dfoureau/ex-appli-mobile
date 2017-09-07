@@ -30,6 +30,8 @@ export default  StyleSheet.create({
   headerViewTitle:{flex:1,paddingTop:20, height:70,justifyContent: 'center',},
   headerTitle:{fontSize:30,color:"#fff",marginLeft:15,},
   /**Fin de style pour le header */
+
+/*Stye de liste, avec des containers pour séparer la partie droite et gache de l'ecran */
 listFirstEltText:{
   marginLeft: 5,
   fontSize: 18,
@@ -60,10 +62,29 @@ secondView:{
 },
 thirdView:{
   flex: .50,
-}
+},
+fourthView:{
+  flex: .15,
+},
+firstViewCRA:{
+  display: 'flex',
+  flexDirection: 'row',
+  marginBottom: 30,
+  marginLeft: 15,
+},
+firstViewCRANoMargin:{
+  display: 'flex',
+  flexDirection: 'row',
+  marginLeft: 15,
+},
+/*Stye de liste, avec des containers pour séparer la partie droite et gache de l'ecran */
 
-
-
+//boutton ajouter
+addBtn:{height:20, width:20,marginTop: 15},
+//checkmark cra
+craIcon:{height:15, width:15, marginTop: 35},
+//text boutton ajouter
+addText:{flex:1,  alignSelf: 'flex-end', height:70,marginTop: -35, marginBottom: -30, color: 'black'},
 
 
 })

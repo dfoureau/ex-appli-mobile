@@ -75,7 +75,7 @@ export default class Menu extends Component{
 						
 						<View style={style.separateur}></View>
 
-						<TouchableHighlight onPress={()=>this.afficherEcran('CRA')} 
+						<TouchableHighlight onPress={()=>this.afficherEcran('ListCRA')} 
 							style={style.vue} >
 							<View style={style.view}>
 								<Image
