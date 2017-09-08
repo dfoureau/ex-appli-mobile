@@ -33,18 +33,21 @@ export default StyleSheet.create({
         height: 50,
     },
 
-    LastItemMenu: {             
+    LastItemMenuLeft: {             
         position: 'absolute', 
         bottom: 0,
-        left: 6,
-        width: width*0.6,
-        zIndex: 5000, 
+        left: 8,
+        width: width*0.6*0.5,
+    },
+
+    LastItemMenuRight: {             
+        position: 'absolute', 
+        bottom: 0,
+        right: 12,
+        width: 35,
     },
 
     LastItemMenuIcon: {             
-        position: 'absolute', 
-        right: 18,
-        bottom: -3,
         width: 24,
         height: 24,
     },

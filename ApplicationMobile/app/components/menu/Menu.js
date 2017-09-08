@@ -10,7 +10,6 @@ class ContainerHeader extends Component {
 	constructor(props){
 		super(props);
 		this.state={
-            
 			pan: new Animated.ValueXY({x:-width, y:0}),
 			isOpen:false,
 			navigationParent: null,
@@ -22,7 +21,7 @@ class ContainerHeader extends Component {
 	}
 
 	afficherCloseMenu(){
-        
+		
 		if(this.state.isOpen){
 			this.closeView();
 		}else{
@@ -54,7 +53,11 @@ class ContainerHeader extends Component {
 		  }                              
         ).start();
         
-    }
+	}
+	
+	fermerMenu(){
+		this.props.fermerMenu();
+}
 	
 	render(){
 		return (
@@ -63,7 +66,7 @@ class ContainerHeader extends Component {
 	
 				<View style={styles.ContainerMenu}>
 
-					<TouchableOpacity style={styles.CloseMenuButton} onPress={()=>this.afficherCloseMenu()}>
+					<TouchableOpacity style={styles.CloseMenuButton} onPress={()=>this.fermerMenu()}>
 						<Image style={styles.CloseIcon}
 							source={require('../../images/icons/CloseIcon.png')}
 						/>
@@ -117,15 +120,14 @@ class ContainerHeader extends Component {
 							<Text style={styles.TextItemMenu}>Notifications</Text>   
 						</View>
 					</TouchableOpacity>
-					<TouchableOpacity style={[styles.ItemMenu, styles.LastItemMenu]} onPress={()=>this.afficherEcran('Reglages')}>						
-						<View>
+					<TouchableOpacity style={[styles.ItemMenu, styles.LastItemMenuLeft]} onPress={()=>this.afficherEcran('APropos')}>						
 							<Text>A Propos</Text>
-							<Image style={styles.LastItemMenuIcon}
+					</TouchableOpacity>
+					<TouchableOpacity style={[styles.ItemMenu, styles.LastItemMenuRight]} onPress={()=>this.afficherEcran('Reglages')}>							
+						<Image style={styles.LastItemMenuIcon}
 								source={require('../../images/icons/CogIcon.png')}
 							/>   
-						</View>
 					</TouchableOpacity>
-
 				</View>
 	
 				<View style={styles.ContainerOpaque}></View>
