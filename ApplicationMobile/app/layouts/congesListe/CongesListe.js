@@ -30,10 +30,6 @@ class CongesListe extends React.Component {
 			<View>
 
 				<ContainerAccueil title='Congés' afficherEcran={this.afficherEcranParent.bind(this)}/>
-				
-				<ContainerFilters>
-
-				</ContainerFilters>	
 
 			</View>
         

@@ -43,6 +43,7 @@ export default class ContainerAccueil extends React.Component {
         this.state.isOpen=!this.state.isOpen;
     
 	}
+
 	closeView(){
 		
 		Animated.timing(
@@ -71,7 +72,7 @@ export default class ContainerAccueil extends React.Component {
 
 	afficherEcranContainer(ecran){
         this.props.afficherEcran(ecran);
-   }
+   	}
 
 	render() {
 

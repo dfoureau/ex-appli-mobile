@@ -32,40 +32,4 @@ export default StyleSheet.create({
 
     },
 
-    ContainerMenu: {                       // SALUT
-        width: width*0.6, 
-        height: height, 
-        backgroundColor: '#FFFFFF', 
-        position: 'absolute',
-        paddingTop: 10,
-        zIndex: 1000, 
-    },
-
-    ItemMenu: {                       // SALUT
-        paddingLeft: 10,
-    },
-
-    IconItemMenu: {                       // SALUT
-        width: 36, 
-        height: 36
-
-    },
-
-    TextItemMenu: {                       // SALUT
-        color: '#000000', 
-        fontSize: 16,
-        position: 'relative', 
-        left: 44, 
-        bottom: 28, 
-    },
-
-    ContainerOpaque: {
-        width: width, 
-        height: height, 
-        backgroundColor: '#000', 
-        opacity: 0.5,
-        position: 'absolute', 
-        zIndex: 500,
-    }
-
 });

@@ -109,6 +109,14 @@ class ContainerHeader extends Component {
 							<Text style={styles.TextItemMenu}>Annuaire</Text>   
 						</View>
 					</TouchableHighlight>
+					<TouchableHighlight style={styles.ItemMenu} onPress={()=>this.afficherEcran('Notifications')}>						
+						<View>
+							<Image style={styles.IconItemMenu}
+								source={require('../../images/icons/calendar.png')}
+							/>
+							<Text style={styles.TextItemMenu}>Notifications</Text>   
+						</View>
+					</TouchableHighlight>
 					<TouchableHighlight style={[styles.ItemMenu, styles.LastItemMenu]} onPress={()=>this.afficherEcran('Reglages')}>						
 						<View>
 							<Text>A Propos</Text>

@@ -17,12 +17,13 @@ import Style from './Styles';
 /**container de l'accueil */
 import ContainerAccueil from '../../components/containerAccueil/ContainerAccueil';
 
-import Vierge from '../vierge/Vierge';
-
 import { ActivitesListe } from '../activitesListe';
 import { FraisListe } from '../fraisListe';
 import { CongesListe } from '../congesListe';
 import { AnnuaireListe } from '../annuaireListe';
+import { Notifications } from '../notifications';
+import { APropos } from '../aPropos';
+import { Reglages } from '../reglages';
 
 var {height, width} = Dimensions.get('window');
 
@@ -64,12 +65,6 @@ const navigation=StackNavigator({
 		screen:Accueil,
 		navigationOptions: { header: null }
 	},
-	Vierge:{
-		screen:Vierge,
-		navigationOptions: {
-			header: null
-		}
-	}, 
 	ActivitesListe:{
 		screen:ActivitesListe, 
 		navigationOptions: { header: null }
@@ -84,6 +79,18 @@ const navigation=StackNavigator({
 	}, 
 	AnnuaireListe:{
 		screen:AnnuaireListe, 
+		navigationOptions: { header: null }
+	},
+	Notifications:{
+		screen:Notifications, 
+		navigationOptions: { header: null }
+	}, 
+	APropos:{
+		screen:APropos, 
+		navigationOptions: { header: null }
+	}, 
+	Reglages:{
+		screen:Reglages, 
 		navigationOptions: { header: null }
 	}
 

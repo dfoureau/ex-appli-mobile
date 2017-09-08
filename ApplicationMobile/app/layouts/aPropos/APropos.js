@@ -1,35 +1,38 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import styles from './styles';
 
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from '../../components/containerAccueil/ContainerAccueil';
-import { ContainerFilters } from '../../components/containerFilters';
-import { SearchFilter } from '../../components/searchFilter';
-import { OptionFilter } from '../../components/optionFilter';
 import Accueil from '../accueil/Accueil'
 
 
-class FraisListe extends React.Component {
+class APropos extends React.Component {
 	 
 	constructor (props) {
 		super(props)
-		this.state = { title:'Notes de Frais' }
+		this.state = { title:'A Propos' }
 	}
-	
+
 	//Permet d'afficher l'ecran choisi dans le menu
 	afficherEcranParent(ecran){
 		this.props.navigation.navigate(ecran);
 	}
-
+	
 	render() {
 		return (
 
 			<View>
 
 				<ContainerAccueil title={this.state.title} afficherEcran={this.afficherEcranParent.bind(this)}/>
+
+                <View style={{paddingVertical: 20}}>
+                  <Text style={{fontSize:16, paddingVertical: 10, paddingHorizontal: 10}}>2017 &copy; Cat-Amania</Text>
+                  <Text style={{fontSize:16, paddingVertical: 10, paddingHorizontal: 10}}>Version : 1.0.0 </Text>
+                  <Text style={{fontSize:16, paddingVertical: 10, paddingHorizontal: 10}}>Rapports de bugs ou demande d'aide : site de support sur Jira</Text>
+                </View>
 
 			</View>
         
@@ -41,8 +44,8 @@ class FraisListe extends React.Component {
 // NAVIGATION AUTORISEE A PARTIR DE CE LAYOUT
 const navigation=StackNavigator({
 
-	FraisListe: {
-		screen: FraisListe,
+	APropos: {
+		screen: APropos,
 		navigationOptions: { header: null }
 	},
 	
