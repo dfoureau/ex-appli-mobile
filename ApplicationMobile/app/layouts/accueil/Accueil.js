@@ -19,6 +19,11 @@ import ContainerAccueil from '../../components/containerAccueil/ContainerAccueil
 
 import Vierge from '../vierge/Vierge';
 
+import { ActivitesListe } from '../activitesListe';
+import { FraisListe } from '../fraisListe';
+import { CongesListe } from '../congesListe';
+import { AnnuaireListe } from '../annuaireListe';
+
 var {height, width} = Dimensions.get('window');
 
 class Accueil extends React.Component {
@@ -27,6 +32,7 @@ class Accueil extends React.Component {
 		super(props)
 		this.state = {
 			//On définit les différentes variables
+			title:'Cat-Amania',
 		}
 	}
 	
@@ -38,12 +44,14 @@ class Accueil extends React.Component {
 	render() {
 
 		return (
-            <ContainerAccueil  afficherEcran={this.afficherEcranParent.bind(this)}  >
-                <View style={{height: 100, }}>
-                    <Text >Accueil</Text>
+			<View>
+				<ContainerAccueil title={this.state.title} afficherEcran={this.afficherEcranParent.bind(this)}/>
+				<View style={{height: 100, }}>
 
                 </View>
-            </ContainerAccueil>
+
+			</View>
+            
         
 		);
 	}
@@ -54,16 +62,31 @@ const navigation=StackNavigator({
 
 	Accueil:{
 		screen:Accueil,
-		navigationOptions: {
-			header: null
-		}
+		navigationOptions: { header: null }
 	},
 	Vierge:{
 		screen:Vierge,
 		navigationOptions: {
 			header: null
 		}
+	}, 
+	ActivitesListe:{
+		screen:ActivitesListe, 
+		navigationOptions: { header: null }
+	}, 
+	FraisListe:{
+		screen:FraisListe, 
+		navigationOptions: { header: null }
+	},   
+	CongesListe:{
+		screen:CongesListe, 
+		navigationOptions: { header: null }
+	}, 
+	AnnuaireListe:{
+		screen:AnnuaireListe, 
+		navigationOptions: { header: null }
 	}
+
 });
 
 //Il faut exporteer la na vigation ou bien la classe
