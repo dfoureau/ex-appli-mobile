@@ -7,7 +7,7 @@ import {
   TextInput, 
   Button, 
   Image, 
-  TouchableHighlight, 
+  TouchableOpacity, 
   Text,
 Alert,
 ScrollView,
@@ -79,11 +79,11 @@ export default class ContainerAccueil extends React.Component {
 		return (
         <View>
             <View style={styles.ContainerHeader}>
-            <TouchableHighlight style={styles.MenuIconLink} onPress={()=>this.afficherCloseMenu()}>
+            <TouchableOpacity style={styles.MenuIconLink} onPress={()=>this.afficherCloseMenu()}>
                 <Image style={styles.MenuIcon}
                     source={require('../../images/icons/MenuIcon.png')}
                 />
-            </TouchableHighlight>
+            </TouchableOpacity>
             <Text style={styles.TextHeader}>{this.props.title}</Text>
         </View>
             
@@ -96,7 +96,7 @@ export default class ContainerAccueil extends React.Component {
             }}
             
             >
-                <Menu   afficherEcran={this.afficherEcranContainer.bind(this)}    />
+                <Menu   afficherEcran={this.afficherEcranContainer.bind(this)} fermerMenu={this.afficherCloseMenu.bind(this)}/>
             </Animated.View>
 
         </View>

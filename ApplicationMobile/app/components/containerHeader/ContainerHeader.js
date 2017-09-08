@@ -82,7 +82,7 @@ class ContainerHeader extends Component {
     }}
     
     >
-        <Menu   afficherEcran={this.afficherEcranContainer.bind(this)}    />
+        <Menu   afficherEcran={this.afficherEcranContainer.bind(this)}  fermerMenu={this.afficherCloseMenu.bind(this)}  />
     </Animated.View>
 
     </View>
