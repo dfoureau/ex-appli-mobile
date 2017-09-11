@@ -86,46 +86,44 @@ class ActivitesListe extends React.Component {
 		return (
 
 			<View>
-
-				<ContainerAccueil title={this.state.title} afficherEcran={this.afficherEcranParent.bind(this)}/>
-				
-				<View style={Style.firstView}>
-					<View style={Style.secondView}>
-						<Picker
-							style={{
-							width: 120
-						}}
-							selectedValue={this.state.month}
-							onValueChange={(itemValue, itemIndex) => this.setState({month: itemValue})}>
-							<Picker.Item label="Année" value="0"/>
-							<Picker.Item label="2017" value="1"/>
-							<Picker.Item label="2016" value="2"/>
-							<Picker.Item label="2015" value="3"/>
-							<Picker.Item label="2014" value="4"/>
-							<Picker.Item label="2013" value="5"/>
-							<Picker.Item label="2012" value="6"/>
-							<Picker.Item label="2011" value="7"/>
-						</Picker>
-						<Text style={Style.addText}>Ajouter</Text>
-					</View>
-					<View style={Style.fourthView}>
-						<TouchableHighlight onPress={null}>
-							<View>
-								
-								<Image style={Style.addBtn} source={require('../../images/icons/add.png')}/>
-							</View>
-						</TouchableHighlight>
-					</View>
-				</View>
-
-				<FlatList
-					data={data}
-					renderItem={({item}) => !item.moreThanOne
-					? <View>
-							<CRAItem date={item.date} client={item.client} status={item.status} key={item.Id}/>
+				<ContainerAccueil title={this.state.title} afficherEcran={this.afficherEcranParent.bind(this)}>
+					<View style={Style.firstView}>
+						<View style={Style.secondView}>
+							<Picker
+								style={{
+								width: 120
+							}}
+								selectedValue={this.state.month}
+								onValueChange={(itemValue, itemIndex) => this.setState({month: itemValue})}>
+								<Picker.Item label="Année" value="0"/>
+								<Picker.Item label="2017" value="1"/>
+								<Picker.Item label="2016" value="2"/>
+								<Picker.Item label="2015" value="3"/>
+								<Picker.Item label="2014" value="4"/>
+								<Picker.Item label="2013" value="5"/>
+								<Picker.Item label="2012" value="6"/>
+								<Picker.Item label="2011" value="7"/>
+							</Picker>
+							<Text style={Style.addText}>Ajouter</Text>
 						</View>
-				: this.afficherCRAs(item)}/>
+						<View style={Style.fourthView}>
+							<TouchableHighlight onPress={null}>
+								<View>
+									
+									<Image style={Style.addBtn} source={require('../../images/icons/add.png')}/>
+								</View>
+							</TouchableHighlight>
+						</View>
+					</View>
 
+					<FlatList
+						data={data}
+						renderItem={({item}) => !item.moreThanOne
+						? <View>
+								<CRAItem date={item.date} client={item.client} status={item.status} key={item.Id}/>
+							</View>
+					: this.afficherCRAs(item)}/>
+				</ContainerAccueil>
 			</View>
         
 		);

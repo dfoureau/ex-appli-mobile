@@ -45,13 +45,10 @@ class Accueil extends React.Component {
 	render() {
 
 		return (
-			<View>
-				<ContainerAccueil title={this.state.title} afficherEcran={this.afficherEcranParent.bind(this)}/>
-				<View style={{height: 100, }}>
-
-                </View>
-
-			</View>
+				<ContainerAccueil title={this.state.title} afficherEcran={this.afficherEcranParent.bind(this)}>
+					<View style={{height: 100, }}>
+					</View>
+				</ContainerAccueil>
             
         
 		);

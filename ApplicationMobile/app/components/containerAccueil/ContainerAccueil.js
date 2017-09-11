@@ -85,8 +85,13 @@ export default class ContainerAccueil extends React.Component {
                 />
             </TouchableOpacity>
             <Text style={styles.TextHeader}>{this.props.title}</Text>
+	
+
         </View>
-            
+		<ScrollView>
+                    {/* On indique qu'on affiche les donnée de l'enfant */}
+                    {this.props.children}
+                </ScrollView>
             <Animated.View style={{
             //...this.props.style,
                 position:'absolute', 
