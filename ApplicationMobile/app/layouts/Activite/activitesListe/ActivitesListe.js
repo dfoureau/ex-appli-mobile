@@ -110,7 +110,7 @@ class ActivitesListe extends React.Component {
 							<TouchableHighlight onPress={null}>
 								<View>
 									
-									<Image style={Style.addBtn} source={require('../../images/icons/add.png')}/>
+									<Image style={Style.addBtn} source={require('../../../images/icons/add.png')}/>
 								</View>
 							</TouchableHighlight>
 						</View>

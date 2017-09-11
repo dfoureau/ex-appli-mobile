@@ -17,7 +17,7 @@ import Style from './Styles';
 /**container de l'accueil */
 import ContainerAccueil from '../../components/containerAccueil/ContainerAccueil';
 
-import { ActivitesListe } from '../activitesListe';
+import { ActivitesListe } from '../activite/activitesListe';
 import { FraisListe } from '../fraisListe';
 import { CongesListe } from '../congesListe';
 import { AnnuaireListe } from '../annuaireListe';
