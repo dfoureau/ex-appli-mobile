@@ -1,15 +1,15 @@
 import React from 'react';
 import { View, Picker, Image, FlatList, Text, TouchableHighlight } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
-import Style from '../../styles/Styles';
-import CRAItem from '../../components/CRAItem/CRAItem';
+import Style from '../../../styles/Styles';
+import CRAItem from '../../../components/CRAItem/CRAItem';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
-import ContainerAccueil from '../../components/containerAccueil/ContainerAccueil';
-import { ContainerFilters } from '../../components/containerFilters';
-import { SearchFilter } from '../../components/searchFilter';
-import { OptionFilter } from '../../components/optionFilter';
-import Accueil from '../accueil/Accueil'
+import ContainerAccueil from '../../../components/containerAccueil/ContainerAccueil';
+import { ContainerFilters } from '../../../components/containerFilters';
+import { SearchFilter } from '../../../components/searchFilter';
+import { OptionFilter } from '../../../components/optionFilter';
+import Accueil from '../../accueil/Accueil'
 
 
 class ActivitesListe extends React.Component {
