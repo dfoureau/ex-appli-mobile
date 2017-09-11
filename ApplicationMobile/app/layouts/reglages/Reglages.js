@@ -35,11 +35,6 @@ class Reglages extends React.Component {
 					onValueChange={(value) => this.setState ({switchValue: value})}
 					value={this.state.switchValue} />
                 </View>
-                <View>
-                	<TouchableHighlight onPress={() =>this.afficherEcranParent("APropos")}>
-                		<Text style={{fontSize:20, marginBottom: 20,paddingVertical: 10, paddingHorizontal: 10}}>A propos de l'application</Text>
-                	</TouchableHighlight>
-                </View>
 
 			</View>
         
