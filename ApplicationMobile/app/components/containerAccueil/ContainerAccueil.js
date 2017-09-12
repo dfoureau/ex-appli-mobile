@@ -7,13 +7,14 @@ import {
   TextInput, 
   Button, 
   Image, 
-  TouchableHighlight, 
+  TouchableOpacity, 
   Text,
 Alert,
 ScrollView,
 Animated,  } from 'react-native'
 import { StackNavigator, NavigationActions } from 'react-navigation';
 //import style from './Style.js'
+import styles from './styles';
 
 import Menu from '../menu/Menu'
 
@@ -42,6 +43,7 @@ export default class ContainerAccueil extends React.Component {
         this.state.isOpen=!this.state.isOpen;
     
 	}
+
 	closeView(){
 		
 		Animated.timing(
@@ -49,7 +51,7 @@ export default class ContainerAccueil extends React.Component {
 		  {
 			toValue: {x:-width,y:0},
 			//easing: Easing.back,
-			duration: 1000,
+			duration: 600,
 		  }                              
         ).start();
         
@@ -61,7 +63,7 @@ export default class ContainerAccueil extends React.Component {
 		  {
 			toValue: {x:0,y:0},
 			//easing: Easing.back,
-			duration: 1000,
+			duration: 600,
 		  }                              
         ).start();
         
@@ -70,42 +72,26 @@ export default class ContainerAccueil extends React.Component {
 
 	afficherEcranContainer(ecran){
         this.props.afficherEcran(ecran);
-   }
+   	}
 
 	render() {
 
 		return (
         <View>
-            <View style={{height:height,}}>
-                <View style={{flexDirection:'row',backgroundColor:'#2224AA',}}>
-                    <View style={{width:70,}}>
+            <View style={styles.ContainerHeader}>
+            <TouchableOpacity style={styles.MenuIconLink} onPress={()=>this.afficherCloseMenu()}>
+                <Image style={styles.MenuIcon}
+                    source={require('../../images/icons/MenuIcon.png')}
+                />
+            </TouchableOpacity>
+            <Text style={styles.TextHeader}>{this.props.title}</Text>
+	
 
-                        <TouchableHighlight onPress={()=>this.afficherCloseMenu()} 
-                            style={{height:50, width:50,
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    marginTop:20,}} >
-                            <Image
-                                style={{height:30, width:30}}
-                                source={require('../../images/icons/menu.png')}
-                            />
-                        </TouchableHighlight>
-                    </View>
-                    <View style={{flex:1,paddingTop:20, height:170,}}>
-                        <View>
-                            <Image source={require('../../images/logo.png')}/>
-                        </View>
-                        <View style={{paddingTop:20}}>
-                            <Text style={{fontSize:22, color:'#fff'}}>Bonjour Rhony LANDRY</Text>
-                        </View>
-                    </View>
-                </View>
-                <ScrollView>
+        </View>
+		<ScrollView>
                     {/* On indique qu'on affiche les donnée de l'enfant */}
                     {this.props.children}
                 </ScrollView>
-            </View>
-            
             <Animated.View style={{
             //...this.props.style,
                 position:'absolute', 
@@ -115,7 +101,11 @@ export default class ContainerAccueil extends React.Component {
             }}
             
             >
+<<<<<<< HEAD
                 <Menu   afficherEcran={this.afficherEcranContainer.bind(this)}  fermerMenu={this.afficherCloseMenu.bind(this)}  />
+=======
+                <Menu   afficherEcran={this.afficherEcranContainer.bind(this)} fermerMenu={this.afficherCloseMenu.bind(this)}/>
+>>>>>>> feature/annuaireList
             </Animated.View>
 
         </View>
