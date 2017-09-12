@@ -19,12 +19,12 @@ import styles from './styles';
 
 
 // IMPORT DES COMPOSANTS EXOTIQUES
-import ContainerAccueil from '../../components/containerAccueil/ContainerAccueil';
+import ContainerAccueil from '../../../components/containerAccueil/ContainerAccueil';
 
-import { ContainerHeader } from '../../components/containerHeader';
-import { ContainerFilters } from '../../components/containerFilters';
-import { SearchFilter } from '../../components/searchFilter';
-import { OptionFilter } from '../../components/optionFilter';
+import { ContainerHeader } from '../../../components/containerHeader';
+import { ContainerFilters } from '../../../components/containerFilters';
+import { SearchFilter } from '../../../components/searchFilter';
+import { OptionFilter } from '../../../components/optionFilter';
 
 
 // IMPORT DES LAYOUTS NAVIGABLES
@@ -71,7 +71,7 @@ class AnnuaireListe extends React.Component {
 	<TouchableHighlight onPress={()=>this.afficherContact(item.key)} >
 		<View style={styles.item}>
 		  <View style={styles.itemRow}>
-			  <Image style={styles.itemPhoto} source={require('../../images/imageProfilDefault.png')} />
+			  <Image style={styles.itemPhoto} source={require('../../../images/imageProfilDefault.png')} />
 			  <Text style={styles.itemText}>{item.nom} {item.prenom}</Text>
 		  </View>
 		  

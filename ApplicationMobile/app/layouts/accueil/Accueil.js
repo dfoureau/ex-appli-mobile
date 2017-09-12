@@ -18,9 +18,9 @@ import Style from './Styles';
 import ContainerAccueil from '../../components/containerAccueil/ContainerAccueil';
 
 import { ActivitesListe } from '../activite/activitesListe';
-import { FraisListe } from '../fraisListe';
-import { CongesListe } from '../congesListe';
-import { AnnuaireListe } from '../annuaireListe';
+import { FraisListe } from '../frais/fraisListe';
+import { CongesListe } from '../conges/congesListe';
+import { AnnuaireListe } from '../annuaire/annuaireListe';
 import { Notifications } from '../notifications';
 import { APropos } from '../aPropos';
 import { Reglages } from '../reglages';

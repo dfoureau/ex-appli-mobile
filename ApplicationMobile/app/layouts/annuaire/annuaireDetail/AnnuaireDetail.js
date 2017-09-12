@@ -12,10 +12,10 @@ import {
 Alert,
 ScrollView  } from 'react-native'
 import { StackNavigator, NavigationActions } from 'react-navigation';
-import StyleGlobal from '../../styles/Styles';
+import StyleGlobal from '../../../styles/Styles';
 
-import ContainerAccueil from '../../components/containerAccueil/ContainerAccueil';
-import { ContainerHeader } from '../../components/containerHeader';
+import ContainerAccueil from '../../../components/containerAccueil/ContainerAccueil';
+import { ContainerHeader } from '../../../components/containerHeader';
 
 
 var {height, width} = Dimensions.get('window');
