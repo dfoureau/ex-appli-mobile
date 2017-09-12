@@ -101,11 +101,7 @@ export default class ContainerAccueil extends React.Component {
             }}
             
             >
-<<<<<<< HEAD
-                <Menu   afficherEcran={this.afficherEcranContainer.bind(this)}  fermerMenu={this.afficherCloseMenu.bind(this)}  />
-=======
                 <Menu   afficherEcran={this.afficherEcranContainer.bind(this)} fermerMenu={this.afficherCloseMenu.bind(this)}/>
->>>>>>> feature/annuaireList
             </Animated.View>
 
         </View>
