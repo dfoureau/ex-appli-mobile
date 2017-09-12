@@ -26,7 +26,7 @@ class Notifications extends React.Component {
 
 			<View>
 
-				<ContainerAccueil title={this.state.title} afficherEcran={this.afficherEcranParent.bind(this)}/>
+				<ContainerAccueil title={this.state.title} afficherEcran={this.afficherEcranParent.bind(this)}>
 				
 				<FlatList
 					data={[
@@ -132,7 +132,7 @@ class Notifications extends React.Component {
 						</View>
               		</View>
             	</View>}/>
-
+				</ContainerAccueil>
 			</View>
         
 		);

@@ -33,9 +33,6 @@ import { AnnuaireDetail } from '../annuaireDetail';
 
 
 
-
-
-
 class AnnuaireListe extends React.Component {
 	 
 	constructor (props) {
@@ -123,7 +120,7 @@ class AnnuaireListe extends React.Component {
 
 			<View>
 
-				<ContainerAccueil title={this.state.title} afficherEcran={this.afficherEcranParent.bind(this)}/>
+				<ContainerAccueil title={this.state.title} afficherEcran={this.afficherEcranParent.bind(this)}>
 				
 				<ContainerFilters>
 					<OptionFilter/>
@@ -138,7 +135,7 @@ class AnnuaireListe extends React.Component {
 						ItemSeparatorComponent={this.renderItemSeparator}
 					/>
 				</View>
-
+				</ContainerAccueil>
 			</View>
         
 		);

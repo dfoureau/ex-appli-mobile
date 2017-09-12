@@ -15,7 +15,7 @@ class ContainerHeader extends Component {
 			navigationParent: null,
 		}
 	}
-	
+
 	afficherEcran(ecran){
 		 this.props.afficherEcran(ecran);
 	}
@@ -130,7 +130,11 @@ class ContainerHeader extends Component {
 					</TouchableOpacity>
 				</View>
 	
-				<View style={styles.ContainerOpaque}></View>
+				<View style={styles.ContainerOpaque}>
+				<TouchableOpacity style={styles.buttonOpaque} onPress={()=>this.fermerMenu()}>
+				
+				</TouchableOpacity>
+				</View>
 	
 			</View>
 	

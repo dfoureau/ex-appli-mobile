@@ -72,6 +72,16 @@ export default StyleSheet.create({
         opacity: 0.5,
         position: 'absolute', 
         zIndex: 500,
-    }
+    },
+
+    
+    buttonOpaque: {
+        width: width,
+        height: height,             
+        position: 'absolute', 
+        right: 15, 
+        top: 15,
+        backgroundColor: 'transparent',
+    },
 
 });

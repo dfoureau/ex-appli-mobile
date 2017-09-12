@@ -51,7 +51,7 @@ export default class ContainerAccueil extends React.Component {
 		  {
 			toValue: {x:-width,y:0},
 			//easing: Easing.back,
-			duration: 1000,
+			duration: 600,
 		  }                              
         ).start();
         
@@ -63,7 +63,7 @@ export default class ContainerAccueil extends React.Component {
 		  {
 			toValue: {x:0,y:0},
 			//easing: Easing.back,
-			duration: 1000,
+			duration: 600,
 		  }                              
         ).start();
         

@@ -14,7 +14,7 @@ ScrollView  } from 'react-native'
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import StyleGlobal from '../../styles/Styles';
 
-import ContainerTitre from '../../components/containerTitre/ContainerTitre';
+import ContainerAccueil from '../../components/containerAccueil/ContainerAccueil';
 import { ContainerHeader } from '../../components/containerHeader';
 
 
@@ -47,11 +47,12 @@ class AnnuaireDetail extends React.Component {
 		return (
             
             <View>
-                <ContainerTitre title={this.state.title} afficherEcran={this.afficherEcranParent.bind(this)}/>
+                <ContainerAccueil title={this.state.titre} afficherEcran={this.afficherEcranParent.bind(this)}>
                 <ScrollView>
 
 
                 </ScrollView>
+                </ContainerAccueil>
 
             </View>
         

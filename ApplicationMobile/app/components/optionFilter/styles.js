@@ -28,7 +28,7 @@ export default StyleSheet.create({
         width: width*0.4-30, 
         height: 40,
         color: '#000',
-        fontSize:16, 
+        //fontSize:16, 
     },
 
 });
