@@ -17,13 +17,13 @@ import Style from './Styles';
 /**container de l'accueil */
 import ContainerAccueil from '../../components/containerAccueil/ContainerAccueil';
 
-import { ActivitesListe } from '../activite/activitesListe';
-import { FraisListe } from '../frais/fraisListe';
-import { CongesListe } from '../conges/congesListe';
+import { ActivitesListe } from '../CRA/activitesListe';
+import { FraisListe } from '../noteDeFrais/fraisListe';
+import { CongesListe } from '../demandeDeConges/congesListe';
 import { AnnuaireListe } from '../annuaire/annuaireListe';
 import { Notifications } from '../notifications';
-import { APropos } from '../aPropos';
-import { Reglages } from '../reglages';
+import { APropos } from '../Configuration/aPropos';
+import { Reglages } from '../Configuration/reglages';
 
 var {height, width} = Dimensions.get('window');
 

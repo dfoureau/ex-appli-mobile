@@ -5,8 +5,8 @@ import styles from './styles';
 
 
 // IMPORT DES COMPOSANTS EXOTIQUES
-import ContainerAccueil from '../../components/containerAccueil/ContainerAccueil';
-import Accueil from '../accueil/Accueil'
+import ContainerAccueil from '../../../components/containerAccueil/ContainerAccueil';
+import Accueil from '../../accueil/Accueil'
 
 
 class Reglages extends React.Component {
