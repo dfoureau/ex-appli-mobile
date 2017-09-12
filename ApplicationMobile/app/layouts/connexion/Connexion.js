@@ -95,21 +95,20 @@ var {height, width} = Dimensions.get('window')
 	}
 }
 
-
-// NAVIGATION AUTORISEE A PARTIR DE CE LAYOUT
 const navigation=StackNavigator({
-
-	Connexion: {
+	Connexion:{
 		screen:Connexion,
-		navigationOptions: { header: null }
+		navigationOptions: {
+			header: null
+		}
 	},
-	Accueil: {
+	Accueil:{
 		screen:Accueil,
-		navigationOptions: { header: null }
+		navigationOptions: {
+			header: null
+		}
 	}
-
 });
 
-
-// EXPORT DE LA NAVIGATION
+//Il faut exporteer la na vigation ou bien la classe
 AppRegistry.registerComponent('ApplicationMobile', () => navigation);

@@ -7,7 +7,7 @@ const bleu1 = "#2298AA";
 const bleu2 = "#2ABBDD";
 const bleu3 = "#355A86";
 export default   StyleSheet.create({
-	scrollView:{ width:width,height:height,backgroundColor:'#355a86',},
+	scrollView:{ width:width,height:height,backgroundColor:'#2224AA',},
 	viewContainer:{marginTop:150, width:width, justifyContent:'center',alignItems: 'center',},
 	viewChamps:{justifyContent:'center',alignItems: 'center',marginTop:120},
 	viewSeConnecter:{marginTop:20, alignItems: 'center', },

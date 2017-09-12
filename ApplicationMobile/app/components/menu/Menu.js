@@ -1,5 +1,5 @@
+
 import React, { Component } from 'react';
-<<<<<<< HEAD
 import {View, TouchableHighlight, Text, Dimensions, StyleSheet, Image,ScrollView,
 Alert } from 'react-native';
 import { StackNavigator } from 'react-navigation';
@@ -10,21 +10,6 @@ export default class Menu extends Component{
 		super(props)
 		this.state = {
 			//On définit les différentes variables
-=======
-import { View, Image, Text, Animated, Dimensions, TouchableOpacity } from 'react-native';
-
-import styles from './styles';
-
-var {height, width} = Dimensions.get('window');
-
-class ContainerHeader extends Component {
-
-	constructor(props){
-		super(props);
-		this.state={
-			pan: new Animated.ValueXY({x:-width, y:0}),
-			isOpen:false,
->>>>>>> feature/annuaireList
 			navigationParent: null,
 		}
 	}
@@ -32,47 +17,7 @@ class ContainerHeader extends Component {
 	afficherEcran(ecran){
 		 this.props.afficherEcran(ecran);
 	}
-
-	afficherCloseMenu(){
-		
-		if(this.state.isOpen){
-			this.closeView();
-		}else{
-			this.openView();
-		}
-        this.state.isOpen=!this.state.isOpen;
-    
-	}
-	closeView(){
-		
-		Animated.timing(
-		  this.state.pan,
-		  {
-			toValue: {x:-width,y:0},
-			//easing: Easing.back,
-			duration: 1000,
-		  }                              
-        ).start();
-        
-	}
-	openView (){
-        
-		Animated.timing(
-		  this.state.pan,
-		  {
-			toValue: {x:0,y:0},
-			//easing: Easing.back,
-			duration: 1000,
-		  }                              
-        ).start();
-        
-	}
 	
-	fermerMenu(){
-		this.props.fermerMenu();
-}
-	
-<<<<<<< HEAD
 	fermerMenu(){
 			this.props.fermerMenu();
 	}
@@ -284,89 +229,30 @@ class ContainerHeader extends Component {
 			</TouchableHighlight>
 		)
 	};
-=======
-	render(){
-		return (
-
-			<View>
-	
-				<View style={styles.ContainerMenu}>
-
-					<TouchableOpacity style={styles.CloseMenuButton} onPress={()=>this.fermerMenu()}>
-						<Image style={styles.CloseIcon}
-							source={require('../../images/icons/CloseIcon.png')}
-						/>
-					</TouchableOpacity>
-
-					<TouchableOpacity style={styles.ItemMenu} onPress={()=>this.afficherEcran('Accueil')}>						
-						<View>
-							<Image style={styles.IconItemMenu}
-								source={require('../../images/icons/calendar.png')}
-							/>
-							<Text style={styles.TextItemMenu}>Tableau de Bord</Text>   
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity style={styles.ItemMenu} onPress={()=>this.afficherEcran('ActivitesListe')}>						
-						<View>
-							<Image style={styles.IconItemMenu}
-								source={require('../../images/icons/ActiviteIcon.png')}
-							/>
-							<Text style={styles.TextItemMenu}>Relevés d'Activité</Text>   
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity style={styles.ItemMenu} onPress={()=>this.afficherEcran('FraisListe')}>						
-						<View>
-							<Image style={styles.IconItemMenu}
-								source={require('../../images/icons/FoodIcon.png')}
-							/>
-							<Text style={styles.TextItemMenu}>Notes de Frais</Text>   
-						</View>
-					</TouchableOpacity>	
-					<TouchableOpacity style={styles.ItemMenu} onPress={()=>this.afficherEcran('CongesListe')}>						
-						<View>
-							<Image style={styles.IconItemMenu}
-								source={require('../../images/icons/CongesIcon.png')}
-							/>
-							<Text style={styles.TextItemMenu}>Congés</Text>   
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity style={styles.ItemMenu} onPress={()=>this.afficherEcran('AnnuaireListe')}>						
-						<View>
-							<Image style={styles.IconItemMenu}
-								source={require('../../images/icons/AnnuaireIcon.png')}
-							/>
-							<Text style={styles.TextItemMenu}>Annuaire</Text>   
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity style={styles.ItemMenu} onPress={()=>this.afficherEcran('Notifications')}>						
-						<View>
-							<Image style={styles.IconItemMenu}
-								source={require('../../images/icons/calendar.png')}
-							/>
-							<Text style={styles.TextItemMenu}>Notifications</Text>   
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity style={[styles.ItemMenu, styles.LastItemMenuLeft]} onPress={()=>this.afficherEcran('APropos')}>						
-							<Text>A Propos</Text>
-					</TouchableOpacity>
-					<TouchableOpacity style={[styles.ItemMenu, styles.LastItemMenuRight]} onPress={()=>this.afficherEcran('Reglages')}>							
-						<Image style={styles.LastItemMenuIcon}
-								source={require('../../images/icons/CogIcon.png')}
-							/>   
-					</TouchableOpacity>
-				</View>
-	
-				<View style={styles.ContainerOpaque}>
-				<TouchableOpacity style={styles.buttonOpaque} onPress={()=>this.fermerMenu()}>
-				
-				</TouchableOpacity>
-				</View>
-	
-			</View>
-	
-		);
-	}
->>>>>>> feature/annuaireList
 }
-	
-export default ContainerHeader;
+
+const style=StyleSheet.create({
+	vue:{height:60, 
+		justifyContent: 'center',
+	},
+	view:{flex:1,
+		  flexDirection:'row',
+		  marginLeft:15,
+		  alignItems:'center',
+	},
+	libelle:{
+		fontSize: 20,
+		marginLeft: 10,
+	},
+	icone:{
+		height:30, 
+		width:30,
+	},
+	separateur:{
+		width:width, height:1, backgroundColor:'#000',
+	},
+});
+
+
+
+//export default navigation;

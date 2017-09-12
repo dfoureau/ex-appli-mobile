@@ -13,7 +13,7 @@ Alert,
 ScrollView,
 Animated,  } from 'react-native'
 import { StackNavigator, NavigationActions } from 'react-navigation';
-import styles from './styles';
+import StyleGlobal from '../../styles/Styles'
 
 import Menu from '../menu/Menu'
 
@@ -36,29 +36,75 @@ export default class ContainerTitre extends React.Component {
 		}
 	}
 	
-    //Permet d'afficher l'ecran choisi dans le menu
-	afficherEcranParent(ecran){
-		this.props.navigation.navigate(ecran);
-	}
+    /**Determine s'il faut ouvrir ou fermer le menu */
+	afficherCloseMenu(){
+        
+		if(this.state.isOpen){
+			this.closeView();
+		}else{
+			this.openView();
+		}
+        this.state.isOpen=!this.state.isOpen;
     
-    /**Retour vers la page précédente */
-    retour(){
-        const backAction = NavigationActions.back()
-          this.props.navigation.dispatch(backAction);
     }
+    /**Ferme le menu */
+	closeView(){
+		
+		Animated.timing(
+		  this.state.pan,
+		  {
+			toValue: {x:-width,y:0},
+			//easing: Easing.back,
+			duration: 1000,
+		  }                              
+        ).start();
+        
+    }
+    /**Ouvre le menu */
+	openView (){
+        
+		Animated.timing(
+		  this.state.pan,
+		  {
+			toValue: {x:0,y:0},
+			//easing: Easing.back,
+			duration: 1000,
+		  }                              
+        ).start();
+        
+    }
+    
+    /**Affiche l'écran demandé */
+	afficherEcranContainer(ecran){
+        this.props.afficherEcran(ecran);
+   }
 
 	render() {
 
 		return (
         <View>
-            <View style={styles.ContainerHeader}>
-            <TouchableHighlight style={styles.MenuIconLink} onPress={()=>this.retour()}>
-                <Image style={styles.MenuIcon}
-                    source={require('../../images/icons/retour.png')}
-                />
-            </TouchableHighlight>
-            <Text style={styles.TextHeader}>{this.props.title}</Text>
-        </View>
+            <View style={{height:height,}}>
+                <View style={StyleGlobal.headerView}>
+                    <View style={StyleGlobal.headerRetourView}>
+
+                        <TouchableHighlight onPress={()=>this.afficherCloseMenu()} 
+                            style={StyleGlobal.headerBtnRetourStyle}>
+                            <Image
+                                style={StyleGlobal.headerBtnRetourImage}
+                                source={require('../../images/icons/menu.png')}
+                            />
+                        </TouchableHighlight>
+                    </View>
+                    <View style={StyleGlobal.headerViewTitle}>
+                        
+					    <Text style={StyleGlobal.headerTitle}>{this.props.title}</Text>
+                    </View>
+                </View>
+                <ScrollView>
+                    {/* On indique qu'on affiche les donnée de l'enfant */}
+                    {this.props.children}
+                </ScrollView>
+            </View>
             
             <Animated.View style={{
             //...this.props.style,
@@ -69,11 +115,7 @@ export default class ContainerTitre extends React.Component {
             }}
             
             >
-<<<<<<< HEAD
                 <Menu   afficherEcran={this.afficherEcranContainer.bind(this)}  fermerMenu={this.afficherCloseMenu.bind(this)}    />
-=======
-                <Menu   afficherEcran={this.afficherEcranContainer.bind(this)} fermerMenu={this.afficherCloseMenu.bind(this)} />
->>>>>>> feature/annuaireList
             </Animated.View>
 
         </View>
