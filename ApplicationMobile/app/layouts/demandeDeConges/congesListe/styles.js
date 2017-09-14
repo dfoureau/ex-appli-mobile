@@ -74,6 +74,7 @@ export default StyleSheet.create({
   },
 
   containerList: {
+    flex:1,
     marginBottom: 25
   },
 

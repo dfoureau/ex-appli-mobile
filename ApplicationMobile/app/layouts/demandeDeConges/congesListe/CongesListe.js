@@ -8,7 +8,7 @@ import ContainerAccueil from '../../../components/containerAccueil/ContainerAccu
 import { ContainerFilters } from '../../../components/containerFilters';
 import { SearchFilter } from '../../../components/searchFilter';
 import { OptionFilter } from '../../../components/optionFilter';
-import { AddButton } from 'components/Buttons';
+import { AddButton } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil'
 
 class CongesListe extends React.Component {
@@ -22,10 +22,11 @@ class CongesListe extends React.Component {
 	afficherEcranParent(ecran){
 		this.props.navigation.navigate(ecran);
 	}
-
-	addDemandeConge(){
-	}
 	
+	addDemandeConge(){
+
+	}
+
 	render() {
 
 		/*status => 1: validé, 2: brouillon, 3: en attente de validation */
@@ -53,7 +54,7 @@ class CongesListe extends React.Component {
 				status: 'validé',
 				userValidation: 'Anne Edythe',
 				dateValidation: '03/09/2017'
-            }
+			},
 		];
 
 		return (
@@ -104,15 +105,9 @@ class CongesListe extends React.Component {
 							</Picker>
 							<View style={style.containerAdd}>
 								<AddButton
-									text="Ajouter"
-									onPress={null}
+									text="AJOUTER"
+									onPress={this.addDemandeConge()}
 								/>
-								{/*
-								<Button style={style.btnAdd} onPress={()=>this.addDemandeConge()} title="Ajouter"/>	
-								
-								<TouchableHighlight onPress={null}>
-									<Image style={style.addBtn} source={require('../../../images/icons/add.png')}/>
-								</TouchableHighlight> */}
 							</View>
 						</View>
 						{/* Container liste des congés */}

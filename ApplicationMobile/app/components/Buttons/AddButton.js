@@ -3,10 +3,10 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import styles from './styles';
 
 const AddButton = ({text, onPress}) => (
-    <TouchableOpacity onPress={onPress}>
-        <View>
-            <Text></Text>
-            <Image source={require('../../images/icons/add.png')}/>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
+        <View style={styles.view}>
+            <Text style={styles.text}>{text}</Text>
+            <Image style={styles.icon} source={require('../../images/icons/add.png')}/>
         </View>
     </TouchableOpacity>
 );
