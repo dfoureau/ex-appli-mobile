@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, TextInput, Picker, Image, TouchableHighlight, FlatList } from 'react-native';
+import React from 'react'
+import { View, Text, TextInput, Picker, Image, TouchableHighlight, FlatList, Button } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import style from './styles';
 
@@ -8,6 +8,7 @@ import ContainerAccueil from '../../../components/containerAccueil/ContainerAccu
 import { ContainerFilters } from '../../../components/containerFilters';
 import { SearchFilter } from '../../../components/searchFilter';
 import { OptionFilter } from '../../../components/optionFilter';
+import AddButton from 'components/Buttons/AddButton';
 import Accueil from '../../accueil/Accueil'
 
 class CongesListe extends React.Component {
@@ -20,6 +21,9 @@ class CongesListe extends React.Component {
 	//Permet d'afficher l'ecran choisi dans le menu
 	afficherEcranParent(ecran){
 		this.props.navigation.navigate(ecran);
+	}
+
+	addDemandeConge(){
 	}
 	
 	render() {
@@ -99,10 +103,16 @@ class CongesListe extends React.Component {
 									<Picker.Item label="2011" value="7"/>
 							</Picker>
 							<View style={style.containerAdd}>
-								<Text style={style.addText}>Ajouter</Text>
+								<AddButton
+									text="Ajouter"
+									onPress={null}
+								/>
+								{/*
+								<Button style={style.btnAdd} onPress={()=>this.addDemandeConge()} title="Ajouter"/>	
+								
 								<TouchableHighlight onPress={null}>
 									<Image style={style.addBtn} source={require('../../../images/icons/add.png')}/>
-								</TouchableHighlight>
+								</TouchableHighlight> */}
 							</View>
 						</View>
 						{/* Container liste des congés */}

@@ -69,7 +69,8 @@ export default StyleSheet.create({
     display: 'flex',
     marginRight: 10,
     marginLeft: 10,
-    padding: 5
+    padding: 5,
+    borderWidth: 1
   },
 
   containerList: {
@@ -101,18 +102,28 @@ export default StyleSheet.create({
     fontSize: 14
   },
 
-  addText: {
-    color: 'black',
-    fontSize: 16,
-  },
+  // addText: {
+  //   color: 'black',
+  //   fontSize: 16,
+  // },
 
-  addBtn: {
-    height: 20, 
-    width: 20
-  },
+  // addBtn: {
+  //   height: 20, 
+  //   width: 20
+  // },
 
   listIcon: {
     height: 15, 
     width: 15
+  },
+
+  btnAdd: {
+    borderWidth: 1,
+    // shadowColor: '#000000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 15
+    // },
+    // shadowOpacity: 20
   },
 });
