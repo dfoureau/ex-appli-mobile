@@ -7,11 +7,18 @@ export default StyleSheet.create({
         alignItems:'center',
     },
 
-    view:{
+    viewAddButton:{
         flexDirection:'row',
         alignItems:'center',
         padding:5,
-        backgroundColor:'#233F65'
+        backgroundColor:'#355A86'
+    },
+
+    viewButton:{
+        flexDirection:'row',
+        alignItems:'center',
+        padding:5,
+        backgroundColor:'#2196F3' 
     },
 
     icon:{

@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TextInput, Picker, Image, TouchableHighlight, FlatList, Button } from 'react-native';
+import { View, Text, TextInput, Picker, Image, TouchableHighlight, FlatList } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import style from './styles';
 
@@ -8,7 +8,7 @@ import ContainerAccueil from '../../../components/containerAccueil/ContainerAccu
 import { ContainerFilters } from '../../../components/containerFilters';
 import { SearchFilter } from '../../../components/searchFilter';
 import { OptionFilter } from '../../../components/optionFilter';
-import { AddButton } from '../../../components/Buttons';
+import { AddButton, Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil'
 
 class CongesListe extends React.Component {
