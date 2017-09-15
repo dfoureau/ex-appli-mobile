@@ -52,30 +52,33 @@ export default StyleSheet.create({
   container2: {
     display: 'flex',
     flexDirection: 'row',
-    marginLeft: 10,
-    marginRight: 10,
-    marginBottom: 10
+    margin:10,
   },
 
-  containerAdd: {
+  containerPicker:{
+    flexDirection: 'row',
+    borderWidth:1,
+    width:110,
+    height:29,
+    alignItems : 'center',
+  },
+
+  containerButton:{
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems : 'center',
-    marginRight: 4
+    marginRight:5
   },
 
   container3: {
-    display: 'flex',
-    marginRight: 10,
-    marginLeft: 10,
-    padding: 5,
-    borderWidth: 1
+    flex:1,
+    margin:10,
+    padding: 5
   },
 
   containerList: {
-    flex:1,
-    marginBottom: 25
+    marginBottom: 20,
   },
 
   containerPeriod: {
@@ -103,28 +106,8 @@ export default StyleSheet.create({
     fontSize: 14
   },
 
-  // addText: {
-  //   color: 'black',
-  //   fontSize: 16,
-  // },
-
-  // addBtn: {
-  //   height: 20, 
-  //   width: 20
-  // },
-
   listIcon: {
     height: 15, 
     width: 15
-  },
-
-  btnAdd: {
-    borderWidth: 1,
-    // shadowColor: '#000000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 15
-    // },
-    // shadowOpacity: 20
   },
 });

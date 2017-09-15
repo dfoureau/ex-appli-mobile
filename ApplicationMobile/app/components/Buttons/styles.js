@@ -7,29 +7,16 @@ export default StyleSheet.create({
         alignItems:'center',
     },
 
-    viewAddButton:{
+    view:{
         flexDirection:'row',
         alignItems:'center',
         padding:5,
         backgroundColor:'#355A86'
     },
 
-    viewButton:{
-        flexDirection:'row',
-        alignItems:'center',
-        padding:5,
-        backgroundColor:'#2196F3' 
-    },
-
-    icon:{
-        width:22,
-        height:22,
-        marginLeft:3
-    },
-
     text:{
         color:'white',
         fontSize:14,
-        fontWeight:'bold',
+        fontWeight:'bold'
     }
 });

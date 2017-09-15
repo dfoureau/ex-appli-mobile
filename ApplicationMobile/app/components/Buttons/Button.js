@@ -1,13 +1,13 @@
 import React, {PropTypes} from 'react';
-import { View, Text, TouchableHighlight } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import styles from './styles';
 
 const Button = ({text, onPress}) => (
-    <TouchableHighlight  style={styles.container} onPress={onPress}>
-        <View style={styles.viewButton}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
+        <View style={styles.view}>
             <Text style={styles.text}>{text}</Text>
         </View>
-    </TouchableHighlight >
+    </TouchableOpacity>
 );
 
 Button.PropTypes = {

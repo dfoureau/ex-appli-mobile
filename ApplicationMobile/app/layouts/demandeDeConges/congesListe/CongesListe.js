@@ -90,21 +90,23 @@ class CongesListe extends React.Component {
 						</View>
 						{/* Container filtre et ajout de congés*/}
 						<View style={style.container2}>
-							<Picker
-									style={{width: 120}}
-									selectedValue={this.state.month}
-									onValueChange={(itemValue, itemIndex) => this.setState({month: itemValue})}>
-									<Picker.Item label="Année" value="0"/>
-									<Picker.Item label="2017" value="1"/>
-									<Picker.Item label="2016" value="2"/>
-									<Picker.Item label="2015" value="3"/>
-									<Picker.Item label="2014" value="4"/>
-									<Picker.Item label="2013" value="5"/>
-									<Picker.Item label="2012" value="6"/>
-									<Picker.Item label="2011" value="7"/>
-							</Picker>
-							<View style={style.containerAdd}>
-								<AddButton
+							<View style={style.containerPicker}>
+								<Picker
+										style={{width:110}}
+										selectedValue={this.state.month}
+										onValueChange={(itemValue, itemIndex) => this.setState({month: itemValue})}>
+										<Picker.Item label="Année" value="0"/>
+										<Picker.Item label="2017" value="1"/>
+										<Picker.Item label="2016" value="2"/>
+										<Picker.Item label="2015" value="3"/>
+										<Picker.Item label="2014" value="4"/>
+										<Picker.Item label="2013" value="5"/>
+										<Picker.Item label="2012" value="6"/>
+										<Picker.Item label="2011" value="7"/>
+								</Picker>
+							</View>
+							<View style={style.containerButton}>
+								<Button 
 									text="AJOUTER"
 									onPress={this.addDemandeConge()}
 								/>
@@ -124,7 +126,7 @@ class CongesListe extends React.Component {
 									</View>
 									<View>
 										<Text style={style.dayNumberText}>Nb jours : {item.dayNumber}</Text>
-										<Text style={style.statusText}>Etat : {item.status}{ item.statusId == 1 ? <Text> par {item.userValidation} le {item.dateValidation}</Text> : null}</Text>
+										<Text style={style.statusText}>Etat : {item.status}{ item.statusId == 1 ? <Text> par {item.userValidation} le {item.dateValidation}</Text> : null}</Text>	
 									</View>
 								</View>}/>
 						</View>
