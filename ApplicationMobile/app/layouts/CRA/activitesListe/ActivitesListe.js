@@ -10,6 +10,7 @@ import { ContainerFilters } from '../../../components/containerFilters';
 import { SearchFilter } from '../../../components/searchFilter';
 import { OptionFilter } from '../../../components/optionFilter';
 import Accueil from '../../accueil/Accueil'
+import ActivitesDetail from '../activitesDetail/ActivitesDetail';
 
 
 class ActivitesListe extends React.Component {
@@ -107,7 +108,7 @@ class ActivitesListe extends React.Component {
 							<Text style={Style.addText}>Ajouter</Text>
 						</View>
 						<View style={Style.fourthView}>
-							<TouchableHighlight onPress={null}>
+							<TouchableHighlight onPress={() => {this.props.navigation.navigate('ActivitesDetail', { date1:"09/09/2017",date2:"12/12/2017",activite:"IC" })}}>
 								<View>
 									
 									<Image style={Style.addBtn} source={require('../../../images/icons/add.png')}/>
@@ -136,6 +137,10 @@ const navigation=StackNavigator({
 
 	ActivitesListe: {
 		screen: ActivitesListe,
+		navigationOptions: { header: null }
+	},
+	ActivitesDetail: {
+		screen: ActivitesDetail,
 		navigationOptions: { header: null }
 	},
 	

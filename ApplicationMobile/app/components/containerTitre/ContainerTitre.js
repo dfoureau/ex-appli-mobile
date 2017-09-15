@@ -35,11 +35,6 @@ export default class ContainerTitre extends React.Component {
 			navigationParent: null,
 		}
 	}
-	
-    //Permet d'afficher l'ecran choisi dans le menu
-	afficherEcranParent(ecran){
-		this.props.navigation.navigate(ecran);
-	}
     
     /**Retour vers la page précédente */
     retour(){
@@ -59,6 +54,10 @@ export default class ContainerTitre extends React.Component {
             </TouchableHighlight>
             <Text style={styles.TextHeader}>{this.props.title}</Text>
         </View>
+
+        <ScrollView>
+                {this.props.children}
+            </ScrollView>
             
             <Animated.View style={{
             //...this.props.style,
@@ -69,8 +68,7 @@ export default class ContainerTitre extends React.Component {
             }}
             
             >
-                <Menu   afficherEcran={this.afficherEcranContainer.bind(this)} fermerMenu={this.afficherCloseMenu.bind(this)} />
-            </Animated.View>
+         </Animated.View>
 
         </View>
 		);
