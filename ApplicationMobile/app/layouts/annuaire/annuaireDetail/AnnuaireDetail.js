@@ -15,7 +15,7 @@ import { StackNavigator, NavigationActions } from 'react-navigation';
 import Style from '../../../styles/Styles';
 import styles from './styles';
 
-import ContainerAccueil from '../../../components/containerAccueil/ContainerAccueil';
+import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { ContainerHeader } from '../../../components/containerHeader';
 
 
@@ -48,7 +48,7 @@ class AnnuaireDetail extends React.Component {
 		return (
             
             <View>
-                <ContainerAccueil title={this.state.titre} afficherEcran={this.afficherEcranParent.bind(this)}>
+                <ContainerTitre title={this.state.titre} navigation={this.props.navigation}>
                 <ScrollView style={styles.scrollView}>
 
                     {/*DESCRIPTION PROFILE*/}
@@ -154,7 +154,7 @@ class AnnuaireDetail extends React.Component {
                     </View>
 
                 </ScrollView>
-                </ContainerAccueil>
+                </ContainerTitre>
 
             </View>
         
