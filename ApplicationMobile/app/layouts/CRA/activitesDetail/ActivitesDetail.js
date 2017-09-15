@@ -10,8 +10,9 @@ import { ContainerFilters } from '../../../components/containerFilters';
 import { SearchFilter } from '../../../components/searchFilter';
 import { OptionFilter } from '../../../components/optionFilter';
 import Accueil from '../../accueil/Accueil'
-
+import { ValiderButton } from '../../../components/Buttons';
 import Calendar from '../../../components/calendar/Calendar';
+
 import styles from './styles';
 
 class ActivitesDetail extends React.Component {
@@ -111,10 +112,11 @@ class ActivitesDetail extends React.Component {
 					</View>
 				</View >
 				<View style={Style.firstView}>
-					<View style={styles.viewBtnValider}>
-						<TouchableHighlight style={styles.btnValider} onPress={this.handleValidate} >
-							<Text style={styles.textBtnValider}>Valider</Text>
-						</TouchableHighlight>
+					<View style={styles.containerButton}>
+						<ValiderButton 
+							text="Valider"
+							onPress={() => this.handleValidate() }
+						/>
 					</View>
 				</View>
 				</ContainerTitre>

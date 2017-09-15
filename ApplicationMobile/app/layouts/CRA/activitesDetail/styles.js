@@ -53,13 +53,13 @@ import { StyleSheet,
       fontWeight: '400', 
       fontSize: 15.5,
     },
-    //Bouton Valider blanc TEMP
-      viewBtnValider: {
-        marginTop: 60,
-        marginLeft: 250,
-        },
-        textBtnValider: {
-          fontSize:15,
-          color: 'black',
-        },
+    //Bouton Valider
+    containerButton: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems : 'center',
+      marginRight:30,
+      marginTop: 40,
+    }
   });
