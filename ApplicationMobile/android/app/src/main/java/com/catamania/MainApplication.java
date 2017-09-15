@@ -1,4 +1,4 @@
-package com.applicationmobile;
+package com.catamania;
 
 import android.app.Application;
 
