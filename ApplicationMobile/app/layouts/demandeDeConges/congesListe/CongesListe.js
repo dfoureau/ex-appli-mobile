@@ -8,7 +8,7 @@ import ContainerAccueil from '../../../components/containerAccueil/ContainerAccu
 import { ContainerFilters } from '../../../components/containerFilters';
 import { SearchFilter } from '../../../components/searchFilter';
 import { OptionFilter } from '../../../components/optionFilter';
-import { AddButton, Button } from '../../../components/Buttons';
+import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil'
 
 class CongesListe extends React.Component {
