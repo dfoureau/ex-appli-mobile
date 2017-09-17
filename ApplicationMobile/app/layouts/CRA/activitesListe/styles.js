@@ -1,79 +1,188 @@
 import { StyleSheet,
-    Dimensions, } from 'react-native';
-  
-  
-  var {height, width} = Dimensions.get('window');
-  const bleu1 = "#FFF";
-  const bleu2 = "#FFF";
-  const bleu3 = "#FFF";
-  export default   StyleSheet.create({
-      scrollView:{ width:width,height:height,backgroundColor:'#fff',},
-      viewContainer:{marginTop:150, width:width, justifyContent:'center',alignItems: 'center',},
-      viewChamps:{justifyContent:'center',alignItems: 'center',marginTop:120},
-      viewSeConnecter:{marginTop:20, alignItems: 'center', },
-      btnSeconnecter:{fontSize:30,},
-      viewMdpOublie:{marginTop:20, alignItems: 'center', },
-      touchMdpOublie:{width:200,height:50, justifyContent:'center',alignItems: 'center',},
-      txtMdpOublie:{fontSize:15, color:"#2298AA", justifyContent:'center',alignItems: 'center',},
-      inputContainer: {
-          borderLeftWidth: 2,
-          borderRightWidth: 2,
-          borderTopWidth: 2,
-          borderBottomWidth: 2,
-          height: 50,
-          marginTop:20,
-        },
-  
-      input: {
-          height: 50,
-          backgroundColor: '#ffffff',
-          paddingLeft: 15,
-          paddingRight: 15,
-          borderWidth: 0, 
-          fontSize:19,
-        },
+  Dimensions, } from 'react-native';
 
-        container: {
-          width:width,
-          minHeight:height
-         },
-         sectionContain: {
-           backgroundColor: '#FFF',
-           paddingBottom: 300,
-           
-         },
-         sectionHeader: {
-           paddingTop: 15,
-           paddingLeft: 25,
-           height: 50,
-           width:width,
-         },
-         sectionHeaderText: {
-           fontSize: 20,
-           fontWeight: 'bold',
-         },
-         item: {
-           padding: 10,
-           //height: 44,
-           width:width,
-           backgroundColor:'#FFFFFF',
-         },
-         itemText: {
-           fontSize: 16,
-           flex:1,
-           marginLeft:10,
-         },
-         itemRow: {
-           flex:1,
-           flexDirection:'row',
-           paddingLeft: 10,
-           height: 44,
-           width:width,
-           alignItems: 'center',
-         },
-           itemPhoto:{
-             height:40,
-             width:40,
-             borderRadius:50, 
-            }
-  });
+
+var {height, width} = Dimensions.get('window');
+const bleu1 = "#2298AA";
+const bleu2 = "#2ABBDD";
+const bleu3 = "#355A86";
+export default  StyleSheet.create({
+
+  titreHeader:{
+    marginLeft:15,
+    alignSelf: 'center',
+  },
+
+  fondHeader:{
+    backgroundColor:'#2224AA',
+  },
+
+
+/*Stye de liste, avec des containers pour séparer la partie droite et gache de l'ecran */
+listFirstEltText:{
+  marginLeft: 5,
+  fontSize: 18,
+  flex: 2,
+  color : 'black',
+  fontStyle: 'italic',
+},
+listText:{
+  fontSize: 14,
+  marginBottom: 25,
+  marginLeft: 5,
+},
+listDate: {
+  fontSize: 14,
+  marginLeft: 20,
+  flex: 1,
+  flexDirection: 'row',
+  justifyContent: 'flex-end',
+  color: 'black',
+  fontStyle: 'italic',
+},
+firstView:{
+  display: 'flex',
+  flexDirection: 'row'
+},
+secondView:{
+ flex: 1,
+},
+thirdView:{
+  flex: .50,
+},
+fourthView:{
+  flex: .15,
+},
+firstViewCRA:{
+  display: 'flex',
+  flexDirection: 'row',
+  marginBottom: 30,
+  marginLeft: 15,
+},
+firstViewCRANoMargin:{
+  display: 'flex',
+  flexDirection: 'row',
+  marginLeft: 15,
+},
+/*Stye de liste, avec des containers pour séparer la partie droite et gache de l'ecran */
+
+//boutton ajouter
+addBtn:{height:20, width:20,marginTop: 15},
+//checkmark cra
+craIcon:{height:15, width:15, marginTop: 35},
+//text boutton ajouter
+addText:{flex:1,  alignSelf: 'flex-end', height:70,marginTop: -35, marginBottom: -30, color: 'black'},
+
+ text: {
+    color: 'black',
+    fontSize: 16,
+    padding: 2,
+    margin: 2
+  },
+
+  textInputYear: {
+    borderWidth: 1,
+    color: 'black',
+    height: 25,
+    width: 70,
+    padding: 2,
+    margin: 4,
+    textAlign: 'center',
+    textAlignVertical: 'center'
+  },
+
+  textInputCounter: {
+    borderWidth: 1,
+    color: 'black',
+    height: 25,
+    width: 40,
+    padding: 2,
+    margin: 4,
+    textAlign: 'center',
+    textAlignVertical: 'center'
+  },
+
+  container: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+
+  container1: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+    marginLeft: 10,
+    marginRight: 10
+  },
+
+  containerInfoElement: {
+    flexDirection: 'row'
+  },
+
+  container2: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop:20,
+    margin:20
+  },
+
+  containerPicker:{
+    flexDirection: 'row',
+    borderWidth:1,
+    width:118,
+    height:29,
+    alignItems : 'center',
+    marginLeft:-3
+  },
+
+  containerButton:{
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems : 'center',
+    marginRight:10,
+    height:30
+  },
+
+  container3: {
+    flex:1,
+    margin:10,
+    padding: 5
+  },
+
+  containerList: {
+    marginBottom: 20,
+  },
+
+  containerPeriod: {
+    flexDirection: 'row'
+  },
+
+  containerIcon: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end'
+  },
+
+  periodText: {
+    color: 'black',
+    fontSize: 16
+  },
+
+  dayNumberText: {
+    color: 'gray',
+    fontSize: 14
+  },
+
+  statusText: {
+    color: 'gray',
+    fontSize: 14
+  },
+
+  listIcon: {
+    height: 15,
+    width: 15
+  },
+})
+
