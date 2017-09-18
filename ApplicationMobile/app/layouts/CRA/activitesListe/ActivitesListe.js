@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Picker, Image, FlatList, Text, TouchableHighlight } from 'react-native';
+import { View, Text, TextInput, Picker, Image, TouchableHighlight, FlatList } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
-import Style from '../../../styles/Styles';
+import style from './styles';
 import CRAItem from '../../../components/CRAItem/CRAItem';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
@@ -10,6 +10,7 @@ import { ContainerFilters } from '../../../components/containerFilters';
 import { SearchFilter } from '../../../components/searchFilter';
 import { OptionFilter } from '../../../components/optionFilter';
 import Accueil from '../../accueil/Accueil'
+import { Button } from '../../../components/Buttons';
 import ActivitesDetail from '../activitesDetail/ActivitesDetail';
 
 
@@ -88,12 +89,12 @@ class ActivitesListe extends React.Component {
 
 			<View>
 				<ContainerAccueil title={this.state.title} afficherEcran={this.afficherEcranParent.bind(this)}>
-					<View style={Style.firstView}>
-						<View style={Style.secondView}>
-							<Picker
+					<View style={style.container}>
+					   <View style={style.container2}>
+						  <View style={style.containerPicker}>
+							  <Picker
 								style={{
-								width: 120
-							}}
+								width: 120 }}
 								selectedValue={this.state.month}
 								onValueChange={(itemValue, itemIndex) => this.setState({month: itemValue})}>
 								<Picker.Item label="Année" value="0"/>
@@ -104,26 +105,23 @@ class ActivitesListe extends React.Component {
 								<Picker.Item label="2013" value="5"/>
 								<Picker.Item label="2012" value="6"/>
 								<Picker.Item label="2011" value="7"/>
-							</Picker>
-							<Text style={Style.addText}>Ajouter</Text>
-						</View>
-						<View style={Style.fourthView}>
-							<TouchableHighlight onPress={() => {this.props.navigation.navigate('ActivitesDetail', { date1:"09/09/2017",date2:"12/12/2017",activite:"IC" })}}>
-								<View>
-									
-									<Image style={Style.addBtn} source={require('../../../images/icons/add.png')}/>
-								</View>
-							</TouchableHighlight>
-						</View>
-					</View>
+							  </Picker>
+						  </View>
+						    <View style={style.containerButton}>
+						      <Button text="AJOUTER"
+						       onPress={() => {this.props.navigation.navigate('ActivitesDetail', { date1:"09/09/2017",date2:"12/12/2017",activite:"IC" })}}/>
+						    </View>
+					    </View>
 
-					<FlatList
+					   <FlatList
 						data={data}
 						renderItem={({item}) => !item.moreThanOne
 						? <View>
 								<CRAItem date={item.date} client={item.client} status={item.status} key={item.Id}/>
 							</View>
-					: this.afficherCRAs(item)}/>
+					     : this.afficherCRAs(item)}/>
+
+				    </View>
 				</ContainerAccueil>
 			</View>
         

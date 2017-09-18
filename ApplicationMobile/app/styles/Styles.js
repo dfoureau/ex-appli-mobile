@@ -9,9 +9,9 @@ const bleu3 = "#355A86";
 export default  StyleSheet.create({
 
   titreHeader:{
-    marginLeft:15,
-    alignSelf: 'center', 
-  },
+        marginLeft:15,
+        alignSelf: 'center',
+      },
 
   fondHeader:{
     backgroundColor:'#2224AA',
@@ -77,12 +77,18 @@ firstViewCRANoMargin:{
   flexDirection: 'row',
   marginLeft: 15,
 },
+
+periodText: {
+    color: 'black',
+    fontSize: 16
+ },
+
 /*Stye de liste, avec des containers pour séparer la partie droite et gache de l'ecran */
 
 //boutton ajouter
 addBtn:{height:20, width:20,marginTop: 15},
 //checkmark cra
-craIcon:{height:15, width:15, marginTop: 35},
+craIcon:{height:15, width:15, marginTop: -19 , marginLeft: 315},
 //text boutton ajouter
 addText:{flex:1,  alignSelf: 'flex-end', height:70,marginTop: -35, marginBottom: -30, color: 'black'},
 
