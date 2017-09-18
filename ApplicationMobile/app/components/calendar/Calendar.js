@@ -11,6 +11,11 @@ class Calendar extends Component {
         }
       }
 
+      changeDate(date) {
+        this.setState({date: date});
+        this.props.onValueChange(date);
+      }
+
       render(){
         return (
           <DatePicker
@@ -26,7 +31,7 @@ class Calendar extends Component {
                 backgroundColor: '#f9f9f9',
               },
             }}
-            onDateChange={(date) => {this.setState({date: date})}}
+            onDateChange={(date) => this.changeDate(date)}
           />
         );
     }
