@@ -11,11 +11,16 @@ export default StyleSheet.create({
         flexDirection:'row',
         alignItems:'center',
         padding:5,
-        backgroundColor:'#355A86'
+        backgroundColor:'#355A86',
     },
     viewValider: {
         paddingLeft: 10,
         paddingRight: 10,
+    },
+    viewSupprimer: {
+        paddingLeft: 10,
+        paddingRight: 10,
+        backgroundColor: '#cf2a27',
     },
 
     text:{
