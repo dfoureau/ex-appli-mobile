@@ -31,25 +31,21 @@ export default class CRAItem extends Component {
         return (
             <View style={!this.state.manyElt ? Style.firstViewCRA : Style.firstViewCRANoMargin}>
                 <View style={Style.secondView}>
-                      {/* Libelle Date  */}
                     <Text style={Style.periodText}>
                         {!this.state.hideDate ? this.state.date : null}
                     </Text>
-                     {/* Libelle Client */}
                     <Text>
                         Client : {this.state.client}
 
                     </Text>
                   <View style={Style.fourthView}>
                       <View>
-                      {/* L'affichage du cocher si le statut est validé 1 */}
                         <Image
                           style={Style.craIcon} source={this.state.status == 1
                                  ? require('../../images/icons/check2.png') : null}/>
                       </View>
                   </View>
                     <Text>
-                     {/* Libelle Etat */}
                         Etat : {this.state.status == 1 ? 'Validé'
                              : (this.state.status == 2 ? 'Brouillon'
                              : 'En cours de validation')}
