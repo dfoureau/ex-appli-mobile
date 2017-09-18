@@ -13,7 +13,7 @@ class APropos extends React.Component {
 	 
 	constructor (props) {
 		super(props)
-		this.state = { title:'A Propos' }
+		this.state = { title:'À Propos' }
 	}
 
 	//Permet d'afficher l'ecran choisi dans le menu
