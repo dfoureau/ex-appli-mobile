@@ -88,7 +88,7 @@ periodText: {
 //boutton ajouter
 addBtn:{height:20, width:20,marginTop: 15},
 //checkmark cra
-craIcon:{height:15, width:15, marginTop: -19 , marginLeft :259},
+craIcon:{height:15, width:15, marginTop: -19 , marginLeft: 315},
 //text boutton ajouter
 addText:{flex:1,  alignSelf: 'flex-end', height:70,marginTop: -35, marginBottom: -30, color: 'black'},
 
