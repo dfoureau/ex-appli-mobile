@@ -11,23 +11,27 @@ class Calendar extends Component {
         }
       }
 
+      changeDate(date) {
+        this.setState({date: date});
+        this.props.onValueChange(date);
+      }
+
       render(){
         return (
           <DatePicker
-            style={{width: 160}}
+            style={{width: 130}}
             date={this.state.date}
             mode="date"
-            placeholder="Selectionner une date"
+            placeholder=" /    / "
             format="DD/MM/YYYY"
             confirmBtnText="Valider"
             cancelBtnText="Annuler"
             customStyles={{
               dateInput: {
-                marginLeft: 26,
                 backgroundColor: '#f9f9f9',
-              }
+              },
             }}
-            onDateChange={(date) => {this.setState({date: date})}}
+            onDateChange={(date) => this.changeDate(date)}
           />
         );
     }

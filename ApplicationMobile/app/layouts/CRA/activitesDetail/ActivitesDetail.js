@@ -96,11 +96,11 @@ class ActivitesDetail extends React.Component {
 					<View style={styles.calendarContainer}>
 						<View style={styles.calendarFlexContainer}>
 							<Text style={styles.calendarText}>Du</Text>
-							<Calendar style={styles.calendarComponent} date={this.state.date1}/>
+							<Calendar style={styles.calendarComponent} date={this.state.date1} onValueChange={(newDate) => this.setState({date1:newDate})}/>
 						</View>
 						<View style={styles.calendarFlexContainer}>
 							<Text style={styles.calendarText}>Au</Text>
-							<Calendar style={styles.calendarComponent} date={this.state.date2}/>
+							<Calendar style={styles.calendarComponent} date={this.state.date2} onValueChange={(newDate) => this.setState({date2:newDate})}/>
 						</View>
 					</View>
                 </View>
