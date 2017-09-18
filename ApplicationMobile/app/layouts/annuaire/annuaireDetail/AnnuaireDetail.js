@@ -12,9 +12,10 @@ import {
 Alert,
 ScrollView  } from 'react-native'
 import { StackNavigator, NavigationActions } from 'react-navigation';
-import StyleGlobal from '../../../styles/Styles';
+import Style from '../../../styles/Styles';
+import styles from './styles';
 
-import ContainerAccueil from '../../../components/containerAccueil/ContainerAccueil';
+import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { ContainerHeader } from '../../../components/containerHeader';
 
 
@@ -25,9 +26,11 @@ class AnnuaireDetail extends React.Component {
 	constructor (props) {
 		super(props)
 		this.state = {
-            titre:"Annuaire Detail",
-			//On définit les différentes variables
-		}
+            titre:"Alain AFFLELOU",
+            //On définit les différentes variables
+            id: this.props.navigation.state.params.cle,
+            list: {key:'3', nom:'AFFELOU', prenom:'Alain', entite:'CAT-AMANIA', fonction:'Directeur d\'agence', agence:'Nantes', telMobile:'06.06.06.06.06', telFixe:'02.02.02.02.02', email1:'a.afflelou@email.cat.client.com', email2:'a.afflelou@email.cat.com'},
+        }
 	}
 	
 	//Permet d'afficher l'ecran choisi dans le menu
@@ -40,19 +43,119 @@ class AnnuaireDetail extends React.Component {
         const backAction = NavigationActions.back()
           this.props.navigation.dispatch(backAction);
     }
-    
 
 	render() {
 
 		return (
             
             <View>
-                <ContainerAccueil title={this.state.titre} afficherEcran={this.afficherEcranParent.bind(this)}>
-                <ScrollView>
+                <ContainerTitre title={this.state.titre} navigation={this.props.navigation}>
+                <ScrollView style={styles.scrollView}>
+                
+                    {/*DESCRIPTION PROFILE*/}
+                    <View style={Style.firstView}>
+                        <View style={Style.secondView}>
+                            <View style={styles.container}>
+                                <View style={styles.containerRow}>
+                                    <Text style={styles.text}>Entité: {this.state.list.entite}</Text>
+                                    <Text style={styles.text}>Fonction: {this.state.list.fonction}</Text>
+                                    <Text style={styles.text}>Agence: {this.state.list.agence}</Text>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={styles.containerIcon}>
+                            <Image style={styles.iconProfile} source={require('../../../images/imageProfilDefault.png')}/>
+                        </View>
+                    </View>
+                        
+                    {/*TELEPHONE 1*/}
+                    <View style={[Style.firstView, styles.firstSection]}>
+                        <View style={Style.secondView}>
+                            <View style={styles.container}>
+                                <View style={styles.containerRow}>
+                                    <Text style={styles.text}>{this.state.list.telMobile}</Text>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={styles.containerIcon}>
+                            <TouchableHighlight onPress={null}>
+                                <View>
+                                    <Image style={styles.icon} source={require('../../../images/icons/tel.png')}/>
+                                </View>
+                            </TouchableHighlight>
+                        </View>
+                        <View style={styles.containerIcon}>
+                            <TouchableHighlight onPress={null}>
+                                <View>
+                                    <Image style={styles.icon} source={require('../../../images/icons/bulles.png')}/>
+                                </View>
+                            </TouchableHighlight>
+                        </View>
+                    </View>
 
+                    {/*TELEPHONE 2*/}
+                    <View style={[Style.firstView, styles.secondSection]}>
+                        <View style={Style.secondView}>
+                            <View style={styles.container}>
+                                <View style={styles.containerRow}>
+                                    <Text style={styles.text}>{this.state.list.telFixe}</Text>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={styles.containerIcon}>
+                            <TouchableHighlight onPress={null}>
+                                <View>
+                                    <Image style={styles.icon} source={require('../../../images/icons/tel.png')}/>
+                                </View>
+                            </TouchableHighlight>
+                        </View>
+                        <View style={styles.containerIcon}>
+                            <TouchableHighlight onPress={null}>
+                                <View>
+                                    <Image style={styles.icon} source={require('../../../images/icons/bulles.png')}/>
+                                </View>
+                            </TouchableHighlight>
+                        </View>
+                    </View>
+
+                    {/*EMAIL 1 */}
+                    <View style={[Style.firstView, styles.firstSection]}>
+                        <View style={Style.secondView}>
+                            <View style={styles.container}>
+                                <View style={styles.containerRow}>
+                                    <Text style={styles.text}>{this.state.list.email1}</Text>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={styles.containerIcon}>
+                            <TouchableHighlight onPress={null}>
+                                <View>
+                                    <Image style={styles.icon} source={require('../../../images/icons/email.png')}/>
+                                </View>
+                            </TouchableHighlight>
+                        </View>
+                    </View>
+
+                    {/*EMAIL 2*/}
+                    <View style={[Style.firstView, styles.secondSection]}>
+                        <View style={Style.secondView}>
+                            <View style={styles.container}>
+                                <View style={styles.containerRow}>
+                                    <Text style={styles.text}>{this.state.list.email2}</Text>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={styles.containerIcon}>
+                            <TouchableHighlight onPress={null}>
+                                <View>
+                                    <Image style={styles.icon} source={require('../../../images/icons/email.png')}/>
+                                </View>
+                            </TouchableHighlight>
+                        </View>
+                    </View>
 
                 </ScrollView>
-                </ContainerAccueil>
+                </ContainerTitre>
 
             </View>
         

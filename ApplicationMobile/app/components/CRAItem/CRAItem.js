@@ -31,33 +31,27 @@ export default class CRAItem extends Component {
         return (
             <View style={!this.state.manyElt ? Style.firstViewCRA : Style.firstViewCRANoMargin}>
                 <View style={Style.secondView}>
-                    <Text
-                        style={{
-                        color: 'black',
-                        fontStyle: 'italic'
-                    }}>
+                    <Text style={Style.periodText}>
                         {!this.state.hideDate ? this.state.date : null}
                     </Text>
                     <Text>
                         Client : {this.state.client}
+
                     </Text>
-                    <Text>
-                        Etat : {this.state.status == 1
-                            ? 'Validé'
-                            : (this.state.status == 2
-                                ? 'Brouillon'
-                                : 'En cours de validation')}
-                    </Text>
-                </View>
-                <View style={Style.fourthView}>
-                    <View>
+                  <View style={Style.fourthView}>
+                      <View>
                         <Image
-                            style={Style.craIcon}
-                            source={this.state.status == 1
-                            ? require('../../images/icons/check2.png')
-                            : null}/>
-                    </View>
+                          style={Style.craIcon} source={this.state.status == 1
+                                 ? require('../../images/icons/check2.png') : null}/>
+                      </View>
+                  </View>
+                    <Text>
+                        Etat : {this.state.status == 1 ? 'Validé'
+                             : (this.state.status == 2 ? 'Brouillon'
+                             : 'En cours de validation')}
+                    </Text>
                 </View>
+
             </View>
         )
     }
