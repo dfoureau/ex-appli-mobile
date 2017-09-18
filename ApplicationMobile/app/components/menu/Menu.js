@@ -121,7 +121,7 @@ class ContainerHeader extends Component {
 						</View>
 					</TouchableOpacity>
 					<TouchableOpacity style={[styles.ItemMenu, styles.LastItemMenuLeft]} onPress={()=>this.afficherEcran('APropos')}>						
-							<Text>A Propos</Text>
+							<Text>À Propos</Text>
 					</TouchableOpacity>
 					<TouchableOpacity style={[styles.ItemMenu, styles.LastItemMenuRight]} onPress={()=>this.afficherEcran('Reglages')}>							
 						<Image style={styles.LastItemMenuIcon}

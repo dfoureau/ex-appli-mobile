@@ -1,3 +1,3 @@
-rootProject.name = 'ApplicationMobile'
+rootProject.name = 'CatAmania'
 
 include ':app'

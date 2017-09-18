@@ -112,4 +112,4 @@ const navigation=StackNavigator({
 
 
 // EXPORT DE LA NAVIGATION
-AppRegistry.registerComponent('ApplicationMobile', () => navigation);
+AppRegistry.registerComponent('CatAmania', () => navigation);
