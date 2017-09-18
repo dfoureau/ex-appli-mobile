@@ -9,7 +9,8 @@ import { ContainerFilters } from '../../../components/containerFilters';
 import { SearchFilter } from '../../../components/searchFilter';
 import { OptionFilter } from '../../../components/optionFilter';
 import { Button } from '../../../components/Buttons';
-import Accueil from '../../accueil/Accueil'
+import Accueil from '../../accueil/Accueil';
+import CongesPeriode from '../congesPeriode/CongesPeriode';
 
 class CongesListe extends React.Component {
 	 
@@ -24,7 +25,8 @@ class CongesListe extends React.Component {
 	}
 	
 	addDemandeConge(){
-
+		//TEMP à changer
+		this.props.navigation.navigate('CongesPeriode');
 	}
 
 	render() {
@@ -108,7 +110,7 @@ class CongesListe extends React.Component {
 							<View style={style.containerButton}>
 								<Button 
 									text="AJOUTER"
-									onPress={this.addDemandeConge()}
+									onPress={() => this.addDemandeConge()}
 								/>
 							</View>
 						</View>
@@ -144,6 +146,10 @@ const navigation=StackNavigator({
 
 	CongesListe: {
 		screen: CongesListe,
+		navigationOptions: { header: null }
+	},
+	CongesPeriode: {
+		screen: CongesPeriode,
 		navigationOptions: { header: null }
 	},
 	
