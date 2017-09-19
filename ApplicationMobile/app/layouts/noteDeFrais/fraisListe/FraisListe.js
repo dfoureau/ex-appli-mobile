@@ -10,7 +10,8 @@ import { ContainerFilters } from '../../../components/containerFilters';
 import { SearchFilter } from '../../../components/searchFilter';
 import { OptionFilter } from '../../../components/optionFilter';
 import { Button } from '../../../components/Buttons';
-import Accueil from '../../accueil/Accueil'
+import Accueil from '../../accueil/Accueil';
+import Confirmation from '../confirmation/Confirmation';
 
 
 class FraisListe extends React.Component {
@@ -121,6 +122,10 @@ const navigation=StackNavigator({
 
 	FraisListe: {
 		screen: FraisListe,
+		navigationOptions: { header: null }
+	},
+	FraisConfirmation: {
+		screen: Confirmation,
 		navigationOptions: { header: null }
 	},
 	

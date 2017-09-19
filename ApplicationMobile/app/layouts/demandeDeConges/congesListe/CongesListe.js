@@ -11,6 +11,7 @@ import { OptionFilter } from '../../../components/optionFilter';
 import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil';
 import CongesPeriode from '../congesPeriode/CongesPeriode';
+import Confirmation from '../confirmation/Confirmation';
 
 class CongesListe extends React.Component {
 	 
@@ -152,6 +153,10 @@ const navigation=StackNavigator({
 		screen: CongesPeriode,
 		navigationOptions: { header: null }
 	},
+	CongesConfirmation: {
+		screen: Confirmation,
+		navigationOptions: { header: null }
+	}
 	
 });
 
