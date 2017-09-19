@@ -8,7 +8,7 @@ import styles from './styles';
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { Button, OkButton } from '../../../components/Buttons';
 
-class Confirmation extends React.Component {
+class ActivitesConfirmation extends React.Component {
 	 
 	constructor (props) {
 		super(props)
@@ -44,8 +44,8 @@ class Confirmation extends React.Component {
 // NAVIGATION AUTORISEE A PARTIR DE CE LAYOUT
 const navigation=StackNavigator({
 
-	CRAConfirmation: {
-		screen: Confirmation,
+	ActivitesConfirmation: {
+		screen: ActivitesConfirmation,
 		navigationOptions: { header: null }
 	},
 	

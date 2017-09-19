@@ -12,7 +12,7 @@ import { OptionFilter } from '../../../components/optionFilter';
 import Accueil from '../../accueil/Accueil'
 import { Button } from '../../../components/Buttons';
 import ActivitesDetail from '../activitesDetail/ActivitesDetail';
-import Confirmation from '../confirmation/Confirmation';
+import ActivitesConfirmation from '../activitesConfirmation/ActivitesConfirmation';
 
 
 class ActivitesListe extends React.Component {
@@ -143,7 +143,7 @@ const navigation=StackNavigator({
 		navigationOptions: { header: null }
 	},
 	ActivitesConfirmation: {
-		screen: Confirmation,
+		screen: ActivitesConfirmation,
 		navigationOptions: { header: null }
 	}
 	

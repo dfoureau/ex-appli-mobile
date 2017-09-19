@@ -8,14 +8,16 @@ import styles from './styles';
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { Button, OkButton } from '../../../components/Buttons';
 
-class Confirmation extends React.Component {
+class FraisConfirmation extends React.Component {
 	 
 	constructor (props) {
 		super(props)
-		this.state = { title:'Demande de congés' }
+		this.state = {
+            title:'Note de frais',
+        }
     }
     handleValidate() {
-        this.props.navigation.navigate('CongesListe');
+        this.props.navigation.navigate('FraisListe');
     }
 
 	render() {
@@ -26,7 +28,7 @@ class Confirmation extends React.Component {
                     <View style={Style.firstView}>
                         <View style={styles.container}>
                             <View style={styles.containerText}>    
-                                <Text style={styles.confirmationText}>Votre demande a été envoyée.</Text>
+                                <Text style={styles.confirmationText}>Votre demande a été sauvegardée en brouillon.</Text>
                             </View>
                             <View style={styles.containerButton}>
                                 <OkButton text="OK" onPress={() => this.handleValidate()}/>
@@ -44,10 +46,10 @@ class Confirmation extends React.Component {
 // NAVIGATION AUTORISEE A PARTIR DE CE LAYOUT
 const navigation=StackNavigator({
 
-	CPConfirmation: {
-		screen: Confirmation,
+	FraisConfirmation: {
+		screen: FraisConfirmation,
 		navigationOptions: { header: null }
-	},
+    },
 	
 });
 
