@@ -11,6 +11,7 @@ import { OptionFilter } from '../../../components/optionFilter';
 import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil';
 import CongesPeriode from '../congesPeriode/CongesPeriode';
+import CongesConfirmation from '../congesConfirmation/CongesConfirmation';
 
 class CongesListe extends React.Component {
 	 
@@ -26,7 +27,7 @@ class CongesListe extends React.Component {
 	
 	addDemandeConge(){
 		//TEMP à changer
-		this.props.navigation.navigate('CongesPeriode');
+		this.props.navigation.navigate('CongesConfirmation');
 	}
 
 	render() {
@@ -152,6 +153,10 @@ const navigation=StackNavigator({
 		screen: CongesPeriode,
 		navigationOptions: { header: null }
 	},
+	CongesConfirmation: {
+		screen: CongesConfirmation,
+		navigationOptions: { header: null }
+	}
 	
 });
 
