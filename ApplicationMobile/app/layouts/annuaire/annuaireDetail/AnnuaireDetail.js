@@ -8,7 +8,7 @@ import {
   TextInput, 
   Button, 
   Image, 
-  TouchableHighlight, 
+  TouchableOpacity, 
   Text,
 Alert,
 ScrollView  } from 'react-native'
@@ -80,18 +80,18 @@ class AnnuaireDetail extends React.Component {
                             </View>
                         </View>
                         <View style={styles.containerIcon}>
-                            <TouchableHighlight onPress={() => Communications.phonecall(this.state.list.telMobile, true)}>
+                            <TouchableOpacity onPress={() => Communications.phonecall(this.state.list.telMobile, true)}>
                                 <View>
                                     <Image style={styles.icon} source={require('../../../images/icons/tel.png')}/>
                                 </View>
-                            </TouchableHighlight>
+                            </TouchableOpacity>
                         </View>
                         <View style={styles.containerIcon}>
-                            <TouchableHighlight onPress={() => Communications.text(this.state.list.telMobile)}>
+                            <TouchableOpacity onPress={() => Communications.text(this.state.list.telMobile)}>
                                 <View>
                                     <Image style={styles.icon} source={require('../../../images/icons/bulles.png')}/>
                                 </View>
-                            </TouchableHighlight>
+                            </TouchableOpacity>
                         </View>
                     </View>
 
@@ -105,18 +105,18 @@ class AnnuaireDetail extends React.Component {
                             </View>
                         </View>
                         <View style={styles.containerIcon}>
-                            <TouchableHighlight onPress={() => Communications.phonecall(this.state.list.telFixe, true)}>
+                            <TouchableOpacity onPress={() => Communications.phonecall(this.state.list.telFixe, true)}>
                                 <View>
                                     <Image style={styles.icon} source={require('../../../images/icons/tel.png')}/>
                                 </View>
-                            </TouchableHighlight>
+                            </TouchableOpacity>
                         </View>
                         <View style={styles.containerIcon}>
-                            <TouchableHighlight onPress={() => Communications.text(this.state.list.telFixe)}>
+                            <TouchableOpacity onPress={() => Communications.text(this.state.list.telFixe)}>
                                 <View>
                                     <Image style={styles.icon} source={require('../../../images/icons/bulles.png')}/>
                                 </View>
-                            </TouchableHighlight>
+                            </TouchableOpacity>
                         </View>
                     </View>
 
@@ -130,11 +130,11 @@ class AnnuaireDetail extends React.Component {
                             </View>
                         </View>
                         <View style={styles.containerIcon}>
-                            <TouchableHighlight onPress={() => Communications.email([this.state.list.email1],null,null,null,null)}>
+                            <TouchableOpacity onPress={() => Communications.email([this.state.list.email1],null,null,null,null)}>
                                 <View>
                                     <Image style={styles.icon} source={require('../../../images/icons/email.png')}/>
                                 </View>
-                            </TouchableHighlight>
+                            </TouchableOpacity>
                         </View>
                     </View>
 
@@ -148,11 +148,11 @@ class AnnuaireDetail extends React.Component {
                             </View>
                         </View>
                         <View style={styles.containerIcon}>
-                            <TouchableHighlight onPress={() => Communications.email([this.state.list.email2],null,null,null,null)}>
+                            <TouchableOpacity onPress={() => Communications.email([this.state.list.email2],null,null,null,null)}>
                                 <View>
                                     <Image style={styles.icon} source={require('../../../images/icons/email.png')}/>
                                 </View>
-                            </TouchableHighlight>
+                            </TouchableOpacity>
                         </View>
                     </View>
 
