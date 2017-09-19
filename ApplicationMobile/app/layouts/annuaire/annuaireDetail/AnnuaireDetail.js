@@ -1,3 +1,4 @@
+'use strict';
 import React, { Component } from 'react'
 import { 
   AppRegistry,
@@ -18,6 +19,7 @@ import styles from './styles';
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { ContainerHeader } from '../../../components/containerHeader';
 
+import Communications from 'react-native-communications';
 
 var {height, width} = Dimensions.get('window');
 
@@ -78,14 +80,14 @@ class AnnuaireDetail extends React.Component {
                             </View>
                         </View>
                         <View style={styles.containerIcon}>
-                            <TouchableHighlight onPress={null}>
+                            <TouchableHighlight onPress={() => Communications.phonecall(this.state.list.telMobile, true)}>
                                 <View>
                                     <Image style={styles.icon} source={require('../../../images/icons/tel.png')}/>
                                 </View>
                             </TouchableHighlight>
                         </View>
                         <View style={styles.containerIcon}>
-                            <TouchableHighlight onPress={null}>
+                            <TouchableHighlight onPress={() => Communications.text(this.state.list.telMobile)}>
                                 <View>
                                     <Image style={styles.icon} source={require('../../../images/icons/bulles.png')}/>
                                 </View>
@@ -103,14 +105,14 @@ class AnnuaireDetail extends React.Component {
                             </View>
                         </View>
                         <View style={styles.containerIcon}>
-                            <TouchableHighlight onPress={null}>
+                            <TouchableHighlight onPress={() => Communications.phonecall(this.state.list.telFixe, true)}>
                                 <View>
                                     <Image style={styles.icon} source={require('../../../images/icons/tel.png')}/>
                                 </View>
                             </TouchableHighlight>
                         </View>
                         <View style={styles.containerIcon}>
-                            <TouchableHighlight onPress={null}>
+                            <TouchableHighlight onPress={() => Communications.text(this.state.list.telFixe)}>
                                 <View>
                                     <Image style={styles.icon} source={require('../../../images/icons/bulles.png')}/>
                                 </View>
@@ -128,7 +130,7 @@ class AnnuaireDetail extends React.Component {
                             </View>
                         </View>
                         <View style={styles.containerIcon}>
-                            <TouchableHighlight onPress={null}>
+                            <TouchableHighlight onPress={() => Communications.email([this.state.list.email1],null,null,null,null)}>
                                 <View>
                                     <Image style={styles.icon} source={require('../../../images/icons/email.png')}/>
                                 </View>
@@ -146,7 +148,7 @@ class AnnuaireDetail extends React.Component {
                             </View>
                         </View>
                         <View style={styles.containerIcon}>
-                            <TouchableHighlight onPress={null}>
+                            <TouchableHighlight onPress={() => Communications.email([this.state.list.email2],null,null,null,null)}>
                                 <View>
                                     <Image style={styles.icon} source={require('../../../images/icons/email.png')}/>
                                 </View>
