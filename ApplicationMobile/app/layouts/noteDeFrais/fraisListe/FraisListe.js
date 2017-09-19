@@ -27,7 +27,8 @@ class FraisListe extends React.Component {
 	}
 
 	addNDF(){
-
+		//TEMP
+		this.props.navigation.navigate('FraisConfirmation');
 	}
 
 	render() {
