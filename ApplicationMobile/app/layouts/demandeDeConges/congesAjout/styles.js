@@ -82,12 +82,10 @@ export default StyleSheet.create({
       },
 
       container4: {
-        flexDirection: 'row',
-        marginHorizontal: 10, 
-        justifyContent: 'space-around'
+        flexDirection:'row', 
+        justifyContent:'flex-end',
+        marginHorizontal: 10
       },
-
-
 
       header: {
         height: 25, 
@@ -109,5 +107,10 @@ export default StyleSheet.create({
         fontSize: 12,
         color:'#000000',
         textAlign: 'center'
-      }
+      },
+
+      btnSupprimer: {
+      paddingLeft: 10,
+      paddingRight: 10,
+      backgroundColor: '#cf2a27'}
 });

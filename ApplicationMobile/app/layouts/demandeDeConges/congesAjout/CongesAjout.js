@@ -17,7 +17,8 @@ class CongesAjout extends React.Component {
     constructor (props) {
 		super(props)
         this.state = { 
-            title:'Demande de congés', 
+            title:'Demande de congés',
+            statusId: 1, 
             status:'nouveau', 
             statusLabel:'Nouvelle DC',
             header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours'],
@@ -50,12 +51,12 @@ class CongesAjout extends React.Component {
 		this.props.navigation.navigate(ecran);
     }
     
-    addNewPeriod(){
+    addNewConge(){
 		this.props.navigation.navigate('CongesPeriode');
     }
     
-    modifyPeriod(id){
-        alert('bla:'+ id);
+    modifyConge(id){
+        this.props.navigation.navigate('CongesPeriode',{idConge: id});
     }
 
     deleteConge(){
@@ -63,16 +64,16 @@ class CongesAjout extends React.Component {
     }
         
     saveDraft(){
-
+        this.setState({statusId: 2, status: 'brouillon', statusLabel: 'DC en brouillon'});
     }
 
     validateConge(){
-        
+        this.setState({statusId: 3, status: 'validé', statusLabel: 'Modifications interdites'});
     }
 
     afficherRow(){
         return (this.state.listConges.map((row, i) => (
-            <TouchableOpacity key={i} onPress={() => this.modifyPeriod(row.id)}>
+            <TouchableOpacity key={i} onPress={() => this.modifyConge(row.id)}>
                 <Row 
                 style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
                 borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
@@ -80,6 +81,24 @@ class CongesAjout extends React.Component {
                 data={[row.startDate, row.endDate, row.absType, row.dayNumber]}/> 
             </TouchableOpacity>   
         )));
+    }
+
+    showDeleteButton()
+    {
+        if(this.state.statusId == 2)
+            return <Button text="SUPPRIMER" onPress={() => this.deleteConge()}/>
+    }
+
+    showDraftButton()
+    {
+        if(this.state.statusId == 1 || this.state.statusId == 2)
+            return <Button text="BROUILLON" onPress={() => this.saveDraft()} />
+    }
+
+    showValidateButton()
+    {
+        if(this.state.statusId == 1 || this.state.statusId == 2)
+            return <Button text="VALIDER" onPress={() => this.validateConge()} />
     }
 
     render() {         
@@ -129,23 +148,15 @@ class CongesAjout extends React.Component {
                         </View>
                         <View>    
                             <Button
+                                style={style.btnSupprimer}
                                 text="AJOUTER NOUVELLE PERIODE"
-                                onPress={() => this.addNewPeriod()}/>
+                                onPress={() => this.addNewConge()}/>
                         </View>
                     </View>
                     <View style={style.container4}>
-                        <Button 
-                            text="SUPPRIMER"
-                            onPress={() => this.deleteConge()}
-                        />
-                        <Button 
-                            text="BROUILLON"
-                            onPress={() => this.saveDraft()}
-                        />
-                        <Button 
-                            text="VALIDER"
-                            onPress={() => this.validateConge()}
-                        />
+                        {this.showDeleteButton()}
+                        {this.showDraftButton()}
+                        {this.showValidateButton()}
                     </View>
                 </View>
             </ContainerAccueil>

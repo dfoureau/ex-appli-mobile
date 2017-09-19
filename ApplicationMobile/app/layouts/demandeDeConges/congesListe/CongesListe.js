@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, TextInput, Picker, Image, TouchableHighlight, FlatList } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import style from './styles';
+import styleButton from '../../../components/Buttons/styles';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from '../../../components/containerAccueil/ContainerAccueil';
