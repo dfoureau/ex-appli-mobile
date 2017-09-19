@@ -1,6 +1,7 @@
 import React from 'react'
-import { View, Text, TextInput, FlatList } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
+import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import style from './styles';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
@@ -10,11 +11,38 @@ import { SearchFilter } from '../../../components/searchFilter';
 import { OptionFilter } from '../../../components/optionFilter';
 import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil'
+import CongesPeriode from '../congesPeriode/CongesPeriode';
 
 class CongesAjout extends React.Component {
     constructor (props) {
 		super(props)
-		this.state = { title:'Demande de congés', status:'nouveau', statusLabel:'Nouvelle DC' }
+        this.state = { 
+            title:'Demande de congés', 
+            status:'nouveau', 
+            statusLabel:'Nouvelle DC',
+            header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours'],
+            listConges: [ 
+                {
+                    id:8,
+                    startDate: '30/10/2017',
+                    endDate: '31/10/2017',
+                    absType : 'CP',
+                    dayNumber: 2
+                }, {
+                    id: 9,
+                    startDate: '02/11/2017',
+                    endDate: '03/11/2017',
+                    absType : 'RTT',
+                    dayNumber: 2
+                }, {
+                    id: 10,
+                    startDate: '02/12/2017',
+                    endDate: '02/12/2017',
+                    absType : 'CP',
+                    dayNumber: 1
+                }
+            ]
+        } 
 	}
 
 	//Permet d'afficher l'ecran choisi dans le menu
@@ -23,9 +51,13 @@ class CongesAjout extends React.Component {
     }
     
     addNewPeriod(){
-		
+		this.props.navigation.navigate('CongesPeriode');
     }
     
+    modifyPeriod(id){
+        alert('bla:'+ id);
+    }
+
     deleteConge(){
 
     }
@@ -38,58 +70,19 @@ class CongesAjout extends React.Component {
         
     }
 
-    //Renvoie l'en-tête du tableau
-    renderHeader = () => (
-           <View style={style.containerRow}>
-                <View style={style.containerHeader}><Text style={style.text}>Date du</Text></View>
-                <View style={style.containerHeader}><Text style={style.text}>Date au</Text></View>
-                <View style={style.containerHeader}><Text style={style.text}>Type d'abs</Text></View>
-                <View style={style.containerHeader}><Text style={style.text}>Nb. jours</Text></View>
-           </View>
-        
-   );
+    afficherRow(){
+        return (this.state.listConges.map((row, i) => (
+            <TouchableOpacity key={i} onPress={() => this.modifyPeriod(row.id)}>
+                <Row 
+                style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
+                borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
+                textStyle={style.rowText}
+                data={[row.startDate, row.endDate, row.absType, row.dayNumber]}/> 
+            </TouchableOpacity>   
+        )));
+    }
 
-   //Renvoie un élément du tableau
-   renderItem = ({item}) => (
-       <View style={style.containerRows}>
-            <View style={style.containerRow}>
-                <Text style={style.text}>{item.startDate}</Text>
-                <Text style={style.text}>{item.endDate}</Text>
-                <Text style={style.text}>{item.absType}</Text>
-                <Text style={style.text}>{item.dayNumber}</Text>
-           </View>
-           </View>
-   );
-
-    render() {
-        const data = [
-            {
-                key: 0,
-				startDate: '30/10/2017',
-                endDate: '31/10/2017',
-                absType : 'CP',
-				dayNumber: 2
-            }, {
-				key: 1,
-				startDate: '02/11/2017',
-				endDate: '03/11/2017',
-				absType : 'RTT',
-				dayNumber: 2
-            }, {
-				key: 2,
-				startDate: '02/12/2017',
-				endDate: '02/12/2017',
-				absType : 'CP',
-				dayNumber: 1
-            }, {
-				key: 3,
-				startDate: '02/12/2017',
-				endDate: '02/12/2017',
-				absType : 'CP',
-				dayNumber: 1
-            }
-        ];
-
+    render() {         
         return (
             <ContainerAccueil title={this.state.title} afficherEcran={this.afficherEcranParent.bind(this)}>
                 <View style={style.container}>
@@ -128,15 +121,17 @@ class CongesAjout extends React.Component {
 							</View> 
                     </View>
                     <View style={style.container3}>
-                        <FlatList 
-							data={data}
-                            horizontal={false}
-                            numColumns={4}
-                            columnWrapperStyle={{ alignItems: 'center'}}
-							renderItem={this.renderItem} />
-                        <Button 
-                            text="AJOUTER NOUVELLE PERIODE"
-                            onPress={() => this.addNewPeriod()}/>
+                        <View style={style.containerTable}>
+                            <Table borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}>
+                                <Row data={this.state.header} style={style.header} textStyle={style.headerText} />
+                                {this.afficherRow()}
+                            </Table>
+                        </View>
+                        <View>    
+                            <Button
+                                text="AJOUTER NOUVELLE PERIODE"
+                                onPress={() => this.addNewPeriod()}/>
+                        </View>
                     </View>
                     <View style={style.container4}>
                         <Button 
@@ -166,6 +161,10 @@ const navigation=StackNavigator({
             navigationOptions: { header: null }
         },
         
+        CongesPeriode: {
+            screen: CongesPeriode,
+            navigationOptions: { header: null }
+        }
     });
     
     

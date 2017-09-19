@@ -11,7 +11,6 @@ import { OptionFilter } from '../../../components/optionFilter';
 import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil';
 import CongesAjout from '../congesAjout/CongesAjout';
-// import CongesPeriode from '../congesPeriode/CongesPeriode';
 
 class CongesListe extends React.Component {
 	 

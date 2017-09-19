@@ -74,22 +74,11 @@ export default StyleSheet.create({
         flex:0.75,
         marginTop:10,
         marginHorizontal: 10,
+        flexDirection: 'column'
       },
 
-      containerRows: {
-        flexWrap:'wrap'
-      },
-
-      containerRow: {
-        flex:1,
-        flexDirection: 'row',
-        flexWrap:'wrap'
-      },
-
-      containerHeader: {
-        height:30,
-        borderWidth:1,
-        borderTopWidth:3
+      containerTable: {
+        marginBottom:20
       },
 
       container4: {
@@ -97,4 +86,28 @@ export default StyleSheet.create({
         marginHorizontal: 10, 
         justifyContent: 'space-around'
       },
+
+
+
+      header: {
+        height: 25, 
+        backgroundColor: '#CCCCCC' 
+      },
+
+      headerText: {
+        fontSize: 14,
+        color:'#000000',
+        textAlign: 'center'
+      },
+
+      row: {
+        height: 30,
+        backgroundColor: '#EEEEEE'
+      },
+
+      rowText: {
+        fontSize: 12,
+        color:'#000000',
+        textAlign: 'center'
+      }
 });

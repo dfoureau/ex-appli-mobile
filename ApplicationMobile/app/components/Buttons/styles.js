@@ -13,10 +13,12 @@ export default StyleSheet.create({
         padding:5,
         backgroundColor:'#355A86',
     },
+
     viewValider: {
         paddingLeft: 10,
         paddingRight: 10,
     },
+    
     viewSupprimer: {
         paddingLeft: 10,
         paddingRight: 10,
