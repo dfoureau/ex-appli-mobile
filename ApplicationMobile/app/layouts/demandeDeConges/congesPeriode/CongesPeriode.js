@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { View, Text, TextInput, Picker, TouchableOpacity} from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import Style from './styles';
@@ -21,19 +21,21 @@ class CongesPeriode extends React.Component {
             moment1: "",
             date2: "12/12/2017",
             moment2: "",
-            absence: "Congés payés",
+            absence: "Congés payés"
         }
     }
     
     handleValidate() {
         //Verif que toutes les valeurs sont remplies
+        // Retour à l'écran précédent après validation
+        this.props.navigation.dispatch(NavigationActions.back());
     }
+
     handleSupprimer() {
         
     }
 
 	render() {
-
 		return (
 			<View>
 				<ContainerTitre title={this.state.title} navigation={this.props.navigation}>

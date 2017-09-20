@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, TextInput, Picker, Image, TouchableHighlight, FlatList } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import style from './styles';
+import styleButton from '../../../components/Buttons/styles';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from '../../../components/containerAccueil/ContainerAccueil';
@@ -10,8 +11,7 @@ import { SearchFilter } from '../../../components/searchFilter';
 import { OptionFilter } from '../../../components/optionFilter';
 import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil';
-import CongesPeriode from '../congesPeriode/CongesPeriode';
-import CongesConfirmation from '../congesConfirmation/CongesConfirmation';
+import CongesAjout from '../congesAjout/CongesAjout';
 
 class CongesListe extends React.Component {
 	 
@@ -26,8 +26,7 @@ class CongesListe extends React.Component {
 	}
 	
 	addDemandeConge(){
-		//TEMP à changer
-		this.props.navigation.navigate('CongesConfirmation');
+		this.props.navigation.navigate('CongesAjout');
 	}
 
 	render() {
@@ -149,15 +148,10 @@ const navigation=StackNavigator({
 		screen: CongesListe,
 		navigationOptions: { header: null }
 	},
-	CongesPeriode: {
-		screen: CongesPeriode,
-		navigationOptions: { header: null }
-	},
-	CongesConfirmation: {
-		screen: CongesConfirmation,
+	CongesAjout: {
+		screen: CongesAjout,
 		navigationOptions: { header: null }
 	}
-	
 });
 
 
