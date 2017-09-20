@@ -44,8 +44,8 @@ import { StyleSheet,
         marginTop: 20,
       },
       icon: {
-        height:55,
-        width:55,
+        height:45,
+        width:45,
         //borderRadius:50,
         marginTop: 5 
       },
