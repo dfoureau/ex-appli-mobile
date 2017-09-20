@@ -54,5 +54,16 @@ export default StyleSheet.create({
   },
   pickerAbsences: {
     width:230, 
+  },
+
+  deleteButton: {
+    paddingLeft: 10,
+    paddingRight: 10,
+    backgroundColor: '#cf2a27'
+  },
+
+  validateButton: {
+    paddingLeft: 10,
+    paddingRight: 10
   }
 });
