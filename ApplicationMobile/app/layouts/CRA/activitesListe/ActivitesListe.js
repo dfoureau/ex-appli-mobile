@@ -12,6 +12,7 @@ import { OptionFilter } from '../../../components/optionFilter';
 import Accueil from '../../accueil/Accueil'
 import { Button } from '../../../components/Buttons';
 import ActivitesDetail from '../activitesDetail/ActivitesDetail';
+import AjoutCra from '../ajoutCRA/AjoutCra';
 
 
 class ActivitesListe extends React.Component {
@@ -109,7 +110,9 @@ class ActivitesListe extends React.Component {
 						  </View>
 						    <View style={style.containerButton}>
 						      <Button text="AJOUTER"
-						       onPress={() => {this.props.navigation.navigate('ActivitesDetail', { date1:"09/09/2017",date2:"12/12/2017",activite:"IC" })}}/>
+						      
+						       onPress={() => {this.props.navigation.navigate('AjoutCra')}}/>
+
 						    </View>
 					    </View>
 
@@ -141,7 +144,12 @@ const navigation=StackNavigator({
 		screen: ActivitesDetail,
 		navigationOptions: { header: null }
 	},
-	
+
+	AjoutCra: {
+    		screen: AjoutCra,
+    		navigationOptions: { header: null }
+    	},
+
 });
 
 
