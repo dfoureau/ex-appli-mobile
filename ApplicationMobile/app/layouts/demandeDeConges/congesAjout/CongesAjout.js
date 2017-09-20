@@ -85,7 +85,7 @@ class CongesAjout extends React.Component {
 
     showDeleteButton()
     {
-        if(this.state.statusId == 2)
+        // if(this.state.statusId == 2)
             return <Button 
                         buttonStyles={style.deleteButton} 
                         text="SUPPRIMER" 
@@ -94,7 +94,7 @@ class CongesAjout extends React.Component {
 
     showDraftButton()
     {
-        if(this.state.statusId == 1 || this.state.statusId == 2)
+        // if(this.state.statusId == 1 || this.state.statusId == 2)
             return <Button 
                         buttonStyles={style.draftButton}
                         text="BROUILLON" 
@@ -103,7 +103,7 @@ class CongesAjout extends React.Component {
 
     showValidateButton()
     {
-        if(this.state.statusId == 1 || this.state.statusId == 2)
+        // if(this.state.statusId == 1 || this.state.statusId == 2)
             return <Button 
                         text="VALIDER" 
                         onPress={() => this.validateConge()} />
@@ -156,7 +156,6 @@ class CongesAjout extends React.Component {
                         </View>
                         <View>    
                             <Button
-                                style={style.btnSupprimer}
                                 text="AJOUTER NOUVELLE PERIODE"
                                 onPress={() => this.addNewConge()}/>
                         </View>

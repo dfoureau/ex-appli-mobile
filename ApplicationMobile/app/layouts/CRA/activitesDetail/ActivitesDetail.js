@@ -9,6 +9,7 @@ import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { ContainerFilters } from '../../../components/containerFilters';
 import { SearchFilter } from '../../../components/searchFilter';
 import { OptionFilter } from '../../../components/optionFilter';
+import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil';
 import Calendar from '../../../components/calendar/Calendar';
 
@@ -112,7 +113,7 @@ class ActivitesDetail extends React.Component {
 				</View >
 				<View style={Style.firstView}>
 					<View style={styles.containerButton}>
-						<Button 
+						<Button
 							styleButton={styles.validateButton}
 							text="Valider"
 							onPress={() => this.handleValidate() }

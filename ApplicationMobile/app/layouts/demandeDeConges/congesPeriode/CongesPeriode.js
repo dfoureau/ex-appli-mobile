@@ -100,7 +100,8 @@ class CongesPeriode extends React.Component {
                                 />
                             </View>
                             <View style={styles.button}>
-                                <ValiderButton 
+                                <Button
+                                    buttonStyles={styles.validateButton} 
                                     text="Valider"
                                     onPress={() => this.handleValidate() }
                                 />
