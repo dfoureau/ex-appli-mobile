@@ -9,7 +9,7 @@ import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil'
 import CongesPeriode from '../congesPeriode/CongesPeriode';
-// TODO import CongesConfirmation
+import CongesConfirmation from '../congesConfirmation/CongesConfirmation';
 
 class CongesAjout extends React.Component {
     constructor (props) {
@@ -63,12 +63,12 @@ class CongesAjout extends React.Component {
         
     saveDraft(){
         this.setState({statusId: 2, status: 'brouillon', statusLabel: 'DC en brouillon'});
-        //this.props.navigation.navigate('CongesConfirmation');
+        this.props.navigation.navigate('CongesConfirmation');
     }
 
     validateConge(){
         this.setState({statusId: 3, status: 'validé', statusLabel: 'Modifications interdites'});
-        //this.props.navigation.navigate('CongesConfirmation');
+        this.props.navigation.navigate('CongesConfirmation');
     }
 
     afficherRow(){
@@ -177,10 +177,10 @@ const navigation=StackNavigator({
             navigationOptions: { header: null }
         },
 
-        // CongesConfirmation: {
-        //     screen: CongesConfirmation,
-        //     navigationOptions: { header: null }
-        // }
+        CongesConfirmation: {
+            screen: CongesConfirmation,
+            navigationOptions: { header: null }
+        }
     });
     
     
