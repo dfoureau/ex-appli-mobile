@@ -65,12 +65,14 @@ class ContainerHeader extends Component {
 			<View>
 	
 				<View style={styles.ContainerMenu}>
-
-					<TouchableOpacity style={styles.CloseMenuButton} onPress={()=>this.fermerMenu()}>
-						<Image style={styles.CloseIcon}
-							source={require('../../images/icons/CloseIcon.png')}
-						/>
-					</TouchableOpacity>
+					<View style={styles.ContainerTop}>
+						<Image style={styles.Logo} source={require('../../images/logoMenu.png')}/>
+						<TouchableOpacity style={styles.CloseMenuButton} onPress={()=>this.fermerMenu()}>
+							<Image style={styles.CloseIcon}
+								source={require('../../images/icons/CloseIcon.png')}
+							/>
+						</TouchableOpacity>
+					</View>
 
 					<TouchableOpacity style={styles.ItemMenu} onPress={()=>this.afficherEcran('Accueil')}>						
 						<View>
