@@ -3,9 +3,7 @@ import { StyleSheet,
 
 
 var {height, width} = Dimensions.get('window');
-const bleu1 = "#2298AA";
-const bleu2 = "#2ABBDD";
-const bleu3 = "#355A86";
+
 export default  StyleSheet.create({
 
 
@@ -21,65 +19,20 @@ export default  StyleSheet.create({
     marginRight: 10
   },
 
-
-  containerButton:{
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems : 'center',
-    marginRight:10,
-    height:30
-  },
-
-
-
-  containerList: {
-    marginBottom: 20,
-  },
-
-  containerPeriod: {
-    flexDirection: 'row'
-  },
-
-  containerIcon: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end'
-  },
-
-  periodText: {
-    color: 'black',
-    fontSize: 16
-  },
-
-  dayNumberText: {
-    color: 'gray',
-    fontSize: 14
-  },
-
-  statusText: {
-    color: 'gray',
-    fontSize: 14
-  },
-
-  listIcon: {
-    height: 15,
-    width: 15
-  },
-
   text: {
        color: 'black',
        fontSize: 16,
        padding: 2,
        margin: 2
-     },
+  },
 
   textCRA: {
-         color: 'mediumorchid',
+         color: 'purple',
          fontSize: 16,
          padding: 2,
          margin: 2,
-         marginRight : 45
+         marginRight : 45,
+         marginTop:4
   },
 
   containerPicker:{
@@ -91,12 +44,11 @@ export default  StyleSheet.create({
       padding: 2,
       marginTop: -2,
       marginLeft : -90
-    },
+  },
+
   containerFirstLine: {
      flexDirection: 'row'
-   },
-
-
+  },
 
   containerSecondLine:{
       flexDirection: 'row',
@@ -112,17 +64,32 @@ export default  StyleSheet.create({
 
   containerFourthLine: {
          flexDirection: 'row',
-         marginTop :30,
+         marginTop :20,
+         marginLeft: 100,
+
+
 
   },
 
-   textAbsences: {
+  container3: {
+         flex:0.75,
+         marginTop:10,
+         marginHorizontal: 10,
+         flexDirection: 'column'
+  },
+
+  statusLabel: {
+          color: 'purple',
+          fontSize: 16
+  },
+
+  textAbsences: {
             color: 'black',
             fontSize: 16,
             padding: 2,
             margin: 2,
             marginRight : 90
-   },
+  },
 
    textMois: {
                color: 'black',
@@ -133,11 +100,35 @@ export default  StyleSheet.create({
 
    },
 
+   btnModifier: {
+         backgroundColor: '#cf2a27',
+          width:100,
+   },
 
-   table: { width: 335, marginTop:18 , marginLeft:15},
-   headTable: {backgroundColor: '#f1f8ff' },
-   rowTable: { height: 40},
-   textHead: {fontSize: 15, color: 'black', textAlign: 'center' },
-   textRow :{textAlign: 'center' },
-})
+   table: { width: 335, marginTop:18 , marginLeft:5},
+   header: {
+           height: 25,
+           backgroundColor: '#CCCCCC'
+         },
+
+         headerText: {
+           fontSize: 14,
+           color:'#000000',
+           textAlign: 'center'
+         },
+
+         row: {
+           height: 30,
+           backgroundColor: '#EEEEEE'
+         },
+
+         rowText: {
+           fontSize: 12,
+           color:'#000000',
+           textAlign: 'center'
+         },
+
+
+
+});
 

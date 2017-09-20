@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, Picker, Image, FlatList, Text, TouchableHighlight, TouchableOpacity  } from 'react-native';
+import { View,Text,TextInput,TouchableHighlight,Picker, TouchableOpacity  } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from '../../../components/containerAccueil/ContainerAccueil';
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
+import { Button } from '../../../components/Buttons';
+import CongesPeriode from '../../demandeDeConges/congesPeriode/CongesPeriode';
 import Style from '../../../styles/Styles';
 import style from './styles';
 
@@ -13,13 +15,83 @@ class AjoutCra extends React.Component {
 	 
 	constructor (props) {
 		super(props)
-		this.state = { title:'Septembre 2017'}
-	                    }
+		this.state = {
+		    title:'Septembre 2017',
+            statusId: 1,
+            status:'nouveau',
+            statusLabel:'Nouvelle CRA',
+            header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours'],
+            listConges: [
+                            {
+                                id:8,
+                                startDate: '01/09/2017',
+                                endDate: '13/09/2017',
+                                absType : '1.0',
+                                dayNumber: 9
+                            }, {
+                                id: 9,
+                                startDate: '14/09/2017',
+                                endDate: '14/09/2017',
+                                absType : '0.5+RT',
+                                dayNumber: 1
+                            }, {
+                                id: 10,
+                                startDate: '15/09/2017',
+                                endDate: '30/07/2017',
+                                absType : '1.0',
+                                dayNumber: 11
+                            }
+            ]
+		}
+	}
+
 
 	//Permet d'afficher l'ecran choisi dans le menu
 	afficherEcranParent(ecran){
 		this.props.navigation.navigate(ecran);
-	};
+	}
+
+    validateConge(){
+
+    }
+
+    saveDraft()
+    {
+
+    }
+
+     modifyConge(id){
+            this.props.navigation.navigate('CongesPeriode',{idConge: id});
+         }
+     modify()
+     {
+
+     }
+    showDraftButton()
+        {
+            if(this.state.statusId == 1 || this.state.statusId == 2)
+                return <Button text="BROUILLON" onPress={() => this.saveDraft()} />
+        }
+
+        showValidateButton()
+        {
+            if(this.state.statusId == 1 || this.state.statusId == 2)
+                return <Button text="VALIDER" onPress={() => this.validateConge()} />
+        }
+
+
+
+      afficherRow(){
+            return (this.state.listConges.map((row, i) => (
+                <TouchableOpacity key={i} onPress={() => this.modifyConge(row.id)}>
+                    <Row
+                    style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
+                    borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
+                    textStyle={style.rowText}
+                    data={[row.startDate, row.endDate, row.absType, row.dayNumber]}/>
+                </TouchableOpacity>
+            )));
+       }
 
      handleValidate = () => {
      //TODO Retourne sur la page des CRA
@@ -28,13 +100,6 @@ class AjoutCra extends React.Component {
 
 	render() {
 
-	 const tableHead = ['Date du ', 'Date au', 'Imputation*', 'NB.jours'];
-
-     const tableData = [
-                         ['01/09/2017', '13/09/2017', '1.0', '9'],
-                         ['14/09/2017', '14/09/2017', '0.5+RT', '1'],
-                         ['15/09/2017', '30/07/2017', '1.0', '11'],
-                       ];
 
 		return (
 
@@ -44,10 +109,10 @@ class AjoutCra extends React.Component {
 
                     <View style={style.container1}>
                        <View style={style.containerFirstLine}>
-                          <Text style={style.text}>Etat : nouveau</Text>
+                          <Text style={style.text}>Etat : {this.state.status}</Text>
                         </View>
                         <View style={style.containerFirstLine}>
-                          <Text style={style.textCRA}>Nouvelle CRA</Text>
+                          <Text style={style.textCRA}>{this.state.statusLabel}</Text>
                         </View>
                     </View>
 
@@ -87,12 +152,17 @@ class AjoutCra extends React.Component {
                          </View>
                      </View>
 
-                     <View>
-                          <Table style={style.table} borderStyle={{borderWidth: 0.5, borderColor: '#c8e1ff'}}>
-                               <Row data={tableHead}  style={style.headTable} textStyle={style.textHead} flexArr={[1.4, 1.4,1.5, 1]}/>
-                               <Rows data={tableData} style={style.rowTable}   textStyle={style.textRow} flexArr={[1.4, 1.4,1.5, 1]}/>
+                     <View style={style.container3}>
+                          <Table style={style.table} borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}>
+                               <Row data={this.state.header} style={style.header} textStyle={style.headerText} />
+                                {this.afficherRow()}
+                          </Table>
+                     </View>
 
-                               </Table>
+                     <View style={style.containerFourthLine}>
+                      <Button style={style.btnModifier}
+                         text="               Modifier               "
+                         onPress={() => this.modify()}/>
                      </View>
 
                   </View>
@@ -111,6 +181,12 @@ const navigation=StackNavigator({
 		screen: AjoutCra,
 		navigationOptions: { header: null }
 	},
+    CongesPeriode: {
+        screen: CongesPeriode,
+        navigationOptions: { header: null }
+    },
+
+
 	
 });
 
