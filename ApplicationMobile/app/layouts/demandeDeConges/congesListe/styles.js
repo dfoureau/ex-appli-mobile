@@ -110,4 +110,8 @@ export default StyleSheet.create({
     height: 15, 
     width: 15
   },
+
+  btnAjouter: {
+    backgroundColor:'#000000'
+  }
 });

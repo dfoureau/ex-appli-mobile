@@ -86,19 +86,28 @@ class CongesAjout extends React.Component {
     showDeleteButton()
     {
         if(this.state.statusId == 2)
-            return <Button text="SUPPRIMER" onPress={() => this.deleteConge()}/>
+            return <Button 
+                        buttonStyles={style.deleteButton} 
+                        text="SUPPRIMER" 
+                        onPress={() => this.deleteConge()}/>
     }
 
     showDraftButton()
     {
         if(this.state.statusId == 1 || this.state.statusId == 2)
-            return <Button text="BROUILLON" onPress={() => this.saveDraft()} />
+            return <Button 
+                        buttonStyles={style.draftButton}
+                        textStyles={style.draftText} 
+                        text="BROUILLON" 
+                        onPress={() => this.saveDraft()} />
     }
 
     showValidateButton()
     {
         if(this.state.statusId == 1 || this.state.statusId == 2)
-            return <Button text="VALIDER" onPress={() => this.validateConge()} />
+            return <Button 
+                        text="VALIDER" 
+                        onPress={() => this.validateConge()} />
     }
 
     render() {         

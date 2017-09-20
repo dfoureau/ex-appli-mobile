@@ -15,21 +15,6 @@ export default StyleSheet.create({
         backgroundColor:'#355A86',
     },
 
-    viewValider: {
-        paddingLeft: 10,
-        paddingRight: 10,
-    },
-    
-    viewSupprimer: {
-        paddingLeft: 10,
-        paddingRight: 10,
-        backgroundColor: '#cf2a27',
-    },
-    viewOk: {
-        paddingLeft:20,
-        paddingRight: 20,
-    },
-
     text:{
         color:'white',
         fontSize:14,

@@ -108,7 +108,7 @@ class CongesListe extends React.Component {
 								</Picker>
 							</View>
 							<View style={style.containerButton}>
-								<Button 
+								<Button
 									text="AJOUTER"
 									onPress={() => this.addDemandeConge()}
 								/>
