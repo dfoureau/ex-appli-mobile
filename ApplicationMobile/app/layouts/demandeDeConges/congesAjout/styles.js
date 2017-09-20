@@ -109,8 +109,11 @@ export default StyleSheet.create({
         textAlign: 'center'
       },
 
-      btnSupprimer: {
-      paddingLeft: 10,
-      paddingRight: 10,
-      backgroundColor: '#cf2a27'}
+      deleteButton: {
+        backgroundColor: '#FF0000'
+      },
+
+      draftButton: {
+        backgroundColor: '#808080'
+      }
 });

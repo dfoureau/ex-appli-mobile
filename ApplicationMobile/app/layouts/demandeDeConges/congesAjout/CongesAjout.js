@@ -85,20 +85,28 @@ class CongesAjout extends React.Component {
 
     showDeleteButton()
     {
-        if(this.state.statusId == 2)
-            return <Button text="SUPPRIMER" onPress={() => this.deleteConge()}/>
+        // if(this.state.statusId == 2)
+            return <Button 
+                        buttonStyles={style.deleteButton} 
+                        text="SUPPRIMER" 
+                        onPress={() => this.deleteConge()}/>
     }
 
     showDraftButton()
     {
-        if(this.state.statusId == 1 || this.state.statusId == 2)
-            return <Button text="BROUILLON" onPress={() => this.saveDraft()} />
+        // if(this.state.statusId == 1 || this.state.statusId == 2)
+            return <Button 
+                        buttonStyles={style.draftButton}
+                        text="BROUILLON" 
+                        onPress={() => this.saveDraft()} />
     }
 
     showValidateButton()
     {
-        if(this.state.statusId == 1 || this.state.statusId == 2)
-            return <Button text="VALIDER" onPress={() => this.validateConge()} />
+        // if(this.state.statusId == 1 || this.state.statusId == 2)
+            return <Button 
+                        text="VALIDER" 
+                        onPress={() => this.validateConge()} />
     }
 
     render() {         
@@ -148,7 +156,6 @@ class CongesAjout extends React.Component {
                         </View>
                         <View>    
                             <Button
-                                style={style.btnSupprimer}
                                 text="AJOUTER NOUVELLE PERIODE"
                                 onPress={() => this.addNewConge()}/>
                         </View>

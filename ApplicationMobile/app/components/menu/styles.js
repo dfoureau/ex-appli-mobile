@@ -8,18 +8,30 @@ export default StyleSheet.create({
         width: width*0.6, 
         height: height-24, 
         backgroundColor: '#FFF', 
-        position: 'absolute',
-        paddingTop: 60,
-        zIndex: 1000, 
+        paddingTop: 5,
+        zIndex: 1000
+    },
+
+    ContainerTop: {
+        flexDirection:'row',
+        alignItems:'center',
+        marginBottom:10
+    },
+
+    Logo: {
+        width:150,
+        height:45,
+        backgroundColor: 'transparent'
     },
 
     CloseMenuButton: {
         width: 20,
         height: 20,             
-        position: 'absolute', 
         right: 15, 
         top: 15,
+        position: 'absolute',
         backgroundColor: 'transparent',
+        alignSelf:'flex-end'
     },
 
     CloseIcon: {

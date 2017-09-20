@@ -5,7 +5,7 @@ import Style from './styles';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
-import { ValiderButton, SupprimerButton } from '../../../components/Buttons';
+import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil'
 import Calendar from '../../../components/calendar/Calendar';
 
@@ -93,13 +93,15 @@ class CongesPeriode extends React.Component {
                     <View style={Style.firstView}>
                         <View style={styles.containerButton}>
                             <View style={styles.button}>
-                                <SupprimerButton 
+                                <Button 
+                                    buttonStyles={styles.deleteButton}
                                     text="Supprimer"
                                     onPress={() => this.handleSupprimer() }
                                 />
                             </View>
                             <View style={styles.button}>
-                                <ValiderButton 
+                                <Button
+                                    buttonStyles={styles.validateButton} 
                                     text="Valider"
                                     onPress={() => this.handleValidate() }
                                 />

@@ -6,7 +6,7 @@ import styles from './styles';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
-import { Button, OkButton } from '../../../components/Buttons';
+import { Button } from '../../../components/Buttons';
 
 class FraisConfirmation extends React.Component {
 	 
@@ -31,7 +31,10 @@ class FraisConfirmation extends React.Component {
                                 <Text style={styles.confirmationText}>Votre demande a été sauvegardée en brouillon.</Text>
                             </View>
                             <View style={styles.containerButton}>
-                                <OkButton text="OK" onPress={() => this.handleValidate()}/>
+                                <Button 
+                                    buttonStyles={styles.OkButton}
+                                    text="OK" 
+                                    onPress={() => this.handleValidate()}/>
                             </View>
                         </View>
                     </View>
