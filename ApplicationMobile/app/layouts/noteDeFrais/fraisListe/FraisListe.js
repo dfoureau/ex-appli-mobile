@@ -10,7 +10,8 @@ import { ContainerFilters } from '../../../components/containerFilters';
 import { SearchFilter } from '../../../components/searchFilter';
 import { OptionFilter } from '../../../components/optionFilter';
 import { Button } from '../../../components/Buttons';
-import Accueil from '../../accueil/Accueil'
+import Accueil from '../../accueil/Accueil';
+import FraisConfirmation from '../fraisConfirmation/FraisConfirmation';
 
 
 class FraisListe extends React.Component {
@@ -26,7 +27,8 @@ class FraisListe extends React.Component {
 	}
 
 	addNDF(){
-		
+		//TEMP
+		this.props.navigation.navigate('FraisConfirmation');
 	}
 
 	render() {
@@ -85,7 +87,7 @@ class FraisListe extends React.Component {
 								<View style={style.containerButton}>
 									<Button 
 										text="AJOUTER"
-										onPress={this.addNDF()}
+										onPress={() => this.addNDF()}
 									/>
 								</View>
 							</View>
@@ -121,6 +123,10 @@ const navigation=StackNavigator({
 
 	FraisListe: {
 		screen: FraisListe,
+		navigationOptions: { header: null }
+	},
+	FraisConfirmation: {
+		screen: FraisConfirmation,
 		navigationOptions: { header: null }
 	},
 	

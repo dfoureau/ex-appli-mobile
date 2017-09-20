@@ -25,6 +25,10 @@ export default StyleSheet.create({
         paddingRight: 10,
         backgroundColor: '#cf2a27',
     },
+    viewOk: {
+        paddingLeft:20,
+        paddingRight: 20,
+    },
 
     text:{
         color:'white',
