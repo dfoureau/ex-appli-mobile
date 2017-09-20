@@ -97,7 +97,6 @@ class CongesAjout extends React.Component {
         if(this.state.statusId == 1 || this.state.statusId == 2)
             return <Button 
                         buttonStyles={style.draftButton}
-                        textStyles={style.draftText} 
                         text="BROUILLON" 
                         onPress={() => this.saveDraft()} />
     }

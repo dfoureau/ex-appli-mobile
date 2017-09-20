@@ -115,9 +115,5 @@ export default StyleSheet.create({
 
       draftButton: {
         backgroundColor: '#808080'
-      },
-
-      draftText: {
-        color:'#FFFFFF'
       }
 });
