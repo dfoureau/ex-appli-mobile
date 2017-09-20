@@ -5,13 +5,11 @@ import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-ta
 import style from './styles';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
-import ContainerAccueil from '../../../components/containerAccueil/ContainerAccueil';
-import { ContainerFilters } from '../../../components/containerFilters';
-import { SearchFilter } from '../../../components/searchFilter';
-import { OptionFilter } from '../../../components/optionFilter';
+import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil'
 import CongesPeriode from '../congesPeriode/CongesPeriode';
+// TODO import CongesConfirmation
 
 class CongesAjout extends React.Component {
     constructor (props) {
@@ -65,10 +63,12 @@ class CongesAjout extends React.Component {
         
     saveDraft(){
         this.setState({statusId: 2, status: 'brouillon', statusLabel: 'DC en brouillon'});
+        //this.props.navigation.navigate('CongesConfirmation');
     }
 
     validateConge(){
         this.setState({statusId: 3, status: 'validé', statusLabel: 'Modifications interdites'});
+        //this.props.navigation.navigate('CongesConfirmation');
     }
 
     afficherRow(){
@@ -103,7 +103,7 @@ class CongesAjout extends React.Component {
 
     render() {         
         return (
-            <ContainerAccueil title={this.state.title} afficherEcran={this.afficherEcranParent.bind(this)}>
+            <ContainerTitre title={this.state.title} navigation={this.props.navigation}>
                 <View style={style.container}>
                     <View style={style.container1}>
                         <View style={style.containerStatus}>
@@ -159,7 +159,7 @@ class CongesAjout extends React.Component {
                         {this.showValidateButton()}
                     </View>
                 </View>
-            </ContainerAccueil>
+            </ContainerTitre>
     );
     }
 }
@@ -175,7 +175,12 @@ const navigation=StackNavigator({
         CongesPeriode: {
             screen: CongesPeriode,
             navigationOptions: { header: null }
-        }
+        },
+
+        // CongesConfirmation: {
+        //     screen: CongesConfirmation,
+        //     navigationOptions: { header: null }
+        // }
     });
     
     

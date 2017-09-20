@@ -27,6 +27,8 @@ class CongesPeriode extends React.Component {
     
     handleValidate() {
         //Verif que toutes les valeurs sont remplies
+        // Retour à l'écran précédent après validation
+        this.props.navigation.dispatch(NavigationActions.back());
     }
 
     handleSupprimer() {
