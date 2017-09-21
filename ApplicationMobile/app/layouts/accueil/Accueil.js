@@ -12,6 +12,7 @@ import {
 Alert,
 ScrollView  } from 'react-native'
 import { StackNavigator, NavigationActions } from 'react-navigation';
+import { FieldSet } from 'react-redux-form/native';
 import Style from './Styles';
 
 /**container de l'accueil */
