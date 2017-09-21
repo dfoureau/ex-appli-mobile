@@ -5,6 +5,7 @@ import Style from './Styles';
 
 /**container de l'accueil */
 import ContainerAccueil from '../../components/containerAccueil/ContainerAccueil';
+import Panel from '../../components/Panel/Panel';
 
 import { ActivitesListe } from '../CRA/activitesListe';
 import { FraisListe } from '../noteDeFrais/fraisListe';
@@ -58,7 +59,17 @@ class Accueil extends React.Component {
 
 		return (
 				<ContainerAccueil title={this.state.title} afficherEcran={this.afficherEcranParent.bind(this)}>
-					<View style={Style.container1}>
+					<Panel title="A Panel with short content text">
+          				<Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Text>
+        			</Panel>
+        			<Panel title="A Panel with long content text">
+          				<Text>Lorem ipsum...</Text>
+        			</Panel>
+        			<Panel title="Another Panel">
+          				<Text>Lorem ipsum dolor sit amet...</Text>
+        			</Panel>
+
+					{/* <View style={Style.container1}>
 						<Text style={Style.titleContainer}>INFORMATIONS PERSONNELLES</Text>
 						<View style={Style.containerUser}>
 							<Text style={Style.text}>Bienvenue {this.state.userInfo.firstName} {this.state.userInfo.lastName}</Text>
@@ -84,7 +95,7 @@ class Accueil extends React.Component {
 										<Text style={Style.text}>{item.content}</Text>
 									</View>}/>	
 						</View>
-					</View>
+					</View> */}
 				</ContainerAccueil>
             
         
