@@ -1,13 +1,13 @@
 import React from 'react';
-import { View,Text,TextInput,TouchableHighlight,Picker, TouchableOpacity  } from 'react-native';
+import { View,Text,TextInput,Picker, TouchableOpacity,ScrollView ,Alert} from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from '../../../components/containerAccueil/ContainerAccueil';
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
-import { Button } from '../../../components/Buttons';
-import CongesPeriode from '../../demandeDeConges/congesPeriode/CongesPeriode';
+import { Button,} from '../../../components/Buttons';
+import ActivitesDetail from '../activitesDetail/ActivitesDetail';
 import Style from '../../../styles/Styles';
 import style from './styles';
 
@@ -18,10 +18,14 @@ class AjoutCra extends React.Component {
 		this.state = {
 		    title:'Septembre 2017',
             statusId: 1,
+            TextClient : 'La Banque Postale',
+            TextResponsable :'J DOE',
+            TextProjet : ' ',
+            TextComment : ' ',
             status:'nouveau',
             statusLabel:'Nouvelle CRA',
             header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours'],
-            listConges: [
+            listCRA: [
                             {
                                 id:8,
                                 startDate: '01/09/2017',
@@ -50,8 +54,11 @@ class AjoutCra extends React.Component {
 	afficherEcranParent(ecran){
 		this.props.navigation.navigate(ecran);
 	}
+    deleteCr(){
 
-    validateConge(){
+
+    }
+    validate(){
 
     }
 
@@ -60,30 +67,42 @@ class AjoutCra extends React.Component {
 
     }
 
-     modifyConge(id){
-            this.props.navigation.navigate('CongesPeriode',{idConge: id});
+     modifyCRA(id){
+            this.props.navigation.navigate('ActivitesDetail',{idCRA: id});
          }
-     modify()
-     {
 
+
+     showDeleteButton()
+     {
+             if(this.state.statusId == 1 || this.state.statusId == 2)
+                 return <Button text="SUPPRIMER" style={style.btnDelete} onPress={() =>
+                 Alert.alert(
+                 'Suppression',
+                  'Etes-vous sûr de vouloir supprimer le relevé d activité ?',
+                  [
+                  {text: 'Non', onPress: () => console.log('Cancel Pressed!')},
+                  {text: 'Oui', onPress: () => console.log('OK Pressed!')},
+                  ]
+                  )}/>
      }
-    showDraftButton()
-        {
+
+     showDraftButton()
+     {
             if(this.state.statusId == 1 || this.state.statusId == 2)
                 return <Button text="BROUILLON" onPress={() => this.saveDraft()} />
-        }
+     }
 
-        showValidateButton()
-        {
+     showValidateButton()
+     {
             if(this.state.statusId == 1 || this.state.statusId == 2)
-                return <Button text="VALIDER" onPress={() => this.validateConge()} />
-        }
+                return <Button text="VALIDER"  onPress={() => this.validate()} />
+     }
 
 
 
       afficherRow(){
-            return (this.state.listConges.map((row, i) => (
-                <TouchableOpacity key={i} onPress={() => this.modifyConge(row.id)}>
+            return (this.state.listCRA.map((row, i) => (
+                <TouchableOpacity key={i} onPress={() => this.modifyCRA(row.id)}>
                     <Row
                     style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
                     borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
@@ -102,7 +121,7 @@ class AjoutCra extends React.Component {
 
 
 		return (
-
+          <ScrollView>
 			<View>
 				<ContainerTitre title={this.state.title} navigation={this.props.navigation}>
                   <View style={style.container}>
@@ -131,7 +150,7 @@ class AjoutCra extends React.Component {
                             <View style={style.containerPicker}>
                                  <Picker
                            			style={{
-                           			width: 80 }}
+                           			width: 140 }}
                            			selectedValue={this.state.month}
                            			onValueChange={(itemValue, itemIndex) => this.setState({month: itemValue})}>
                            					<Picker.Item label="Mois" value="0"/>
@@ -159,16 +178,82 @@ class AjoutCra extends React.Component {
                           </Table>
                      </View>
 
-                     <View style={style.containerFourthLine}>
-                      <Button style={style.btnModifier}
-                         text="               Modifier               "
-                         onPress={() => this.modify()}/>
+                     <View>
+                          <Text style={style.textInformation}>Information mission *</Text>
                      </View>
+
+                    <View style={style.containerInformation}>
+                        <View style={style.containerFirstLine}>
+                          <Text style={style.text}>   Client * : </Text>
+                        </View>
+                        <View style={style.containerInfoClt}>
+                             <TextInput
+                             style={style.textInputInfos}
+                             value={this.state.TextClient}
+                             editable={true}
+                             onChangeText={(TextClient) => this.setState({TextClient})}
+                             underlineColorAndroid='transparent' />
+                        </View>
+
+                        <View style={style.containerFirstLine}>
+                              <Text style={style.textResponsable}>   Responsable * : </Text>
+                        </View>
+
+                        <View style={style.containerInfoResp}>
+                               <TextInput
+                                style={style.textInputInfos}
+                                value={this.state.TextResponsable}
+                                editable={true}
+                                onChangeText={(TextResponsable) => this.setState({TextResponsable})}
+                                underlineColorAndroid='transparent' />
+                        </View>
+
+                        <View style={style.containerFirstLine}>
+                               <Text style={style.textProjet}>   Projet : </Text>
+                        </View>
+
+                        <View style={style.containerInfoPrj}>
+                               <TextInput
+                               style={style.textInputProjet}
+                               value={this.state.TextProjet}
+                               onChangeText={(TextProjet) => this.setState({TextProjet})}
+                               editable={true}
+                               underlineColorAndroid='transparent' />
+                        </View>
+                    </View>
+                       <View>
+                            <Text style={style.textCommentaire}>Commentaire</Text>
+                       </View>
+                         <View>
+                           <TextInput
+                             style={style.textInputComment}
+                             multiline = {true}
+                             editable={true}
+                             numberOfLines = {4}
+                             onChangeText={(textComment) => this.setState({textComment})}
+                             value={this.state.textComment}
+                             underlineColorAndroid='transparent'
+                           />
+                         </View>
+
+                       <View>
+                          <View style={style.vueButtonValidate}>
+                           {this.showValidateButton()}
+                          </View>
+
+                          <View style={style.vueButtonBr}>
+                          {this.showDraftButton()}
+                          </View>
+
+                          <View style={style.vueButtonDelete}>
+                          {this.showDeleteButton()}
+                          </View>
+                       </View>
 
                   </View>
 				</ContainerTitre>
 			</View>
-        
+          </ScrollView>
 		);
 	}
 }
@@ -181,8 +266,8 @@ const navigation=StackNavigator({
 		screen: AjoutCra,
 		navigationOptions: { header: null }
 	},
-    CongesPeriode: {
-        screen: CongesPeriode,
+    ActivitesDetail: {
+        screen: ActivitesDetail,
         navigationOptions: { header: null }
     },
 

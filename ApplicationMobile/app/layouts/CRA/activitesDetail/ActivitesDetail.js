@@ -40,7 +40,7 @@ class ActivitesDetail extends React.Component {
 	};
 	handleValidate = () => {
 		//TODO Retourne sur la page des CRA
-		this.props.navigation.navigate('ActivitesListe', { date1: this.state.date1});
+		//this.props.navigation.navigate('AjoutCra', { date1: this.state.date1});
 	};
 
 	//Gère le rendu des boutons sur plusieurs lignes, et gère le toggle
@@ -121,7 +121,7 @@ class ActivitesDetail extends React.Component {
 				</View>
 				</ContainerTitre>
 			</View>
-        
+
 		);
 	}
 }
