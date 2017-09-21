@@ -134,7 +134,6 @@ export default  StyleSheet.create({
    containerInformation: {
        flexDirection: 'row',
        flex:1,
-       borderWidth: 1,
        marginLeft: 4,
        marginRight: 5,
        marginTop: 5,
@@ -165,10 +164,6 @@ export default  StyleSheet.create({
         height:35,
       },
 
-   containerInfoComment :{
-
-   },
-
    textResponsable : {
          color: 'black',
          fontSize: 16,
@@ -183,7 +178,6 @@ export default  StyleSheet.create({
           marginTop:135,
    },
 
-
    textInputProjet:{
 
           borderWidth: 1,
@@ -193,19 +187,33 @@ export default  StyleSheet.create({
    },
 
    textInputInfos: {
-       borderWidth: 1,
-       borderColor: '#2abbdd',
-       color: 'black',
-       height: 35,
+
        width: 300,
+       height:35,
+       backgroundColor:'#FFFFFF',
+       borderRadius:3,
+       fontSize:15,
+       padding:0,
+       paddingLeft:10,
+       paddingRight:10,
+       paddingBottom:2,
+       marginBottom: 10,
+
    },
 
    textInputComment :{
-          marginLeft: 4,
+          marginLeft:20,
           marginRight: 5,
-          borderWidth: 1,
-
-
+          width: 300,
+          height:70,
+          backgroundColor:'#FFFFFF',
+          borderRadius:3,
+          fontSize:15,
+          padding:0,
+          paddingLeft:10,
+          paddingRight:10,
+          paddingBottom:2,
+          marginBottom: 10,
    },
 
    textCommentaire: {
@@ -216,41 +224,27 @@ export default  StyleSheet.create({
 
    },
 
-   btnDelete :{
-
-     color: '#cf2a27',
-
-   },
-
-   vueButtonValidate : {
-       flexDirection: 'row',
-       display: 'flex',
-       marginTop  : 35,
-       marginLeft: 280,
-
-   },
-
-   vueButtonBr : {
-        flexDirection: 'row',
-        display: 'flex',
-        marginTop  : -29,
-        marginLeft: 180,
-   },
-
-   vueButtonDelete : {
-           flexDirection: 'row',
-           display: 'flex',
-           marginTop  : -29,
-           marginLeft: 70,
-
-      },
-
-   alert :{
+   wrapper :{
 
     borderRadius: 5,
     marginBottom: 5,
 
    },
+
+   containerButton: {
+      flexDirection:'row',
+      justifyContent:'flex-end',
+      marginHorizontal: 10,
+       marginTop:35,
+   },
+
+   deleteButton: {
+           backgroundColor: '#FF0000'
+   },
+
+   draftButton: {
+           backgroundColor: '#808080'
+   }
 
 });
 

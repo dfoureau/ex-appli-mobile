@@ -8,6 +8,7 @@ import ContainerAccueil from '../../../components/containerAccueil/ContainerAccu
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { Button,} from '../../../components/Buttons';
 import ActivitesDetail from '../activitesDetail/ActivitesDetail';
+import CraConfirmation from '../craConfirmation/CraConfirmation';
 import Style from '../../../styles/Styles';
 import style from './styles';
 
@@ -18,8 +19,8 @@ class AjoutCra extends React.Component {
 		this.state = {
 		    title:'Septembre 2017',
             statusId: 1,
-            TextClient : 'La Banque Postale',
-            TextResponsable :'J DOE',
+            TextClient : ' ',
+            TextResponsable :' ',
             TextProjet : ' ',
             TextComment : ' ',
             status:'nouveau',
@@ -58,45 +59,53 @@ class AjoutCra extends React.Component {
 
 
     }
-    validate(){
-
+    validatePressDelete(){
+      this.props.navigation.navigate('CraConfirmation');
     }
 
-    saveDraft()
-    {
+    saveDraft(){
+            this.setState({statusId: 2, status: 'brouillon', statusLabel: 'DC en brouillon'});
+            this.props.navigation.navigate('CraConfirmation');
+    }
 
+
+    validate(){
+              this.setState({statusId: 3, status: 'validé', statusLabel: 'Modifications interdites'});
+              this.props.navigation.navigate('CraConfirmation');
     }
 
      modifyCRA(id){
             this.props.navigation.navigate('ActivitesDetail',{idCRA: id});
          }
 
-
      showDeleteButton()
      {
-             if(this.state.statusId == 1 || this.state.statusId == 2)
-                 return <Button text="SUPPRIMER" style={style.btnDelete} onPress={() =>
+             //if(this.state.statusId == 1 || this.state.statusId == 2)
+                 return <Button text="SUPPRIMER" buttonStyles={style.deleteButton}  onPress={() =>
                  Alert.alert(
                  'Suppression',
                   'Etes-vous sûr de vouloir supprimer le relevé d activité ?',
                   [
                   {text: 'Non', onPress: () => console.log('Cancel Pressed!')},
-                  {text: 'Oui', onPress: () => console.log('OK Pressed!')},
+                  {text: 'Oui', onPress: () => this.validatePressDelete()},
                   ]
-                  )}/>
+                  )
+                  }/>
      }
 
      showDraftButton()
      {
-            if(this.state.statusId == 1 || this.state.statusId == 2)
-                return <Button text="BROUILLON" onPress={() => this.saveDraft()} />
+           // if(this.state.statusId == 1 || this.state.statusId == 2)
+                return <Button buttonStyles={style.draftButton} text="BROUILLON" onPress={() => this.saveDraft()} />
      }
 
      showValidateButton()
      {
-            if(this.state.statusId == 1 || this.state.statusId == 2)
+            //if(this.state.statusId == 1 || this.state.statusId == 2)
                 return <Button text="VALIDER"  onPress={() => this.validate()} />
      }
+
+
 
 
 
@@ -191,6 +200,7 @@ class AjoutCra extends React.Component {
                              style={style.textInputInfos}
                              value={this.state.TextClient}
                              editable={true}
+                             placeholderTextColor='#000000'
                              onChangeText={(TextClient) => this.setState({TextClient})}
                              underlineColorAndroid='transparent' />
                         </View>
@@ -204,6 +214,7 @@ class AjoutCra extends React.Component {
                                 style={style.textInputInfos}
                                 value={this.state.TextResponsable}
                                 editable={true}
+                                placeholderTextColor='#000000'
                                 onChangeText={(TextResponsable) => this.setState({TextResponsable})}
                                 underlineColorAndroid='transparent' />
                         </View>
@@ -214,8 +225,9 @@ class AjoutCra extends React.Component {
 
                         <View style={style.containerInfoPrj}>
                                <TextInput
-                               style={style.textInputProjet}
+                               style={style.textInputInfos}
                                value={this.state.TextProjet}
+                               placeholderTextColor='#000000'
                                onChangeText={(TextProjet) => this.setState({TextProjet})}
                                editable={true}
                                underlineColorAndroid='transparent' />
@@ -231,24 +243,17 @@ class AjoutCra extends React.Component {
                              editable={true}
                              numberOfLines = {4}
                              onChangeText={(textComment) => this.setState({textComment})}
+                             placeholderTextColor='#000000'
                              value={this.state.textComment}
                              underlineColorAndroid='transparent'
                            />
                          </View>
 
-                       <View>
-                          <View style={style.vueButtonValidate}>
-                           {this.showValidateButton()}
-                          </View>
-
-                          <View style={style.vueButtonBr}>
-                          {this.showDraftButton()}
-                          </View>
-
-                          <View style={style.vueButtonDelete}>
-                          {this.showDeleteButton()}
-                          </View>
-                       </View>
+                      <View style={style.containerButton}>
+                         {this.showDeleteButton()}
+                         {this.showDraftButton()}
+                         {this.showValidateButton()}
+                      </View>
 
                   </View>
 				</ContainerTitre>
@@ -271,7 +276,10 @@ const navigation=StackNavigator({
         navigationOptions: { header: null }
     },
 
-
+    CraConfirmation: {
+                screen: CraConfirmation,
+                navigationOptions: { header: null }
+            }
 	
 });
 

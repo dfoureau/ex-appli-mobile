@@ -38,10 +38,15 @@ class ActivitesDetail extends React.Component {
 		//Change le bouton sélectionné
 		this.setState({activiteClicked: label});
 	};
-	handleValidate = () => {
+
+	  handleValidate() {
+            this.props.navigation.dispatch(NavigationActions.back());
+        }
+
+	     //handleValidate = () => {
 		//TODO Retourne sur la page des CRA
-		//this.props.navigation.navigate('AjoutCra', { date1: this.state.date1});
-	};
+		//this.props.navigation.navigate('AjoutCra', { date1: this.state.date1})};
+
 
 	//Gère le rendu des boutons sur plusieurs lignes, et gère le toggle
 	renderActiviteButtons = () => {
