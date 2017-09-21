@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity,Alert } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import style from './styles';
@@ -58,7 +58,7 @@ class CongesAjout extends React.Component {
     }
 
     deleteConge(){
-
+    this.props.navigation.navigate('CongesConfirmation');
     }
         
     saveDraft(){
@@ -88,8 +88,18 @@ class CongesAjout extends React.Component {
         // if(this.state.statusId == 2)
             return <Button 
                         buttonStyles={style.deleteButton} 
-                        text="SUPPRIMER" 
-                        onPress={() => this.deleteConge()}/>
+                        text="SUPPRIMER"
+                        onPress={() =>
+                           Alert.alert(
+                           'Suppression',
+                           'Etes-vous sûr de vouloir supprimer le congé ?',
+                           [
+                           {text: 'Non', onPress: () => console.log('Cancel!')},
+                           {text: 'Oui', onPress: () => this.deleteConge()},
+                           ]
+                           )
+                           }/>
+
     }
 
     showDraftButton()
