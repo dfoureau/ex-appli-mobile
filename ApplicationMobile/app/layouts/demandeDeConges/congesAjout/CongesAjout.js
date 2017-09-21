@@ -92,7 +92,7 @@ class CongesAjout extends React.Component {
                         onPress={() =>
                            Alert.alert(
                            'Suppression',
-                           'Etes-vous sûr de vouloir supprimer le relevé d activité ?',
+                           'Etes-vous sûr de vouloir supprimer le congé ?',
                            [
                            {text: 'Non', onPress: () => console.log('Cancel!')},
                            {text: 'Oui', onPress: () => this.deleteConge()},
