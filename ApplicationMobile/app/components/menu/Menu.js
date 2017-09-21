@@ -79,7 +79,7 @@ class ContainerHeader extends Component {
 							<Image style={styles.IconItemMenu}
 								source={require('../../images/icons/calendar.png')}
 							/>
-							<Text style={styles.TextItemMenu}>Tableau de Bord</Text>   
+							<Text style={styles.TextItemMenu}>Accueil</Text>   
 						</View>
 					</TouchableOpacity>
 					<TouchableOpacity style={styles.ItemMenu} onPress={()=>this.afficherEcran('ActivitesListe')}>						
