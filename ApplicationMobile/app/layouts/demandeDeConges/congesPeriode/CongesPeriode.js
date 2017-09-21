@@ -1,11 +1,11 @@
-import React from 'react'
+import React from 'react';
 import { View, Text, TextInput, Picker, TouchableOpacity} from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import Style from './styles';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
-import { ValiderButton, SupprimerButton } from '../../../components/Buttons';
+import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil'
 import Calendar from '../../../components/calendar/Calendar';
 
@@ -21,19 +21,21 @@ class CongesPeriode extends React.Component {
             moment1: "",
             date2: "12/12/2017",
             moment2: "",
-            absence: "Congés payés",
+            absence: "Congés payés"
         }
     }
     
     handleValidate() {
         //Verif que toutes les valeurs sont remplies
+        // Retour à l'écran précédent après validation
+        this.props.navigation.dispatch(NavigationActions.back());
     }
+
     handleSupprimer() {
         
     }
 
 	render() {
-
 		return (
 			<View>
 				<ContainerTitre title={this.state.title} navigation={this.props.navigation}>
@@ -91,13 +93,15 @@ class CongesPeriode extends React.Component {
                     <View style={Style.firstView}>
                         <View style={styles.containerButton}>
                             <View style={styles.button}>
-                                <SupprimerButton 
+                                <Button 
+                                    buttonStyles={styles.deleteButton}
                                     text="Supprimer"
                                     onPress={() => this.handleSupprimer() }
                                 />
                             </View>
                             <View style={styles.button}>
-                                <ValiderButton 
+                                <Button
+                                    buttonStyles={styles.validateButton} 
                                     text="Valider"
                                     onPress={() => this.handleValidate() }
                                 />

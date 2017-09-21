@@ -12,7 +12,11 @@ import { OptionFilter } from '../../../components/optionFilter';
 import Accueil from '../../accueil/Accueil'
 import { Button } from '../../../components/Buttons';
 import ActivitesDetail from '../activitesDetail/ActivitesDetail';
+<<<<<<< HEAD
 import AjoutCra from '../ajoutCRA/AjoutCra';
+=======
+import ActivitesConfirmation from '../activitesConfirmation/ActivitesConfirmation';
+>>>>>>> develop
 
 
 class ActivitesListe extends React.Component {
@@ -144,12 +148,20 @@ const navigation=StackNavigator({
 		screen: ActivitesDetail,
 		navigationOptions: { header: null }
 	},
+<<<<<<< HEAD
 
 	AjoutCra: {
     		screen: AjoutCra,
     		navigationOptions: { header: null }
     	},
 
+=======
+	ActivitesConfirmation: {
+		screen: ActivitesConfirmation,
+		navigationOptions: { header: null }
+	}
+	
+>>>>>>> develop
 });
 
 
