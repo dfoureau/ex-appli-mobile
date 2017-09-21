@@ -214,6 +214,8 @@ export default  StyleSheet.create({
           paddingRight:10,
           paddingBottom:2,
           marginBottom: 10,
+          textAlignVertical :'top',
+
    },
 
    textCommentaire: {
