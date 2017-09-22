@@ -122,24 +122,44 @@ export default  StyleSheet.create({
    },
 
    textInformation: {
-      color: 'black',
       fontSize: 14,
       padding: 2,
-      marginLeft: 24,
-      marginTop :4
-
+      marginTop :4,
+      paddingTop: 10,
+      paddingHorizontal:15,
+      color: '#000000',
+      fontWeight: 'bold',
      },
 
 
    containerInformation: {
        flexDirection: 'row',
        flex:1,
-       marginLeft: 4,
-       marginRight: 5,
-       marginTop: 5,
        height:210,
+       flex: 0.25,
+       marginHorizontal: 10,
+       paddingHorizontal:5,
+       paddingVertical: 5,
+       borderWidth:0.5,
+       borderColor: "#808080",
+       borderRadius:5
 
    },
+
+
+   containerCommentaire: {
+          flexDirection: 'row',
+          flex:1,
+          height:85,
+          flex: 0.25,
+          marginHorizontal: 10,
+          paddingHorizontal:5,
+          paddingVertical: 5,
+          borderWidth:0.5,
+          borderColor: "#808080",
+          borderRadius:5
+
+      },
 
    containerInfoClt: {
         flexDirection: 'row',
@@ -219,11 +239,13 @@ export default  StyleSheet.create({
    },
 
    textCommentaire: {
-        color: 'black',
         fontSize: 14,
-        marginLeft: 24,
-        marginTop:10
-
+        padding: 2,
+        marginTop :4,
+        paddingTop: 10,
+        paddingHorizontal:15,
+        color: '#000000',
+        fontWeight: 'bold',
    },
 
    wrapper :{

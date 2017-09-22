@@ -236,7 +236,7 @@ class AjoutCra extends React.Component {
                        <View>
                             <Text style={style.textCommentaire}>Commentaire</Text>
                        </View>
-                         <View>
+                         <View style={style.containerCommentaire}>
                            <TextInput
                              style={style.textInputComment}
                              multiline = {true}
