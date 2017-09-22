@@ -3,19 +3,30 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
     container: {
         backgroundColor:'#fff',
-        margin:10,
+        marginTop:10,
+        marginHorizontal:10,
+        borderWidth:0.5,
+        borderColor: "#808080",
+        borderRadius:5,
         overflow:'hidden'
     },
 
     titleContainer: {
-        flexDirection:'row'
+        flexDirection:'row',
+        paddingVertical: 5,
+        alignItems: 'center'
     },
 
     title: {
-        flex: 1,
-        padding: 10,
-        color:'#2a2f43',
-        fontWeight:'bold'
+        flex:1,
+        paddingHorizontal:10,
+        color: '#000000',
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+
+    button: {
+        marginRight:10
     },
 
     buttonImage: {

@@ -59,7 +59,10 @@ export class Panel extends Component {
             <Animated.View style={[styles.container,{height: this.state.animation}]}>
                 <View style={styles.titleContainer} onLayout={this._setMinHeight.bind(this)}>
                     <Text style={styles.title}>{this.state.title}</Text>
-                    <TouchableHighlight onPress={this.toggle.bind(this)}>
+                    <TouchableHighlight 
+                        style={styles.button} 
+                        onPress={this.toggle.bind(this)}
+                        underlayColor="white">
                         <Image style={styles.buttonImage} source={icon}/>
                     </TouchableHighlight>
                 </View>

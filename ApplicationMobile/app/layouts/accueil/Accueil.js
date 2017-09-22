@@ -55,47 +55,34 @@ class Accueil extends React.Component {
 		this.props.navigation.navigate(ecran);
 	}
 
+	renderItemNews() {
+		return (this.state.news.map(item => (
+			<View key={item.id}>
+				<Text style={Style.titleNews}>{item.title}</Text>
+				<Text style={[Style.text, Style.text3]}>{item.content}</Text>
+			</View>   
+        )));
+	}
+
 	render() {
 
 		return (
 				<ContainerAccueil title={this.state.title} afficherEcran={this.afficherEcranParent.bind(this)}>
-					<Panel title="A Panel with short content text">
-          				<Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Text>
+					<Panel title="INFORMATIONS PERSONNELLES">
+						<Text style={Style.text}>Bienvenue {this.state.userInfo.firstName} {this.state.userInfo.lastName}</Text>
+						<Text style={Style.text}>Entité juridique : CAT-AMANIA</Text>
+						<Text style={Style.text}>Profil : {this.state.userInfo.branch}</Text> 
+						<Text style={Style.text}>Agence : {this.state.userInfo.agency}</Text>
+						<Text style={Style.text}>Manager : {this.state.userInfo.manager}</Text>		
         			</Panel>
-        			<Panel title="A Panel with long content text">
-          				<Text>Lorem ipsum...</Text>
+        			<Panel title="SOLDES CONGES">
+						<Text style={Style.text}>Sur votre bulletin de salaire du {this.state.userInfo.vacationInfo.period}, votre solde de congés se compose de la manière suivante :</Text>
+						<Text style={[Style.text, Style.text2]}>- solde CP : {this.state.userInfo.vacationInfo.CPCounter}</Text>
+						<Text style={[Style.text, Style.text2]}>- solde RTT : {this.state.userInfo.vacationInfo.RTTCounter}</Text>
         			</Panel>
-        			<Panel title="Another Panel">
-          				<Text>Lorem ipsum dolor sit amet...</Text>
+        			<Panel title="NEWS">
+						{this.renderItemNews()}
         			</Panel>
-
-					{/* <View style={Style.container1}>
-						<Text style={Style.titleContainer}>INFORMATIONS PERSONNELLES</Text>
-						<View style={Style.containerUser}>
-							<Text style={Style.text}>Bienvenue {this.state.userInfo.firstName} {this.state.userInfo.lastName}</Text>
-							<Text style={Style.text}>Entité juridique : CAT-AMANIA</Text>
-							<Text style={Style.text}>Profil : {this.state.userInfo.branch}</Text> 
-							<Text style={Style.text}>Agence : {this.state.userInfo.agency}</Text>
-							<Text style={Style.text}>Manager : {this.state.userInfo.manager}</Text>
-						</View>
-						<Text style={Style.titleContainer}>SOLDES CONGES</Text>
-						<View style={Style.containerVacation}>
-							<Text style={Style.text}>Sur votre bulletin de salaire du {this.state.userInfo.vacationInfo.period}, votre solde de congés se compose de la manière suivante :</Text>
-							<Text style={[Style.text, Style.text2]}>- solde CP : {this.state.userInfo.vacationInfo.CPCounter}</Text>
-							<Text style={[Style.text, Style.text2]}>- solde RTT : {this.state.userInfo.vacationInfo.RTTCounter}</Text>
-						</View>
-						<Text style={Style.titleContainer}>NEWS</Text>
-						<View style={Style.containerNews}>
-							<FlatList 
-								data={this.state.news}
-								keyExtractor={(item, index) => item.id}
-								renderItem={({item}) => 
-									<View style={Style.containerList}>
-										<Text style={Style.titleNews}>{item.title}</Text>
-										<Text style={Style.text}>{item.content}</Text>
-									</View>}/>	
-						</View>
-					</View> */}
 				</ContainerAccueil>
             
         
