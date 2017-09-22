@@ -11,7 +11,7 @@ import { SearchFilter } from '../../../components/searchFilter';
 import { OptionFilter } from '../../../components/optionFilter';
 import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil';
-import FraisConfirmation from '../fraisConfirmation/FraisConfirmation';
+import FraisAjout from '../fraisAjout/FraisAjout';
 
 
 class FraisListe extends React.Component {
@@ -27,8 +27,7 @@ class FraisListe extends React.Component {
 	}
 
 	addNDF(){
-		//TEMP
-		this.props.navigation.navigate('FraisConfirmation');
+		this.props.navigation.navigate('FraisAjout');
 	}
 
 	render() {
@@ -125,10 +124,11 @@ const navigation=StackNavigator({
 		screen: FraisListe,
 		navigationOptions: { header: null }
 	},
-	FraisConfirmation: {
-		screen: FraisConfirmation,
+	FraisAjout: {
+		screen: FraisAjout,
 		navigationOptions: { header: null }
 	},
+
 	
 });
 
