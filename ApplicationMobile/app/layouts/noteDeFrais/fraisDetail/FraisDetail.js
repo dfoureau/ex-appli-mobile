@@ -218,6 +218,10 @@ class FraisDetail extends React.Component {
 											keyboardType="numeric"
 										/>	 
 									</View>
+									<View style={[styles.inputGroup, {paddingTop: 10, paddingBottom: 10}]}>
+									<Text style={styles.text}>Indemnité kilométrique</Text>
+									<Text style={[styles.text, {width: 130, textAlign: 'right'}]}>{this.state.indemKm}</Text>
+									</View>
 								</View>
 							</View>
 
