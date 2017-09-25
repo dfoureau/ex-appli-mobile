@@ -66,7 +66,7 @@ class CongesListe extends React.Component {
 						{/* Container avec compteurs des congés*/}
 						<View style={style.container1}>
 							<View style={style.containerInfoElement}>
-								<Text style={style.text}>Au :</Text>
+								<Text style={style.text}>Solde au :</Text>
 								<TextInput 
 									style={style.textInputYear}
 									value={'09/2017'}

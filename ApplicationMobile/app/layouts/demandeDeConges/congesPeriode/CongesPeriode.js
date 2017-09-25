@@ -21,7 +21,7 @@ class CongesPeriode extends React.Component {
             moment1: "",
             date2: "12/12/2017",
             moment2: "",
-            absence: "Congés payés"
+            absence: ""
         }
     }
     
@@ -49,7 +49,6 @@ class CongesPeriode extends React.Component {
                                             style={styles.picker}
                                             selectedValue={this.state.moment1}
                                             onValueChange={(itemValue, itemIndex) => this.setState({moment1: itemValue})}>
-                                            <Picker.Item label="- Moment -" value="0"/>
                                             <Picker.Item label="Matin" value="1"/>
                                             <Picker.Item label="Midi" value="2"/>
                                     </Picker>
@@ -63,7 +62,6 @@ class CongesPeriode extends React.Component {
                                             style={styles.picker}
                                             selectedValue={this.state.moment2}
                                             onValueChange={(itemValue, itemIndex) => this.setState({moment2: itemValue})}>
-                                            <Picker.Item label="- Moment -" value="0"/>
                                             <Picker.Item label="Midi" value="1"/>
                                             <Picker.Item label="Soir" value="2"/>
                                     </Picker>
