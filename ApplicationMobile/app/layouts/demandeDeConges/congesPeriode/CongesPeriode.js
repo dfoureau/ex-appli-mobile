@@ -18,9 +18,9 @@ class CongesPeriode extends React.Component {
 		this.state = { 
             title:'Détails période', 
             date1: "09/09/2017",
-            moment1: "",
+            moment1: "1",
             date2: "12/12/2017",
-            moment2: "",
+            moment2: "2",
             absence: ""
         }
     }
@@ -34,6 +34,7 @@ class CongesPeriode extends React.Component {
     handleSupprimer() {
         
     }
+
 
 	render() {
 		return (

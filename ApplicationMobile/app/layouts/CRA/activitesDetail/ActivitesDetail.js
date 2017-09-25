@@ -24,14 +24,14 @@ class ActivitesDetail extends React.Component {
 			date1: this.props.navigation.state.params.date1,
 			date2: this.props.navigation.state.params.date2,
 			activite: this.props.navigation.state.params.activite,
-			activitesListe: [ {"code" :"1.0", "label": "Client"}, 
+			activitesListe: [ {"code" :"1.0"}, 
 							{"code":"IC", "label":"Intercontrat"}, 
 							{"code":"FO", "label":"Formation"}, 
 							{"code":"AM", "label":"Arrêt maladie"}, 
 							{"code": "AB", "label":"Absence diverse"}, 
-							{"code":"0.5+FO"}, 
-							{"code":"0.5+AM"}, 
-							{"code":"0.5+AB"},],
+							{"code":"0.5+FO", "label":"0.5 + Formation"}, 
+							{"code":"0.5+AM", "label":"0.5 + Arrêt maladie"}, 
+							{"code":"0.5+AB", "label":"0.5 + Absence diverse"},],
 			activiteClicked: "",
 		}
 	}
@@ -105,7 +105,9 @@ class ActivitesDetail extends React.Component {
 
 		let activite = this.state.activiteClicked;
 		if (activite.code != undefined)
-			return <Text style={styles.text}>{activite.code} = {activite.label}</Text>;
+			if (activite.label != undefined) 
+				return <Text style={styles.text}>{activite.code} = {activite.label}</Text>;
+			else return <Text style={styles.text}>{activite.code}</Text>;
 					
 	}
 
