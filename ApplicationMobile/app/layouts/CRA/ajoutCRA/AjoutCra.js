@@ -24,7 +24,7 @@ class AjoutCra extends React.Component {
             TextProjet : ' ',
             TextComment : ' ',
             status:'nouveau',
-            statusLabel:'Nouvelle CRA',
+            statusLabel:'Nouveau CRA',
             header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours'],
             listCRA: [
                             {
@@ -145,7 +145,7 @@ class AjoutCra extends React.Component {
                     </View>
 
                     <View style={style.containerSecondLine}>
-                       <Text style={style.text}>Jours ouvrés : 21</Text>
+                       <Text style={style.text}>Jours ouvrés : 21 j</Text>
                     </View>
 
                      <View style={style.container1}>

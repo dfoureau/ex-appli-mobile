@@ -24,7 +24,14 @@ class ActivitesDetail extends React.Component {
 			date1: this.props.navigation.state.params.date1,
 			date2: this.props.navigation.state.params.date2,
 			activite: this.props.navigation.state.params.activite,
-			activitesListe: [ "1.0", "IC", "FO", "MA", "AB", "0.5+FO", "0.5+AM", "0.5+AB",],
+			activitesListe: [ {"code" :"1.0", "label": "Client"}, 
+							{"code":"IC", "label":"Intercontrat"}, 
+							{"code":"FO", "label":"Formation"}, 
+							{"code":"AM", "label":"Arrêt maladie"}, 
+							{"code": "AB", "label":"Absence diverse"}, 
+							{"code":"0.5+FO"}, 
+							{"code":"0.5+AM"}, 
+							{"code":"0.5+AB"},],
 			activiteClicked: "",
 		}
 	}
@@ -34,9 +41,10 @@ class ActivitesDetail extends React.Component {
 	afficherEcranParent(ecran){
 		this.props.navigation.navigate(ecran);
 	};
-	choixActivite(label){
+	choixActivite = (activite) => {
 		//Change le bouton sélectionné
-		this.setState({activiteClicked: label});
+		this.setState({activiteClicked: activite});
+		console.log(this.state.activiteClicked.code)
 	};
 
 	  handleValidate() {
@@ -50,7 +58,7 @@ class ActivitesDetail extends React.Component {
 
 	//Gère le rendu des boutons sur plusieurs lignes, et gère le toggle
 	renderActiviteButtons = () => {
-
+		console.log(this.state.activitesListe)
 		let button, buttons = [];
 		const maxItems = 4;
 		let tempLength = this.state.activitesListe.length/4;
@@ -65,18 +73,19 @@ class ActivitesDetail extends React.Component {
 				let nb = i+(maxItems*j);
 				if (this.state.activitesListe[nb] != undefined) {
 
-					let label = this.state.activitesListe[nb];
+					let activite = this.state.activitesListe[nb];
+					let code = activite.code;
 					let styleButton = styles.btnChoixDetail;
 					//Si le bouton courant est dans le state activiteClicked, un style lui est rajouté
-					if(this.state.activiteClicked.label != undefined && this.state.activiteClicked.label==label) {
+					if(this.state.activiteClicked.code != undefined && this.state.activiteClicked.code==code) {
 						styleButton = [styles.btnChoixDetail, styles.btnChoixClicked];
 					}
 					
 					button.push(
 						<View key={nb}>
-							<TouchableOpacity  onPress={() => this.choixActivite({label})} 
+							<TouchableOpacity  onPress={() => this.choixActivite(activite)} 
 							style={styleButton}>
-								<Text style={styles.activitesText}>{label}</Text>
+								<Text style={styles.activitesText}>{code}</Text>
 							</TouchableOpacity >
 						</View>
 					)
@@ -90,6 +99,15 @@ class ActivitesDetail extends React.Component {
 		}
 		return buttons;
 	};
+
+	//Gère l'affichage du détail d'une activité quand sélectionnée
+	renderDetailActivite() {
+
+		let activite = this.state.activiteClicked;
+		if (activite.code != undefined)
+			return <Text style={styles.text}>{activite.code} = {activite.label}</Text>;
+					
+	}
 
 	render() {
 
@@ -110,7 +128,15 @@ class ActivitesDetail extends React.Component {
 					</View>
                 </View>
 				<View style={Style.firstView}>
-					<View style={[styles.calendarContainer,styles.marginTop40]}>
+
+					<View style={styles.detailActivite}>
+						{this.renderDetailActivite()}
+					</View>
+
+				</View>
+				<View style={Style.firstView}>					
+
+					<View style={[styles.calendarContainer]}>
 						
 							{this.renderActiviteButtons()}
 

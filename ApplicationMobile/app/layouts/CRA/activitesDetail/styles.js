@@ -7,6 +7,10 @@ import { StyleSheet,
   const bleu2 = "#FFF";
   const bleu3 = "#FFF";
   export default   StyleSheet.create({
+    text: {
+        color: 'black',
+        fontSize: 15,
+      },
     calendarContainer: {
       flex: 1,
       alignItems:'center',
@@ -52,6 +56,12 @@ import { StyleSheet,
     activitesText: {
       fontWeight: '400', 
       fontSize: 15.5,
+    },
+    detailActivite: {
+      height: 20,
+      margin: 20,
+      marginLeft: 40,
+      marginBottom: 0
     },
     //Bouton Valider
     containerButton: {
