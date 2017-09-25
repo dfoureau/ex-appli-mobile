@@ -15,7 +15,7 @@ export default StyleSheet.create({
     height: 25, 
     width: 70,
     padding: 2,
-    margin: 4,
+    marginTop: 4,
     textAlign: 'center',
     textAlignVertical: 'center'
   },
@@ -26,7 +26,7 @@ export default StyleSheet.create({
     height: 25, 
     width: 40,
     padding: 2,
-    margin: 4,
+    marginTop: 4,
     textAlign: 'center',
     textAlignVertical: 'center'
   },

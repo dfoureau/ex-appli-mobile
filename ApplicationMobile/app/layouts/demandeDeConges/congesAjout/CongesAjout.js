@@ -133,7 +133,7 @@ class CongesAjout extends React.Component {
                     </View>
                     <View style={style.container2}>
                             <View style={style.containerInfoElement}>
-								<Text style={style.text}>Au :</Text>
+								<Text style={style.text}>Solde au :</Text>
 								<TextInput 
 									style={style.textInputYear}
 									value={'09/2017'}
