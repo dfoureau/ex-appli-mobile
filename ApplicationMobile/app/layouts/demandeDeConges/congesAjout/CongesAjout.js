@@ -13,7 +13,7 @@ import CongesConfirmation from '../congesConfirmation/CongesConfirmation';
 
 class CongesAjout extends React.Component {
     constructor (props) {
-		super(props)
+        super(props)
         this.state = { 
             title:'Demande de congés',
             statusId: 1, 
@@ -22,27 +22,51 @@ class CongesAjout extends React.Component {
             header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours'],
             listConges: [ 
                 {
-                    id:8,
+                    id: 8,
                     startDate: '30/10/2017',
+                    startPeriod: '1',
                     endDate: '31/10/2017',
-                    absType : 'CP',
+                    endPeriod: '2',
+                    absTypeId: '1',
+                    absTypeLabel: 'CP',
                     dayNumber: 2
                 }, {
                     id: 9,
                     startDate: '02/11/2017',
+                    startPeriod: '1',
                     endDate: '03/11/2017',
-                    absType : 'RTT',
+                    endPeriod: '2',
+                    absTypeId: '4',
+                    absTypeLabel: 'RTT',
                     dayNumber: 2
                 }, {
                     id: 10,
                     startDate: '02/12/2017',
+                    startPeriod: '1',
                     endDate: '02/12/2017',
-                    absType : 'CP',
+                    endPeriod: '2',
+                    absTypeId: '1',
+                    absTypeLabel: 'CP',
                     dayNumber: 1
                 }
             ]
         } 
-	}
+        
+        this.renderList()
+    } 
+    
+    static navigationOptions = ({ navigation }) => ({
+        listConges: navigation.state.params.listConges,
+    });
+
+    renderList()
+    {
+        const { params } = this.props.navigation.state;
+        if( params.listConges != null)
+        {
+            this.state.listConges = params.listConges;
+        }
+    }
 
 	//Permet d'afficher l'ecran choisi dans le menu
 	afficherEcranParent(ecran){
@@ -50,11 +74,11 @@ class CongesAjout extends React.Component {
     }
     
     addNewConge(){
-		this.props.navigation.navigate('CongesPeriode');
+		this.props.navigation.navigate('CongesPeriode', { idConge: null });
     }
     
     modifyConge(id){
-        this.props.navigation.navigate('CongesPeriode',{idConge: id});
+        this.props.navigation.navigate('CongesPeriode', { idConge: id });
     }
 
     deleteConge(){
@@ -78,7 +102,7 @@ class CongesAjout extends React.Component {
                 style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
                 borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
                 textStyle={style.rowText}
-                data={[row.startDate, row.endDate, row.absType, row.dayNumber]}/> 
+                data={[row.startDate, row.endDate, row.absTypeLabel, row.dayNumber]}/> 
             </TouchableOpacity>   
         )));
     }

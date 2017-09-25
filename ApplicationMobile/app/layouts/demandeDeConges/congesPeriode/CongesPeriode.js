@@ -11,30 +11,97 @@ import Calendar from '../../../components/calendar/Calendar';
 
 import styles from './styles';
 
-class CongesPeriode extends React.Component {
-	 
+class CongesPeriode extends React.Component { 
 	constructor (props) {
-		super(props)
-		this.state = { 
-            title:'Détails période', 
-            date1: "09/09/2017",
-            moment1: "1",
-            date2: "12/12/2017",
-            moment2: "2",
-            absence: ""
-        }
+        super(props)
+        this.renderRow()
     }
     
+    static navigationOptions = ({ navigation }) => ({
+        idConge: navigation.state.params.idConge,
+    });
+
+    renderRow()
+    {
+        const data = [
+            {
+                id: 8,
+                startDate: '30/10/2017',
+                startPeriod: '1',
+                endDate: '31/10/2017',
+                endPeriod: '2',
+                absTypeId: '1',
+                absTypeLabel: 'CP',
+                dayNumber: 2
+            }, {
+                id: 9,
+                startDate: '02/11/2017',
+                startPeriod: '1',
+                endDate: '03/11/2017',
+                endPeriod: '2',
+                absTypeId: '4',
+                absTypeLabel: 'RTT',
+                dayNumber: 2
+            }, {
+                id: 10,
+                startDate: '02/12/2017',
+                startPeriod: '1',
+                endDate: '02/12/2017',
+                endPeriod: '2',
+                absTypeId: '1',
+                absTypeLabel: 'CP',
+                dayNumber: 1
+            }
+        ];       
+
+        const { params } = this.props.navigation.state;
+        if( params.idConge != null)
+        {
+            item = data.find(i => i.id === params.idConge);
+            this.state = {
+                title:'Détails période', 
+                date1: item.startDate,
+                moment1: item.startPeriod,
+                date2: item.endDate,
+                moment2: item.endPeriod,
+                absence: item.absTypeId,
+                listConges : data    
+            };
+        }
+        else
+        {
+            this.state = { 
+                title:'Détails période', 
+                date1: "09/09/2017",
+                moment1: "2",
+                date2: "12/12/2017",
+                moment2: "2",
+                absence: "",
+                listConges : data
+            };               
+        }
+    }
+
     handleValidate() {
-        //Verif que toutes les valeurs sont remplies
+        // Verif que toutes les valeurs sont remplies
         // Retour à l'écran précédent après validation
-        this.props.navigation.dispatch(NavigationActions.back());
+        // this.props.navigation.dispatch(NavigationActions.back());
+
+        const { params } = this.props.navigation.state;
+        // Maj de l'item dans la liste
+        item = this.state.listConges.find(i => i.id === params.idConge);
+        item.startDate = this.state.date1;
+        item.startPeriod = this.state.moment1;
+        item.endDate = this.state.date2;
+        item.endPeriod = this.state.moment2;
+        item.absTypeId = this.state.absence;
+
+        this.props.navigation.navigate('CongesAjout', { listConges : this.state.listConges });
     }
 
     handleSupprimer() {
         
     }
-
 
 	render() {
 		return (
@@ -44,7 +111,10 @@ class CongesPeriode extends React.Component {
                         <View style={styles.container}>
                             <View style={styles.flexContainer}>
                                 <Text style={styles.calendarText}>Du</Text>
-                                <Calendar style={styles.calendarComponent} date={this.state.date1} onValueChange={(newDate) => this.setState({date1:newDate})}/>
+                                <Calendar 
+                                        style={styles.calendarComponent} 
+                                        date={this.state.date1} 
+                                        onValueChange={(newDate) => this.setState({date1:newDate})}/>
                                 <View style={styles.pickerContainer}>
                                     <Picker
                                             style={styles.picker}

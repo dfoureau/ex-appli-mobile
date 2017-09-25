@@ -26,7 +26,7 @@ class CongesListe extends React.Component {
 	}
 	
 	addDemandeConge(){
-		this.props.navigation.navigate('CongesAjout');
+		this.props.navigation.navigate('CongesAjout', { listConges: null });
 	}
 
 	render() {
