@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TextInput, TouchableOpacity,Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, AsyncStorage } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import style from './styles';
@@ -19,25 +19,9 @@ class CongesAjout extends React.Component {
             statusId: 1, 
             status:'nouveau', 
             statusLabel:'Nouvelle DC',
-            header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours'],
-            listConges: null
+            header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours']
         } 
-        
-        this.renderList()
     } 
-    
-    static navigationOptions = ({ navigation }) => ({
-        period: navigation.state.params.period,
-    });
-
-    renderList()
-    {
-        const { params } = this.props.navigation.state;
-        if( params.listConges != null)
-        {
-            this.state.period = params.period;
-        }
-    }
 
 	//Permet d'afficher l'ecran choisi dans le menu
 	afficherEcranParent(ecran){
@@ -67,17 +51,21 @@ class CongesAjout extends React.Component {
     }
 
     afficherRow(){
-        if(this.state.listConges != null)
-            return (this.state.listConges.map((row, i) => (
-                <TouchableOpacity key={i} onPress={() => this.modifyConge(row.id)}>
-                    <Row 
-                    style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
-                    borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
-                    textStyle={style.rowText}
-                    data={[row.startDate, row.endDate, row.absTypeLabel, row.dayNumber]}/> 
-                </TouchableOpacity>   
-            )));  
-        else return <Text></Text>;    
+        var listConges = AsyncStorage.getItem('periodList').value;
+        alert('value: '+ listConges);
+        return <Text>{listConges}</Text>;
+
+        // if(listConges != null)
+        //     return (listConges.map((row, i) => (
+        //         <TouchableOpacity key={i} onPress={() => this.modifyConge(row.id)}>
+        //             <Row 
+        //             style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
+        //             borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
+        //             textStyle={style.rowText}
+        //             data={[row.startDate, row.endDate, row.absTypeLabel, row.dayNumber]}/> 
+        //         </TouchableOpacity>   
+        //     )));  
+        // else return <Text></Text>;    
     }
 
     showDeleteButton()

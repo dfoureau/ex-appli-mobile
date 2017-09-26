@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, Picker, TouchableOpacity} from 'react-native';
+import { View, Text, TextInput, Picker, TouchableOpacity, AsyncStorage } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import Style from './styles';
 
@@ -11,21 +11,24 @@ import Calendar from '../../../components/calendar/Calendar';
 
 import styles from './styles';
 
+var list = [];
+
 class CongesPeriode extends React.Component { 
 	constructor (props) {
         super(props)
         this.renderRow()
+
     }
     
     static navigationOptions = ({ navigation }) => ({
-        idConge: navigation.state.params.idConge,
+        idPeriod: navigation.state.params.idPeriod,
     });
 
     renderRow()
     {
         const { params } = this.props.navigation.state;
         // Nouvelle période
-        if( params.idConge == null)
+        if( params.idPeriod == null)
         {
             this.state = { 
                 title:'Détails période', 
@@ -33,79 +36,41 @@ class CongesPeriode extends React.Component {
                 moment1: "2",
                 date2: "12/12/2017",
                 moment2: "2",
-                absence: "",
-                period: null
+                absence: ""
             };   
         }         
     }
-        // const data = [
-        //     {
-        //         id: 8,
-        //         startDate: '30/10/2017',
-        //         startPeriod: '1',
-        //         endDate: '31/10/2017',
-        //         endPeriod: '2',
-        //         absTypeId: '1',
-        //         absTypeLabel: 'CP',
-        //         dayNumber: 2
-        //     }, {
-        //         id: 9,
-        //         startDate: '02/11/2017',
-        //         startPeriod: '1',
-        //         endDate: '03/11/2017',
-        //         endPeriod: '2',
-        //         absTypeId: '4',
-        //         absTypeLabel: 'RTT',
-        //         dayNumber: 2
-        //     }, {
-        //         id: 10,
-        //         startDate: '02/12/2017',
-        //         startPeriod: '1',
-        //         endDate: '02/12/2017',
-        //         endPeriod: '2',
-        //         absTypeId: '1',
-        //         absTypeLabel: 'CP',
-        //         dayNumber: 1
-        //     }
-        // ];       
-
-        // const { params } = this.props.navigation.state;
-        // if( params.idConge != null)
-        // {
-        //     item = data.find(i => i.id === params.idConge);
-        //     this.state = {
-        //         title:'Détails période', 
-        //         date1: item.startDate,
-        //         moment1: item.startPeriod,
-        //         date2: item.endDate,
-        //         moment2: item.endPeriod,
-        //         absence: item.absTypeId,
-        //         listConges : data    
-        //     };
-        // }
-        // else
-        // {
-        //     this.state = { 
-        //         title:'Détails période', 
-        //         date1: "09/09/2017",
-        //         moment1: "2",
-        //         date2: "12/12/2017",
-        //         moment2: "2",
-        //         absence: "",
-        //         listConges : data
-        //     };               
-        // }
     
-
     addPeriod()
     {
-        this.setState({period: [{
-                startDate: this.state.date1,
-                startPeriod: this.state.moment1, 
-                endDate: this.state.date2,
-                endPeriod: this.state.moment2,
-                absTypeId: this.state.absence
-        }]});
+        var period = {
+            startDate: this.state.date1,
+            startPeriod: this.state.moment1, 
+            endDate: this.state.date2,
+            endPeriod: this.state.moment2,
+            absTypeId: this.state.absence,
+            absTypeLabel: 'CP'
+        };
+
+
+        AsyncStorage.setItem('@MySuperStore:key', 'I like to save it.');
+        const value = AsyncStorage.getItem('@MySuperStore:key');
+        if (value !== null){
+            alert("Get Value >> ", value);
+        }
+      
+        
+        // list.push(period);
+        // AsyncStorage.setItem("periodList", "OK");
+
+        // AsyncStorage.getItem("periodList", function (err, value) {
+        //     alert("Get Value >> ", value);
+        // });
+        // AsyncStorage.getItem("periodList").then((value) => {
+        //     alert("Get Value >> ", value);
+        //  }).done();
+        //const listConges = JSON.parse(AsyncStorage.getItem('periodList'));
+        
     }
 
     handleValidate() {
@@ -125,7 +90,7 @@ class CongesPeriode extends React.Component {
         // item.endPeriod = this.state.moment2;
         // item.absTypeId = this.state.absence;
 
-        this.props.navigation.navigate('CongesAjout', { period : this.state.period });
+        //this.props.navigation.navigate('CongesAjout', { period : this.state.period });
     }
 
     handleSupprimer() {
