@@ -23,52 +23,9 @@ class CongesPeriode extends React.Component {
 
     renderRow()
     {
-        const data = [
-            {
-                id: 8,
-                startDate: '30/10/2017',
-                startPeriod: '1',
-                endDate: '31/10/2017',
-                endPeriod: '2',
-                absTypeId: '1',
-                absTypeLabel: 'CP',
-                dayNumber: 2
-            }, {
-                id: 9,
-                startDate: '02/11/2017',
-                startPeriod: '1',
-                endDate: '03/11/2017',
-                endPeriod: '2',
-                absTypeId: '4',
-                absTypeLabel: 'RTT',
-                dayNumber: 2
-            }, {
-                id: 10,
-                startDate: '02/12/2017',
-                startPeriod: '1',
-                endDate: '02/12/2017',
-                endPeriod: '2',
-                absTypeId: '1',
-                absTypeLabel: 'CP',
-                dayNumber: 1
-            }
-        ];       
-
         const { params } = this.props.navigation.state;
-        if( params.idConge != null)
-        {
-            item = data.find(i => i.id === params.idConge);
-            this.state = {
-                title:'Détails période', 
-                date1: item.startDate,
-                moment1: item.startPeriod,
-                date2: item.endDate,
-                moment2: item.endPeriod,
-                absence: item.absTypeId,
-                listConges : data    
-            };
-        }
-        else
+        // Nouvelle période
+        if( params.idConge == null)
         {
             this.state = { 
                 title:'Détails période', 
@@ -77,9 +34,78 @@ class CongesPeriode extends React.Component {
                 date2: "12/12/2017",
                 moment2: "2",
                 absence: "",
-                listConges : data
-            };               
-        }
+                period: null
+            };   
+        }         
+    }
+        // const data = [
+        //     {
+        //         id: 8,
+        //         startDate: '30/10/2017',
+        //         startPeriod: '1',
+        //         endDate: '31/10/2017',
+        //         endPeriod: '2',
+        //         absTypeId: '1',
+        //         absTypeLabel: 'CP',
+        //         dayNumber: 2
+        //     }, {
+        //         id: 9,
+        //         startDate: '02/11/2017',
+        //         startPeriod: '1',
+        //         endDate: '03/11/2017',
+        //         endPeriod: '2',
+        //         absTypeId: '4',
+        //         absTypeLabel: 'RTT',
+        //         dayNumber: 2
+        //     }, {
+        //         id: 10,
+        //         startDate: '02/12/2017',
+        //         startPeriod: '1',
+        //         endDate: '02/12/2017',
+        //         endPeriod: '2',
+        //         absTypeId: '1',
+        //         absTypeLabel: 'CP',
+        //         dayNumber: 1
+        //     }
+        // ];       
+
+        // const { params } = this.props.navigation.state;
+        // if( params.idConge != null)
+        // {
+        //     item = data.find(i => i.id === params.idConge);
+        //     this.state = {
+        //         title:'Détails période', 
+        //         date1: item.startDate,
+        //         moment1: item.startPeriod,
+        //         date2: item.endDate,
+        //         moment2: item.endPeriod,
+        //         absence: item.absTypeId,
+        //         listConges : data    
+        //     };
+        // }
+        // else
+        // {
+        //     this.state = { 
+        //         title:'Détails période', 
+        //         date1: "09/09/2017",
+        //         moment1: "2",
+        //         date2: "12/12/2017",
+        //         moment2: "2",
+        //         absence: "",
+        //         listConges : data
+        //     };               
+        // }
+    
+
+    addPeriod()
+    {
+        this.setState({period: [{
+                startDate: this.state.date1,
+                startPeriod: this.state.moment1, 
+                endDate: this.state.date2,
+                endPeriod: this.state.moment2,
+                absTypeId: this.state.absence
+        }]});
     }
 
     handleValidate() {
@@ -88,15 +114,18 @@ class CongesPeriode extends React.Component {
         // this.props.navigation.dispatch(NavigationActions.back());
 
         const { params } = this.props.navigation.state;
-        // Maj de l'item dans la liste
-        item = this.state.listConges.find(i => i.id === params.idConge);
-        item.startDate = this.state.date1;
-        item.startPeriod = this.state.moment1;
-        item.endDate = this.state.date2;
-        item.endPeriod = this.state.moment2;
-        item.absTypeId = this.state.absence;
+        // Ajout item dans la liste
+        this.addPeriod();
 
-        this.props.navigation.navigate('CongesAjout', { listConges : this.state.listConges });
+        // Maj de l'item dans la liste
+        // item = this.state.listConges.find(i => i.id === params.idConge);
+        // item.startDate = this.state.date1;
+        // item.startPeriod = this.state.moment1;
+        // item.endDate = this.state.date2;
+        // item.endPeriod = this.state.moment2;
+        // item.absTypeId = this.state.absence;
+
+        this.props.navigation.navigate('CongesAjout', { period : this.state.period });
     }
 
     handleSupprimer() {
