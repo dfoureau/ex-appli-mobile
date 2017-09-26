@@ -3,6 +3,7 @@ import { View, Text, TextInput, Picker, TouchableOpacity} from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import Style from './styles';
 import moment from 'moment';
+import business from 'moment-business';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
@@ -18,10 +19,10 @@ class CongesPeriode extends React.Component {
 		super(props)
 		this.state = { 
             title:'Détails période', 
-            date1: "11/09/2017",
-            moment1: "",
+            date1: "16/09/2017",
+            moment1: "1",
             date2: "25/09/2017",
-            moment2: "",
+            moment2: "2",
             absence: ""
         }
     }
@@ -34,24 +35,6 @@ class CongesPeriode extends React.Component {
 
     handleSupprimer() {
         
-    }
-    
-    calculNbJours() {
-        let dateDu = this.state.date1;
-        let dateAu = this.state.date2;
-        let momentDu = moment(dateDu, "DD/MM/YYYY");
-        let momentAu = moment(dateAu, "DD/MM/YYYY");
-        //console.log(momentDu);
-        //console.log(momentAu);
-        //console.log(momentAu.diff(momentDu, 'days'));
-        let i, total = 0;
-        let currentDate = momentDu;
-        while (momentAu.diff(currentDate, 'days') >= 0) {
-            //console.log(currentDate);
-            currentDate = currentDate.add(1, 'days');
-            if (currentDate.isoWeekday() < 6) total += 1;
-        } 
-        return <Text>{total}</Text>;
     }
 
 	render() {
@@ -85,9 +68,6 @@ class CongesPeriode extends React.Component {
                                             <Picker.Item label="Soir" value="2"/>
                                     </Picker>
                                 </View>
-                            </View>
-                            <View style={styles.flexContainer}>
-                                {this.calculNbJours()}
                             </View>
                         </View>
                     </View>
