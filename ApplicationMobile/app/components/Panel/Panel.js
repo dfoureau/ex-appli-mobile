@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Text, View, Image, TouchableHighlight, Animated } from 'react-native'; 
+import PropTypes from "prop-types";
 import styles from './styles';
 
 export class Panel extends Component {
@@ -13,7 +14,7 @@ export class Panel extends Component {
 
         this.state = {
             title: props.title,
-            expanded: true,
+            expanded: this.props.expanded,
             animation: new Animated.Value()
         };
     }
@@ -44,7 +45,7 @@ export class Panel extends Component {
             {
                 toValue: finalValue
             }
-        ).start();  
+        ).start();
     }
 
     render(){
@@ -53,25 +54,35 @@ export class Panel extends Component {
         if(this.state.expanded){
             icon = this.icons['up'];   
         }
-
+        
         //Step 5
         return ( 
-            <Animated.View style={[styles.container,{height: this.state.animation}]}>
+            <Animated.View style={[styles.container,{height: this.state.animation}, this.props.containerStyle]}>
                 <View style={styles.titleContainer} onLayout={this._setMinHeight.bind(this)}>
-                    <Text style={styles.title}>{this.state.title}</Text>
                     <TouchableHighlight 
                         style={styles.button} 
                         onPress={this.toggle.bind(this)}
                         underlayColor="white">
-                        <Image style={styles.buttonImage} source={icon}/>
+                            <View style={styles.buttonContainer}>
+                                <Text style={styles.title}>{this.state.title}</Text>
+                                <Image style={styles.buttonImage} source={icon}/>
+                            </View>
                     </TouchableHighlight>
                 </View>
-                <View style={styles.body} onLayout={this._setMaxHeight.bind(this)}>
-                    {this.props.children}
-                </View>
+                { this.state.expanded && 
+                    <View style={styles.body} onLayout={this._setMaxHeight.bind(this)}>
+                        {this.props.children}
+                    </View> }
             </Animated.View>
         );
     }
+}
+
+Panel.propTypes = {
+    expanded: PropTypes.bool,
+}
+Panel.defaultProps = {
+    expanded: true,
 }
 
 export default Panel;
