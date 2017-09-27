@@ -7,6 +7,11 @@ export default StyleSheet.create({
         fontSize: 16,
       },
 
+      textAide: {
+        color: 'red',
+        fontSize: 16,
+      },
+
       statusLabel: {
         color: 'purple',
         fontSize: 16
@@ -42,11 +47,19 @@ export default StyleSheet.create({
         marginTop: 8
       },
 
+      containerColumn: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems : 'center'
+      },
+
       containerInfoElement: {
         flexDirection: 'row',
+        flex: 1,
         marginTop: 10,
+        marginLeft: 20,
         alignItems: 'flex-start',
-        flexDirection: 'column'
+        flexDirection: 'column',
       },
 
       containerPicker:{
@@ -58,7 +71,8 @@ export default StyleSheet.create({
         backgroundColor: '#f4f4f4',
       },
       containerButton: {
-        marginTop: 8
+        marginTop: 8,
+        marginRight: 15,
       },
 
       container3: {

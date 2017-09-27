@@ -4,6 +4,7 @@ import { View, Text, TextInput, Picker, TouchableOpacity, ScrollView, Alert } fr
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import Style from '../../../styles/Styles';
 import styles from './styles';
+import moment from 'moment';
 
 
 // IMPORT DES COMPOSANTS EXOTIQUES
@@ -26,48 +27,10 @@ class FraisAjout extends React.Component {
 			statusId: 1, 
 			status:'Brouillon', 
 			statusLabel:'Nouvelle NDF',
-			header: ['Date du', 'Date au', 'Client', 'Montant'],
+			header: ['Jour', 'Client', 'Montant €'],
 			months: ["Avril 2017", "Mai 2017", "Juin 2017", "Juillet 2017", "Aout 2017", "Septembre 2017", "Octobre 2017", "Novembre 2017", "Décembre 2017", 'Janvier 2018', "Février 2018", "Mars 2018", ],
 			monthSelected: 5,
-			listFrais: [ 
-				{
-					id:8,
-					startDate: '30/10/2017',
-					endDate: '31/10/2017',
-					client : 'La Banque Postale',
-					montant: 480
-				}, {
-					id: 9,
-					startDate: '02/11/2017',
-					endDate: '03/11/2017',
-					client : 'La Banque Postale',
-					montant: 40
-				}, {
-					id: 10,
-					startDate: '02/12/2017',
-					endDate: '02/12/2017',
-					client : 'La Banque Postale',
-					montant: 800
-				}, {
-					id: 110,
-					startDate: '02/12/2017',
-					endDate: '02/12/2017',
-					client : 'La Banque Postale',
-					montant: 800
-				}, {
-					id: 120,
-					startDate: '02/12/2017',
-					endDate: '02/12/2017',
-					client : 'La Banque Postale',
-					montant: 800
-				}, {
-					id: 310,
-					startDate: '02/12/2017',
-					endDate: '02/12/2017',
-					client : 'La Banque Postale',
-					montant: 800
-				}
-			],
+			listFrais: [],
 			totalMontant: 0,
 			totalClient: 0,
 			nbJours: 0
@@ -75,8 +38,26 @@ class FraisAjout extends React.Component {
 	}
 
 	//Affiche les lignes du tableau
-	afficherRow(){
-        return (this.state.listFrais.map((row, i) => (
+	afficherRow(firstDay){
+		let tal = this.state.listFrais, 
+			lignes = [],
+			jours = moment(firstDay, "DD-MM-YYYY"),
+			daysInMonth = 30 //TODO calculer
+		if (tal.length == 0 ) { //A l'init on rempli des lignes vides
+			for(let i = 0 ; i < daysInMonth ; i++) {
+				lignes.push(<TouchableOpacity key={i} onPress={() => this.modifyNDF(i)}>
+								<Row 
+									style={[styles.row, i%2 && {backgroundColor: '#FFFFFF'}]}
+									borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
+									textStyle={styles.rowText}
+									data={[jours.format('D dd'), '', 0]}/> 
+							</TouchableOpacity>);
+				jours.add(1, 'days');
+			}
+		}
+		return lignes;
+
+       /* return (this.state.listFrais.map((row, i) => (
             <TouchableOpacity key={i} onPress={() => this.modifyNDF(row.id)}>
                 <Row 
                 style={[styles.row, i%2 && {backgroundColor: '#FFFFFF'}]}
@@ -84,7 +65,7 @@ class FraisAjout extends React.Component {
                 textStyle={styles.rowText}
                 data={[row.startDate, row.endDate, row.client, row.montant]}/> 
             </TouchableOpacity>   
-        )));
+        )));*/
 	}
 	
 	//Affiche le contenu du menu des mois/années
@@ -93,6 +74,7 @@ class FraisAjout extends React.Component {
 			<Picker.Item label={item} value={i} key={i}/>
 		)
 	}
+
 	modifyNDF(id){
 		console.log(id);
         this.props.navigation.navigate('FraisDetail',{id: id});
@@ -146,6 +128,42 @@ class FraisAjout extends React.Component {
 
 	render() {
 
+		const list = [ 
+			{
+				id:8,
+				jour: '30/10/2017',
+				client : 'La Banque Postale',
+				montant: 480
+			}, {
+				id: 9,
+				jour: '02/11/2017',
+				client : 'La Banque Postale',
+				montant: 40
+			}, {
+				id: 10,
+				jour: '02/12/2017',
+				client : 'La Banque Postale',
+				montant: 800
+			}, {
+				id: 110,
+				startDate: '02/12/2017',
+				endDate: '02/12/2017',
+				client : 'La Banque Postale',
+				montant: 800
+			}, {
+				id: 120,
+				startDate: '02/12/2017',
+				endDate: '02/12/2017',
+				client : 'La Banque Postale',
+				montant: 800
+			}, {
+				id: 310,
+				startDate: '02/12/2017',
+				endDate: '02/12/2017',
+				client : 'La Banque Postale',
+				montant: 800
+			}
+		]
 
 		return (
 
@@ -171,16 +189,21 @@ class FraisAjout extends React.Component {
 									{this.loadPickerItems()}
 								</Picker>
 							</View>
-							<View style={styles.containerInfoElement}>
-								<Text style={styles.text}>Total à régler : {this.state.totalMontant} €</Text>
-								<Text style={styles.text}>Total client : {this.state.totalClient} €</Text>
-								<Text style={styles.text}>Nombre de jours : {this.state.nbJours}</Text>
+							<View style={styles.containerColumn}>
+								<View style={styles.containerInfoElement}>
+									<Text style={styles.text}>Total à régler : {this.state.totalMontant} €</Text>
+									<Text style={styles.text}>Total client : {this.state.totalClient} €</Text>
+									<Text style={styles.text}>Nombre de jours : {this.state.nbJours}</Text>
+								</View>
+								<View style={styles.containerButton}>    
+									<Button
+										text="AJOUTER FORFAIT"
+										onPress={() => this.addNDF()}
+										buttonStyles={Style.addButton}/>
+								</View>
 							</View>
-							<View style={styles.containerButton}>    
-								<Button
-									text="AJOUTER"
-									onPress={() => this.addNDF()}
-									buttonStyles={Style.addButton}/>
+							<View style={styles.container2}>
+								<Text style={styles.textAide}>Saisir une ligne pour ajouter/modifier une NDF</Text>
 							</View>
                     </View>
                     <View style={styles.container3}>
@@ -188,7 +211,7 @@ class FraisAjout extends React.Component {
 							<View style={styles.containerTable}>
 								<Table borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}>
 									<Row data={this.state.header} style={styles.header} textStyle={styles.headerText} />
-									{this.afficherRow()}
+									{this.afficherRow("01/09/2017")}
 								</Table>
 							</View>
 							
