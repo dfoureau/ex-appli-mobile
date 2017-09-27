@@ -10,9 +10,7 @@ export default StyleSheet.create({
     container: {
         marginRight: 15,
         marginLeft: 15,
-    },
-    scrollView: {
-        flex: 1
+        flex: 1,
     },
     containerEtat: {
         marginTop: 5,

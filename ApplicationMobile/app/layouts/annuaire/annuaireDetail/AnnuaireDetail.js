@@ -65,7 +65,7 @@ class AnnuaireDetail extends React.Component {
             
             <View>
                 <ContainerTitre title={this.state.titre} navigation={this.props.navigation}>
-                <ScrollView style={styles.scrollView}>
+                <View style={styles.scrollView}>
                 
                     {/*DESCRIPTION PROFILE*/}
                     <View style={Style.firstView}>
@@ -161,7 +161,7 @@ class AnnuaireDetail extends React.Component {
                         </View>
                     </View>
 
-                </ScrollView>
+                </View>
                 </ContainerTitre>
 
             </View>

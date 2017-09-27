@@ -153,7 +153,7 @@ class FraisAjout extends React.Component {
 				<ContainerTitre title={this.state.title} navigation={this.props.navigation}>
                 
 				<View style={styles.container}>
-				<ScrollView style={styles.scrollView}>
+
                     <View style={styles.container1}>
                         <View style={styles.containerStatus}>
                             <Text style={styles.text}>Etat : {this.state.status}</Text>
@@ -201,7 +201,7 @@ class FraisAjout extends React.Component {
 						{this.showDraftButton()}
 						{this.showValidateButton()}{console.log(this.props.navigation)}
 					</View>
-					</ScrollView>
+
 			    </View>
 				
             </ContainerTitre>  
