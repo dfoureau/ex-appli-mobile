@@ -27,12 +27,12 @@ export default StyleSheet.create({
         flexDirection: 'column',
     },
     containerInput: {
-        marginTop: 10,
-        borderWidth: 1,
-        borderColor: 'gray',
+        //marginTop: 10,
+        //borderWidth: 1,
+        //borderColor: 'gray',
     },
     inputView: {
-        marginLeft: 15
+        marginLeft: 7
     },
     checkbox: {
         marginTop: 10,

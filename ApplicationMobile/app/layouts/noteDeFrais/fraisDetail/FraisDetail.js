@@ -9,6 +9,7 @@ import CheckBox from 'react-native-check-box'
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { Button } from '../../../components/Buttons';
+import Panel from '../../../components/Panel/Panel';
 
 class FraisDetail extends React.Component {
 	 
@@ -113,8 +114,8 @@ class FraisDetail extends React.Component {
                         
                         <View style={styles.containerDetails}>
 
-                            <View style={styles.containerInput}>
-                                <Text style={styles.inputTitle}>Informations client*</Text>
+							<Panel 	title="Informations client*" 
+									containerStyle={{backgroundColor:"transparent", margin:0}}>
 
 								<View style={styles.inputView}>
 									<CheckBox	
@@ -146,10 +147,11 @@ class FraisDetail extends React.Component {
 										/>	 
 									</View>
 								</View>
-                            </View>
 
-                            <View style={styles.containerInput}>
-                                <Text style={styles.inputTitle}>Transport</Text>
+							</Panel>
+
+							<Panel 	title="Transport" 
+									containerStyle={{backgroundColor:"transparent", margin:0}}>
 
 								<View style={styles.inputView}>
 									<View style={styles.inputGroup}>
@@ -223,10 +225,10 @@ class FraisDetail extends React.Component {
 									<Text style={[styles.text, {width: 130, textAlign: 'right'}]}>{this.state.indemKm}</Text>
 									</View>
 								</View>
-							</View>
+							</Panel>
 
-							<View style={styles.containerInput}>
-								<Text style={styles.inputTitle}>Abonnements</Text>
+							<Panel title="Abonnements" 
+									containerStyle={{backgroundColor:"transparent", margin:0}}>
 
 								<View style={styles.inputView}>
 									<View style={styles.inputGroup}>
@@ -252,10 +254,10 @@ class FraisDetail extends React.Component {
 										/>
 									</View> 
 								</View>
-                            </View>
+                            </Panel>
 
-                            <View style={styles.containerInput}>
-								<Text style={styles.inputTitle}>Frais de réception</Text>
+							<Panel title="Frais de réception" 
+									containerStyle={{backgroundColor:"transparent", margin:0}}>
 
 								<View style={styles.inputView}>
 									<View style={styles.inputGroup}>
@@ -292,10 +294,10 @@ class FraisDetail extends React.Component {
 										/>
 									</View> 
 								</View>
-							</View>
-
-                            <View style={styles.containerInput}>
-								<Text style={styles.inputTitle}>Divers</Text>
+							</Panel>
+								
+							<Panel title="Divers" 
+									containerStyle={{backgroundColor:"transparent", margin:0}}>
 
 								<View style={styles.inputView}>
 									<View style={styles.inputGroup}>
@@ -320,7 +322,7 @@ class FraisDetail extends React.Component {
 										/>
 									</View> 
 								</View>
-							</View>
+							</Panel>
 
                         </View>
                         
