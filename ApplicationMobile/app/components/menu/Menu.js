@@ -13,7 +13,7 @@ class ContainerHeader extends Component {
 			pan: new Animated.ValueXY({x:-width, y:0}),
 			isOpen:false,
 			navigationParent: null,
-			hasNotifications: true, //Necessite de mettre une variable globale
+			nbNotifications: 8, //Necessite de mettre une variable globale
 		}
 	}
 
@@ -60,10 +60,8 @@ class ContainerHeader extends Component {
 		this.props.fermerMenu();
 	}
 
-	afficherNotificationIcon(notif) {
-		return notif ? <Image style={styles.IconItemRight}
-						source={require('../../images/notif.png')}
-						/> : null;
+	afficherNotifications(notif) {
+		return notif > 0 ? 	<Text style={styles.TextItemNotif} onLayout={(event) => console.log(event.nativeEvent.layout.height)}>{notif}</Text> : null;
 	}
 	
 	render(){
@@ -127,7 +125,7 @@ class ContainerHeader extends Component {
 								source={require('../../images/icons/calendar.png')}
 							/>
 							<Text style={styles.TextItemMenu}>Notifications</Text>
-							{this.afficherNotificationIcon(this.state.hasNotifications)}
+							{this.afficherNotifications(this.state.nbNotifications)}
 						</View>
 					</TouchableOpacity>
 					<TouchableOpacity style={[styles.ItemMenu, styles.LastItemMenuLeft]} onPress={()=>this.afficherEcran('APropos')}>						

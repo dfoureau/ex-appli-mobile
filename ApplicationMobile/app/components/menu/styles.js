@@ -74,11 +74,17 @@ export default StyleSheet.create({
         height: 36,
     },
 
-    IconItemRight: {
-        width:16, 
-        height:16, 
-        right:50,
-        bottom: 7,
+    TextItemNotif: {
+        right:50, 
+        bottom: 6, 
+        paddingLeft: 5.5, 
+        minHeight: 16.5, 
+        minWidth: 16.5,
+        fontSize:12, 
+        backgroundColor:'red',
+        fontWeight: '500', 
+        color:'white', 
+        borderRadius:10,
     },
 
     TextItemMenu: {                      
