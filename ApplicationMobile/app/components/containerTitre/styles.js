@@ -66,6 +66,16 @@ export default StyleSheet.create({
         opacity: 0.5,
         position: 'absolute', 
         zIndex: 500,
-    }
+    },
+
+    LogoTitreCat: {
+        backgroundColor: 'transparent',
+        alignSelf: 'flex-end',
+        height: 51, 
+        width: 173,
+        position: 'absolute',
+        right: 10,
+        opacity: 0.3,
+    },
 
 });

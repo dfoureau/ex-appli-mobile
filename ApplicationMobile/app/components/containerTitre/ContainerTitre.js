@@ -53,10 +53,11 @@ export default class ContainerTitre extends React.Component {
                             source={require('../../images/icons/retour.png')}
                         />
                     </TouchableHighlight>
+                    <Image style={styles.LogoTitreCat} source={require('../../images/logo.png')}/>
                     <Text style={styles.TextHeader}>{this.props.title}</Text>
                 </View>
-
         
+                {/* On indique qu'on affiche les donnée de l'enfant */}
                 {this.props.children}
             </ScrollView>
             
