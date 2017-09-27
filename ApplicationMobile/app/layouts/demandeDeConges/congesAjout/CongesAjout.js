@@ -19,8 +19,11 @@ class CongesAjout extends React.Component {
             statusId: 1, 
             status:'nouveau', 
             statusLabel:'Nouvelle DC',
-            header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours']
+            header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours'],
+            period: {}
         } 
+
+        this.setIsEmpty();
     } 
 
 	//Permet d'afficher l'ecran choisi dans le menu
@@ -47,14 +50,38 @@ class CongesAjout extends React.Component {
 
     validateConge(){
         this.setState({statusId: 3, status: 'validé', statusLabel: 'Modifications interdites'});
+        AsyncStorage.clear();
         this.props.navigation.navigate('CongesConfirmation');
     }
 
-    afficherRow(){
-        var listConges = AsyncStorage.getItem('periodList').value;
-        alert('value: '+ listConges);
-        return <Text>{listConges}</Text>;
+    setIsEmpty()
+    {
+        AsyncStorage.getItem('period').then((period) => {
+            if(period == null)
+                this.setState({isEmpty: true}) 
+            else {
+                var newPeriod = JSON.parse(period)
+                this.setState({isEmpty: false, period: newPeriod});
+            }
+        }).done();
+    }
 
+    afficherRow(){
+        try {
+            if(this.state.period != null)
+                return <TouchableOpacity>     
+                            <Row 
+                            style={[style.row, {backgroundColor: '#FFFFFF'}]}
+                            borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
+                            textStyle={style.rowText}
+                            data={[this.state.period.startDate, this.state.period.endDate, this.state.period.absTypeLabel, '1']}/>
+                        </TouchableOpacity>;
+            else 
+                return <Text></Text>;
+        }
+        catch(error){
+            console.log(error.message);
+        }
         // if(listConges != null)
         //     return (listConges.map((row, i) => (
         //         <TouchableOpacity key={i} onPress={() => this.modifyConge(row.id)}>
@@ -146,7 +173,7 @@ class CongesAjout extends React.Component {
                         <View style={style.containerTable}>
                             <Table borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}>
                                 <Row data={this.state.header} style={style.header} textStyle={style.headerText} />
-                                {this.afficherRow()}
+                                {this.state.isEmpty ? <Text/> : this.afficherRow()}
                             </Table>
                         </View>
                         <View>    

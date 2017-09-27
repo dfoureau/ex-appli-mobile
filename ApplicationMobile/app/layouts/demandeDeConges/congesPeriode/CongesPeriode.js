@@ -41,7 +41,7 @@ class CongesPeriode extends React.Component {
         }         
     }
     
-    addPeriod()
+    savePeriod()
     {
         var period = {
             startDate: this.state.date1,
@@ -52,35 +52,19 @@ class CongesPeriode extends React.Component {
             absTypeLabel: 'CP'
         };
 
-
-        AsyncStorage.setItem('@MySuperStore:key', 'I like to save it.');
-        const value = AsyncStorage.getItem('@MySuperStore:key');
-        if (value !== null){
-            alert("Get Value >> ", value);
+        try {
+            AsyncStorage.setItem('period', JSON.stringify(period));
         }
-      
-        
-        // list.push(period);
-        // AsyncStorage.setItem("periodList", "OK");
-
-        // AsyncStorage.getItem("periodList", function (err, value) {
-        //     alert("Get Value >> ", value);
-        // });
-        // AsyncStorage.getItem("periodList").then((value) => {
-        //     alert("Get Value >> ", value);
-        //  }).done();
-        //const listConges = JSON.parse(AsyncStorage.getItem('periodList'));
-        
+        catch(error){
+            console.log(error.message);
+        }
     }
 
     handleValidate() {
-        // Verif que toutes les valeurs sont remplies
-        // Retour à l'écran précédent après validation
-        // this.props.navigation.dispatch(NavigationActions.back());
+        // TODO : Verifier que toutes les valeurs sont remplies
 
-        const { params } = this.props.navigation.state;
-        // Ajout item dans la liste
-        this.addPeriod();
+        // Ajout et sauvegarde item dans la liste
+        this.savePeriod();
 
         // Maj de l'item dans la liste
         // item = this.state.listConges.find(i => i.id === params.idConge);
@@ -90,7 +74,7 @@ class CongesPeriode extends React.Component {
         // item.endPeriod = this.state.moment2;
         // item.absTypeId = this.state.absence;
 
-        //this.props.navigation.navigate('CongesAjout', { period : this.state.period });
+        this.props.navigation.navigate('CongesAjout');
     }
 
     handleSupprimer() {

@@ -10,7 +10,7 @@ import {
   TouchableHighlight, 
   Text,
 Alert,
-ScrollView  } from 'react-native'
+ScrollView, AsyncStorage  } from 'react-native'
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import Style from './Styles';
 import Accueil from '../accueil/Accueil'
@@ -26,6 +26,7 @@ var {height, width} = Dimensions.get('window')
 			identifiant: '',
 			MDP: ''
 		}
+		AsyncStorage.clear();
 	}
 	
 	//Modification des variables
