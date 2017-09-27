@@ -130,7 +130,6 @@ class AjoutCra extends React.Component {
 
 
 		return (
-          <ScrollView>
 			<View>
 				<ContainerTitre title={this.state.title} navigation={this.props.navigation}>
                   <View style={style.container}>
@@ -258,7 +257,6 @@ class AjoutCra extends React.Component {
                   </View>
 				</ContainerTitre>
 			</View>
-          </ScrollView>
 		);
 	}
 }

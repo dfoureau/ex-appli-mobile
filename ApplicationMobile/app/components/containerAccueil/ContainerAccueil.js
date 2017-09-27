@@ -77,33 +77,33 @@ export default class ContainerAccueil extends React.Component {
 	render() {
 
 		return (
-        <View>
-            <View style={styles.ContainerHeader}>
-            <TouchableOpacity style={styles.MenuIconLink} onPress={()=>this.afficherCloseMenu()}>
-                <Image style={styles.MenuIcon}
-                    source={require('../../images/icons/MenuIcon.png')}
-                />
-            </TouchableOpacity>
-            <Text style={styles.TextHeader}>{this.props.title}</Text>
-	
+		
+		<View>
+			<ScrollView>
+				<View style={styles.ContainerHeader}>
+					<TouchableOpacity style={styles.MenuIconLink} onPress={()=>this.afficherCloseMenu()}>
+						<Image style={styles.MenuIcon}
+							source={require('../../images/icons/MenuIcon.png')}
+						/>
+					</TouchableOpacity>
+					<Text style={styles.TextHeader}>{this.props.title}</Text>
+				</View>
+		
+                {/* On indique qu'on affiche les donnée de l'enfant */}
+                {this.props.children}
+			</ScrollView>
+			
+				<Animated.View style={{
+				//...this.props.style,
+					position:'absolute', 
+					width:width,
+					height:height,
+					transform: this.state.pan.getTranslateTransform(),         // Bind opacity to animated value
+				}}>
 
-        </View>
-		<ScrollView>
-                    {/* On indique qu'on affiche les donnée de l'enfant */}
-                    {this.props.children}
-                </ScrollView>
-            <Animated.View style={{
-            //...this.props.style,
-                position:'absolute', 
-                width:width,
-                height:height,
-                transform: this.state.pan.getTranslateTransform(),         // Bind opacity to animated value
-            }}
-            
-            >
-                <Menu   afficherEcran={this.afficherEcranContainer.bind(this)} fermerMenu={this.afficherCloseMenu.bind(this)}/>
-            </Animated.View>
-
+                	<Menu   afficherEcran={this.afficherEcranContainer.bind(this)} fermerMenu={this.afficherCloseMenu.bind(this)}/>
+            	</Animated.View>
+			
         </View>
 		);
 	}
