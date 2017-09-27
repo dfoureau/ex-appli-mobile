@@ -14,7 +14,7 @@ export class Panel extends Component {
 
         this.state = {
             title: props.title,
-            expanded: this.props.expanded,
+            expanded: true,
             animation: new Animated.Value()
         };
     }
@@ -69,20 +69,12 @@ export class Panel extends Component {
                             </View>
                     </TouchableHighlight>
                 </View>
-                { this.state.expanded && 
-                    <View style={styles.body} onLayout={this._setMaxHeight.bind(this)}>
-                        {this.props.children}
-                    </View> }
+                <View style={styles.body} onLayout={this._setMaxHeight.bind(this)}>
+                    {this.props.children}
+                </View>
             </Animated.View>
         );
     }
-}
-
-Panel.propTypes = {
-    expanded: PropTypes.bool,
-}
-Panel.defaultProps = {
-    expanded: true,
 }
 
 export default Panel;

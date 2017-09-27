@@ -115,8 +115,7 @@ class FraisDetail extends React.Component {
                         <View style={styles.containerDetails}>
 
 							<Panel 	title="Informations client*" 
-									containerStyle={{backgroundColor:"transparent", margin:0}}
-									expanded={true}>
+									containerStyle={{backgroundColor:"transparent", margin:0}}>
 
 								<View style={styles.inputView}>
 									<CheckBox	
@@ -152,8 +151,7 @@ class FraisDetail extends React.Component {
 							</Panel>
 
 							<Panel 	title="Transport" 
-									containerStyle={{backgroundColor:"transparent", margin:0}}
-									expanded={false}>
+									containerStyle={{backgroundColor:"transparent", margin:0}}>
 
 								<View style={styles.inputView}>
 									<View style={styles.inputGroup}>
@@ -230,8 +228,7 @@ class FraisDetail extends React.Component {
 							</Panel>
 
 							<Panel title="Abonnements" 
-									containerStyle={{backgroundColor:"transparent", margin:0}}
-									expanded={false}>
+									containerStyle={{backgroundColor:"transparent", margin:0}}>
 
 								<View style={styles.inputView}>
 									<View style={styles.inputGroup}>
@@ -260,8 +257,7 @@ class FraisDetail extends React.Component {
                             </Panel>
 
 							<Panel title="Frais de réception" 
-									containerStyle={{backgroundColor:"transparent", margin:0}}
-									expanded={false}>
+									containerStyle={{backgroundColor:"transparent", margin:0}}>
 
 								<View style={styles.inputView}>
 									<View style={styles.inputGroup}>
@@ -301,8 +297,7 @@ class FraisDetail extends React.Component {
 							</Panel>
 								
 							<Panel title="Divers" 
-									containerStyle={{backgroundColor:"transparent", margin:0}}
-									expanded={false}>
+									containerStyle={{backgroundColor:"transparent", margin:0}}>
 
 								<View style={styles.inputView}>
 									<View style={styles.inputGroup}>
