@@ -86,6 +86,7 @@ export default class ContainerAccueil extends React.Component {
 							source={require('../../images/icons/MenuIcon.png')}
 						/>
 					</TouchableOpacity>
+					<Image style={styles.LogoTitreCat} source={require('../../images/logo.png')}/>
 					<Text style={styles.TextHeader}>{this.props.title}</Text>
 				</View>
 		
