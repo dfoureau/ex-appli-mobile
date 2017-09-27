@@ -16,15 +16,14 @@ var list = [];
 class CongesPeriode extends React.Component { 
 	constructor (props) {
         super(props)
-        this.renderRow()
-
+        this.setInitialValues()
     }
     
     static navigationOptions = ({ navigation }) => ({
         idPeriod: navigation.state.params.idPeriod,
     });
 
-    renderRow()
+    setInitialValues()
     {
         const { params } = this.props.navigation.state;
         // Nouvelle période
@@ -32,17 +31,18 @@ class CongesPeriode extends React.Component {
         {
             this.state = { 
                 title:'Détails période', 
-                date1: "09/09/2017",
-                moment1: "2",
-                date2: "12/12/2017",
-                moment2: "2",
-                absence: ""
+                date1: '09/09/2017',
+                moment1: '1',
+                date2: '12/12/2017',
+                moment2: '2',
+                absence: ''
             };   
         }         
     }
     
     savePeriod()
     {
+        var periodList = [];
         var period = {
             startDate: this.state.date1,
             startPeriod: this.state.moment1, 
@@ -50,10 +50,12 @@ class CongesPeriode extends React.Component {
             endPeriod: this.state.moment2,
             absTypeId: this.state.absence,
             absTypeLabel: 'CP'
-        };
+        }; 
+
+        periodList.push(period);
 
         try {
-            AsyncStorage.setItem('period', JSON.stringify(period));
+            AsyncStorage.setItem('periodList', JSON.stringify(periodList));
         }
         catch(error){
             console.log(error.message);

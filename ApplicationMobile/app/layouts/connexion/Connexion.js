@@ -26,6 +26,7 @@ var {height, width} = Dimensions.get('window')
 			identifiant: '',
 			MDP: ''
 		}
+		
 		AsyncStorage.clear();
 	}
 	

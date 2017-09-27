@@ -19,8 +19,7 @@ class CongesAjout extends React.Component {
             statusId: 1, 
             status:'nouveau', 
             statusLabel:'Nouvelle DC',
-            header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours'],
-            period: {}
+            header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours']
         } 
 
         this.setIsEmpty();
@@ -56,43 +55,34 @@ class CongesAjout extends React.Component {
 
     setIsEmpty()
     {
-        AsyncStorage.getItem('period').then((period) => {
-            if(period == null)
+        AsyncStorage.getItem('periodList').then((periodList) => {
+            if(periodList == null)
                 this.setState({isEmpty: true}) 
             else {
-                var newPeriod = JSON.parse(period)
-                this.setState({isEmpty: false, period: newPeriod});
+                var newPeriod = JSON.parse(periodList)
+                this.setState({isEmpty: false, periodList: newPeriod});
             }
         }).done();
     }
 
     afficherRow(){
         try {
-            if(this.state.period != null)
-                return <TouchableOpacity>     
-                            <Row 
-                            style={[style.row, {backgroundColor: '#FFFFFF'}]}
+            if(this.state.periodList != null)
+                return (this.state.periodList.map((row, i) => (
+                    <TouchableOpacity key={i} onPress={() => this.modifyConge(row.id)}>
+                        <Row 
+                            style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
                             borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
                             textStyle={style.rowText}
-                            data={[this.state.period.startDate, this.state.period.endDate, this.state.period.absTypeLabel, '1']}/>
-                        </TouchableOpacity>;
+                            data={[row.startDate, row.endDate, row.absTypeLabel, '1']}/> 
+                    </TouchableOpacity>   
+                )));  
             else 
                 return <Text></Text>;
         }
         catch(error){
             console.log(error.message);
-        }
-        // if(listConges != null)
-        //     return (listConges.map((row, i) => (
-        //         <TouchableOpacity key={i} onPress={() => this.modifyConge(row.id)}>
-        //             <Row 
-        //             style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
-        //             borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
-        //             textStyle={style.rowText}
-        //             data={[row.startDate, row.endDate, row.absTypeLabel, row.dayNumber]}/> 
-        //         </TouchableOpacity>   
-        //     )));  
-        // else return <Text></Text>;    
+        }   
     }
 
     showDeleteButton()
