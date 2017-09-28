@@ -28,33 +28,53 @@ class FraisAjout extends React.Component {
 			statusLabel:'Nouvelle NDF',
 			header: ['Jour', 'Client', 'Montant €'],
 			months: ["Avril 2017", "Mai 2017", "Juin 2017", "Juillet 2017", "Aout 2017", "Septembre 2017", "Octobre 2017", "Novembre 2017", "Décembre 2017", 'Janvier 2018', "Février 2018", "Mars 2018", ],
-			monthSelected: 5,
-			listFrais: [],
+			monthSelected: 8,
+			listFrais: this.setListFrais(),
 			totalMontant: 0,
 			totalClient: 0,
-			nbJours: 0
+			nbJours: 0,
 		}
 	}
 
-	//Affiche les lignes du tableau
-	afficherRow(firstDay){
-		moment.locale('fr');
-		let tal = this.state.listFrais, 
-			lignes = [],
-			jours = moment(firstDay, "DD-MM-YYYY"),
-			daysInMonth = 30 //TODO calculer
-		if (tal.length == 0 ) { //A l'init on rempli des lignes vides
-			for(let i = 0 ; i < daysInMonth ; i++) {
-				lignes.push(<TouchableOpacity key={i} onPress={() => this.modifyNDF(i)}>
-								<Row 
-									style={[styles.row, i%2 && {backgroundColor: '#FFFFFF'}]}
-									borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
-									textStyle={styles.rowText}
-									data={[jours.format('dd D'), '', 0]}/> 
-							</TouchableOpacity>);
-				jours.add(1, 'days');
+	//Set la liste des lignes du tableau
+	setListFrais() {
+		
+		//Soit nouvelle NDF -> tableau vide, mois = par defaut le mois en cours (listeFrais vide)
+		//Soit vient de modif une ligne de NDf -> tableau prérempli (en cache), mois = pas besoin de le savoir (listeFrais pas vide)
+		//Soit ancienne NDF -> tableau prérempli avec get valeurs à partir d'un service, mois = passé en parametre (listeFrais pas vide)
+		
+		//TODO Check si liste presente dans le cache
+		
+		//Nouvelle NDF -> Tableau vide initié
+		let currentDate = new Date();
+		let initList = [],
+			i = 0,
+			jours = moment({y: '2017', M: currentDate.getMonth(), d: 1}), //Date de depart : le 1er du mois
+			month = jours.month(), //numero du mois choisi
+			monthOk = true; //verif que le mois est toujours le bon
+		while (monthOk) {
+			if (jours.month() == month) {
+				initList.push({id: i, date: jours.format('DD-MM-YYYY'), dateShort: jours.format('dd DD')});
+				jours.add(1, 'days'); //passe au jour suivant
+				i++;
 			}
+			else monthOk = false; //Si on passe au moins suivant on arrete
 		}
+		return initList;		
+	}
+
+	//Affiche les lignes du tableau à partir de listFrais
+	afficherRow(){
+		moment.locale('fr');
+		return (this.state.listFrais.map((row, i) => (
+			<TouchableOpacity key={i} onPress={() => this.modifyNDF(row.id)}>
+				<Row 
+				style={[styles.row, i%2 && {backgroundColor: '#FFFFFF'}]}
+				borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
+				textStyle={styles.rowText}
+				data={[row.dateShort, '', 0]}/> 
+			</TouchableOpacity>   
+		)));
 		return lignes;
 	}
 	
@@ -66,11 +86,10 @@ class FraisAjout extends React.Component {
 	}
 
 	modifyNDF(id){
-		console.log(id);
-        this.props.navigation.navigate('FraisDetail',{id: id});
+        this.props.navigation.navigate('FraisDetail',{forfait: false, id: id, data:this.state.listFrais});
     }
-	addNDF() {
-		this.props.navigation.navigate('FraisDetail');
+	addNDF(monthSelected) {
+		this.props.navigation.navigate('FraisDetail', {forfait: true, month: monthSelected});
 	}
 	deleteNDF() {
         this.props.navigation.navigate('FraisConfirmation');
@@ -121,43 +140,6 @@ class FraisAjout extends React.Component {
 
 	render() {
 
-		const list = [ 
-			{
-				id:8,
-				jour: '30/10/2017',
-				client : 'La Banque Postale',
-				montant: 480
-			}, {
-				id: 9,
-				jour: '02/11/2017',
-				client : 'La Banque Postale',
-				montant: 40
-			}, {
-				id: 10,
-				jour: '02/12/2017',
-				client : 'La Banque Postale',
-				montant: 800
-			}, {
-				id: 110,
-				startDate: '02/12/2017',
-				endDate: '02/12/2017',
-				client : 'La Banque Postale',
-				montant: 800
-			}, {
-				id: 120,
-				startDate: '02/12/2017',
-				endDate: '02/12/2017',
-				client : 'La Banque Postale',
-				montant: 800
-			}, {
-				id: 310,
-				startDate: '02/12/2017',
-				endDate: '02/12/2017',
-				client : 'La Banque Postale',
-				montant: 800
-			}
-		]
-
 		return (
 
 			<View style={styles.mainContainer}>
@@ -191,7 +173,7 @@ class FraisAjout extends React.Component {
 								<View style={styles.containerButton}>    
 									<Button
 										text="AJOUTER FORFAIT"
-										onPress={() => this.addNDF()}
+										onPress={() => this.addNDF(this.state.monthSelected)}
 										buttonStyles={Style.addButton}/>
 								</View>
 							</View>
@@ -204,7 +186,7 @@ class FraisAjout extends React.Component {
 							<View style={styles.containerTable}>
 								<Table borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}>
 									<Row data={this.state.header} style={styles.header} textStyle={styles.headerText} />
-									{this.afficherRow("01/09/2017")}
+									{this.afficherRow()}
 								</Table>
 							</View>
 							
