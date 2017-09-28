@@ -48,12 +48,15 @@ import ActivitesConfirmation from '../activitesConfirmation/ActivitesConfirmatio
         return rows;
     }
 
+    //Transfert du paramétre vers la page AjoutCRa
+    //Params : Idate
 	SendDataCRA(ItemDate){
           this.props.navigation.navigate('AjoutCra',{Idate: ItemDate});
-          console.log("------------------------------------------");
-          console.log(ItemDate);
 	}
 
+    AfficherAjoutCRa(){
+    this.props.navigation.navigate('AjoutCra',{Idate: 'Septembre 2017'});
+    }
 
 	render() {
 
@@ -120,7 +123,7 @@ import ActivitesConfirmation from '../activitesConfirmation/ActivitesConfirmatio
 						    <View style={style.containerButton}>
 						      <Button text="AJOUTER"
 						      
-						       onPress={() => {this.props.navigation.navigate('AjoutCra')}}/>
+						       onPress={() => this.AfficherAjoutCRa()}/>
 
 						    </View>
 					    </View>
@@ -131,7 +134,6 @@ import ActivitesConfirmation from '../activitesConfirmation/ActivitesConfirmatio
 						? <View>
 						        <TouchableOpacity key={item.Id} onPress = {() => this.SendDataCRA(item.date)}>
 								<CRAItem date={item.date} client={item.client} status={item.status} key={item.Id}/>
-								<AjoutCra title={item.date} />
 								</TouchableOpacity>
 							</View>
 					     :

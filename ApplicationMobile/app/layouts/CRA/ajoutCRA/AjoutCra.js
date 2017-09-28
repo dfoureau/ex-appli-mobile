@@ -58,9 +58,7 @@ import style from './styles';
 	}
     deleteCr(){
 
-
     }
-
 
     validatePressDelete(){
       this.props.navigation.navigate('CraConfirmation');
@@ -109,7 +107,6 @@ import style from './styles';
      }
 
 
-
       afficherRow(){
             return (this.state.listCRA.map((row, i) => (
                 <TouchableOpacity key={i} onPress={() => this.modifyCRA(row.id)}>
@@ -127,13 +124,12 @@ import style from './styles';
       this.props.navigation.navigate('ActivitesListe');
       };
 
-
+     //i.e this.props.navigation.state.params.Idate,
      static navigationOptions = ({ navigation }) => ({
-              Idate: navigation.state.params.Idate,
-           });
+              Idate:navigation.state.params.Idate, });
 
 	render() {
-
+       //Décralation du params transmis à l'écran courante.
        const { params } = this.props.navigation.state;
 
 		return (
