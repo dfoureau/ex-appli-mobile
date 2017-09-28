@@ -18,7 +18,8 @@ class FraisDetail extends React.Component {
 		this.state = { 
 			title:'Note de frais',
 			status: this.setStatus(),
-			selectedDatesArray: [],
+			selectedDatesArray: this.setDatesArray(),
+			month: this.props.navigation.state.params.month,
 			factureClientChecked: false,
 			nomClient: '',
 			lieuDeplacement: '',
@@ -37,6 +38,13 @@ class FraisDetail extends React.Component {
 			divers: '',
 			libelleDivers: ''
 		}
+	}
+
+	/** Au chargement **/	
+	setDatesArray() {
+	/*	let month = this.state.month;
+		if (month != undefined) */
+		return [];
 	}
 
 	setStatus() {
