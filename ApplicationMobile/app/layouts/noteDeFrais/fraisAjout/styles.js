@@ -17,10 +17,13 @@ export default StyleSheet.create({
         fontSize: 16
       },
  
+      mainContainer: {
+        flex: 1
+      },
+
     container: {
         flexDirection: 'column',
-        height:height,
-        width:width
+        flex:1
       },
     
       container1: {
@@ -75,22 +78,16 @@ export default StyleSheet.create({
         marginRight: 15,
       },
 
+      //Tableau
       container3: {
         flex:0.75,
         marginTop:20,
         marginHorizontal: 10,
         flexDirection: 'column'
       },
-
+      
       containerTable: {
-        marginBottom:20
-      },
-
-      container4: {
-        flexDirection:'row', 
-        justifyContent:'flex-end',
-        marginHorizontal: 10,
-        marginTop: 20,
+        marginBottom:20,
       },
 
       header: {
@@ -115,6 +112,14 @@ export default StyleSheet.create({
         textAlign: 'center'
       },
       //Boutons
+      containerButtons:{
+        alignItems : 'center',
+        flexDirection: 'row',
+        alignSelf: 'flex-end',
+        marginRight:30,
+        marginBottom: 5,
+        marginTop: 5
+    },
         deleteButton: {
             backgroundColor: '#FF0000'
         },

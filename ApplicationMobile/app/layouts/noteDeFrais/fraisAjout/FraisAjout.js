@@ -5,7 +5,7 @@ import { StackNavigator, NavigationActions } from 'react-navigation';
 import Style from '../../../styles/Styles';
 import styles from './styles';
 import moment from 'moment';
-
+import 'moment/locale/fr';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
@@ -17,7 +17,6 @@ import Accueil from '../../accueil/Accueil';
 import FraisDetail from '../fraisDetail/FraisDetail';
 import FraisConfirmation from '../fraisConfirmation/FraisConfirmation';
 
-
 class FraisAjout extends React.Component {
 	 
 	constructor (props) {
@@ -25,7 +24,7 @@ class FraisAjout extends React.Component {
 		this.state = { 
 			title:'Note de frais',
 			statusId: 1, 
-			status:'Brouillon', 
+			status:'nouveau', 
 			statusLabel:'Nouvelle NDF',
 			header: ['Jour', 'Client', 'Montant €'],
 			months: ["Avril 2017", "Mai 2017", "Juin 2017", "Juillet 2017", "Aout 2017", "Septembre 2017", "Octobre 2017", "Novembre 2017", "Décembre 2017", 'Janvier 2018', "Février 2018", "Mars 2018", ],
@@ -39,6 +38,7 @@ class FraisAjout extends React.Component {
 
 	//Affiche les lignes du tableau
 	afficherRow(firstDay){
+		moment.locale('fr');
 		let tal = this.state.listFrais, 
 			lignes = [],
 			jours = moment(firstDay, "DD-MM-YYYY"),
@@ -50,22 +50,12 @@ class FraisAjout extends React.Component {
 									style={[styles.row, i%2 && {backgroundColor: '#FFFFFF'}]}
 									borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
 									textStyle={styles.rowText}
-									data={[jours.format('D dd'), '', 0]}/> 
+									data={[jours.format('dd D'), '', 0]}/> 
 							</TouchableOpacity>);
 				jours.add(1, 'days');
 			}
 		}
 		return lignes;
-
-       /* return (this.state.listFrais.map((row, i) => (
-            <TouchableOpacity key={i} onPress={() => this.modifyNDF(row.id)}>
-                <Row 
-                style={[styles.row, i%2 && {backgroundColor: '#FFFFFF'}]}
-                borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
-                textStyle={styles.rowText}
-                data={[row.startDate, row.endDate, row.client, row.montant]}/> 
-            </TouchableOpacity>   
-        )));*/
 	}
 	
 	//Affiche le contenu du menu des mois/années
@@ -86,17 +76,18 @@ class FraisAjout extends React.Component {
         this.props.navigation.navigate('FraisConfirmation');
 	}
 	saveDraft(){
-        this.setState({statusId: 2, status: 'Brouillon', statusLabel: 'DC en brouillon'});
+        this.setState({statusId: 2, status: 'brouillon', statusLabel: 'NDF en brouillon'});
         this.props.navigation.navigate('FraisConfirmation');
 	}
 	validateNDF(){
-        this.setState({statusId: 3, status: 'Validé', statusLabel: 'Modifications interdites'});
+        this.setState({statusId: 3, status: 'validé', statusLabel: 'Modifications interdites'});
         this.props.navigation.navigate('FraisConfirmation');
     }
 	
 	showDeleteButton()
     {
-        return <Button 
+		if(this.state.statusId == 2)
+        	return <Button 
                         buttonStyles={styles.deleteButton} 
                         text="SUPPRIMER"
                         onPress={() =>
@@ -113,6 +104,7 @@ class FraisAjout extends React.Component {
 
     showDraftButton()
     {
+		if(this.state.statusId == 1 || this.state.statusId == 2)
             return <Button 
                         buttonStyles={styles.draftButton}
                         text="BROUILLON" 
@@ -121,6 +113,7 @@ class FraisAjout extends React.Component {
 
     showValidateButton()
     {
+		if(this.state.statusId == 1 || this.state.statusId == 2)
             return <Button 
                         text="VALIDER" 
                         onPress={() => this.validateNDF()} />
@@ -167,7 +160,7 @@ class FraisAjout extends React.Component {
 
 		return (
 
-			<View>
+			<View style={styles.mainContainer}>
 				<ContainerTitre title={this.state.title} navigation={this.props.navigation}>
                 
 				<View style={styles.container}>
@@ -215,14 +208,13 @@ class FraisAjout extends React.Component {
 								</Table>
 							</View>
 							
-                    </View>
-                   
+                    </View>                   
 					
 
-				    <View style={styles.container4}>
+				    <View style={styles.containerButtons}>
 						{this.showDeleteButton()}
 						{this.showDraftButton()}
-						{this.showValidateButton()}{console.log(this.props.navigation)}
+						{this.showValidateButton()}
 					</View>
 
 			    </View>
