@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Image, Text, Animated, Dimensions, TouchableOpacity } from 'react-native';
-
+import propTypes from 'prop-types';
 import styles from './styles';
 
 var {height, width} = Dimensions.get('window');
@@ -13,6 +13,7 @@ class ContainerHeader extends Component {
 			pan: new Animated.ValueXY({x:-width, y:0}),
 			isOpen:false,
 			navigationParent: null,
+			nbNotifications: 8, //Necessite de mettre une variable globale
 		}
 	}
 
@@ -57,7 +58,11 @@ class ContainerHeader extends Component {
 	
 	fermerMenu(){
 		this.props.fermerMenu();
-}
+	}
+
+	afficherNotifications(notif) {
+		return notif > 0 ? 	<Text style={styles.TextItemNotif} onLayout={(event) => console.log(event.nativeEvent.layout.height)}>{notif}</Text> : null;
+	}
 	
 	render(){
 		return (
@@ -75,7 +80,7 @@ class ContainerHeader extends Component {
 					</View>
 
 					<TouchableOpacity style={styles.ItemMenu} onPress={()=>this.afficherEcran('Accueil')}>						
-						<View>
+						<View style={styles.ItemMenuView}>
 							<Image style={styles.IconItemMenu}
 								source={require('../../images/icons/calendar.png')}
 							/>
@@ -83,7 +88,7 @@ class ContainerHeader extends Component {
 						</View>
 					</TouchableOpacity>
 					<TouchableOpacity style={styles.ItemMenu} onPress={()=>this.afficherEcran('ActivitesListe')}>						
-						<View>
+						<View style={styles.ItemMenuView}>
 							<Image style={styles.IconItemMenu}
 								source={require('../../images/icons/ActiviteIcon.png')}
 							/>
@@ -91,7 +96,7 @@ class ContainerHeader extends Component {
 						</View>
 					</TouchableOpacity>
 					<TouchableOpacity style={styles.ItemMenu} onPress={()=>this.afficherEcran('FraisListe')}>						
-						<View>
+						<View style={styles.ItemMenuView}>
 							<Image style={styles.IconItemMenu}
 								source={require('../../images/icons/FoodIcon.png')}
 							/>
@@ -99,7 +104,7 @@ class ContainerHeader extends Component {
 						</View>
 					</TouchableOpacity>	
 					<TouchableOpacity style={styles.ItemMenu} onPress={()=>this.afficherEcran('CongesListe')}>						
-						<View>
+						<View style={styles.ItemMenuView}>
 							<Image style={styles.IconItemMenu}
 								source={require('../../images/icons/CongesIcon.png')}
 							/>
@@ -107,7 +112,7 @@ class ContainerHeader extends Component {
 						</View>
 					</TouchableOpacity>
 					<TouchableOpacity style={styles.ItemMenu} onPress={()=>this.afficherEcran('AnnuaireListe')}>						
-						<View>
+						<View style={styles.ItemMenuView}>
 							<Image style={styles.IconItemMenu}
 								source={require('../../images/icons/AnnuaireIcon.png')}
 							/>
@@ -115,11 +120,12 @@ class ContainerHeader extends Component {
 						</View>
 					</TouchableOpacity>
 					<TouchableOpacity style={styles.ItemMenu} onPress={()=>this.afficherEcran('Notifications')}>						
-						<View>
+						<View style={styles.ItemMenuView}>
 							<Image style={styles.IconItemMenu}
 								source={require('../../images/icons/calendar.png')}
 							/>
-							<Text style={styles.TextItemMenu}>Notifications</Text>   
+							<Text style={styles.TextItemMenu}>Notifications</Text>
+							{this.afficherNotifications(this.state.nbNotifications)}
 						</View>
 					</TouchableOpacity>
 					<TouchableOpacity style={[styles.ItemMenu, styles.LastItemMenuLeft]} onPress={()=>this.afficherEcran('APropos')}>						

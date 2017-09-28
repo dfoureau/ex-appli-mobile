@@ -9,6 +9,7 @@ import CheckBox from 'react-native-check-box'
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { Button } from '../../../components/Buttons';
+import Panel from '../../../components/Panel/Panel';
 
 class FraisDetail extends React.Component {
 	 
@@ -94,238 +95,236 @@ class FraisDetail extends React.Component {
 
             <View style={styles.mainContainer}>
                 <ContainerTitre title={this.state.title} navigation={this.props.navigation}>
-                </ContainerTitre>
                 
-                <ScrollView style={styles.scrollView}>
-                    <View style={styles.container}>
+				<View style={styles.container}>
 
-                        <View style={styles.containerEtat}>
-                            <Text style={styles.text}>État: {this.state.status}</Text>
-                        </View>
+					<View style={styles.containerEtat}>
+						<Text style={styles.text}>État: {this.state.status}</Text>
+					</View>
 
-                        <View style={styles.containerCalendar}>
-                            <Calendar
-                                markedDates={this.convertDates()}
-                                markingType={'interactive'}
-                                onDayPress={(day) => this.onDateSelected(day)}
-                            />
-                        </View>
-                        
-                        <View style={styles.containerDetails}>
+					<View style={styles.containerCalendar}>
+						<Calendar
+							markedDates={this.convertDates()}
+							markingType={'interactive'}
+							onDayPress={(day) => this.onDateSelected(day)}
+						/>
+					</View>
+					
+					<View style={styles.containerDetails}>
 
-                            <View style={styles.containerInput}>
-                                <Text style={styles.inputTitle}>Informations client*</Text>
+						<Panel 	title="Informations client*" 
+								containerStyle={{backgroundColor:"transparent", margin:0}}>
 
-								<View style={styles.inputView}>
-									<CheckBox	
-										onClick={() => this.handleChecked()}
-										isChecked={this.state.factureClientChecked}
-										rightText='Facture client ?'
-										rightTextStyle={{color:'black', fontSize: 16}}
-										style={styles.checkbox}
+							<View style={styles.inputView}>
+								<CheckBox	
+									onClick={() => this.handleChecked()}
+									isChecked={this.state.factureClientChecked}
+									rightText='Facture client ?'
+									rightTextStyle={{color:'black', fontSize: 16}}
+									style={styles.checkbox}
+								/>
+								<View>
+									<Text style={styles.text}>Client/Object* :</Text>
+									<TextInput
+										style={styles.inputComponent}
+										value={this.state.nomClient}
+										onChangeText={(text) => this.setState({nomClient: text})}
+										editable={true}
+										underlineColorAndroid='transparent'
+									/>	 
+								</View>
+								<View>
+									<Text style={styles.text}>Lieu de déplacement* :</Text>
+									<TextInput
+										style={styles.inputComponent}
+										value={this.state.lieuDeplacement}
+										placeholderTextColor='#000000'
+										onChangeText={(text) => this.setState({lieuDeplacement: text})}
+										editable={true}
+										underlineColorAndroid='transparent'
+									/>	 
+								</View>
+							</View>
+
+						</Panel>
+
+						<Panel 	title="Transport" 
+								containerStyle={{backgroundColor:"transparent", margin:0}}>
+
+							<View style={styles.inputView}>
+								<View style={styles.inputGroup}>
+									<Text style={[styles.text,styles.inputText]}>Nombre de km :</Text>
+									<TextInput
+										style={[styles.inputComponent, styles.inputComponentRow]}
+										value={this.state.nbKm}
+										onChangeText={(text) => this.setState({nbKm: text})}
+										editable={true}
+										underlineColorAndroid='transparent'
+										keyboardType="numeric"
+									/>	 
+								</View>
+								<View style={styles.inputGroup}>
+									<Text style={[styles.text,styles.inputText]}>Forfait :</Text>
+									<TextInput
+										style={[styles.inputComponent, styles.inputComponentRow]}
+										value={this.state.forfait}
+										onChangeText={(text) => this.setState({forfait: text})}
+										editable={true}
+										underlineColorAndroid='transparent'
+										keyboardType="numeric"
 									/>
-									<View>
-										<Text style={styles.text}>Client/Object* :</Text>
-										<TextInput
-											style={styles.inputComponent}
-											value={this.state.nomClient}
-											onChangeText={(text) => this.setState({nomClient: text})}
-											editable={true}
-											underlineColorAndroid='transparent'
-										/>	 
-									</View>
-									<View>
-										<Text style={styles.text}>Lieu de déplacement* :</Text>
-										<TextInput
-											style={styles.inputComponent}
-											value={this.state.lieuDeplacement}
-											placeholderTextColor='#000000'
-											onChangeText={(text) => this.setState({lieuDeplacement: text})}
-											editable={true}
-											underlineColorAndroid='transparent'
-										/>	 
-									</View>
+								</View> 
+								<View style={styles.inputGroup}>
+									<Text style={[styles.text,styles.inputText]}>SNCF :</Text>
+									<TextInput
+										style={[styles.inputComponent, styles.inputComponentRow]}
+										value={this.state.sncf}
+										onChangeText={(text) => this.setState({sncf: text})}
+										editable={true}
+										underlineColorAndroid='transparent'
+										keyboardType="numeric"
+									/>	 
 								</View>
-                            </View>
-
-                            <View style={styles.containerInput}>
-                                <Text style={styles.inputTitle}>Transport</Text>
-
-								<View style={styles.inputView}>
-									<View style={styles.inputGroup}>
-										<Text style={[styles.text,styles.inputText]}>Nombre de km :</Text>
-										<TextInput
-											style={[styles.inputComponent, styles.inputComponentRow]}
-											value={this.state.nbKm}
-											onChangeText={(text) => this.setState({nbKm: text})}
-											editable={true}
-											underlineColorAndroid='transparent'
-											keyboardType="numeric"
-										/>	 
-									</View>
-									<View style={styles.inputGroup}>
-										<Text style={[styles.text,styles.inputText]}>Forfait :</Text>
-										<TextInput
-											style={[styles.inputComponent, styles.inputComponentRow]}
-											value={this.state.forfait}
-											onChangeText={(text) => this.setState({forfait: text})}
-											editable={true}
-											underlineColorAndroid='transparent'
-											keyboardType="numeric"
-										/>
-									</View> 
-									<View style={styles.inputGroup}>
-										<Text style={[styles.text,styles.inputText]}>SNCF :</Text>
-										<TextInput
-											style={[styles.inputComponent, styles.inputComponentRow]}
-											value={this.state.sncf}
-											onChangeText={(text) => this.setState({sncf: text})}
-											editable={true}
-											underlineColorAndroid='transparent'
-											keyboardType="numeric"
-										/>	 
-									</View>
-									<View style={styles.inputGroup}>
-										<Text style={[styles.text,styles.inputText]}>Péages :</Text>
-										<TextInput
-											style={[styles.inputComponent, styles.inputComponentRow]}
-											value={this.state.peages}
-											onChangeText={(text) => this.setState({peages: text})}
-											editable={true}
-											underlineColorAndroid='transparent'
-											keyboardType="numeric"
-										/>	 
-									</View>
-									<View style={styles.inputGroup}>
-										<Text style={[styles.text,styles.inputText]}>Essence :</Text>
-										<TextInput
-											style={[styles.inputComponent, styles.inputComponentRow]}
-											value={this.state.essence}
-											onChangeText={(text) => this.setState({essence: text})}
-											editable={true}
-											underlineColorAndroid='transparent'
-											keyboardType="numeric"
-										/>	 
-									</View>
-									<View style={styles.inputGroup}>
-										<Text style={[styles.text,styles.inputText]}>Taxi :</Text>
-										<TextInput
-											style={[styles.inputComponent, styles.inputComponentRow]}
-											value={this.state.taxi}
-											onChangeText={(text) => this.setState({taxi: text})}
-											editable={true}
-											underlineColorAndroid='transparent'
-											keyboardType="numeric"
-										/>	 
-									</View>
-									<View style={[styles.inputGroup, {paddingTop: 10, paddingBottom: 10}]}>
-									<Text style={styles.text}>Indemnité kilométrique</Text>
-									<Text style={[styles.text, {width: 130, textAlign: 'right'}]}>{this.state.indemKm}</Text>
-									</View>
+								<View style={styles.inputGroup}>
+									<Text style={[styles.text,styles.inputText]}>Péages :</Text>
+									<TextInput
+										style={[styles.inputComponent, styles.inputComponentRow]}
+										value={this.state.peages}
+										onChangeText={(text) => this.setState({peages: text})}
+										editable={true}
+										underlineColorAndroid='transparent'
+										keyboardType="numeric"
+									/>	 
+								</View>
+								<View style={styles.inputGroup}>
+									<Text style={[styles.text,styles.inputText]}>Essence :</Text>
+									<TextInput
+										style={[styles.inputComponent, styles.inputComponentRow]}
+										value={this.state.essence}
+										onChangeText={(text) => this.setState({essence: text})}
+										editable={true}
+										underlineColorAndroid='transparent'
+										keyboardType="numeric"
+									/>	 
+								</View>
+								<View style={styles.inputGroup}>
+									<Text style={[styles.text,styles.inputText]}>Taxi :</Text>
+									<TextInput
+										style={[styles.inputComponent, styles.inputComponentRow]}
+										value={this.state.taxi}
+										onChangeText={(text) => this.setState({taxi: text})}
+										editable={true}
+										underlineColorAndroid='transparent'
+										keyboardType="numeric"
+									/>	 
+								</View>
+								<View style={[styles.inputGroup, {paddingTop: 10, paddingBottom: 10}]}>
+								<Text style={styles.text}>Indemnité kilométrique</Text>
+								<Text style={[styles.text, {width: 130, textAlign: 'right'}]}>{this.state.indemKm}</Text>
 								</View>
 							</View>
+						</Panel>
 
-							<View style={styles.containerInput}>
-								<Text style={styles.inputTitle}>Abonnements</Text>
+						<Panel title="Abonnements" 
+								containerStyle={{backgroundColor:"transparent", margin:0}}>
 
-								<View style={styles.inputView}>
-									<View style={styles.inputGroup}>
-										<Text style={[styles.text,styles.inputText]}>Nb de zones :</Text>
-										<TextInput
-											style={[styles.inputComponent, styles.inputComponentRow]}
-											value={this.state.nbZones}
-											onChangeText={(text) => this.setState({nbZones: text})}
-											editable={true}
-											underlineColorAndroid='transparent'
-											keyboardType="numeric"
-										/>	 
-									</View>
-									<View style={styles.inputGroup}>
-										<Text style={[styles.text,styles.inputText]}>50% :</Text>
-										<TextInput
-											style={[styles.inputComponent, styles.inputComponentRow]}
-											value={this.state.pourcent}
-											onChangeText={(text) => this.setState({pourcent: text})}
-											editable={true}
-											underlineColorAndroid='transparent'
-											keyboardType="numeric"
-										/>
-									</View> 
+							<View style={styles.inputView}>
+								<View style={styles.inputGroup}>
+									<Text style={[styles.text,styles.inputText]}>Nb de zones :</Text>
+									<TextInput
+										style={[styles.inputComponent, styles.inputComponentRow]}
+										value={this.state.nbZones}
+										onChangeText={(text) => this.setState({nbZones: text})}
+										editable={true}
+										underlineColorAndroid='transparent'
+										keyboardType="numeric"
+									/>	 
 								</View>
-                            </View>
-
-                            <View style={styles.containerInput}>
-								<Text style={styles.inputTitle}>Frais de réception</Text>
-
-								<View style={styles.inputView}>
-									<View style={styles.inputGroup}>
-										<Text style={[styles.text,styles.inputText]}>Hôtel :</Text>
-										<TextInput
-											style={[styles.inputComponent, styles.inputComponentRow]}
-											value={this.state.hotel}
-											onChangeText={(text) => this.setState({hotel: text})}
-											editable={true}
-											underlineColorAndroid='transparent'
-											keyboardType="numeric"
-										/>	 
-									</View>
-									<View style={styles.inputGroup}>
-										<Text style={[styles.text,styles.inputText]}>Repas :</Text>
-										<TextInput
-											style={[styles.inputComponent, styles.inputComponentRow]}
-											value={this.state.repas}
-											onChangeText={(text) => this.setState({repas: text})}
-											editable={true}
-											underlineColorAndroid='transparent'
-											keyboardType="numeric"
-										/>
-									</View> 
-									<View style={styles.inputGroup}>
-										<Text style={[styles.text,styles.inputText]}>Invitation :</Text>
-										<TextInput
-											style={[styles.inputComponent, styles.inputComponentRow]}
-											value={this.state.invitation}
-											onChangeText={(text) => this.setState({invitation: text})}
-											editable={true}
-											underlineColorAndroid='transparent'
-											keyboardType="numeric"
-										/>
-									</View> 
-								</View>
+								<View style={styles.inputGroup}>
+									<Text style={[styles.text,styles.inputText]}>50% :</Text>
+									<TextInput
+										style={[styles.inputComponent, styles.inputComponentRow]}
+										value={this.state.pourcent}
+										onChangeText={(text) => this.setState({pourcent: text})}
+										editable={true}
+										underlineColorAndroid='transparent'
+										keyboardType="numeric"
+									/>
+								</View> 
 							</View>
+						</Panel>
 
-                            <View style={styles.containerInput}>
-								<Text style={styles.inputTitle}>Divers</Text>
+						<Panel title="Frais de réception" 
+								containerStyle={{backgroundColor:"transparent", margin:0}}>
 
-								<View style={styles.inputView}>
-									<View style={styles.inputGroup}>
-										<Text style={[styles.text,styles.inputText]}>Divers :</Text>
-										<TextInput
-											style={[styles.inputComponent, styles.inputComponentRow]}
-											value={this.state.divers}
-											onChangeText={(text) => this.setState({divers: text})}
-											editable={true}
-											underlineColorAndroid='transparent'
-											keyboardType="numeric"
-										/>	 
-									</View>
-									<View style={styles.inputGroup}>
-										<Text style={[styles.text,styles.inputText, styles.inputTextSmall]}>Libellé frais divers :</Text>
-										<TextInput
-											style={[styles.inputComponent, styles.inputComponentRow, styles.inputComponentSmall]}
-											value={this.state.libelleDivers}
-											onChangeText={(text) => this.setState({libelleDivers: text})}
-											editable={true}
-											underlineColorAndroid='transparent'
-										/>
-									</View> 
+							<View style={styles.inputView}>
+								<View style={styles.inputGroup}>
+									<Text style={[styles.text,styles.inputText]}>Hôtel :</Text>
+									<TextInput
+										style={[styles.inputComponent, styles.inputComponentRow]}
+										value={this.state.hotel}
+										onChangeText={(text) => this.setState({hotel: text})}
+										editable={true}
+										underlineColorAndroid='transparent'
+										keyboardType="numeric"
+									/>	 
 								</View>
+								<View style={styles.inputGroup}>
+									<Text style={[styles.text,styles.inputText]}>Repas :</Text>
+									<TextInput
+										style={[styles.inputComponent, styles.inputComponentRow]}
+										value={this.state.repas}
+										onChangeText={(text) => this.setState({repas: text})}
+										editable={true}
+										underlineColorAndroid='transparent'
+										keyboardType="numeric"
+									/>
+								</View> 
+								<View style={styles.inputGroup}>
+									<Text style={[styles.text,styles.inputText]}>Invitation :</Text>
+									<TextInput
+										style={[styles.inputComponent, styles.inputComponentRow]}
+										value={this.state.invitation}
+										onChangeText={(text) => this.setState({invitation: text})}
+										editable={true}
+										underlineColorAndroid='transparent'
+										keyboardType="numeric"
+									/>
+								</View> 
 							</View>
+						</Panel>
+							
+						<Panel title="Divers" 
+								containerStyle={{backgroundColor:"transparent", margin:0}}>
 
-                        </View>
-                        
-                    </View>
-                </ScrollView>
+							<View style={styles.inputView}>
+								<View style={styles.inputGroup}>
+									<Text style={[styles.text,styles.inputText]}>Divers :</Text>
+									<TextInput
+										style={[styles.inputComponent, styles.inputComponentRow]}
+										value={this.state.divers}
+										onChangeText={(text) => this.setState({divers: text})}
+										editable={true}
+										underlineColorAndroid='transparent'
+										keyboardType="numeric"
+									/>	 
+								</View>
+								<View style={styles.inputGroup}>
+									<Text style={[styles.text,styles.inputText, styles.inputTextSmall]}>Libellé frais divers :</Text>
+									<TextInput
+										style={[styles.inputComponent, styles.inputComponentRow, styles.inputComponentSmall]}
+										value={this.state.libelleDivers}
+										onChangeText={(text) => this.setState({libelleDivers: text})}
+										editable={true}
+										underlineColorAndroid='transparent'
+									/>
+								</View> 
+							</View>
+						</Panel>
+
+					</View>
+					
+                </View>
                 
                 <View style={styles.containerButton}>
                     <Button 
@@ -339,7 +338,8 @@ class FraisDetail extends React.Component {
                         )}/>
 					<Button onPress={() => this.handleValidate()} text="VALIDER"/>
                 </View>
-            </View>
+			</ContainerTitre>
+			</View>
         
 		);
 	}

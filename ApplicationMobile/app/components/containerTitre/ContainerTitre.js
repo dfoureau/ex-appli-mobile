@@ -46,16 +46,18 @@ export default class ContainerTitre extends React.Component {
 
 		return (
         <View>
-            <View style={styles.ContainerHeader}>
-            <TouchableHighlight style={styles.MenuIconLink} onPress={()=>this.retour()}>
-                <Image style={styles.MenuIcon}
-                    source={require('../../images/icons/retour.png')}
-                />
-            </TouchableHighlight>
-            <Text style={styles.TextHeader}>{this.props.title}</Text>
-        </View>
-
-        <ScrollView>
+            <ScrollView>
+                <View style={styles.ContainerHeader}>
+                    <TouchableHighlight style={styles.MenuIconLink} onPress={()=>this.retour()}>
+                        <Image style={styles.MenuIcon}
+                            source={require('../../images/icons/retour.png')}
+                        />
+                    </TouchableHighlight>
+                    <Image style={styles.LogoTitreCat} source={require('../../images/logo.png')}/>
+                    <Text style={styles.TextHeader}>{this.props.title}</Text>
+                </View>
+        
+                {/* On indique qu'on affiche les donnée de l'enfant */}
                 {this.props.children}
             </ScrollView>
             
@@ -65,10 +67,8 @@ export default class ContainerTitre extends React.Component {
                 width:width,
                 height:height,
                 transform: this.state.pan.getTranslateTransform(),         // Bind opacity to animated value
-            }}
-            
-            >
-         </Animated.View>
+            }}>
+            </Animated.View>
 
         </View>
 		);

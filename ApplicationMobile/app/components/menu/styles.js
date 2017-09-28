@@ -44,6 +44,11 @@ export default StyleSheet.create({
         paddingTop: 5,
         height: 50,
     },
+    
+    ItemMenuView: {
+        flexDirection:'row', 
+        alignItems:'center',
+    },
 
     LastItemMenuLeft: {             
         position: 'absolute', 
@@ -69,12 +74,24 @@ export default StyleSheet.create({
         height: 36,
     },
 
+    TextItemNotif: {
+        right:50, 
+        bottom: 6, 
+        paddingLeft: 5.5, 
+        minHeight: 16.5, 
+        minWidth: 16.5,
+        fontSize:12, 
+        backgroundColor:'red',
+        fontWeight: '500', 
+        color:'white', 
+        borderRadius:10,
+    },
+
     TextItemMenu: {                      
+        flex:1, 
         color: '#000000', 
         fontSize: 16,
-        position: 'relative', 
-        left: 44, 
-        bottom: 28, 
+        marginLeft: 8,
     },
 
     ContainerOpaque: {
