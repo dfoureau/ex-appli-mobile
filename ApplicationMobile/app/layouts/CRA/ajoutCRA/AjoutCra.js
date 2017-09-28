@@ -12,12 +12,13 @@ import CraConfirmation from '../craConfirmation/CraConfirmation';
 import Style from '../../../styles/Styles';
 import style from './styles';
 
-class AjoutCra extends React.Component {
-	 
+ class AjoutCra extends React.Component {
+
 	constructor (props) {
 		super(props)
+
 		this.state = {
-		    title:'Septembre 2017',
+		   title: '',
             statusId: 1,
             TextClient : ' ',
             TextResponsable :' ',
@@ -59,6 +60,8 @@ class AjoutCra extends React.Component {
 
 
     }
+
+
     validatePressDelete(){
       this.props.navigation.navigate('CraConfirmation');
     }
@@ -107,8 +110,6 @@ class AjoutCra extends React.Component {
 
 
 
-
-
       afficherRow(){
             return (this.state.listCRA.map((row, i) => (
                 <TouchableOpacity key={i} onPress={() => this.modifyCRA(row.id)}>
@@ -126,13 +127,19 @@ class AjoutCra extends React.Component {
       this.props.navigation.navigate('ActivitesListe');
       };
 
+
+     static navigationOptions = ({ navigation }) => ({
+              Idate: navigation.state.params.Idate,
+           });
+
 	render() {
 
+       const { params } = this.props.navigation.state;
 
 		return (
           <ScrollView>
 			<View>
-				<ContainerTitre title={this.state.title} navigation={this.props.navigation}>
+				<ContainerTitre title={params.Idate} navigation={this.props.navigation}>
                   <View style={style.container}>
 
                     <View style={style.container1}>
@@ -284,5 +291,7 @@ const navigation=StackNavigator({
 });
 
 
+
+
 // EXPORT DE LA NAVIGATION
-export default navigation; 
+export default navigation;

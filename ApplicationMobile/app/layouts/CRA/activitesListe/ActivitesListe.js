@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, TextInput, Picker, Image, TouchableHighlight, FlatList } from 'react-native';
-import { StackNavigator, NavigationActions } from 'react-navigation';
+import { View, Text, TextInput, Picker, Image, TouchableHighlight, FlatList ,TouchableOpacity } from 'react-native';
+import { StackNavigator, NavigationActions,Navigator } from 'react-navigation';
 import style from './styles';
 import CRAItem from '../../../components/CRAItem/CRAItem';
+
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from '../../../components/containerAccueil/ContainerAccueil';
@@ -16,11 +17,11 @@ import AjoutCra from '../ajoutCRA/AjoutCra';
 import ActivitesConfirmation from '../activitesConfirmation/ActivitesConfirmation';
 
 
-class ActivitesListe extends React.Component {
+  class ActivitesListe extends React.Component {
 	 
 	constructor (props) {
 		super(props)
-		this.state = { title:'Relevés d\'Activités' }
+		this.state = { title:'Relevés d\'Activités' };
 	}
 
 	//Permet d'afficher l'ecran choisi dans le menu
@@ -46,7 +47,14 @@ class ActivitesListe extends React.Component {
         }
         return rows;
     }
-	
+
+	SendDataCRA(ItemDate){
+          this.props.navigation.navigate('AjoutCra',{Idate: ItemDate});
+          console.log("------------------------------------------");
+          console.log(ItemDate);
+	}
+
+
 	render() {
 
 		/*status => 1: validé, 2: brouillon, 3: en cours de validation */
@@ -85,7 +93,7 @@ class ActivitesListe extends React.Component {
                 status: 1
             }
 		];
-		
+
 
 		return (
 
@@ -121,9 +129,17 @@ class ActivitesListe extends React.Component {
 						data={data}
 						renderItem={({item}) => !item.moreThanOne
 						? <View>
+						        <TouchableOpacity key={item.Id} onPress = {() => this.SendDataCRA(item.date)}>
 								<CRAItem date={item.date} client={item.client} status={item.status} key={item.Id}/>
+								<AjoutCra title={item.date} />
+								</TouchableOpacity>
 							</View>
-					     : this.afficherCRAs(item)}/>
+					     :
+					     <View>
+					     <TouchableOpacity key={item.Id} onPress = {() => this.SendDataCRA(item.date)}>
+					      {this.afficherCRAs(item)}
+					     </TouchableOpacity>
+					     </View>}/>
 
 				    </View>
 				</ContainerAccueil>
@@ -153,4 +169,5 @@ const navigation=StackNavigator({
 
 
 // EXPORT DE LA NAVIGATION
-export default navigation; 
+export default navigation;
+
