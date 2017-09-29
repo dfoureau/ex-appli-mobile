@@ -1,8 +1,11 @@
 import React from 'react';
-import { View, Text, TextInput, Picker, Image, TouchableHighlight, FlatList } from 'react-native';
-import { StackNavigator, NavigationActions } from 'react-navigation';
+import { View, Text, TextInput, Picker, Image, TouchableHighlight, FlatList ,TouchableOpacity } from 'react-native';
+import { StackNavigator, NavigationActions,Navigator } from 'react-navigation';
 import style from './styles';
+import Style from '../../../styles/Styles';
+
 import CRAItem from '../../../components/CRAItem/CRAItem';
+
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from '../../../components/containerAccueil/ContainerAccueil';
@@ -16,11 +19,11 @@ import AjoutCra from '../ajoutCRA/AjoutCra';
 import ActivitesConfirmation from '../activitesConfirmation/ActivitesConfirmation';
 
 
-class ActivitesListe extends React.Component {
+  class ActivitesListe extends React.Component {
 	 
 	constructor (props) {
 		super(props)
-		this.state = { title:'Relevés d\'Activités' }
+		this.state = { title:'Relevés d\'Activités' };
 	}
 
 	//Permet d'afficher l'ecran choisi dans le menu
@@ -46,7 +49,17 @@ class ActivitesListe extends React.Component {
         }
         return rows;
     }
-	
+
+    //Transfert du paramétre vers la page AjoutCRa
+    //Params : Idate
+	SendDataCRA(ItemDate){
+          this.props.navigation.navigate('AjoutCra',{Idate: ItemDate});
+	}
+
+    AfficherAjoutCRa(){
+    this.props.navigation.navigate('AjoutCra',{Idate: 'Septembre 2017'});
+    }
+
 	render() {
 
 		/*status => 1: validé, 2: brouillon, 3: en cours de validation */
@@ -55,6 +68,8 @@ class ActivitesListe extends React.Component {
                 key:1,
                 Id: 1,
                 moreThanOne: false,
+                hideDate : false,
+                manyElt:false,
                 date: 'Août 2017',
                 client: 'La banque de Nantes',
                 status: 2
@@ -62,30 +77,34 @@ class ActivitesListe extends React.Component {
                 key:2,
                 Id: 2,
                 moreThanOne: true,
+                hideDate : false,
+                manyElt:true,
                 date: 'Juillet 2017',
-                content: [
-                    {
-                        key:11,
-                        Id: 11,
-                        client: 'La banque de Paris',
-                        status: 1
-                    }, {
-                        key:12,
-                        Id: 12,
-                        client: 'La banque de Paris',
-                        status: 1
-                    }
-                ]
-            }, {
+                client: 'La banque de Paris',
+                status: 1
+
+             }, {
                 key:3,
                 Id: 3,
+                moreThanOne: true,
+                date: 'Juillet 2017',
+                hideDate : true,
+                client: 'La banque de Paris',
+                status: 1,
+                manyElt:true,
+             },
+                {
+                key:4,
+                Id: 4,
                 moreThanOne: false,
+                manyElt:false,
+                hideDate : false,
                 date: 'Juin 2017',
                 client: 'Cat-Amania',
                 status: 1
-            }
-		];
-		
+            },
+];
+
 
 		return (
 
@@ -112,7 +131,7 @@ class ActivitesListe extends React.Component {
 						    <View style={style.containerButton}>
 						      <Button text="AJOUTER"
 						      
-						       onPress={() => {this.props.navigation.navigate('AjoutCra')}}/>
+						       onPress={() => this.AfficherAjoutCRa()}/>
 
 						    </View>
 					    </View>
@@ -121,10 +140,21 @@ class ActivitesListe extends React.Component {
 						data={data}
 						renderItem={({item}) => !item.moreThanOne
 						? <View>
-								<CRAItem date={item.date} client={item.client} status={item.status} key={item.Id}/>
-							</View>
-					     : this.afficherCRAs(item)}/>
+						        <TouchableOpacity key={item.Id} onPress = {() => this.SendDataCRA(item.date)}>
 
+                                 <CRAItem date={item.date} client={item.client} status={item.status} key={item.Id}
+                                 manyElt={item.manyElt}/>
+
+								</TouchableOpacity>
+							</View>
+					    :
+					       <View>
+					            <TouchableOpacity key={item.Id} onPress = {() => this.SendDataCRA(item.date)}>
+
+					                <CRAItem date={item.date} client={item.client} status={item.status} key={item.Id}
+					                hideDate={item.hideDate} manyElt={item.manyElt}  />
+					            </TouchableOpacity>
+					       </View>}/>
 				    </View>
 				</ContainerAccueil>
 			</View>
@@ -153,4 +183,5 @@ const navigation=StackNavigator({
 
 
 // EXPORT DE LA NAVIGATION
-export default navigation; 
+export default navigation;
+
