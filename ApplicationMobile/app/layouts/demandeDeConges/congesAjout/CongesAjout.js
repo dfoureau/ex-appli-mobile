@@ -7,9 +7,10 @@ import style from './styles';
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { Button } from '../../../components/Buttons';
-import Accueil from '../../accueil/Accueil'
+import Accueil from '../../accueil/Accueil';
 import CongesPeriode from '../congesPeriode/CongesPeriode';
 import CongesConfirmation from '../congesConfirmation/CongesConfirmation';
+import Period from '../Period';
 
 class CongesAjout extends React.Component {
     constructor (props) {
@@ -21,8 +22,6 @@ class CongesAjout extends React.Component {
             statusLabel:'Nouvelle DC',
             header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours']
         } 
-
-        this.setIsEmpty();
     } 
 
 	//Permet d'afficher l'ecran choisi dans le menu
@@ -31,11 +30,11 @@ class CongesAjout extends React.Component {
     }
     
     addNewConge(){
-		this.props.navigation.navigate('CongesPeriode', { idConge: null });
+		this.props.navigation.navigate('CongesPeriode', { idPeriod: null });
     }
     
     modifyConge(id){
-        this.props.navigation.navigate('CongesPeriode', { idConge: id });
+        this.props.navigation.navigate('CongesPeriode', { idPeriod: id });
     }
 
     deleteConge(){
@@ -53,36 +52,20 @@ class CongesAjout extends React.Component {
         this.props.navigation.navigate('CongesConfirmation');
     }
 
-    setIsEmpty()
-    {
-        AsyncStorage.getItem('periodList').then((periodList) => {
-            if(periodList == null)
-                this.setState({isEmpty: true}) 
-            else {
-                var newPeriod = JSON.parse(periodList)
-                this.setState({isEmpty: false, periodList: newPeriod});
-            }
-        }).done();
-    }
-
     afficherRow(){
-        try {
-            if(this.state.periodList != null)
-                return (this.state.periodList.map((row, i) => (
-                    <TouchableOpacity key={i} onPress={() => this.modifyConge(row.id)}>
-                        <Row 
-                            style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
-                            borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
-                            textStyle={style.rowText}
-                            data={[row.startDate, row.endDate, row.absTypeLabel, '1']}/> 
-                    </TouchableOpacity>   
-                )));  
-            else 
-                return <Text></Text>;
-        }
-        catch(error){
-            console.log(error.message);
-        }   
+        var periods = Period.objects('Period'); 
+        if(periods != null)
+            return (periods.map((row, i) => (
+                <TouchableOpacity key={i} onPress={() => this.modifyConge(row.id)}>
+                    <Row 
+                        style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
+                        borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
+                        textStyle={style.rowText}
+                        data={[row.startDate, row.endDate, row.absTypeLabel, '1']}/> 
+                </TouchableOpacity>   
+            )));  
+        else 
+            return <Text></Text>;
     }
 
     showDeleteButton()
@@ -163,7 +146,7 @@ class CongesAjout extends React.Component {
                         <View style={style.containerTable}>
                             <Table borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}>
                                 <Row data={this.state.header} style={style.header} textStyle={style.headerText} />
-                                {this.state.isEmpty ? <Text/> : this.afficherRow()}
+                                {this.afficherRow()}
                             </Table>
                         </View>
                         <View>    

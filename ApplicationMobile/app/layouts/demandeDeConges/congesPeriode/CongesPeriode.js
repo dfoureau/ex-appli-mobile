@@ -1,21 +1,30 @@
 import React from 'react';
-import { View, Text, TextInput, Picker, TouchableOpacity, AsyncStorage } from 'react-native';
+import { View, Text, TextInput, Picker, TouchableOpacity } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import Style from './styles';
+import Realm from 'realm';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { Button } from '../../../components/Buttons';
-import Accueil from '../../accueil/Accueil'
+import Accueil from '../../accueil/Accueil';
 import Calendar from '../../../components/calendar/Calendar';
+import Period from '../Period';
 
 import styles from './styles';
-
-var list = [];
 
 class CongesPeriode extends React.Component { 
 	constructor (props) {
         super(props)
+        this.state   = { 
+            title:'Détails période', 
+            date1: '09/09/2017',
+            moment1: '1',
+            date2: '09/09/2017',
+            moment2: '2',
+            absence: ''
+        };   
+
         this.setInitialValues()
     }
     
@@ -26,23 +35,23 @@ class CongesPeriode extends React.Component {
     setInitialValues()
     {
         const { params } = this.props.navigation.state;
-        // Nouvelle période
-        if( params.idPeriod == null)
+
+        if( params.idPeriod != null)
         {
-            this.state = { 
-                title:'Détails période', 
-                date1: '09/09/2017',
-                moment1: '1',
-                date2: '12/12/2017',
-                moment2: '2',
-                absence: ''
-            };   
-        }         
+            var period = Period.objectForPrimaryKey('Period', params.idPeriod);
+
+            this.state = {
+                date1: period.startDate,
+                moment1: period.startPeriod,
+                date2: period.endDate,
+                moment2: period.endPeriod,
+                absence: period.absTypeId
+            };
+        }            
     }
     
-    savePeriod()
+    savePeriod(idPeriod)
     {
-        var periodList = [];
         var period = {
             startDate: this.state.date1,
             startPeriod: this.state.moment1, 
@@ -52,35 +61,59 @@ class CongesPeriode extends React.Component {
             absTypeLabel: 'CP'
         }; 
 
-        periodList.push(period);
+        if(idPeriod == null)
+        {
+            // Création d'une période
+            Period.write(() => {
+                Period.create('Period', {  
+                    id: 1,
+                    startDate: period.startDate,
+                    startPeriod: period.startPeriod,
+                    endDate:  period.endDate,
+                    endPeriod: period.endPeriod,
+                    absTypeId: period.absTypeId,
+                    absTypeLabel: period.absTypeLabel
+                })
+            })
+        }
+        else
+        {
+            // Mise à jour d'une période
+            Period.write(() => {
+                Period.create('Period', {  
+                    id: id,
+                    startDate: period.startDate,
+                    startPeriod: period.startPeriod,
+                    endDate:  period.endDate,
+                    endPeriod: period.endPeriod,
+                    absTypeId: period.absTypeId,
+                    absTypeLabel: period.absTypeLabel
+                }, true);
+            })
+        }
+    }
 
-        try {
-            AsyncStorage.setItem('periodList', JSON.stringify(periodList));
-        }
-        catch(error){
-            console.log(error.message);
-        }
+    deletePeriod(idPeriod)
+    {
+        var period = Period.objectForPrimaryKey('Period', idPeriod);
+        Period.write(() => {
+            Period.delete(period);
+        });
     }
 
     handleValidate() {
         // TODO : Verifier que toutes les valeurs sont remplies
-
-        // Ajout et sauvegarde item dans la liste
-        this.savePeriod();
-
-        // Maj de l'item dans la liste
-        // item = this.state.listConges.find(i => i.id === params.idConge);
-        // item.startDate = this.state.date1;
-        // item.startPeriod = this.state.moment1;
-        // item.endDate = this.state.date2;
-        // item.endPeriod = this.state.moment2;
-        // item.absTypeId = this.state.absence;
-
+        const { params } = this.props.navigation.state;
+        this.savePeriod(params.idPeriod);
+        // Retour à la page d'ajout
         this.props.navigation.navigate('CongesAjout');
     }
 
     handleSupprimer() {
-        
+        const { params } = this.props.navigation.state;
+        this.deletePeriod(params.idPeriod);
+        // Retour à la page d'ajout
+        this.props.navigation.navigate('CongesAjout');
     }
 
 	render() {
