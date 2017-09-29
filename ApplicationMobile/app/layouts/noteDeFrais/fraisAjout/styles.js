@@ -81,7 +81,7 @@ export default StyleSheet.create({
       //Tableau
       container3: {
         flex:0.75,
-        marginTop:20,
+        marginTop:15,
         marginHorizontal: 10,
         flexDirection: 'column'
       },

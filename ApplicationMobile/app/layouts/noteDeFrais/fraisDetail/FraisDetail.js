@@ -29,7 +29,7 @@ class FraisDetail extends React.Component {
 			selectedDatesArray: this.setDatesArray(),
 			isforfait: this.props.navigation.state.params.forfait,
 			factureClientChecked: false,
-			nomClient: '',
+			nomClient: this.props.navigation.state.params.client ? this.props.navigation.state.params.client : '',
 			lieuDeplacement: '',
 			nbKm: '',
 			indemKm: 0.333,
@@ -75,7 +75,6 @@ class FraisDetail extends React.Component {
 		let index = this.state.selectedDatesArray.indexOf(date);
 		if (index <= -1) {
 			//Ajout d'une date dans le tableau
-			console.log('add');
 			this.setState(prevState => ({
 				selectedDatesArray: [...prevState.selectedDatesArray, date]
 			}))
@@ -88,17 +87,8 @@ class FraisDetail extends React.Component {
 		}
 	}
 	afficherDate() {
-		//TEMP recupère les données du tableau en parametre
-		let tab = this.props.navigation.state.params.data;
-		let id = this.props.navigation.state.params.id;
-		this.setState({
-			idLigne: id
-		});
-		function getWithId(el) { //Cherche l'element dans le tableau qui correspond a l'id
-			return el.id == id;
-		}
-		let res = tab.find(getWithId),
-			date = moment(res.date, 'DD-MM-YYYY');
+		//TEMP recupère la date en parametre 
+		let	date = moment(this.props.navigation.state.params.date, 'DD-MM-YYYY');
 		return date.format('dddd DD MMMM YYYY');
 	}
 	
@@ -111,8 +101,8 @@ class FraisDetail extends React.Component {
     handleValidate() {
 		//Si forfait: params = liste des dates modifiees et des valeurs
 		//Si non: params = id de la ligne, valeurs
-		if (this.state.isforfait) {
-			this.props.navigation.navigate('FraisAjout', {id: this.state.idLigne});
+		if (!this.state.isforfait) {
+			this.props.navigation.navigate('FraisAjout', {id: this.props.navigation.state.params.id, client: this.state.nomClient, montant: this.state.nbKm});
 		}
 		else {
 			this.props.navigation.navigate('FraisAjout', {dates: this.state.selectedDatesArray});
@@ -133,7 +123,6 @@ class FraisDetail extends React.Component {
 	}
 
 	render() {
-
 		return (
 
             <View style={styles.mainContainer}>

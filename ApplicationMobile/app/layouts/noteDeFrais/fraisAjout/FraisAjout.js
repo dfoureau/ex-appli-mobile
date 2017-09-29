@@ -44,7 +44,7 @@ class FraisAjout extends React.Component {
 		//Soit ancienne NDF -> tableau prérempli avec get valeurs à partir d'un service, mois = passé en parametre (listeFrais pas vide)
 		
 		//TODO Check si liste presente dans le cache
-		
+
 		//Nouvelle NDF -> Tableau vide initié
 		let currentDate = new Date();
 		let initList = [],
@@ -54,12 +54,31 @@ class FraisAjout extends React.Component {
 			monthOk = true; //verif que le mois est toujours le bon
 		while (monthOk) {
 			if (jours.month() == month) {
-				initList.push({id: i, date: jours.format('DD-MM-YYYY'), dateShort: jours.format('dd DD')});
+				initList.push({id: i, 
+								date: jours.format('DD-MM-YYYY'), 
+								dateShort: jours.format('dd DD'),
+								client: '',
+								montant:''});
 				jours.add(1, 'days'); //passe au jour suivant
 				i++;
 			}
 			else monthOk = false; //Si on passe au moins suivant on arrete
 		}
+
+		//Modification NDF (TEMP - la liste doit etre recup dans le cache)
+		if (this.props.navigation.state.params != undefined) {
+			if (this.props.navigation.state.params.id != undefined && this.props.navigation.state.params.client != undefined){
+				let id =this.props.navigation.state.params.id;
+				function getWithId(el) { //Cherche l'element dans le tableau qui correspond a l'id
+					return el.id == id;
+				}
+				let index = initList.findIndex(getWithId);
+				initList[index].client = this.props.navigation.state.params.client;
+				initList[index].montant = this.props.navigation.state.params.montant;
+			}
+		}
+		
+
 		return initList;		
 	}
 
@@ -67,12 +86,12 @@ class FraisAjout extends React.Component {
 	afficherRow(){
 		moment.locale('fr');
 		return (this.state.listFrais.map((row, i) => (
-			<TouchableOpacity key={i} onPress={() => this.modifyNDF(row.id)}>
+			<TouchableOpacity key={i} onPress={() => this.modifyNDF(row.id, row.date, row.client)}>
 				<Row 
 				style={[styles.row, i%2 && {backgroundColor: '#FFFFFF'}]}
 				borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
 				textStyle={styles.rowText}
-				data={[row.dateShort, '', 0]}/> 
+				data={[row.dateShort, row.client, row.montant ? row.montant : 0]}/> 
 			</TouchableOpacity>   
 		)));
 		return lignes;
@@ -85,8 +104,9 @@ class FraisAjout extends React.Component {
 		)
 	}
 
-	modifyNDF(id){
-        this.props.navigation.navigate('FraisDetail',{forfait: false, id: id, data:this.state.listFrais});
+	modifyNDF(id, date, client){ // date & client TEMPORAIRE
+		//Indique le numéro de la ligne a modifier, data = toute la liste => TEMPORAIRE
+        this.props.navigation.navigate('FraisDetail',{forfait: false, id: id, client:client, date:date});
     }
 	addNDF(monthSelected) {
 		this.props.navigation.navigate('FraisDetail', {forfait: true, month: monthSelected});
@@ -168,7 +188,7 @@ class FraisAjout extends React.Component {
 								<View style={styles.containerInfoElement}>
 									<Text style={styles.text}>Total à régler : {this.state.totalMontant} €</Text>
 									<Text style={styles.text}>Total client : {this.state.totalClient} €</Text>
-									<Text style={styles.text}>Nombre de jours : {this.state.nbJours}</Text>
+									{/*<Text style={styles.text}>Nombre de jours : {this.state.nbJours}</Text>*/}
 								</View>
 								<View style={styles.containerButton}>    
 									<Button
