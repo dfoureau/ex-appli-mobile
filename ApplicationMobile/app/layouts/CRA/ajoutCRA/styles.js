@@ -142,7 +142,6 @@ export default  StyleSheet.create({
        marginHorizontal: 10,
        paddingHorizontal:5,
        paddingVertical: 5,
-       borderWidth:0.5,
        borderColor: "#808080",
        borderRadius:5
 
@@ -157,7 +156,6 @@ export default  StyleSheet.create({
           marginHorizontal: 10,
           paddingHorizontal:5,
           paddingVertical: 5,
-          borderWidth:0.5,
           borderColor: "#808080",
           borderRadius:5
 
@@ -224,7 +222,7 @@ export default  StyleSheet.create({
    },
 
    textInputComment :{
-          marginLeft:20,
+          marginLeft:5,
           marginRight: 5,
           width: 300,
           height:70,
