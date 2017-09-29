@@ -76,8 +76,9 @@ import Panel from '../../../components/Panel/Panel';
               this.props.navigation.navigate('CraConfirmation');
     }
 
-     modifyCRA(id){
-            this.props.navigation.navigate('ActivitesDetail',{idCRA: id});
+     modifyCRA(id,startDate,endDate,absType){
+            this.props.navigation.navigate('ActivitesDetail',{idCRA: id,startDate:startDate,endDate:endDate,
+              absType:absType});
          }
 
      showDeleteButton()
@@ -110,7 +111,7 @@ import Panel from '../../../components/Panel/Panel';
 
       afficherRow(){
             return (this.state.listCRA.map((row, i) => (
-                <TouchableOpacity key={i} onPress={() => this.modifyCRA(row.id)}>
+                <TouchableOpacity key={i} onPress={() => this.modifyCRA(row.id,row.startDate,row.endDate,row.absType)}>
                     <Row
                     style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
                     borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
