@@ -69,13 +69,15 @@ fourthView:{
 firstViewCRA:{
   display: 'flex',
   flexDirection: 'row',
-  marginBottom: 30,
+  marginBottom: 25,
   marginLeft: 15,
 },
 firstViewCRANoMargin:{
   display: 'flex',
   flexDirection: 'row',
   marginLeft: 15,
+  marginBottom: 15,
+
 },
 
 periodText: {

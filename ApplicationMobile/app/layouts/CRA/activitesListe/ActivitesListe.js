@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, TextInput, Picker, Image, TouchableHighlight, FlatList ,TouchableOpacity } from 'react-native';
 import { StackNavigator, NavigationActions,Navigator } from 'react-navigation';
 import style from './styles';
+import Style from '../../../styles/Styles';
+
 import CRAItem from '../../../components/CRAItem/CRAItem';
 
 
@@ -66,6 +68,8 @@ import ActivitesConfirmation from '../activitesConfirmation/ActivitesConfirmatio
                 key:1,
                 Id: 1,
                 moreThanOne: false,
+                hideDate : false,
+                manyElt:false,
                 date: 'Août 2017',
                 client: 'La banque de Nantes',
                 status: 2
@@ -73,29 +77,33 @@ import ActivitesConfirmation from '../activitesConfirmation/ActivitesConfirmatio
                 key:2,
                 Id: 2,
                 moreThanOne: true,
+                hideDate : false,
+                manyElt:true,
                 date: 'Juillet 2017',
-                content: [
-                    {
-                        key:11,
-                        Id: 11,
-                        client: 'La banque de Paris',
-                        status: 1
-                    }, {
-                        key:12,
-                        Id: 12,
-                        client: 'La banque de Paris',
-                        status: 1
-                    }
-                ]
-            }, {
+                client: 'La banque de Paris',
+                status: 1
+
+             }, {
                 key:3,
                 Id: 3,
+                moreThanOne: true,
+                date: 'Juillet 2017',
+                hideDate : true,
+                client: 'La banque de Paris',
+                status: 1,
+                manyElt:true,
+             },
+                {
+                key:4,
+                Id: 4,
                 moreThanOne: false,
+                manyElt:false,
+                hideDate : false,
                 date: 'Juin 2017',
                 client: 'Cat-Amania',
                 status: 1
-            }
-		];
+            },
+];
 
 
 		return (
@@ -133,16 +141,20 @@ import ActivitesConfirmation from '../activitesConfirmation/ActivitesConfirmatio
 						renderItem={({item}) => !item.moreThanOne
 						? <View>
 						        <TouchableOpacity key={item.Id} onPress = {() => this.SendDataCRA(item.date)}>
-								<CRAItem date={item.date} client={item.client} status={item.status} key={item.Id}/>
+
+                                 <CRAItem date={item.date} client={item.client} status={item.status} key={item.Id}
+                                 manyElt={item.manyElt}/>
+
 								</TouchableOpacity>
 							</View>
-					     :
-					     <View>
-					     <TouchableOpacity key={item.Id} onPress = {() => this.SendDataCRA(item.date)}>
-					      {this.afficherCRAs(item)}
-					     </TouchableOpacity>
-					     </View>}/>
+					    :
+					       <View>
+					            <TouchableOpacity key={item.Id} onPress = {() => this.SendDataCRA(item.date)}>
 
+					                <CRAItem date={item.date} client={item.client} status={item.status} key={item.Id}
+					                hideDate={item.hideDate} manyElt={item.manyElt}  />
+					            </TouchableOpacity>
+					       </View>}/>
 				    </View>
 				</ContainerAccueil>
 			</View>

@@ -162,22 +162,22 @@ import style from './styles';
                             <View style={style.containerPicker}>
                                  <Picker
                            			style={{
-                           			width: 140 }}
+                           			width: 162 }}
                            			selectedValue={this.state.month}
                            			onValueChange={(itemValue, itemIndex) => this.setState({month: itemValue})}>
-                           					<Picker.Item label="Mois" value="0"/>
-                           					<Picker.Item label="Janvier" value="1"/>
-                           					<Picker.Item label="Février" value="2"/>
-                           					<Picker.Item label="Mars" value="3"/>
-                           				    <Picker.Item label="Avril" value="4"/>
-                           					<Picker.Item label="Mai" value="5"/>
-                           				    <Picker.Item label="Juin" value="6"/>
-                           					<Picker.Item label="Juillet" value="7"/>
-                           					<Picker.Item label="Août" value="8"/>
-                           					<Picker.Item label="Septembre" value="9"/>
-                           					<Picker.Item label="Octobre" value="10"/>
-                           					<Picker.Item label="Novembre" value="11"/>
-                           					<Picker.Item label="Décembre" value="12"/>
+                           					<Picker.Item label={params.Idate} value="0"/>
+                           					<Picker.Item label="Janvier 2017" value="1"/>
+                           					<Picker.Item label="Février 2017" value="2"/>
+                           					<Picker.Item label="Mars 2017" value="3"/>
+                           				    <Picker.Item label="Avril 2017" value="4"/>
+                           					<Picker.Item label="Mai 2017" value="5"/>
+                           				    <Picker.Item label="Juin 2017" value="6"/>
+                           					<Picker.Item label="Juillet 2017" value="7"/>
+                           					<Picker.Item label="Août 2017 " value="8"/>
+                           					<Picker.Item label="Septembre 2017 " value="9"/>
+                           					<Picker.Item label="Octobre 2017 " value="10"/>
+                           					<Picker.Item label="Novembre 2017 " value="11"/>
+                           					<Picker.Item label="Décembre 2017" value="12"/>
                            	     </Picker>
                             </View>
                          </View>
