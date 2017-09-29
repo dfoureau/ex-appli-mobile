@@ -21,9 +21,9 @@ class ActivitesDetail extends React.Component {
 		super(props)
 		this.state = { 
 			title:'Détails période',
-			date1: this.props.navigation.state.params.date1,
-			date2: this.props.navigation.state.params.date2,
-			activite: this.props.navigation.state.params.activite,
+			date1: this.props.navigation.state.params.startDate,
+			date2: this.props.navigation.state.params.endDate,
+			activite: this.props.navigation.state.params.absType,
 			activitesListe: [ {"code" :"1.0"}, 
 							{"code":"IC", "label":"Intercontrat"}, 
 							{"code":"FO", "label":"Formation"}, 
@@ -33,6 +33,7 @@ class ActivitesDetail extends React.Component {
 							{"code":"0.5+AM", "label":"0.5 + Arrêt maladie"}, 
 							{"code":"0.5+AB", "label":"0.5 + Absence diverse"},],
 			activiteClicked: "",
+
 		}
 	}
 
