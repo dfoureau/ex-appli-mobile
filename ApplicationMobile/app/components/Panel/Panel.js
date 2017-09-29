@@ -8,8 +8,8 @@ export class Panel extends Component {
         super(props);
 
         this.icons = {     
-            'up': require('../../images/moins.png'),
-            'down': require('../../images/plus.png')
+            'up': require('../../images/icons/moins.png'),
+            'down': require('../../images/icons/plus.png')
         };
 
         this.state = {
