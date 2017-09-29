@@ -11,6 +11,7 @@ import ActivitesDetail from '../activitesDetail/ActivitesDetail';
 import CraConfirmation from '../craConfirmation/CraConfirmation';
 import Style from '../../../styles/Styles';
 import style from './styles';
+import Panel from '../../../components/Panel/Panel';
 
  class AjoutCra extends React.Component {
 
@@ -189,13 +190,11 @@ import style from './styles';
                           </Table>
                      </View>
 
-                     <View>
-                          <Text style={style.textInformation}>Information mission *</Text>
-                     </View>
+                    <Panel  title="Information mission *"  containerStyle={{backgroundColor:"transparent", margin:0}}>
 
                     <View style={style.containerInformation}>
                         <View style={style.containerFirstLine}>
-                          <Text style={style.text}>   Client * : </Text>
+                          <Text style={style.text}>Client * : </Text>
                         </View>
                         <View style={style.containerInfoClt}>
                              <TextInput
@@ -235,9 +234,9 @@ import style from './styles';
                                underlineColorAndroid='transparent' />
                         </View>
                     </View>
-                       <View>
-                            <Text style={style.textCommentaire}>Commentaire</Text>
-                       </View>
+                    </Panel>
+
+                    <Panel  title="Commentaire"  containerStyle={{backgroundColor:"transparent", margin:0}}>
                          <View style={style.containerCommentaire}>
                            <TextInput
                              style={style.textInputComment}
@@ -250,7 +249,7 @@ import style from './styles';
                              underlineColorAndroid='transparent'
                            />
                          </View>
-
+                     </Panel>
                       <View style={style.containerButton}>
                          {this.showDeleteButton()}
                          {this.showDraftButton()}
