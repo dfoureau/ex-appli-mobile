@@ -71,6 +71,11 @@ export default StyleSheet.create({
         color: 'black',
         fontSize: 16,
       },
+      containerDate: {
+       alignItems: 'center',
+       flex:1,
+       marginTop: 10,
+      },
     containerButton:{
         alignItems : 'center',
         flexDirection: 'row',
