@@ -48,7 +48,11 @@ class CongesAjout extends React.Component {
 
     validateConge(){
         this.setState({statusId: 3, status: 'validé', statusLabel: 'Modifications interdites'});
-        AsyncStorage.clear();
+        // Après sauvegarde en bdd, on reset le cache
+        Period.write(() => {
+            Period.deleteAll();
+        });
+
         this.props.navigation.navigate('CongesConfirmation');
     }
 

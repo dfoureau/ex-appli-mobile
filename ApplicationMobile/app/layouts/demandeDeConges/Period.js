@@ -1,6 +1,7 @@
 import Realm from 'realm';
 
-export class Period extends Realm.Object {}
+export class Period extends Realm.Object {
+}
 
 Period.schema = {
     name:'Period',
@@ -17,6 +18,7 @@ Period.schema = {
 };
 
 export default new Realm({ schema: [Period] });
+
 
 
 

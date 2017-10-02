@@ -3,6 +3,7 @@ import { View, Text, TextInput, Picker, TouchableOpacity } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import Style from './styles';
 import Realm from 'realm';
+import RealmQuery from 'realm-query';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
@@ -10,21 +11,11 @@ import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil';
 import Calendar from '../../../components/calendar/Calendar';
 import Period from '../Period';
-
 import styles from './styles';
 
 class CongesPeriode extends React.Component { 
 	constructor (props) {
-        super(props)
-        this.state   = { 
-            title:'Détails période', 
-            date1: '09/09/2017',
-            moment1: '1',
-            date2: '09/09/2017',
-            moment2: '2',
-            absence: ''
-        };   
-
+        super(props) 
         this.setInitialValues()
     }
     
@@ -36,18 +27,43 @@ class CongesPeriode extends React.Component {
     {
         const { params } = this.props.navigation.state;
 
-        if( params.idPeriod != null)
+        if( params.idPeriod == null)
+        {
+            this.state = {
+                title:'Détails période', 
+                date1: '09/09/2017',
+                moment1: '1',
+                date2: '09/09/2017',
+                moment2: '2',
+                absence: ''
+            }
+        } 
+        else
         {
             var period = Period.objectForPrimaryKey('Period', params.idPeriod);
-
+            
             this.state = {
+                title:'Détails période', 
                 date1: period.startDate,
                 moment1: period.startPeriod,
                 date2: period.endDate,
                 moment2: period.endPeriod,
                 absence: period.absTypeId
             };
-        }            
+        }          
+    }
+
+    getNextKey() { 
+        let number = new Number(RealmQuery
+                        .where(Period.objects('Period'))
+                        .max('id').id);
+ 
+                        //alert('number:' + parseInt(number));
+        if (number != null) {
+            return parseInt(number) + 1;
+        } else {
+            return 1;
+        }
     }
     
     savePeriod(idPeriod)
@@ -66,7 +82,7 @@ class CongesPeriode extends React.Component {
             // Création d'une période
             Period.write(() => {
                 Period.create('Period', {  
-                    id: 1,
+                    id: this.getNextKey(),
                     startDate: period.startDate,
                     startPeriod: period.startPeriod,
                     endDate:  period.endDate,
