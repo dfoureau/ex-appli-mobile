@@ -1,7 +1,9 @@
 import Realm from 'realm';
 
-export class Period extends Realm.Object {
-}
+// Définition des modèles et de leurs propriétés
+
+// Période
+class Period extends Realm.Object{}
 
 Period.schema = {
     name:'Period',
@@ -15,12 +17,8 @@ Period.schema = {
         absTypeId:'string',
         absTypeLabel:'string'
     }
-};
+  };
 
-export default new Realm({ schema: [Period] });
+// New model
 
-
-
-
-
-
+export default new Realm({ schema: [Period] })

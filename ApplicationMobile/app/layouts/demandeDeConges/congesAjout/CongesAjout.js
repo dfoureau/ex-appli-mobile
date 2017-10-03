@@ -10,7 +10,7 @@ import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil';
 import CongesPeriode from '../congesPeriode/CongesPeriode';
 import CongesConfirmation from '../congesConfirmation/CongesConfirmation';
-import Period from '../Period';
+import service from '../../../realm/service';
 
 class CongesAjout extends React.Component {
     constructor (props) {
@@ -49,15 +49,13 @@ class CongesAjout extends React.Component {
     validateConge(){
         this.setState({statusId: 3, status: 'validé', statusLabel: 'Modifications interdites'});
         // Après sauvegarde en bdd, on reset le cache
-        Period.write(() => {
-            Period.deleteAll();
-        });
+        service.deleteAll('Period');
 
         this.props.navigation.navigate('CongesConfirmation');
     }
 
     afficherRow(){
-        var periods = Period.objects('Period'); 
+        let periods = service.get('Period'); 
            
         return (periods.map((row, i) => (
             <TouchableOpacity key={i} onPress={() => this.modifyConge(row.id)}>

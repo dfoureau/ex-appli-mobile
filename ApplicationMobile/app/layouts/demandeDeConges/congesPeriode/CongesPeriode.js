@@ -2,15 +2,13 @@ import React from 'react';
 import { View, Text, TextInput, Picker, TouchableOpacity } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import Style from './styles';
-import Realm from 'realm';
-import RealmQuery from 'realm-query';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil';
 import Calendar from '../../../components/calendar/Calendar';
-import Period from '../Period';
+import service from '../../../realm/service';
 import styles from './styles';
 
 class CongesPeriode extends React.Component { 
@@ -40,7 +38,7 @@ class CongesPeriode extends React.Component {
         } 
         else
         {
-            var period = Period.objectForPrimaryKey('Period', params.idPeriod);
+            var period = service.getById('Period', params.idPeriod);
             
             this.state = {
                 title:'Détails période', 
@@ -52,24 +50,11 @@ class CongesPeriode extends React.Component {
             };
         }          
     }
-
-    getNextKey() { 
-        let nbPeriods = RealmQuery
-                        .where(Period.objects('Period'))
-                        .count();
-        if (nbPeriods > 0) {
-            let number = RealmQuery
-                            .where(Period.objects('Period'))
-                            .max('id').id;
-            return parseInt(number) + 1;
-        } 
-        else 
-            return 1;
-    }
     
     savePeriod(idPeriod)
     {
         var period = {
+            id: idPeriod == null ? service.getNextKey('Period') : idPeriod,
             startDate: this.state.date1,
             startPeriod: this.state.moment1, 
             endDate: this.state.date2,
@@ -81,41 +66,18 @@ class CongesPeriode extends React.Component {
         if(idPeriod == null)
         {
             // Création d'une période
-            Period.write(() => {
-                Period.create('Period', {  
-                    id: this.getNextKey(),
-                    startDate: period.startDate,
-                    startPeriod: period.startPeriod,
-                    endDate:  period.endDate,
-                    endPeriod: period.endPeriod,
-                    absTypeId: period.absTypeId,
-                    absTypeLabel: period.absTypeLabel
-                })
-            })
+            service.insert('Period', period);
         }
         else
         {
             // Mise à jour d'une période
-            Period.write(() => {
-                Period.create('Period', {  
-                    id: idPeriod,
-                    startDate: period.startDate,
-                    startPeriod: period.startPeriod,
-                    endDate:  period.endDate,
-                    endPeriod: period.endPeriod,
-                    absTypeId: period.absTypeId,
-                    absTypeLabel: period.absTypeLabel
-                }, true);
-            })
+            service.update('Period', period);
         }
     }
 
     deletePeriod(idPeriod)
     {
-        var period = Period.objectForPrimaryKey('Period', idPeriod);
-        Period.write(() => {
-            Period.delete(period);
-        });
+        service.delete('Period', idPeriod);
     }
 
     handleValidate() {
