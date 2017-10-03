@@ -58,18 +58,16 @@ class CongesAjout extends React.Component {
 
     afficherRow(){
         var periods = Period.objects('Period'); 
-        if(periods != null)
-            return (periods.map((row, i) => (
-                <TouchableOpacity key={i} onPress={() => this.modifyConge(row.id)}>
-                    <Row 
-                        style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
-                        borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
-                        textStyle={style.rowText}
-                        data={[row.startDate, row.endDate, row.absTypeLabel, '1']}/> 
-                </TouchableOpacity>   
-            )));  
-        else 
-            return <Text></Text>;
+           
+        return (periods.map((row, i) => (
+            <TouchableOpacity key={i} onPress={() => this.modifyConge(row.id)}>
+                <Row 
+                    style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
+                    borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
+                    textStyle={style.rowText}
+                    data={[row.startDate, row.endDate, row.absTypeLabel, '1']}/> 
+            </TouchableOpacity>   
+        )));      
     }
 
     showDeleteButton()

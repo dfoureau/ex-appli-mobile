@@ -54,16 +54,17 @@ class CongesPeriode extends React.Component {
     }
 
     getNextKey() { 
-        let number = new Number(RealmQuery
+        let nbPeriods = RealmQuery
                         .where(Period.objects('Period'))
-                        .max('id').id);
- 
-                        //alert('number:' + parseInt(number));
-        if (number != null) {
+                        .count();
+        if (nbPeriods > 0) {
+            let number = RealmQuery
+                            .where(Period.objects('Period'))
+                            .max('id').id;
             return parseInt(number) + 1;
-        } else {
+        } 
+        else 
             return 1;
-        }
     }
     
     savePeriod(idPeriod)
@@ -97,7 +98,7 @@ class CongesPeriode extends React.Component {
             // Mise à jour d'une période
             Period.write(() => {
                 Period.create('Period', {  
-                    id: id,
+                    id: idPeriod,
                     startDate: period.startDate,
                     startPeriod: period.startPeriod,
                     endDate:  period.endDate,
