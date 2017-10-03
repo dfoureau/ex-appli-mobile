@@ -11,6 +11,8 @@ import Calendar from '../../../components/calendar/Calendar';
 import service from '../../../realm/service';
 import styles from './styles';
 
+const PERIOD_SCHEMA = 'Period';
+
 class CongesPeriode extends React.Component { 
 	constructor (props) {
         super(props) 
@@ -38,7 +40,7 @@ class CongesPeriode extends React.Component {
         } 
         else
         {
-            var period = service.getById('Period', params.idPeriod);
+            var period = service.getByPrimaryKey(PERIOD_SCHEMA, params.idPeriod);
             
             this.state = {
                 title:'Détails période', 
@@ -54,7 +56,7 @@ class CongesPeriode extends React.Component {
     savePeriod(idPeriod)
     {
         var period = {
-            id: idPeriod == null ? service.getNextKey('Period') : idPeriod,
+            id: idPeriod == null ? service.getNextKey(PERIOD_SCHEMA) : idPeriod,
             startDate: this.state.date1,
             startPeriod: this.state.moment1, 
             endDate: this.state.date2,
@@ -66,18 +68,18 @@ class CongesPeriode extends React.Component {
         if(idPeriod == null)
         {
             // Création d'une période
-            service.insert('Period', period);
+            service.insert(PERIOD_SCHEMA, period);
         }
         else
         {
             // Mise à jour d'une période
-            service.update('Period', period);
+            service.update(PERIOD_SCHEMA, period);
         }
     }
 
     deletePeriod(idPeriod)
     {
-        service.delete('Period', idPeriod);
+        service.deleteById(PERIOD_SCHEMA, idPeriod);
     }
 
     handleValidate() {

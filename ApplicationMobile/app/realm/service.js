@@ -13,8 +13,8 @@ export default class service extends React.Component {
     }
 
     // Récupère un élément du schéma par sa clé primaire
-    static getById(schemaName, id){
-        return realm.objectForPrimaryKey(schemaName, id);
+    static getByPrimaryKey(schemaName, key){
+        return realm.objectForPrimaryKey(schemaName, key);
     }
 
     // Insertion d'un élément dans un schéma
@@ -34,16 +34,25 @@ export default class service extends React.Component {
     }
 
     // Suppression d'un élément d'un schéma 
-    static delete(schemaName, id)
+    static deleteById(schemaName, id)
     {
-        var item = this.getById(schemaName, id);
+        var item = this.getByPrimaryKey(schemaName, id);
         realm.write(() => {
             realm.delete(item);
         });
     }
 
     // Suppression de tous les éléments d'un schéma
-    static deleteAll(schemaName)
+    static delete(schemaName)
+    {
+        var allItems = this.get(schemaName);
+        realm.write(() => {
+            realm.delete(allItems);
+        });
+    }
+
+    // Suppression de tous les éléments de tous les schémas
+    static deleteAll()
     {
         realm.write(() => {
             realm.deleteAll();

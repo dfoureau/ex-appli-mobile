@@ -19,6 +19,15 @@ Period.schema = {
     }
   };
 
-// New model
+// Réglage
+class Setting extends Realm.Object{}
+Setting.schema = {
+    name:'Setting',
+    primaryKey:'key',
+    properties: {
+        key: 'string',
+        value: {type: 'bool', default: false}
+    }
+  };
 
-export default new Realm({ schema: [Period] })
+export default new Realm({ schema: [Period, Setting] })
