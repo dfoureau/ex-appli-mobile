@@ -10,7 +10,7 @@ import {
   TouchableHighlight, 
   Text,
 Alert,
-ScrollView  } from 'react-native'
+ScrollView } from 'react-native'
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import Style from './Styles';
 import Accueil from '../accueil/Accueil'

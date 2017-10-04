@@ -6,14 +6,19 @@ import styles from './styles';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from '../../../components/containerAccueil/ContainerAccueil';
-import Accueil from '../../accueil/Accueil'
+import Accueil from '../../accueil/Accueil';
+import service from '../../../realm/service';
 
+const SETTING_SCHEMA = 'Setting';
 
 class Reglages extends React.Component {
 	 
 	constructor (props) {
 		super(props)
-		this.state = { title:'Réglages' }
+		this.state = { 
+			title:'Réglages',
+			switchValue: service.get(SETTING_SCHEMA) == '' ? service.insert(SETTING_SCHEMA, {key: 'NOTIFICATION', value: false}) : service.getByPrimaryKey(SETTING_SCHEMA, 'NOTIFICATION').value
+		}
 	}
 
 	//Permet d'afficher l'ecran choisi dans le menu
@@ -21,6 +26,12 @@ class Reglages extends React.Component {
 		this.props.navigation.navigate(ecran);
 	}
 	
+	saveSetting(key, value)
+	{
+		this.setState ({switchValue: value});
+		service.update(SETTING_SCHEMA, {key: key, value: value});
+	}
+
 	render() {
 		return (
 
@@ -32,7 +43,7 @@ class Reglages extends React.Component {
                     <Text style={{fontSize:20, marginBottom: 20,paddingVertical: 10, paddingHorizontal: 10}}>Recevoir les notifications ?</Text>
 					<Switch
 					style={{marginBottom: 20,paddingVertical: 10, paddingHorizontal: 20}}
-					onValueChange={(value) => this.setState ({switchValue: value})}
+					onValueChange={(value) => this.saveSetting('NOTIFICATION', value)}
 					value={this.state.switchValue} />
                 </View>
 				</ContainerAccueil>

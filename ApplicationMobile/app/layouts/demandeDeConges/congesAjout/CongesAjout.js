@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TextInput, TouchableOpacity,Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, AsyncStorage } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import style from './styles';
@@ -7,42 +7,24 @@ import style from './styles';
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { Button } from '../../../components/Buttons';
-import Accueil from '../../accueil/Accueil'
+import Accueil from '../../accueil/Accueil';
 import CongesPeriode from '../congesPeriode/CongesPeriode';
 import CongesConfirmation from '../congesConfirmation/CongesConfirmation';
+import service from '../../../realm/service';
+
+const PERIOD_SCHEMA = 'Period';
 
 class CongesAjout extends React.Component {
     constructor (props) {
-		super(props)
+        super(props)
         this.state = { 
             title:'Demande de congés',
             statusId: 1, 
             status:'nouveau', 
             statusLabel:'Nouvelle DC',
-            header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours'],
-            listConges: [ 
-                {
-                    id:8,
-                    startDate: '30/10/2017',
-                    endDate: '31/10/2017',
-                    absType : 'CP',
-                    dayNumber: 2
-                }, {
-                    id: 9,
-                    startDate: '02/11/2017',
-                    endDate: '03/11/2017',
-                    absType : 'RTT',
-                    dayNumber: 2
-                }, {
-                    id: 10,
-                    startDate: '02/12/2017',
-                    endDate: '02/12/2017',
-                    absType : 'CP',
-                    dayNumber: 1
-                }
-            ]
+            header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours']
         } 
-	}
+    } 
 
 	//Permet d'afficher l'ecran choisi dans le menu
 	afficherEcranParent(ecran){
@@ -50,11 +32,11 @@ class CongesAjout extends React.Component {
     }
     
     addNewConge(){
-		this.props.navigation.navigate('CongesPeriode');
+		this.props.navigation.navigate('CongesPeriode', { idPeriod: null });
     }
     
     modifyConge(id){
-        this.props.navigation.navigate('CongesPeriode',{idConge: id});
+        this.props.navigation.navigate('CongesPeriode', { idPeriod: id });
     }
 
     deleteConge(){
@@ -68,19 +50,24 @@ class CongesAjout extends React.Component {
 
     validateConge(){
         this.setState({statusId: 3, status: 'validé', statusLabel: 'Modifications interdites'});
+        // Après sauvegarde en bdd, on reset le cache
+        service.delete(PERIOD_SCHEMA);
+
         this.props.navigation.navigate('CongesConfirmation');
     }
 
     afficherRow(){
-        return (this.state.listConges.map((row, i) => (
+        let periods = service.get(PERIOD_SCHEMA); 
+           
+        return (periods.map((row, i) => (
             <TouchableOpacity key={i} onPress={() => this.modifyConge(row.id)}>
                 <Row 
-                style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
-                borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
-                textStyle={style.rowText}
-                data={[row.startDate, row.endDate, row.absType, row.dayNumber]}/> 
+                    style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
+                    borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
+                    textStyle={style.rowText}
+                    data={[row.startDate, row.endDate, row.absTypeLabel, '1']}/> 
             </TouchableOpacity>   
-        )));
+        )));      
     }
 
     showDeleteButton()

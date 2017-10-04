@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, Picker, TouchableOpacity} from 'react-native';
+import { View, Text, TextInput, Picker, TouchableOpacity } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import Style from './styles';
 import moment from 'moment';
@@ -8,34 +8,95 @@ import business from 'moment-business'
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { Button } from '../../../components/Buttons';
-import Accueil from '../../accueil/Accueil'
+import Accueil from '../../accueil/Accueil';
 import Calendar from '../../../components/calendar/Calendar';
-
+import service from '../../../realm/service';
 import styles from './styles';
 
-class CongesPeriode extends React.Component {
-	 
+const PERIOD_SCHEMA = 'Period';
+
+class CongesPeriode extends React.Component { 
 	constructor (props) {
-		super(props)
-		this.state = { 
-            title:'Détails période', 
-            date1: "09/09/2017",
-            moment1: "1",
-            date2: "12/09/2017",
-            moment2: "2",
-            absence: "",
-            joursFeries: ["01/01", '01/11', '28/09', '03/10']
-        }
+        super(props) 
+        this.setInitialValues()
     }
     
+    static navigationOptions = ({ navigation }) => ({
+        idPeriod: navigation.state.params.idPeriod,
+    });
+
+    setInitialValues()
+    {
+        const { params } = this.props.navigation.state;
+
+        if( params.idPeriod == null)
+        {
+            this.state = {
+                title:'Détails période', 
+                date1: '09/09/2017',
+                moment1: '1',
+                date2: '09/09/2017',
+                moment2: '2',
+                absence: ''
+            }
+        } 
+        else
+        {
+            var period = service.getByPrimaryKey(PERIOD_SCHEMA, params.idPeriod);
+            
+            this.state = {
+                title:'Détails période', 
+                date1: period.startDate,
+                moment1: period.startPeriod,
+                date2: period.endDate,
+                moment2: period.endPeriod,
+                absence: period.absTypeId
+            };
+        }          
+    }
+    
+    savePeriod(idPeriod)
+    {
+        var period = {
+            id: idPeriod == null ? service.getNextKey(PERIOD_SCHEMA) : idPeriod,
+            startDate: this.state.date1,
+            startPeriod: this.state.moment1, 
+            endDate: this.state.date2,
+            endPeriod: this.state.moment2,
+            absTypeId: this.state.absence,
+            absTypeLabel: 'CP'
+        }; 
+
+        if(idPeriod == null)
+        {
+            // Création d'une période
+            service.insert(PERIOD_SCHEMA, period);
+        }
+        else
+        {
+            // Mise à jour d'une période
+            service.update(PERIOD_SCHEMA, period);
+        }
+    }
+
+    deletePeriod(idPeriod)
+    {
+        service.deleteById(PERIOD_SCHEMA, idPeriod);
+    }
+
     handleValidate() {
-        //Verif que toutes les valeurs sont remplies
-        // Retour à l'écran précédent après validation
-        this.props.navigation.dispatch(NavigationActions.back());
+        // TODO : Verifier que toutes les valeurs sont remplies
+        const { params } = this.props.navigation.state;
+        this.savePeriod(params.idPeriod);
+        // Retour à la page d'ajout
+        this.props.navigation.navigate('CongesAjout');
     }
 
     handleSupprimer() {
-        
+        const { params } = this.props.navigation.state;
+        this.deletePeriod(params.idPeriod);
+        // Retour à la page d'ajout
+        this.props.navigation.navigate('CongesAjout');
     }
 
     calculNbJours() {
@@ -88,7 +149,10 @@ class CongesPeriode extends React.Component {
                         <View style={styles.container}>
                             <View style={styles.flexContainer}>
                                 <Text style={styles.calendarText}>Du</Text>
-                                <Calendar style={styles.calendarComponent} date={this.state.date1} onValueChange={(newDate) => this.setState({date1:newDate})}/>
+                                <Calendar 
+                                        style={styles.calendarComponent} 
+                                        date={this.state.date1} 
+                                        onValueChange={(newDate) => this.setState({date1:newDate})}/>
                                 <View style={styles.pickerContainer}>
                                     <Picker
                                             style={styles.picker}
