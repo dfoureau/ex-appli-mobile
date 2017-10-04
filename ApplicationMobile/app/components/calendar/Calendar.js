@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Image, Text } from 'react-native';
+import PropTypes from 'prop-types';
 import DatePicker from 'react-native-datepicker';
 
 class Calendar extends Component {
@@ -21,6 +22,8 @@ class Calendar extends Component {
           <DatePicker
             style={{width: 130}}
             date={this.state.date}
+            minDate={this.props.minDate}
+            maxDate={this.props.maxDate}
             mode="date"
             placeholder=" /    / "
             format="DD/MM/YYYY"
@@ -36,5 +39,12 @@ class Calendar extends Component {
         );
     }
 }
+
+Calendar.propTypes = {
+  date: PropTypes.string,
+  onValueChange: PropTypes.func,
+  minDate: PropTypes.string,
+  maxDate: PropTypes.string,
+};
 
 export default Calendar;

@@ -1,5 +1,6 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
+import PropTypes from 'prop-types';
 import styles from './styles';
 
 const Button = ({textStyles, buttonStyles, text, onPress}) => (
@@ -10,9 +11,9 @@ const Button = ({textStyles, buttonStyles, text, onPress}) => (
     </TouchableOpacity>
 );
 
-Button.PropTypes = {
-    textStyles: PropTypes.shape(),
-    buttonStyles : PropTypes.shape(),
+Button.propTypes = {
+    textStyles: Text.propTypes.style,
+    buttonStyles : View.propTypes.style,
     text: PropTypes.string,
     onPress: PropTypes.func
 };

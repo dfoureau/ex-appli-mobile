@@ -46,13 +46,26 @@ class AnnuaireDetail extends React.Component {
           this.props.navigation.dispatch(backAction);
     }
 
+    handleSmsDisplay(tel) {
+        
+        let arr = tel.split(".");
+        console.log(arr[0]);
+        if (arr[0] == "06" || arr[0] == "07") {
+            return <TouchableOpacity onPress={() => Communications.text(tel)}>
+                    <View>
+                        <Image style={styles.icon} source={require('../../../images/icons/bulles.png')}/>
+                    </View>
+                </TouchableOpacity>;
+        } 
+    }
+
 	render() {
 
 		return (
             
             <View>
                 <ContainerTitre title={this.state.titre} navigation={this.props.navigation}>
-                <ScrollView style={styles.scrollView}>
+                <View style={styles.scrollView}>
                 
                     {/*DESCRIPTION PROFILE*/}
                     <View style={Style.firstView}>
@@ -80,16 +93,12 @@ class AnnuaireDetail extends React.Component {
                             </View>
                         </View>
                         <View style={styles.containerIcon}>
+                            {this.handleSmsDisplay(this.state.list.telMobile)}
+                        </View>
+                        <View style={styles.containerIcon}>
                             <TouchableOpacity onPress={() => Communications.phonecall(this.state.list.telMobile, true)}>
                                 <View>
                                     <Image style={styles.icon} source={require('../../../images/icons/tel.png')}/>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.containerIcon}>
-                            <TouchableOpacity onPress={() => Communications.text(this.state.list.telMobile)}>
-                                <View>
-                                    <Image style={styles.icon} source={require('../../../images/icons/bulles.png')}/>
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -105,16 +114,12 @@ class AnnuaireDetail extends React.Component {
                             </View>
                         </View>
                         <View style={styles.containerIcon}>
+                            {this.handleSmsDisplay(this.state.list.telFixe)}
+                        </View>
+                        <View style={styles.containerIcon}>
                             <TouchableOpacity onPress={() => Communications.phonecall(this.state.list.telFixe, true)}>
                                 <View>
                                     <Image style={styles.icon} source={require('../../../images/icons/tel.png')}/>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.containerIcon}>
-                            <TouchableOpacity onPress={() => Communications.text(this.state.list.telFixe)}>
-                                <View>
-                                    <Image style={styles.icon} source={require('../../../images/icons/bulles.png')}/>
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -156,7 +161,7 @@ class AnnuaireDetail extends React.Component {
                         </View>
                     </View>
 
-                </ScrollView>
+                </View>
                 </ContainerTitre>
 
             </View>

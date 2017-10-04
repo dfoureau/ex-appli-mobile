@@ -71,8 +71,8 @@ class FraisListe extends React.Component {
 								<View style={style.containerPicker}>
 									<Picker
 											style={{width:110}}
-											selectedValue={this.state.month}
-											onValueChange={(itemValue, itemIndex) => this.setState({month: itemValue})}>
+											selectedValue={this.state.year}
+											onValueChange={(itemValue, itemIndex) => this.setState({year: itemValue})}>
 											<Picker.Item label="Année" value="0"/>
 											<Picker.Item label="2017" value="1"/>
 											<Picker.Item label="2016" value="2"/>

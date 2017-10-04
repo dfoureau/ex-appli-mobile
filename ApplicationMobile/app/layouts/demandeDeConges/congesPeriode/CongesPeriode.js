@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, TextInput, Picker, TouchableOpacity } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import Style from './styles';
+import moment from 'moment';
+import business from 'moment-business'
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
@@ -97,6 +99,48 @@ class CongesPeriode extends React.Component {
         this.props.navigation.navigate('CongesAjout');
     }
 
+    calculNbJours() {
+
+        let dateDu = moment(this.state.date1, "DD-MM-YYYY");
+        let dateAu = moment(this.state.date2, "DD-MM-YYYY");
+        let momentDu = this.state.moment1; //Matin (=1) ok, Midi (=2) -0.5j
+        let momentAu = this.state.moment2; //Soir (=2) ok, Midi (=1) -0.5j
+
+        //Calcule la difference entre les deux jours
+        let currentDate = moment(dateDu);
+        let total = 0;
+        while (dateAu.diff(currentDate, 'days') >= 0) {
+
+            //Si c'est un jour ouvré
+            if (business.isWeekDay(currentDate)) {
+                //Si ce n'est pas un jour férié on incremente le compteur
+                total = !this.isJourFerie(currentDate) ? total + 1 : total;
+            }
+            //Augmente d'un jour
+            currentDate = currentDate.add(1, 'days');
+        }
+
+        //Change la durée totale en fonction du moment choisi
+        if (business.isWeekDay(dateDu) && this.state.moment1 == 2 && !this.isJourFerie(dateDu)) {
+            total = total > 0 ? total - 0.5 : total;
+        }
+        if (business.isWeekDay(dateAu) && this.state.moment2 == 1 && !this.isJourFerie(dateAu)) {
+            total = total > 0 ? total - 0.5 : total;
+        }
+
+        return <View style={styles.container}>
+                    <Text style={styles.text}>Jours ouvrés : {total}</Text>
+                </View>;
+    }
+
+    isJourFerie(date) {
+        let res = this.state.joursFeries.indexOf(date.format('DD/MM'));
+        if (res > -1) { 
+            return true;
+        }
+        return false;
+    }
+
 	render() {
 		return (
 			<View>
@@ -133,6 +177,8 @@ class CongesPeriode extends React.Component {
                                 </View>
                             </View>
                         </View>
+                        {this.calculNbJours()}
+                        
                     </View>
                     <View style={Style.firstView}>
                         <View style={[styles.container,styles.marginTop40]}>

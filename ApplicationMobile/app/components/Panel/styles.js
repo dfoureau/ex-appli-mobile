@@ -4,7 +4,7 @@ export default StyleSheet.create({
     container: {
         backgroundColor:'#fff',
         marginTop:10,
-        marginHorizontal:10,
+        //marginHorizontal:10,
         borderWidth:0.5,
         borderColor: "#808080",
         borderRadius:5,
@@ -12,9 +12,9 @@ export default StyleSheet.create({
     },
 
     titleContainer: {
-        flexDirection:'row',
+       // flexDirection:'row',
         paddingVertical: 5,
-        alignItems: 'center'
+        //alignItems: 'center'
     },
 
     title: {
@@ -25,11 +25,17 @@ export default StyleSheet.create({
         fontWeight: 'bold',
     },
 
-    button: {
-        marginRight:10
+    buttonContainer: {
+        flex:1,
+        flexDirection:'row',
+        alignItems: 'center',
+    },
+    button:{
+        height: 30
     },
 
     buttonImage: {
+        marginRight:10,
         width: 15,
         height: 15,
         backgroundColor: 'transparent'

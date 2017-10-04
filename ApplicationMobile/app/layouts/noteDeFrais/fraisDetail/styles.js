@@ -10,9 +10,7 @@ export default StyleSheet.create({
     container: {
         marginRight: 15,
         marginLeft: 15,
-    },
-    scrollView: {
-        flex: 1
+        flex: 1,
     },
     containerEtat: {
         marginTop: 5,
@@ -27,12 +25,12 @@ export default StyleSheet.create({
         flexDirection: 'column',
     },
     containerInput: {
-        marginTop: 10,
-        borderWidth: 1,
-        borderColor: 'gray',
+        //marginTop: 10,
+        //borderWidth: 1,
+        //borderColor: 'gray',
     },
     inputView: {
-        marginLeft: 15
+        marginLeft: 7
     },
     checkbox: {
         marginTop: 10,
@@ -72,6 +70,11 @@ export default StyleSheet.create({
     text: {
         color: 'black',
         fontSize: 16,
+      },
+      containerDate: {
+       alignItems: 'center',
+       flex:1,
+       marginTop: 10,
       },
     containerButton:{
         alignItems : 'center',

@@ -34,12 +34,14 @@ export default  StyleSheet.create({
   containerPicker:{
       flexDirection: 'row',
       borderWidth:1,
-      width:140,
+      width:162,
       height:29,
       alignItems : 'center',
       padding: 2,
       marginTop: -27,
-      marginLeft : -145
+      marginLeft : -160,
+      borderWidth:1,
+      backgroundColor: '#f4f4f4'
   },
 
   containerFirstLine: {
@@ -140,7 +142,6 @@ export default  StyleSheet.create({
        marginHorizontal: 10,
        paddingHorizontal:5,
        paddingVertical: 5,
-       borderWidth:0.5,
        borderColor: "#808080",
        borderRadius:5
 
@@ -155,7 +156,6 @@ export default  StyleSheet.create({
           marginHorizontal: 10,
           paddingHorizontal:5,
           paddingVertical: 5,
-          borderWidth:0.5,
           borderColor: "#808080",
           borderRadius:5
 
@@ -222,7 +222,7 @@ export default  StyleSheet.create({
    },
 
    textInputComment :{
-          marginLeft:20,
+          marginLeft:5,
           marginRight: 5,
           width: 300,
           height:70,
