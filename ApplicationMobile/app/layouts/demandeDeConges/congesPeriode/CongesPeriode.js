@@ -14,6 +14,7 @@ import service from '../../../realm/service';
 import styles from './styles';
 
 const PERIOD_SCHEMA = 'Period';
+const feries2017 = ['01/01', '17/04', '01/05', '08/05', '25/05', '14/07', '15/08', '01/11', '11/11', '25/12'];
 
 class CongesPeriode extends React.Component { 
 	constructor (props) {
@@ -33,11 +34,12 @@ class CongesPeriode extends React.Component {
         {
             this.state = {
                 title:'Détails période', 
-                date1: '09/09/2017',
+                date1: '10/09/2017',
                 moment1: '1',
-                date2: '09/09/2017',
+                date2: '10/09/2017',
                 moment2: '2',
-                absence: ''
+                absence: '',
+                //joursFeries: feries2017
             }
         } 
         else
@@ -50,7 +52,8 @@ class CongesPeriode extends React.Component {
                 moment1: period.startPeriod,
                 date2: period.endDate,
                 moment2: period.endPeriod,
-                absence: period.absTypeId
+                absence: period.absTypeId,
+                //joursFeries: feries2017
             };
         }          
     }
@@ -64,7 +67,8 @@ class CongesPeriode extends React.Component {
             endDate: this.state.date2,
             endPeriod: this.state.moment2,
             absTypeId: this.state.absence,
-            absTypeLabel: 'CP'
+            absTypeLabel: 'CP',
+            nbJoursOuvres: this.state.nbJoursOuvres
         }; 
 
         if(idPeriod == null)
@@ -127,6 +131,8 @@ class CongesPeriode extends React.Component {
         if (business.isWeekDay(dateAu) && this.state.moment2 == 1 && !this.isJourFerie(dateAu)) {
             total = total > 0 ? total - 0.5 : total;
         }
+
+        this.setState({nbJoursOuvres: total});
 
         return <View style={styles.container}>
                     <Text style={styles.text}>Jours ouvrés : {total}</Text>
