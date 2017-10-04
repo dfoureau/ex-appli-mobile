@@ -39,7 +39,8 @@ class CongesPeriode extends React.Component {
                 date2: '10/09/2017',
                 moment2: '2',
                 absence: '',
-                //joursFeries: feries2017
+                joursFeries: feries2017,
+                nbJoursOuvres: 0
             }
         } 
         else
@@ -53,7 +54,8 @@ class CongesPeriode extends React.Component {
                 date2: period.endDate,
                 moment2: period.endPeriod,
                 absence: period.absTypeId,
-                //joursFeries: feries2017
+                joursFeries: feries2017,
+                nbJoursOuvres: 0
             };
         }          
     }
@@ -67,7 +69,6 @@ class CongesPeriode extends React.Component {
             endDate: this.state.date2,
             endPeriod: this.state.moment2,
             absTypeId: this.state.absence,
-            absTypeLabel: 'CP',
             nbJoursOuvres: this.state.nbJoursOuvres
         }; 
 
@@ -132,7 +133,7 @@ class CongesPeriode extends React.Component {
             total = total > 0 ? total - 0.5 : total;
         }
 
-        this.setState({nbJoursOuvres: total});
+        this.state.nbJoursOuvres = total;
 
         return <View style={styles.container}>
                     <Text style={styles.text}>Jours ouvrés : {total}</Text>
@@ -194,13 +195,13 @@ class CongesPeriode extends React.Component {
                                         selectedValue={this.state.absence}
                                         onValueChange={(itemValue, itemIndex) => this.setState({absence: itemValue})}>
                                         <Picker.Item label="- Type d'absence -" value="0"/>
-                                        <Picker.Item label="Congés payés" value="1"/>
-                                        <Picker.Item label="Congés anticipés" value="2"/>
-                                        <Picker.Item label="Congés sans solde" value="3"/>
-                                        <Picker.Item label="Solde RTT" value="4"/>
-                                        <Picker.Item label="Congés maternité" value="5"/>
-                                        <Picker.Item label="Congés paternité" value="6"/>
-                                        <Picker.Item label="Absence exceptionnelle" value="7"/>
+                                        <Picker.Item label="Congés payés" value="CP"/>
+                                        <Picker.Item label="Congés anticipés" value="CA"/>
+                                        <Picker.Item label="Congés sans solde" value="CS"/>
+                                        <Picker.Item label="Solde RTT" value="RT"/>
+                                        <Picker.Item label="Congés maternité" value="CMA"/>
+                                        <Picker.Item label="Congés paternité" value="CPA"/>
+                                        <Picker.Item label="Absence exceptionnelle" value="AE"/>
                                 </Picker>
                             </View>
                         </View>
