@@ -65,7 +65,7 @@ class CongesAjout extends React.Component {
                     style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
                     borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
                     textStyle={style.rowText}
-                    data={[row.startDate, row.endDate, row.absTypeLabel, '1']}/> 
+                    data={[row.startDate, row.endDate, row.absTypeId, row.nbJoursOuvres]}/> 
             </TouchableOpacity>   
         )));      
     }

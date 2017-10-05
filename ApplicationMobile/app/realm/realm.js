@@ -15,7 +15,7 @@ Period.schema = {
         endDate:'string',
         endPeriod:'string',
         absTypeId:'string',
-        absTypeLabel:'string'
+        nbJoursOuvres:'float'
     }
   };
 

@@ -14,6 +14,7 @@ import service from '../../../realm/service';
 import styles from './styles';
 
 const PERIOD_SCHEMA = 'Period';
+const feries2017 = ['01/01', '17/04', '01/05', '08/05', '25/05', '14/07', '15/08', '01/11', '11/11', '25/12'];
 
 class CongesPeriode extends React.Component { 
 	constructor (props) {
@@ -33,11 +34,13 @@ class CongesPeriode extends React.Component {
         {
             this.state = {
                 title:'Détails période', 
-                date1: '09/09/2017',
+                date1: '10/09/2017',
                 moment1: '1',
-                date2: '09/09/2017',
+                date2: '10/09/2017',
                 moment2: '2',
-                absence: ''
+                absence: '',
+                joursFeries: feries2017,
+                nbJoursOuvres: 0
             }
         } 
         else
@@ -50,7 +53,9 @@ class CongesPeriode extends React.Component {
                 moment1: period.startPeriod,
                 date2: period.endDate,
                 moment2: period.endPeriod,
-                absence: period.absTypeId
+                absence: period.absTypeId,
+                joursFeries: feries2017,
+                nbJoursOuvres: 0
             };
         }          
     }
@@ -64,7 +69,7 @@ class CongesPeriode extends React.Component {
             endDate: this.state.date2,
             endPeriod: this.state.moment2,
             absTypeId: this.state.absence,
-            absTypeLabel: 'CP'
+            nbJoursOuvres: this.state.nbJoursOuvres
         }; 
 
         if(idPeriod == null)
@@ -128,6 +133,8 @@ class CongesPeriode extends React.Component {
             total = total > 0 ? total - 0.5 : total;
         }
 
+        this.state.nbJoursOuvres = total;
+
         return <View style={styles.container}>
                     <Text style={styles.text}>Jours ouvrés : {total}</Text>
                 </View>;
@@ -188,13 +195,13 @@ class CongesPeriode extends React.Component {
                                         selectedValue={this.state.absence}
                                         onValueChange={(itemValue, itemIndex) => this.setState({absence: itemValue})}>
                                         <Picker.Item label="- Type d'absence -" value="0"/>
-                                        <Picker.Item label="Congés payés" value="1"/>
-                                        <Picker.Item label="Congés anticipés" value="2"/>
-                                        <Picker.Item label="Congés sans solde" value="3"/>
-                                        <Picker.Item label="Solde RTT" value="4"/>
-                                        <Picker.Item label="Congés maternité" value="5"/>
-                                        <Picker.Item label="Congés paternité" value="6"/>
-                                        <Picker.Item label="Absence exceptionnelle" value="7"/>
+                                        <Picker.Item label="Congés payés" value="CP"/>
+                                        <Picker.Item label="Congés anticipés" value="CA"/>
+                                        <Picker.Item label="Congés sans solde" value="CS"/>
+                                        <Picker.Item label="Solde RTT" value="RT"/>
+                                        <Picker.Item label="Congés maternité" value="CMA"/>
+                                        <Picker.Item label="Congés paternité" value="CPA"/>
+                                        <Picker.Item label="Absence exceptionnelle" value="AE"/>
                                 </Picker>
                             </View>
                         </View>
