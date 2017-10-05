@@ -52,8 +52,8 @@ import ActivitesConfirmation from '../activitesConfirmation/ActivitesConfirmatio
 
     //Transfert du paramétre vers la page AjoutCRa
     //Params : Idate
-	SendDataCRA(ItemDate){
-          this.props.navigation.navigate('AjoutCra',{Idate: ItemDate});
+	SendDataCRA(id, ItemDate){
+          this.props.navigation.navigate('AjoutCra',{idCRA: id, Idate: ItemDate});
 	}
 
     AfficherAjoutCRa(){
@@ -140,7 +140,7 @@ import ActivitesConfirmation from '../activitesConfirmation/ActivitesConfirmatio
 						data={data}
 						renderItem={({item}) => !item.moreThanOne
 						? <View>
-						        <TouchableOpacity key={item.Id} onPress = {() => this.SendDataCRA(item.date)}>
+						        <TouchableOpacity key={item.Id} onPress = {() => this.SendDataCRA(item.Id, item.date)}>
 
                                  <CRAItem date={item.date} client={item.client} status={item.status} key={item.Id}
                                  manyElt={item.manyElt}/>
@@ -149,7 +149,7 @@ import ActivitesConfirmation from '../activitesConfirmation/ActivitesConfirmatio
 							</View>
 					    :
 					       <View>
-					            <TouchableOpacity key={item.Id} onPress = {() => this.SendDataCRA(item.date)}>
+					            <TouchableOpacity key={item.Id} onPress = {() => this.SendDataCRA(item.Id, item.date)}>
 
 					                <CRAItem date={item.date} client={item.client} status={item.status} key={item.Id}
 					                hideDate={item.hideDate} manyElt={item.manyElt}  />
