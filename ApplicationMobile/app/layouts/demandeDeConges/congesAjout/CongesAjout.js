@@ -17,30 +17,87 @@ const PERIOD_SCHEMA = 'Period';
 class CongesAjout extends React.Component {
     constructor (props) {
         super(props)
-        this.state = { 
-            title:'Demande de congés',
-            statusId: 1, 
-            status:'nouveau', 
-            statusLabel:'Nouvelle DC',
-            header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours']
-        } 
+        this.setInitialValues();
     } 
+
+    static navigationOptions = ({ navigation }) => ({
+        idConge: navigation.state.params.idConge,
+    });
+
+    setInitialValues()
+    {
+        const { params } = this.props.navigation.state;
+
+        if(params.idConge == null)
+        {
+            // Nouvelle demande de congé
+            this.state = {
+                title:'Demande de congés',
+                statusId: 1, 
+                status:'nouveau', 
+                statusLabel:'Nouvelle DC',
+                header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours'],
+                periods : []
+            }
+        } 
+        else
+        {
+            // Congé existant en base
+            var conge = {
+                id: 2,
+				startDate: '18/08/2017',
+				endDate: '25/08/2017',
+				dayNumber: 6,
+				statusId: 2,
+                status: 'brouillon',
+                periods: [
+                    {
+                        id: 1,
+                        startDate: '18/08/2017',
+                        startPeriod: '1', 
+                        endDate: '20/08/2017',
+                        endPeriod: '2',
+                        absTypeId: 'CP',
+                        nbJoursOuvres: 2
+                    },
+                    {
+                        id: 2,
+                        startDate: '22/08/2017',
+                        startPeriod: '1', 
+                        endDate: '25/08/2017',
+                        endPeriod: '2',
+                        absTypeId: 'RT',
+                        nbJoursOuvres: 4
+                    }
+                ]
+            };
+            
+            this.state = {
+                title:'Demande de congés', 
+                statusId: conge.statusId, 
+                status:conge.status, 
+                statusLabel:'DC en brouillon',
+                header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours'],
+                periods: conge.periods
+            };
+        }          
+    }
 
 	//Permet d'afficher l'ecran choisi dans le menu
 	afficherEcranParent(ecran){
 		this.props.navigation.navigate(ecran);
     }
     
-    addNewConge(){
-		this.props.navigation.navigate('CongesPeriode', { idPeriod: null });
+    addNewPeriod(){
+		this.props.navigation.navigate('CongesPeriode', { idConge: this.props.navigation.state.idConge, idPeriod: null });
     }
     
-    modifyConge(id){
-        this.props.navigation.navigate('CongesPeriode', { idPeriod: id });
+    modifyPeriod(id, isNew){
+        this.props.navigation.navigate('CongesPeriode', { idConge: this.props.navigation.state.idConge, idPeriod: id, isNew: isNew });
     }
 
     deleteConge(){
-    this.props.navigation.navigate('CongesConfirmation');
+        this.props.navigation.navigate('CongesConfirmation');
     }
         
     saveDraft(){
@@ -56,18 +113,30 @@ class CongesAjout extends React.Component {
         this.props.navigation.navigate('CongesConfirmation');
     }
 
-    afficherRow(){
-        let periods = service.get(PERIOD_SCHEMA); 
-           
-        return (periods.map((row, i) => (
-            <TouchableOpacity key={i} onPress={() => this.modifyConge(row.id)}>
+    getRows(tab, isNew)
+    {
+        return (tab.map((row, i) => (
+            <TouchableOpacity key={i} onPress={() => this.modifyPeriod(row.id, isNew)}>
                 <Row 
                     style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
                     borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
                     textStyle={style.rowText}
                     data={[row.startDate, row.endDate, row.absTypeId, row.nbJoursOuvres]}/> 
             </TouchableOpacity>   
-        )));      
+        ))); 
+    }
+
+    afficherRows(){
+        // Périodes existants en base
+        let periods = this.state.periods; 
+        return this.getRows(periods, false);   
+    }
+
+    afficherNewRows()
+    {
+        // Périodes non encore enregistrées en base
+        let newPeriods = service.get(PERIOD_SCHEMA); 
+        return this.getRows(newPeriods, true);  
     }
 
     showDeleteButton()
@@ -148,13 +217,14 @@ class CongesAjout extends React.Component {
                         <View style={style.containerTable}>
                             <Table borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}>
                                 <Row data={this.state.header} style={style.header} textStyle={style.headerText} />
-                                {this.afficherRow()}
+                                {this.afficherRows()}
+                                {this.afficherNewRows()}
                             </Table>
                         </View>
                         <View>    
                             <Button
                                 text="AJOUTER NOUVELLE PERIODE"
-                                onPress={() => this.addNewConge()}/>
+                                onPress={() => this.addNewPeriod()}/>
                         </View>
                     </View>
                     <View style={style.container4}>

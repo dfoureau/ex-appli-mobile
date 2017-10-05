@@ -10,6 +10,7 @@ Period.schema = {
     primaryKey:'id',
     properties: {
         id:'int',    // primary key
+        idConge: {type: 'int', default: 0},
         startDate:'string',
         startPeriod:'string',
         endDate:'string',

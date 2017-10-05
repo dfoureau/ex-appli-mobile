@@ -23,15 +23,18 @@ class CongesPeriode extends React.Component {
     }
     
     static navigationOptions = ({ navigation }) => ({
+        idConge: navigation.state.params.idConge,
         idPeriod: navigation.state.params.idPeriod,
+        isNew: navigation.state.params.isNew
     });
 
     setInitialValues()
     {
         const { params } = this.props.navigation.state;
 
-        if( params.idPeriod == null)
+        if(params.idPeriod == null)
         {
+            // Nouvelle période
             this.state = {
                 title:'Détails période', 
                 date1: '10/09/2017',
@@ -40,12 +43,30 @@ class CongesPeriode extends React.Component {
                 moment2: '2',
                 absence: '',
                 joursFeries: feries2017,
-                nbJoursOuvres: 0
+                nbJoursOuvres: 0,
+                idConge: params.idConge == null ? 0 : params.idConge
             }
         } 
         else
         {
-            var period = service.getByPrimaryKey(PERIOD_SCHEMA, params.idPeriod);
+            if(params.isNew)
+            {
+                // Non enregistrée en base, juste dans le cache
+                var period = service.getByPrimaryKey(PERIOD_SCHEMA, params.idPeriod);
+            }
+            else
+            {
+                // TODO : en attente 
+                // Déjà enregistrée en base
+                var period = {
+                    idConge: params.idConge,
+                    startDate: '12/10/2017',
+                    startPeriod: '1', 
+                    endDate: '12/10/2017',
+                    endPeriod: '2',
+                    absTypeId: 'AE'
+                };
+            }
             
             this.state = {
                 title:'Détails période', 
@@ -55,7 +76,8 @@ class CongesPeriode extends React.Component {
                 moment2: period.endPeriod,
                 absence: period.absTypeId,
                 joursFeries: feries2017,
-                nbJoursOuvres: 0
+                nbJoursOuvres: 0,
+                idConge: params.idConge == null ? 0 : params.idConge
             };
         }          
     }
@@ -64,6 +86,7 @@ class CongesPeriode extends React.Component {
     {
         var period = {
             id: idPeriod == null ? service.getNextKey(PERIOD_SCHEMA) : idPeriod,
+            idConge: this.state.idConge,
             startDate: this.state.date1,
             startPeriod: this.state.moment1, 
             endDate: this.state.date2,
@@ -94,14 +117,14 @@ class CongesPeriode extends React.Component {
         const { params } = this.props.navigation.state;
         this.savePeriod(params.idPeriod);
         // Retour à la page d'ajout
-        this.props.navigation.navigate('CongesAjout');
+        this.props.navigation.navigate('CongesAjout', {idConge: this.state.idConge});
     }
 
     handleSupprimer() {
         const { params } = this.props.navigation.state;
         this.deletePeriod(params.idPeriod);
         // Retour à la page d'ajout
-        this.props.navigation.navigate('CongesAjout');
+        this.props.navigation.navigate('CongesAjout', {idConge: this.state.idConge});
     }
 
     calculNbJours() {
