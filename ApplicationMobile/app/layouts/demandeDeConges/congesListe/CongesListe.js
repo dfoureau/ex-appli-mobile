@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TextInput, Picker, Image, TouchableHighlight, FlatList } from 'react-native';
+import { View, Text, TextInput, Picker, Image, TouchableOpacity, FlatList } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import style from './styles';
 import styleButton from '../../../components/Buttons/styles';
@@ -25,8 +25,12 @@ class CongesListe extends React.Component {
 		this.props.navigation.navigate(ecran);
 	}
 	
-	addDemandeConge(){
-		this.props.navigation.navigate('CongesAjout', { listConges: null });
+	addNewConge(){
+		this.props.navigation.navigate('CongesAjout', {idConge: null});
+	}
+
+	getConge(id){
+		this.props.navigation.navigate('CongesAjout', {idConge: id});
 	}
 
 	render() {
@@ -34,7 +38,8 @@ class CongesListe extends React.Component {
 		/*status => 1: validé, 2: brouillon, 3: en attente de validation */
         const data = [
             {
-                key: 1,
+				key: 1,
+                id: 1,
 				startDate: '28/11/2017',
 				endDate: '28/11/2017',
 				dayNumber: 0.5,
@@ -42,13 +47,15 @@ class CongesListe extends React.Component {
 				status: 'brouillon'
             }, {
 				key: 2,
+				id: 2,
 				startDate: '18/08/2017',
 				endDate: '25/08/2017',
 				dayNumber: 6,
 				statusId: 3,
 				status: 'en attente de validation'
             }, {
-                key:3,
+				key: 3,
+                id: 3,
 				startDate: '06/09/2017',
 				endDate: '12/09/2017',
 				dayNumber: 6,
@@ -110,7 +117,7 @@ class CongesListe extends React.Component {
 							<View style={style.containerButton}>
 								<Button
 									text="AJOUTER"
-									onPress={() => this.addDemandeConge()}
+									onPress={() => this.addNewConge()}
 								/>
 							</View>
 						</View>
@@ -120,16 +127,18 @@ class CongesListe extends React.Component {
 							data={data}
 							renderItem={({item}) => 
 								<View style={style.containerList}>
-									<View style={style.containerPeriod}>
-										<Text style={style.periodText}>{item.startDate} au {item.endDate}</Text>
-										<View style={style.containerIcon}>
-											<Image style={style.listIcon} source= { item.statusId == 1 ? require('../../../images/icons/check2.png') : null}/>
+									<TouchableOpacity key={item.id} onPress = {() => this.getConge(item.id)}>
+										<View style={style.containerPeriod}>
+											<Text style={style.periodText}>{item.startDate} au {item.endDate}</Text>
+											<View style={style.containerIcon}>
+												<Image style={style.listIcon} source= { item.statusId == 1 ? require('../../../images/icons/check2.png') : null}/>
+											</View>
 										</View>
-									</View>
-									<View>
-										<Text style={style.dayNumberText}>Nb jours : {item.dayNumber}</Text>
-										<Text style={style.statusText}>Etat : {item.status}{ item.statusId == 1 ? <Text> par {item.userValidation} le {item.dateValidation}</Text> : null}</Text>	
-									</View>
+										<View>
+											<Text style={style.dayNumberText}>Nb jours : {item.dayNumber}</Text>
+											<Text style={style.statusText}>Etat : {item.status}{ item.statusId == 1 ? <Text> par {item.userValidation} le {item.dateValidation}</Text> : null}</Text>	
+										</View>
+									</TouchableOpacity>
 								</View>}/>
 						</View>
 					</View>
