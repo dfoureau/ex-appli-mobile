@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TextInput, Picker, Image, TouchableHighlight, FlatList } from 'react-native';
+import { View, Text, TextInput, Picker, Image, TouchableOpacity, FlatList } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import style from './styles';
 
@@ -30,11 +30,16 @@ class FraisListe extends React.Component {
 		this.props.navigation.navigate('FraisAjout');
 	}
 
+	getNDF(id, month, year){
+		this.props.navigation.navigate('FraisAjout', { idNDF: id, month: month, year: year });
+	}
+
 	render() {
 		/*status => 1: validé, 2: brouillon, 3: en attente de validation */
         const data = [
             {
-                key: 0,
+				key: 0,
+				id: 0,
 				month: 'Août',
 				year: '2017',
 				amount: 75,
@@ -42,6 +47,7 @@ class FraisListe extends React.Component {
 				status: 'en attente de validation'
             }, {
 				key: 1,
+				id: 1,
 				month: 'Juillet',
 				year: '2017',
 				amount: 203,
@@ -50,7 +56,8 @@ class FraisListe extends React.Component {
 				userValidation: 'Anne Edythe',
 				dateValidation: '02/08/2017'
             }, {
-                key:2,
+				key:2,
+				id: 2,
 				month: 'Mars',
 				year: '2017',
 				amount: 512,
@@ -97,16 +104,18 @@ class FraisListe extends React.Component {
 							data={data}
 							renderItem={({item}) => 
 								<View style={style.containerList}>
-									<View style={style.containerPeriod}>
-										<Text style={style.periodText}>{item.month} {item.year}</Text>
-										<View style={style.containerIcon}>
-											<Image style={style.listIcon} source= { item.statusId == 1 ? require('../../../images/icons/check2.png') : null}/>
+									<TouchableOpacity key={item.id} onPress = {() => this.getNDF(item.id, item.month, item.year)}>
+										<View style={style.containerPeriod}>
+											<Text style={style.periodText}>{item.month} {item.year}</Text>
+											<View style={style.containerIcon}>
+												<Image style={style.listIcon} source= { item.statusId == 1 ? require('../../../images/icons/check2.png') : null}/>
+											</View>
 										</View>
-									</View>
-									<View>
-										<Text style={style.amountText}>Montant : {item.amount} €</Text>
-										<Text style={style.statusText}>Etat : {item.status}{ item.statusId == 1 ? <Text> par {item.userValidation} le {item.dateValidation}</Text> : null}</Text>	
-									</View>
+										<View>
+											<Text style={style.amountText}>Montant : {item.amount} €</Text>
+											<Text style={style.statusText}>Etat : {item.status}{ item.statusId == 1 ? <Text> par {item.userValidation} le {item.dateValidation}</Text> : null}</Text>	
+										</View>
+									</TouchableOpacity>
 								</View>}/>
 					</View>
 				</ContainerAccueil>

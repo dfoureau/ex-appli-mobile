@@ -28,6 +28,7 @@ import Panel from '../../../components/Panel/Panel';
             status:'nouveau',
             statusLabel:'Nouveau CRA',
             header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours'],
+            monthSelected: 'Octobre 2017',
             listCRA: [
                             {
                                 id:8,
@@ -52,6 +53,10 @@ import Panel from '../../../components/Panel/Panel';
 		}
 	}
 
+    static navigationOptions = ({ navigation }) => ({
+            idCRA: navigation.state.params.id,
+            Idate: navigation.state.params.Idate 
+    });
 
 	//Permet d'afficher l'ecran choisi dans le menu
 	afficherEcranParent(ecran){
@@ -126,10 +131,6 @@ import Panel from '../../../components/Panel/Panel';
       this.props.navigation.navigate('ActivitesListe');
       };
 
-     //i.e this.props.navigation.state.params.Idate,
-     static navigationOptions = ({ navigation }) => ({
-              Idate:navigation.state.params.Idate, });
-
 	render() {
        //Décralation du params transmis à l'écran courante.
        const { params } = this.props.navigation.state;
@@ -164,21 +165,20 @@ import Panel from '../../../components/Panel/Panel';
                                  <Picker
                            			style={{
                            			width: 162 }}
-                           			selectedValue={this.state.month}
-                           			onValueChange={(itemValue, itemIndex) => this.setState({month: itemValue})}>
-                           					<Picker.Item label={params.Idate} value="0"/>
-                           					<Picker.Item label="Janvier 2017" value="1"/>
-                           					<Picker.Item label="Février 2017" value="2"/>
-                           					<Picker.Item label="Mars 2017" value="3"/>
-                           				    <Picker.Item label="Avril 2017" value="4"/>
-                           					<Picker.Item label="Mai 2017" value="5"/>
-                           				    <Picker.Item label="Juin 2017" value="6"/>
-                           					<Picker.Item label="Juillet 2017" value="7"/>
-                           					<Picker.Item label="Août 2017 " value="8"/>
-                           					<Picker.Item label="Septembre 2017 " value="9"/>
-                           					<Picker.Item label="Octobre 2017 " value="10"/>
-                           					<Picker.Item label="Novembre 2017 " value="11"/>
-                           					<Picker.Item label="Décembre 2017" value="12"/>
+                           			selectedValue={params.idCRA == null ? this.state.monthSelected : params.Idate}
+                           			onValueChange={(itemValue, itemIndex) => this.setState({monthSelected: itemIndex})}>
+                           					<Picker.Item label="Janvier 2017" value="Janvier 2017" key="1"/>
+                           					<Picker.Item label="Février 2017" value="Février 2017" key="2"/>
+                           					<Picker.Item label="Mars 2017" value="Mars 2017" key="3"/>
+                           				    <Picker.Item label="Avril 2017" value="Avril 2017" key="4"/>
+                           					<Picker.Item label="Mai 2017" value="Mai 2017" key="5"/>
+                           				    <Picker.Item label="Juin 2017" value="Juin 2017" key="6"/>
+                           					<Picker.Item label="Juillet 2017" value="Juillet 2017" key="7"/>
+                           					<Picker.Item label="Août 2017" value="Août 2017" key="8"/>
+                           					<Picker.Item label="Septembre 2017" value="Septembre 2017" key="9"/>
+                           					<Picker.Item label="Octobre 2017" value="Octobre 2017" key="10"/>
+                           					<Picker.Item label="Novembre 2017" value="Novembre 2017" key="11"/>
+                           					<Picker.Item label="Décembre 2017" value="Décembre 2017" key="12"/>
                            	     </Picker>
                             </View>
                          </View>

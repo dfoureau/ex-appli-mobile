@@ -27,14 +27,20 @@ class FraisAjout extends React.Component {
 			status:'nouveau', 
 			statusLabel:'Nouvelle NDF',
 			header: ['Jour', 'Client', 'Montant €'],
-			months: ["Avril 2017", "Mai 2017", "Juin 2017", "Juillet 2017", "Aout 2017", "Septembre 2017", "Octobre 2017", "Novembre 2017", "Décembre 2017", 'Janvier 2018', "Février 2018", "Mars 2018", ],
-			monthSelected: 8,
+			months: ['Janvier 2017', 'Février 2017', 'Mars 2017', 'Avril 2017', 'Mai 2017', 'Juin 2017', 'Juillet 2017', 'Août 2017', 'Septembre 2017', 'Octobre 2017', 'Novembre 2017', 'Décembre 2017'],
+			monthSelected: 'Octobre 2017',
 			listFrais: this.setListFrais(),
 			totalMontant: 0,
 			totalClient: 0,
 			nbJours: 0,
 		}
 	}
+
+	static navigationOptions = ({ navigation }) => ({
+            idNDF: navigation.state.params.id,
+			month: navigation.state.params.month,
+			year: navigation.state.params.year  
+    });
 
 	//Set la liste des lignes du tableau
 	setListFrais() {
@@ -100,7 +106,7 @@ class FraisAjout extends React.Component {
 	//Affiche le contenu du menu des mois/années
 	loadPickerItems() {
 		return this.state.months.map((item,i) => 
-			<Picker.Item label={item} value={i} key={i}/>
+			<Picker.Item label={item} value={item} key={i}/>
 		)
 	}
 
@@ -159,12 +165,11 @@ class FraisAjout extends React.Component {
     }
 
 	render() {
+		const { params } = this.props.navigation.state;
 
 		return (
-
 			<View style={styles.mainContainer}>
 				<ContainerTitre title={this.state.title} navigation={this.props.navigation}>
-                
 				<View style={styles.container}>
 
                     <View style={styles.container1}>
@@ -179,7 +184,7 @@ class FraisAjout extends React.Component {
 							<View style={styles.containerPicker}>
 								<Picker
 									style={{width:160}}
-									selectedValue={this.state.monthSelected}
+									selectedValue={params.idNDF == null ? this.state.monthSelected : params.month + ' ' + params.year}
 									onValueChange={(itemValue, itemIndex) => this.setState({monthSelected: itemIndex})}>
 									{this.loadPickerItems()}
 								</Picker>
@@ -211,14 +216,11 @@ class FraisAjout extends React.Component {
 							</View>
 							
                     </View>                   
-					
-
 				    <View style={styles.containerButtons}>
 						{this.showDeleteButton()}
 						{this.showDraftButton()}
 						{this.showValidateButton()}
 					</View>
-
 			    </View>
 				
             </ContainerTitre>  
