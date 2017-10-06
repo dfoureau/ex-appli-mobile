@@ -27,7 +27,7 @@ class FraisListe extends React.Component {
 	}
 
 	addNDF(){
-		this.props.navigation.navigate('FraisAjout');
+		this.props.navigation.navigate('FraisAjout', { idNDF: null, month: null, year: null });
 	}
 
 	getNDF(id, month, year){

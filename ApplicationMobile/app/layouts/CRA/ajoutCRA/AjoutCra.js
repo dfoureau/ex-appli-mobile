@@ -54,7 +54,7 @@ import Panel from '../../../components/Panel/Panel';
 	}
 
     static navigationOptions = ({ navigation }) => ({
-            idCRA: navigation.state.params.id,
+            idCRA: navigation.state.params.idCRA,
             Idate: navigation.state.params.Idate 
     });
 

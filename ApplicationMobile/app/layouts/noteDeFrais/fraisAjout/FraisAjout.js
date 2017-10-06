@@ -37,7 +37,7 @@ class FraisAjout extends React.Component {
 	}
 
 	static navigationOptions = ({ navigation }) => ({
-            idNDF: navigation.state.params.id,
+            idNDF: navigation.state.params.idNDF,
 			month: navigation.state.params.month,
 			year: navigation.state.params.year  
     });
