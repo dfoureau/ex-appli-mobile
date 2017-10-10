@@ -7,7 +7,7 @@ import styles from './styles';
 import moment from 'moment';
 import 'moment/locale/fr';
 
-// IMPORT DES COMPOSANTS EXOTIQUES
+// IMPORT DES COMPOSANTS EXOTIQUE
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
 import { ContainerFilters } from '../../../components/containerFilters';
 import { SearchFilter } from '../../../components/searchFilter';
