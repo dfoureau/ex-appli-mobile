@@ -27,7 +27,7 @@ import Panel from '../../../components/Panel/Panel';
             TextComment : ' ',
             status:'nouveau',
             statusLabel:'Nouveau CRA',
-            header: ['Date du', 'Date au', 'Type d\'abs', 'Nb. jours'],
+            header: ['Date du', 'Date au', 'Activité', 'Nb. jours'],
             monthSelected: 'Octobre 2017',
             listCRA: [
                             {

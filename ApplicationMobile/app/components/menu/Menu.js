@@ -13,7 +13,7 @@ class ContainerHeader extends Component {
 			pan: new Animated.ValueXY({x:-width, y:0}),
 			isOpen:false,
 			navigationParent: null,
-			nbNotifications: 8, //Necessite de mettre une variable globale
+			nbNews: 8, //Necessite de mettre une variable globale
 		}
 	}
 
@@ -60,8 +60,8 @@ class ContainerHeader extends Component {
 		this.props.fermerMenu();
 	}
 
-	afficherNotifications(notif) {
-		return notif > 0 ? 	<Text style={styles.TextItemNotif} onLayout={(event) => console.log(event.nativeEvent.layout.height)}>{notif}</Text> : null;
+	afficherNews(news) {
+		return news > 0 ? 	<Text style={styles.TextItemNews} onLayout={(event) => console.log(event.nativeEvent.layout.height)}>{news}</Text> : null;
 	}
 	
 	render(){
@@ -119,23 +119,23 @@ class ContainerHeader extends Component {
 							<Text style={styles.TextItemMenu}>Annuaire</Text>   
 						</View>
 					</TouchableOpacity>
-					<TouchableOpacity style={styles.ItemMenu} onPress={()=>this.afficherEcran('Notifications')}>						
+					<TouchableOpacity style={styles.ItemMenu} onPress={()=>this.afficherEcran('News')}>						
 						<View style={styles.ItemMenuView}>
 							<Image style={styles.IconItemMenu}
 								source={require('../../images/icons/calendar.png')}
 							/>
-							<Text style={styles.TextItemMenu}>Notifications</Text>
-							{this.afficherNotifications(this.state.nbNotifications)}
+							<Text style={styles.TextItemMenu}>News</Text>
+							{this.afficherNews(this.state.nbNews)}
 						</View>
 					</TouchableOpacity>
 					<TouchableOpacity style={[styles.ItemMenu, styles.LastItemMenuLeft]} onPress={()=>this.afficherEcran('APropos')}>						
 							<Text>À Propos</Text>
 					</TouchableOpacity>
-					<TouchableOpacity style={[styles.ItemMenu, styles.LastItemMenuRight]} onPress={()=>this.afficherEcran('Reglages')}>							
+					{/* <TouchableOpacity style={[styles.ItemMenu, styles.LastItemMenuRight]} onPress={()=>this.afficherEcran('Reglages')}>							
 						<Image style={styles.LastItemMenuIcon}
 								source={require('../../images/icons/CogIcon.png')}
 							/>   
-					</TouchableOpacity>
+					</TouchableOpacity> */}
 				</View>
 	
 				<View style={styles.ContainerOpaque}>
