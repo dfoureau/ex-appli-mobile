@@ -74,7 +74,7 @@ export default StyleSheet.create({
         height: 36,
     },
 
-    TextItemNotif: {
+    TextItemNews: {
         right:50, 
         bottom: 6, 
         paddingLeft: 5.5, 
