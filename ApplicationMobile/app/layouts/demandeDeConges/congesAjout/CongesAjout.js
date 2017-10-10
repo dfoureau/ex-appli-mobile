@@ -58,7 +58,7 @@ class CongesAjout extends React.Component {
                         endDate: '20/08/2017',
                         endPeriod: '2',
                         absTypeId: 'CP',
-                        nbJoursOuvres: 2
+                        workingDays: 2
                     },
                     {
                         id: 2,
@@ -67,7 +67,7 @@ class CongesAjout extends React.Component {
                         endDate: '25/08/2017',
                         endPeriod: '2',
                         absTypeId: 'RT',
-                        nbJoursOuvres: 4
+                        workingDays: 4
                     }
                 ]
             };
@@ -121,7 +121,7 @@ class CongesAjout extends React.Component {
                     style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
                     borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
                     textStyle={style.rowText}
-                    data={[row.startDate, row.endDate, row.absTypeId, row.nbJoursOuvres]}/> 
+                    data={[row.startDate, row.endDate, row.absTypeId, row.workingDays]}/> 
             </TouchableOpacity>   
         ))); 
     }

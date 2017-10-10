@@ -43,7 +43,7 @@ class CongesPeriode extends React.Component {
                 moment2: '2',
                 absence: '',
                 joursFeries: feries2017,
-                nbJoursOuvres: 0,
+                workingDays: 0,
                 idConge: params.idConge == null ? 0 : params.idConge
             }
         } 
@@ -76,7 +76,7 @@ class CongesPeriode extends React.Component {
                 moment2: period.endPeriod,
                 absence: period.absTypeId,
                 joursFeries: feries2017,
-                nbJoursOuvres: 0,
+                workingDays: 0,
                 idConge: params.idConge == null ? 0 : params.idConge
             };
         }          
@@ -92,7 +92,7 @@ class CongesPeriode extends React.Component {
             endDate: this.state.date2,
             endPeriod: this.state.moment2,
             absTypeId: this.state.absence,
-            nbJoursOuvres: this.state.nbJoursOuvres
+            workingDays: this.state.workingDays
         }; 
 
         if(idPeriod == null)
@@ -156,7 +156,7 @@ class CongesPeriode extends React.Component {
             total = total > 0 ? total - 0.5 : total;
         }
 
-        this.state.nbJoursOuvres = total;
+        this.state.workingDays = total;
 
         return <View style={styles.container}>
                     <Text style={styles.text}>Jours ouvrés : {total}</Text>

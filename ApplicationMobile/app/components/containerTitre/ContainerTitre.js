@@ -38,8 +38,8 @@ export default class ContainerTitre extends React.Component {
     
     /**Retour vers la page précédente */
     retour(){
-        const backAction = NavigationActions.back()
-          this.props.navigation.dispatch(backAction);
+        const backAction = NavigationActions.back();
+        this.props.navigation.dispatch(backAction);
     }
 
 	render() {
