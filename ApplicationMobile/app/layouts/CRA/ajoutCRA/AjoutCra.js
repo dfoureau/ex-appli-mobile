@@ -19,28 +19,39 @@ const ITEMCRA_SCHEMA = 'ItemCRA';
 class AjoutCra extends React.Component {
 
 	constructor (props) {
-		super(props)
-		this.state = {
-		   title: '',
-            statusId: 1,
-            TextClient : ' ',
-            TextResponsable :' ',
-            TextProjet : ' ',
-            TextComment : ' ',
-            status:'nouveau',
-            statusLabel:'Nouveau CRA',
-            header: ['Date du', 'Date au', 'Activité', 'Nb. jours'],
-            monthSelected: 'Octobre 2017',
-            listItemsCRA: this.getItemsCRA()
-        }
-        
-        this.saveItemsCRA();
-;	}
+        super(props)
+        this.setInitialValues();
+	}
 
     static navigationOptions = ({ navigation }) => ({
             idCRA: navigation.state.params.idCRA,
-            Idate: navigation.state.params.Idate 
+            date: navigation.state.params.date,
+            isServiceCalled: navigation.state.params.isServiceCalled // TODO: à supprimer, juste pr la démo
     });
+
+    setInitialValues()
+    {
+        const { params } = this.props.navigation.state;
+
+        this.state = {
+            title: '',
+             statusId: 1,
+             TextClient : ' ',
+             TextResponsable :' ',
+             TextProjet : ' ',
+             TextComment : ' ',
+             status:'nouveau',
+             statusLabel:'Nouveau CRA',
+             header: ['Date du', 'Date au', 'Activité', 'Nb. jours'],
+             monthSelected: 'Octobre 2017',
+             listItemsCRA: params.isServiceCalled ? this.getItemsCRA() : []
+         }
+
+         if(params.isServiceCalled)
+         {
+             this.saveItemsCRA();
+         }
+    }
 
 	//Permet d'afficher l'ecran choisi dans le menu
 	afficherEcranParent(ecran){
@@ -78,12 +89,12 @@ class AjoutCra extends React.Component {
     }
 
     saveItemsCRA(){
+        let list = [];
         // Enregistrement des items du CRA dans le cache
         if(this.state.listItemsCRA != null)
         {
-            this.state.listItemsCRA.map((item, i) => (
-                // Création d'un ItemCRA
-                service.insert(ITEMCRA_SCHEMA, {
+            this.state.listItemsCRA.forEach(function(item){
+                var itemCRA = {
                     id: service.getNextKey(ITEMCRA_SCHEMA), 
                     idItem: item.id,
                     idCRA: item.idCRA,
@@ -91,13 +102,17 @@ class AjoutCra extends React.Component {
                     endDate: item.endDate,
                     actType: item.actType,
                     workingDays: item.workingDays
-                }))
-            );
+                };
+
+                list.push(itemCRA);
+                service.insert(ITEMCRA_SCHEMA, itemCRA);
+            });
+
+            this.state.listItemsCRA = list;
         }
     }
 
     deleteCr(){
-
     }
 
     validatePressDelete(){
@@ -111,16 +126,18 @@ class AjoutCra extends React.Component {
 
 
     validate(){
-              this.setState({statusId: 3, status: 'validé', statusLabel: 'Modifications interdites'});
-              this.props.navigation.navigate('CraConfirmation');
+        // Après sauvegarde en bdd, on reset le cache
+        service.delete(ITEMCRA_SCHEMA);
+        this.setState({statusId: 3, status: 'validé', statusLabel: 'Modifications interdites'});
+        this.props.navigation.navigate('CraConfirmation');
     }
 
-     modifyCRA(id,startDate,endDate,actType){
-            this.props.navigation.navigate('ActivitesDetail',{ idCRA:id, startDate:startDate, endDate:endDate, actType:actType});
-         }
+    modifyItemCRA(id){
+            this.props.navigation.navigate('ActivitesDetail',{ idItemCRA:id });
+    }
 
-     showDeleteButton()
-     {
+    showDeleteButton()
+    {
              //if(this.state.statusId == 1 || this.state.statusId == 2)
                  return <Button text="SUPPRIMER" buttonStyles={style.deleteButton}  onPress={() =>
                  Alert.alert(
@@ -132,37 +149,43 @@ class AjoutCra extends React.Component {
                   ]
                   )
                   }/>
-     }
+    }
 
-     showDraftButton()
-     {
+    showDraftButton()
+    {
            // if(this.state.statusId == 1 || this.state.statusId == 2)
                 return <Button buttonStyles={style.draftButton} text="BROUILLON" onPress={() => this.saveDraft()} />
-     }
+    }
 
-     showValidateButton()
-     {
+    showValidateButton()
+    {
             //if(this.state.statusId == 1 || this.state.statusId == 2)
                 return <Button text="VALIDER"  onPress={() => this.validate()} />
-     }
+    }
 
 
-      afficherRow(){
-            return (this.state.listItemsCRA.map((row, i) => (
-                <TouchableOpacity key={i} onPress={() => this.modifyCRA(row.id,row.startDate,row.endDate,row.actType)}>
-                    <Row
-                    style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
-                    borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
-                    textStyle={style.rowText}
-                    data={[row.startDate, row.endDate, row.actType, row.workingDays]}/>
-                </TouchableOpacity>
-            )));
-       }
+    afficherRows(){
+        let items = service.get(ITEMCRA_SCHEMA); 
+        return this.getRows(items);  
+    }
 
-     handleValidate = () => {
-     //TODO Retourne sur la page des CRA
-      this.props.navigation.navigate('ActivitesListe');
-      };
+    getRows(tab)
+    {
+        return (tab.map((row, i) => (
+            <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(row.id)}>
+                <Row
+                style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
+                borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
+                textStyle={style.rowText}
+                data={[row.startDate, row.endDate, row.actType, row.workingDays]}/>
+            </TouchableOpacity>
+        )));
+    }
+
+    handleValidate = () => {
+    //TODO Retourne sur la page des CRA
+    this.props.navigation.navigate('ActivitesListe');
+    };
 
 	render() {
        //Décralation du params transmis à l'écran courante.
@@ -170,7 +193,7 @@ class AjoutCra extends React.Component {
 
 		return (
 			<View>
-				<ContainerTitre title={params.Idate} navigation={this.props.navigation}>
+				<ContainerTitre title={params.date} navigation={this.props.navigation}>
                   <View style={style.container}>
 
                     <View style={style.container1}>
@@ -220,7 +243,7 @@ class AjoutCra extends React.Component {
                      <View style={style.container3}>
                           <Table style={style.table} borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}>
                                <Row data={this.state.header} style={style.header} textStyle={style.headerText} />
-                                {this.afficherRow()}
+                                {this.afficherRows()}
                           </Table>
                      </View>
 

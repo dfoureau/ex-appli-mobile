@@ -13,6 +13,7 @@ import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil';
 import Calendar from '../../../components/calendar/Calendar';
 import styles from './styles';
+import service from '../../../realm/service';
 
 const ITEMCRA_SCHEMA = 'ItemCRA';
 
@@ -20,11 +21,29 @@ class ActivitesDetail extends React.Component {
 	 
 	constructor (props) {
 		super(props)
+		this.setInitialValues();
+	}
+
+
+	// Permet d'afficher l'ecran choisi dans le menu
+	afficherEcranParent(ecran){
+		this.props.navigation.navigate(ecran);
+	};
+
+	setInitialValues()
+    {
+        const { params } = this.props.navigation.state;
+		var itemCRA = service.getByPrimaryKey(ITEMCRA_SCHEMA, params.idItemCRA);
+
 		this.state = { 
 			title:'Détails période',
-			date1: this.props.navigation.state.params.startDate,
-			date2: this.props.navigation.state.params.endDate,
-			activite: this.props.navigation.state.params.actType,
+			id: params.idItemCRA,
+			idItem: itemCRA.id,
+			idCRA: itemCRA.idCRA,
+			startDate: itemCRA.startDate,
+			endDate: itemCRA.endDate,
+			actType: itemCRA.actType,
+			workingDays: itemCRA.workingDays,
 			activitesListe: [ 
 								{code:"1.0"}, 
 								{code:"IC", label:"Intercontrat"}, 
@@ -35,15 +54,9 @@ class ActivitesDetail extends React.Component {
 								{code:"0.5+AM", label:"0.5 + Arrêt maladie"}, 
 								{code:"0.5+AB", label:"0.5 + Absence diverse"}
 							],
-			activiteClicked: { code: this.props.navigation.state.params.actType }
-		}
-	}
-
-
-	// Permet d'afficher l'ecran choisi dans le menu
-	afficherEcranParent(ecran){
-		this.props.navigation.navigate(ecran);
-	};
+			activiteClicked: { code: itemCRA.actType }
+		}         
+    }
 
 	choixActivite = (activite) => {
 		// Change le bouton sélectionné
@@ -52,23 +65,22 @@ class ActivitesDetail extends React.Component {
 
 	handleValidate(){
 		const { params } = this.props.navigation.state;
-		this.saveItemCRA(params.idItem);
+		this.saveItemCRA(params.idItemCRA);
         // Retour à la page d'ajout
-        this.props.navigation.navigate('AjoutCRA');
+        this.props.navigation.navigate('AjoutCra', {idCRA: null, date: null, isServiceCalled: false});
 	}
 	
-	saveItemCRA(idItem)
+	saveItemCRA(idItemCRA)
     {
         var item = {
-            id: idPeriod == null ? service.getNextKey(PERIOD_SCHEMA) : idPeriod,
-            idConge: this.state.idConge,
-            startDate: this.state.date1,
-            startPeriod: this.state.moment1, 
-            endDate: this.state.date2,
-            endPeriod: this.state.moment2,
-            absTypeId: this.state.absence,
-            workingDays: this.state.workingDays
-        }; 
+			id: idItemCRA, 
+			idItem: this.state.idItem,
+			idCRA: this.state.idCRA,
+			startDate: this.state.startDate,
+			endDate: this.state.endDate,
+			actType: this.state.activiteClicked.code,
+			workingDays: this.state.workingDays
+		}; 
 
         // Mise à jour d'un item
 		service.update(ITEMCRA_SCHEMA, item);
@@ -134,11 +146,11 @@ class ActivitesDetail extends React.Component {
 					<View style={styles.calendarContainer}>
 						<View style={styles.calendarFlexContainer}>
 							<Text style={styles.calendarText}>Du</Text>
-							<Calendar style={styles.calendarComponent} date={this.state.date1} onValueChange={(newDate) => this.setState({date1:newDate})}/>
+							<Calendar style={styles.calendarComponent} date={this.state.startDate} onValueChange={(newDate) => this.setState({startDate:newDate})}/>
 						</View>
 						<View style={styles.calendarFlexContainer}>
 							<Text style={styles.calendarText}>Au</Text>
-							<Calendar style={styles.calendarComponent} date={this.state.date2} onValueChange={(newDate) => this.setState({date2:newDate})}/>
+							<Calendar style={styles.calendarComponent} date={this.state.endDate} onValueChange={(newDate) => this.setState({endDate:newDate})}/>
 						</View>
 					</View>
                 </View>
