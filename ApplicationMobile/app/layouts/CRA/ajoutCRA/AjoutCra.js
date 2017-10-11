@@ -29,7 +29,7 @@ class AjoutCra extends React.Component {
             TextComment : ' ',
             status:'nouveau',
             statusLabel:'Nouveau CRA',
-            header: ['Date du', 'Date au', 'Type d\'act', 'Nb. jours'],
+            header: ['Date du', 'Date au', 'Activité', 'Nb. jours'],
             monthSelected: 'Octobre 2017',
             listItemsCRA: this.getItemsCRA()
         }

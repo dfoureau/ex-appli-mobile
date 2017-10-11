@@ -12,8 +12,9 @@ import { OptionFilter } from '../../../components/optionFilter';
 import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil';
 import Calendar from '../../../components/calendar/Calendar';
-
 import styles from './styles';
+
+const ITEMCRA_SCHEMA = 'ItemCRA';
 
 class ActivitesDetail extends React.Component {
 	 
@@ -50,7 +51,27 @@ class ActivitesDetail extends React.Component {
 	};
 
 	handleValidate(){
-    	this.props.navigation.dispatch(NavigationActions.back());
+		const { params } = this.props.navigation.state;
+		this.saveItemCRA(params.idItem);
+        // Retour à la page d'ajout
+        this.props.navigation.navigate('AjoutCRA');
+	}
+	
+	saveItemCRA(idItem)
+    {
+        var item = {
+            id: idPeriod == null ? service.getNextKey(PERIOD_SCHEMA) : idPeriod,
+            idConge: this.state.idConge,
+            startDate: this.state.date1,
+            startPeriod: this.state.moment1, 
+            endDate: this.state.date2,
+            endPeriod: this.state.moment2,
+            absTypeId: this.state.absence,
+            workingDays: this.state.workingDays
+        }; 
+
+        // Mise à jour d'un item
+		service.update(ITEMCRA_SCHEMA, item);
     }
 
 	// Gère le rendu des boutons sur plusieurs lignes, et gère le toggle
