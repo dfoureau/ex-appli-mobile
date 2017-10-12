@@ -29,8 +29,16 @@ class FraisAjout extends React.Component {
 
 	setInitialValues() {
 		var listeFrais = service.get(FRAIS_SCHEMA);
+		var totalARegler = 0;
+		var totalClient = 0;
 
-		// TODO récupérer les sommes total à régler et total client
+		// pour chaque frais trouvé
+		listeFrais.forEach((frais) => {
+			// on calcul les totaux
+			let totauxFrais = this.calculTotaux(frais);
+			totalARegler += totauxFrais.totalAReglerFrais;
+			totalClient += totauxFrais.totalClientFrais;
+		});
 
 		this.state = {
 			title: 'Note de frais',
@@ -41,33 +49,35 @@ class FraisAjout extends React.Component {
 			months: ['Janvier 2017', 'Février 2017', 'Mars 2017', 'Avril 2017', 'Mai 2017', 'Juin 2017', 'Juillet 2017', 'Août 2017', 'Septembre 2017', 'Octobre 2017', 'Novembre 2017', 'Décembre 2017'],
 			monthSelected: 'Octobre 2017',
 			listFrais: this.setListFrais(),
-			// TODO
-			totalMontant: 0,
-			// TODO
-			totalClient: 0,
+			totalMontant: totalARegler,
+			totalClient: totalClient,
 			nbJours: 0,
 		}
 	}
-	/*
-	static navigationOptions = ({ navigation }) => ({
-		idFrais: navigation.state.params.idFrais,
-		month: navigation.state.params.month,
-		year: navigation.state.params.year  
-	
-});*/
-	/*static navigationOptions = ({ navigation }) => ({
-		idFrais: this.props.navigation.state.params.idFrais
-	});*/
+
+	// Méthode permettant de calculer le total à régler d'un frais
+	calculTotaux(frais) {
+
+		var total = frais.forfait +
+			frais.sncf +
+			frais.pourcentage +
+			frais.hotel +
+			frais.repas +
+			frais.invit +
+			frais.peages +
+			frais.essence +
+			frais.taxi +
+			frais.parking +
+			frais.divers;
+
+		return {
+			totalAReglerFrais: frais.facturable == 0 ? total : 0,
+			totalClientFrais: frais.facturable == 1 ? total : 0
+		};
+	}
 
 	//Set la liste des lignes du tableau
 	setListFrais() {
-
-		//Soit nouvelle NDF -> tableau vide, mois = par defaut le mois en cours (listeFrais vide)
-		//Soit vient de modif une ligne de NDf -> tableau prérempli (en cache), mois = pas besoin de le savoir (listeFrais pas vide)
-		//Soit ancienne NDF -> tableau prérempli avec get valeurs à partir d'un service, mois = passé en parametre (listeFrais pas vide)
-
-		//TODO Check si liste presente dans le cache
-
 		//Nouvelle NDF -> Tableau vide initié
 		let currentDate = new Date();
 		let initList = [],
@@ -76,9 +86,14 @@ class FraisAjout extends React.Component {
 			monthOk = true; //verif que le mois est toujours le bon
 		while (monthOk) {
 			if (jours.month() == month) {
-
 				// on récupère le frais pour la date
-				let frais = service.getByPrimaryKey(FRAIS_SCHEMA, jours.format('DD-MM-YYYY'));
+				var frais = service.getByPrimaryKey(FRAIS_SCHEMA, jours.format('DD-MM-YYYY'));
+				var totauxFrais = null;
+
+				if (frais != null) {
+					// on calcul les totaux
+					totauxFrais = this.calculTotaux(frais);
+				}
 
 				initList.push({
 					// l'id du frais correspond à sa date au format DD-MM-YYYY
@@ -86,28 +101,13 @@ class FraisAjout extends React.Component {
 					date: jours.format('DD-MM-YYYY'),
 					dateShort: jours.format('dd DD'),
 					client: frais != null ? frais.client : '',
-					montant: frais != null ? 'montant' : ''
+					montant: totauxFrais != null ? totauxFrais.totalAReglerFrais + totauxFrais.totalClientFrais : ''
 				});
 
 				jours.add(1, 'days'); //passe au jour suivant
 			}
 			else monthOk = false; //Si on passe au moins suivant on arrete
 		}
-		/*
-				//Modification NDF (TEMP - la liste doit etre recup dans le cache)
-				if (this.props.navigation.state.params != undefined) {
-					if (this.props.navigation.state.params.id != undefined && this.props.navigation.state.params.client != undefined) {
-						let id = this.props.navigation.state.params.id;
-						function getWithId(el) { //Cherche l'element dans le tableau qui correspond a l'id
-							return el.id == id;
-						}
-						let index = initList.findIndex(getWithId);
-						initList[index].client = this.props.navigation.state.params.client;
-						initList[index].montant = this.props.navigation.state.params.montant;
-					}
-				}
-		*/
-
 		return initList;
 	}
 
@@ -186,14 +186,7 @@ class FraisAjout extends React.Component {
 
 	render() {
 		const { params } = this.props.navigation.state;
-/*
-		if (this.props.navigation.state.params.idFrais != null) {
-			var date = moment(this.props.navigation.state.params.idFrais, 'DD-MM-YYYY');
-		}
-		var month = date != null ? date.format('MMMM') : moment().format('MMMM');
-		var year = date != null ? date.format('YYYY') : moment().format('YYYY');
-		console.log('month' + month);
-*/
+
 		return (
 			<View style={styles.mainContainer}>
 				<ContainerTitre title={this.state.title} navigation={this.props.navigation}>
@@ -209,12 +202,12 @@ class FraisAjout extends React.Component {
 						</View>
 						<View style={styles.container2}>
 							<View style={styles.containerPicker}>
-							<Picker
-							style={{width:160}}
-							selectedValue={ this.state.monthSelected}
-							onValueChange={(itemValue, itemIndex) => this.setState({monthSelected: itemIndex})}>
-							{this.loadPickerItems()}
-						</Picker>
+								<Picker
+									style={{ width: 160 }}
+									selectedValue={this.state.monthSelected}
+									onValueChange={(itemValue, itemIndex) => this.setState({ monthSelected: itemIndex })}>
+									{this.loadPickerItems()}
+								</Picker>
 							</View>
 							<View style={styles.containerColumn}>
 								<View style={styles.containerInfoElement}>

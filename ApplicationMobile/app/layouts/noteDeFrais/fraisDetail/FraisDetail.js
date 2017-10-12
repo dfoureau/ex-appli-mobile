@@ -64,6 +64,7 @@ class FraisDetail extends React.Component {
 			hotel: isNewFrais ? '' : frais.hotel.toString(),
 			repas: isNewFrais ? '' : frais.repas.toString(),
 			invitation: isNewFrais ? '' : frais.invit.toString(),
+			parking: isNewFrais ? '' : frais.parking.toString(),
 			divers: isNewFrais ? '' : frais.divers.toString(),
 			libelleDivers: isNewFrais ? '' : frais.libelle
 		}
@@ -121,7 +122,6 @@ class FraisDetail extends React.Component {
 		}))
 	}
 	handleValidate() {
-
 		// on insère les données créées dans le cache
 		let frais = {
 			id: '',    // primary key			
@@ -145,13 +145,13 @@ class FraisDetail extends React.Component {
 			invit: this.state.invitation != '' ? parseFloat(this.state.invitation) : 0,
 			essence: this.state.essence != '' ? parseFloat(this.state.essence) : 0,
 			taxi: this.state.taxi != '' ? parseFloat(this.state.taxi) : 0,
+			parking: this.state.parking != '' ? parseFloat(this.state.parking) : 0,
 			divers: this.state.divers != '' ? parseFloat(this.state.divers) : 0,
 			libelle: this.state.libelleDivers
 		};
 
 		// pour chaque date sélectionnée on crée un frais en cache (realms)
 		this.state.selectedDatesArray.forEach((date) => {
-			
 			// la clée primaire insérée correspondant à la date du frais
 			frais.id = moment(date).format("DD-MM-YYYY");
 			frais.jour = moment(date).get('day');
@@ -325,6 +325,17 @@ class FraisDetail extends React.Component {
 											style={[styles.inputComponent, styles.inputComponentRow]}
 											value={this.state.essence}
 											onChangeText={(text) => this.setState({ essence: text })}
+											editable={true}
+											underlineColorAndroid='transparent'
+											keyboardType="numeric"
+										/>
+									</View>
+									<View style={styles.inputGroup}>
+										<Text style={[styles.text, styles.inputText]}>Parking :</Text>
+										<TextInput
+											style={[styles.inputComponent, styles.inputComponentRow]}
+											value={this.state.parking}
+											onChangeText={(text) => this.setState({ parking: text })}
 											editable={true}
 											underlineColorAndroid='transparent'
 											keyboardType="numeric"
