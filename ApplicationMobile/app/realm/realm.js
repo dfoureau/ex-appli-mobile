@@ -59,4 +59,4 @@ ConnexionParams.schema = {
     }
   };
 
-export default new Realm({ schema: [Period, Setting, ConnexionParams] })
+export default new Realm({ schema: [Period, Setting, ItemCRA, ConnexionParams] })
