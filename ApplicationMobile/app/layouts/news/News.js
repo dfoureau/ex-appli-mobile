@@ -9,11 +9,11 @@ import ContainerAccueil from '../../components/containerAccueil/ContainerAccueil
 import Accueil from '../accueil/Accueil'
 
 
-class Notifications extends React.Component {
+class News extends React.Component {
 	 
 	constructor (props) {
 		super(props)
-		this.state = { title:'Notifications' }
+		this.state = { title:'News' }
 	}
 
 	//Permet d'afficher l'ecran choisi dans le menu
@@ -143,8 +143,8 @@ class Notifications extends React.Component {
 // NAVIGATION AUTORISEE A PARTIR DE CE LAYOUT
 const navigation=StackNavigator({
 
-	Notifications: {
-		screen: Notifications,
+	News: {
+		screen: News,
 		navigationOptions: { header: null }
 	},
 	
