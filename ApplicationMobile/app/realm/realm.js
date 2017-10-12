@@ -20,6 +20,38 @@ Period.schema = {
     }
   };
 
+// Frais
+class Frais extends Realm.Object{}
+
+Frais.schema = {
+    name:'Frais',
+    primaryKey:'id',
+    properties: {
+        id:'string',    // primary key
+        idUser:'int',
+        mois:'int',
+        annee:'int',
+        indemKM:'float',
+        client:'string',
+        facturable:'int',
+        lieu:'string',
+        nbKMS:'int',
+        peages:'float',
+        forfait:'float',
+        sncf:'float',
+        nbZones:'int',
+        pourcentage:'float',
+        hotel:'float',
+        repas:'float',
+        invit:'float',
+        essence:'float',
+        taxi:'float',
+        divers:'float',
+        libelle:'string',
+        jour:'int'       
+    }
+  };
+
 // Réglage
 class Setting extends Realm.Object{}
 Setting.schema = {
@@ -31,4 +63,4 @@ Setting.schema = {
     }
   };
 
-export default new Realm({ schema: [Period, Setting] })
+export default new Realm({ schema: [Period, Frais, Setting] })
