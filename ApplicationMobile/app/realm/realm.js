@@ -47,4 +47,16 @@ Setting.schema = {
     }
   };
 
-export default new Realm({ schema: [Period, ItemCRA, Setting] })
+// Paramètres de connexion
+class ConnexionParams extends Realm.Object{}
+ConnexionParams.schema = {
+    name:'ConnexionParams',
+    primaryKey:'login',
+    properties: {
+        login: 'string',
+        mdp: 'string',
+        tokenREST: 'string'
+    }
+  };
+
+export default new Realm({ schema: [Period, Setting, ConnexionParams] })

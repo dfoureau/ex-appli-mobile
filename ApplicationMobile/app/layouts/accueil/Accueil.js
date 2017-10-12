@@ -11,7 +11,7 @@ import { ActivitesListe } from '../CRA/activitesListe';
 import { FraisListe } from '../noteDeFrais/fraisListe';
 import { CongesListe } from '../demandeDeConges/congesListe';
 import { AnnuaireListe } from '../annuaire/annuaireListe';
-import { Notifications } from '../notifications';
+import { News } from '../news';
 import { APropos } from '../Configuration/aPropos';
 import { Reglages } from '../Configuration/reglages';
 
@@ -113,8 +113,8 @@ const navigation=StackNavigator({
 		screen:AnnuaireListe, 
 		navigationOptions: { header: null }
 	},
-	Notifications:{
-		screen:Notifications, 
+	News:{
+		screen:News, 
 		navigationOptions: { header: null }
 	}, 
 	APropos:{
