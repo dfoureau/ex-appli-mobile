@@ -63,7 +63,7 @@ class FraisAjout extends React.Component {
 			frais.divers).toFixed(2);
 
 		return {
-			totalAReglerFrais: frais.facturable == 0 ? parseFloat(total) : 0,
+			totalAReglerFrais: parseFloat(total),
 			totalClientFrais: frais.facturable == 1 ? parseFloat(total) : 0
 		};
 	}
