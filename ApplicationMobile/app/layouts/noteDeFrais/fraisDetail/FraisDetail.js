@@ -22,7 +22,7 @@ class FraisDetail extends React.Component {
 	static propTypes = {
 		forfait: PropTypes.bool,
 		month: PropTypes.number,
-		id: PropTypes.number,
+		id: PropTypes.number
 	}
 
 	constructor(props) {
@@ -68,12 +68,10 @@ class FraisDetail extends React.Component {
 			divers: isNewFrais ? '' : frais.divers.toString(),
 			libelleDivers: isNewFrais ? '' : frais.libelle
 		}
-
 	}
 
 	/** Au chargement **/
 	setDatesArray() {
-
 		// dans le cas d'une modifcation d'un frais on alimente le tableau de date avec la date du frais (correspondant à son id)
 		if (this.props.navigation.state.params.idFrais != null) return [moment(this.props.navigation.state.params.idFrais, 'DD-MM-YYYY')];
 		let arr = [],
@@ -121,6 +119,7 @@ class FraisDetail extends React.Component {
 			factureClientChecked: !prevState.factureClientChecked
 		}))
 	}
+
 	handleValidate() {
 		// on insère les données créées dans le cache
 		let frais = {
@@ -180,7 +179,7 @@ class FraisDetail extends React.Component {
 
 	}
 	handleDelete() {
-		// dans le cas d'une modification d'un frais on le supprime du cache (realms)
+		// dans le cas d'une suppression d'un frais on le supprime du cache (realms)
 		if (!this.state.isNewFrais) {
 			service.deleteById(FRAIS_SCHEMA, this.props.navigation.state.params.idFrais);
 		}

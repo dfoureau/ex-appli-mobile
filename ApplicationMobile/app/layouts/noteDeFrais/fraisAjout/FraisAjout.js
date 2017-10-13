@@ -28,17 +28,8 @@ class FraisAjout extends React.Component {
 	}
 
 	setInitialValues() {
-		var listeFrais = service.get(FRAIS_SCHEMA);
-		var totalARegler = 0;
-		var totalClient = 0;
 
-		// pour chaque frais trouvé
-		listeFrais.forEach((frais) => {
-			// on calcul les totaux
-			let totauxFrais = this.calculTotaux(frais);
-			totalARegler += totauxFrais.totalAReglerFrais;
-			totalClient += totauxFrais.totalClientFrais;
-		});
+		var initListAndTotals = this.initListAndTotals();
 
 		this.state = {
 			title: 'Note de frais',
@@ -48,17 +39,18 @@ class FraisAjout extends React.Component {
 			header: ['Jour', 'Client', 'Montant €'],
 			months: ['Janvier 2017', 'Février 2017', 'Mars 2017', 'Avril 2017', 'Mai 2017', 'Juin 2017', 'Juillet 2017', 'Août 2017', 'Septembre 2017', 'Octobre 2017', 'Novembre 2017', 'Décembre 2017'],
 			monthSelected: 'Octobre 2017',
-			listFrais: this.setListFrais(),
-			totalMontant: totalARegler,
-			totalClient: totalClient,
+			listFrais: initListAndTotals.listFrais,
+			totalMontant: initListAndTotals.totalAReglerAllFrais,
+			totalClient: initListAndTotals.totalClientAllFrais,
 			nbJours: 0,
 		}
 	}
 
 	// Méthode permettant de calculer le total à régler d'un frais
-	calculTotaux(frais) {
-
-		var total = frais.forfait +
+	calculTotaux(frais) {		
+		// on calcul le total avec un arrondi de 2 décimals
+		var total = ((frais.indemKM * frais.nbKMS) +
+			frais.forfait +
 			frais.sncf +
 			frais.pourcentage +
 			frais.hotel +
@@ -68,16 +60,20 @@ class FraisAjout extends React.Component {
 			frais.essence +
 			frais.taxi +
 			frais.parking +
-			frais.divers;
+			frais.divers).toFixed(2);
 
 		return {
-			totalAReglerFrais: frais.facturable == 0 ? total : 0,
-			totalClientFrais: frais.facturable == 1 ? total : 0
+			totalAReglerFrais: frais.facturable == 0 ? parseFloat(total) : 0,
+			totalClientFrais: frais.facturable == 1 ? parseFloat(total) : 0
 		};
 	}
 
-	//Set la liste des lignes du tableau
-	setListFrais() {
+	// Méthode permettant l'initialisation de la liste des frais et des totaux (montant à régler et client)
+	initListAndTotals() {
+		// intialisation des totaux globaux
+		var totalAReglerAllFrais = 0;
+		var totalClientAllFrais = 0;
+
 		//Nouvelle NDF -> Tableau vide initié
 		let currentDate = new Date();
 		let initList = [],
@@ -90,9 +86,13 @@ class FraisAjout extends React.Component {
 				var frais = service.getByPrimaryKey(FRAIS_SCHEMA, jours.format('DD-MM-YYYY'));
 				var totauxFrais = null;
 
+				// le frais existe en cache
 				if (frais != null) {
 					// on calcul les totaux
 					totauxFrais = this.calculTotaux(frais);
+					// on incrémentes les totaux globaux
+					totalAReglerAllFrais += totauxFrais.totalAReglerFrais;
+					totalClientAllFrais += totauxFrais.totalClientFrais;
 				}
 
 				initList.push({
@@ -101,6 +101,7 @@ class FraisAjout extends React.Component {
 					date: jours.format('DD-MM-YYYY'),
 					dateShort: jours.format('dd DD'),
 					client: frais != null ? frais.client : '',
+					// affichage des totaux spécifiques à un frais
 					montant: totauxFrais != null ? totauxFrais.totalAReglerFrais + totauxFrais.totalClientFrais : ''
 				});
 
@@ -108,7 +109,11 @@ class FraisAjout extends React.Component {
 			}
 			else monthOk = false; //Si on passe au moins suivant on arrete
 		}
-		return initList;
+		return {
+			listFrais: initList,
+			totalAReglerAllFrais: totalAReglerAllFrais,
+			totalClientAllFrais: totalClientAllFrais
+		}
 	}
 
 	//Affiche les lignes du tableau à partir de listFrais
