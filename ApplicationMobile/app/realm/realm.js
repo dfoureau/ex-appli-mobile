@@ -8,14 +8,14 @@ Period.schema = {
     name: 'Period',
     primaryKey: 'id',
     properties: {
-        id:'int',    // primary key
+        id: 'int',    // primary key
         idConge: {type: 'int', default: 0},
-        startDate:'string',
-        startPeriod:'string',
-        endDate:'string',
-        endPeriod:'string',
-        absTypeId:'string',
-        workingDays:'float'
+        startDate: 'string',
+        startPeriod: 'string',
+        endDate: 'string',
+        endPeriod: 'string',
+        absTypeId: 'string',
+        workingDays: 'float'
         // TODO : add primary key server database
     }
 };
@@ -92,4 +92,4 @@ ConnexionParams.schema = {
     }
   };
 
-export default new Realm({ schema: [Period, Setting, ItemCRA, ConnexionParams] })
+export default new Realm({ schema: [Period, Setting, Frais, ItemCRA, ConnexionParams] })
