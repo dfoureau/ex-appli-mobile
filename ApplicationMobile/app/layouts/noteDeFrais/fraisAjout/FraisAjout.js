@@ -102,7 +102,7 @@ class FraisAjout extends React.Component {
 					dateShort: jours.format('dd DD'),
 					client: frais != null ? frais.client : '',
 					// affichage des totaux spécifiques à un frais
-					montant: totauxFrais != null ? totauxFrais.totalAReglerFrais + totauxFrais.totalClientFrais : ''
+					montant: totauxFrais != null ? totauxFrais.totalAReglerFrais : ''
 				});
 
 				jours.add(1, 'days'); //passe au jour suivant
