@@ -6,64 +6,113 @@ import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-ta
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from '../../../components/containerAccueil/ContainerAccueil';
 import ContainerTitre from '../../../components/containerTitre/ContainerTitre';
-import { Button,} from '../../../components/Buttons';
+import { Button } from '../../../components/Buttons';
 import ActivitesDetail from '../activitesDetail/ActivitesDetail';
 import CraConfirmation from '../craConfirmation/CraConfirmation';
 import Style from '../../../styles/Styles';
 import style from './styles';
 import Panel from '../../../components/Panel/Panel';
+import service from '../../../realm/service';
 
- class AjoutCra extends React.Component {
+const ITEMCRA_SCHEMA = 'ItemCRA';
+
+class AjoutCra extends React.Component {
 
 	constructor (props) {
-		super(props)
-
-		this.state = {
-		   title: '',
-            statusId: 1,
-            TextClient : ' ',
-            TextResponsable :' ',
-            TextProjet : ' ',
-            TextComment : ' ',
-            status:'nouveau',
-            statusLabel:'Nouveau CRA',
-            header: ['Date du', 'Date au', 'Activité', 'Nb. jours'],
-            monthSelected: 'Octobre 2017',
-            listCRA: [
-                            {
-                                id:8,
-                                startDate: '01/09/2017',
-                                endDate: '13/09/2017',
-                                absType : '1.0',
-                                dayNumber: 9
-                            }, {
-                                id: 9,
-                                startDate: '14/09/2017',
-                                endDate: '14/09/2017',
-                                absType : '0.5+RT',
-                                dayNumber: 1
-                            }, {
-                                id: 10,
-                                startDate: '15/09/2017',
-                                endDate: '30/07/2017',
-                                absType : '1.0',
-                                dayNumber: 11
-                            }
-            ]
-		}
+        super(props)
+        this.setInitialValues();
 	}
 
     static navigationOptions = ({ navigation }) => ({
             idCRA: navigation.state.params.idCRA,
-            Idate: navigation.state.params.Idate 
+            date: navigation.state.params.date,
+            isServiceCalled: navigation.state.params.isServiceCalled // TODO: à supprimer, juste pr la démo
     });
+
+    setInitialValues()
+    {
+        const { params } = this.props.navigation.state;
+
+        this.state = {
+            title: '',
+             statusId: 1,
+             TextClient : ' ',
+             TextResponsable :' ',
+             TextProjet : ' ',
+             TextComment : ' ',
+             status:'nouveau',
+             statusLabel:'Nouveau CRA',
+             header: ['Date du', 'Date au', 'Activité', 'Nb. jours'],
+             monthSelected: 'Octobre 2017',
+             listItemsCRA: params.isServiceCalled ? this.getItemsCRA() : []
+         }
+
+         if(params.isServiceCalled)
+         {
+             this.saveItemsCRA();
+         }
+    }
 
 	//Permet d'afficher l'ecran choisi dans le menu
 	afficherEcranParent(ecran){
 		this.props.navigation.navigate(ecran);
-	}
-    deleteCr(){
+    }
+    
+    getItemsCRA(){
+        // Appel au service
+        var listItemsCRA = [
+            {
+                id: 1,
+                idCRA: 0,
+                startDate: '01/10/2017',
+                endDate: '13/10/2017',
+                actType : '1.0',
+                workingDays: 9
+            }, {
+                id: 2,
+                idCRA: 0,
+                startDate: '14/10/2017',
+                endDate: '14/10/2017',
+                actType : '0.5+AM',
+                workingDays: 1
+            }, {
+                id: 3,
+                idCRA: 0,
+                startDate: '15/10/2017',
+                endDate: '31/10/2017',
+                actType : '1.0',
+                workingDays: 11
+            }
+        ];
 
+        return listItemsCRA;
+    }
+
+    saveItemsCRA(){
+        let list = [];
+        // Enregistrement des items du CRA dans le cache
+        if(this.state.listItemsCRA != null)
+        {
+            this.state.listItemsCRA.forEach(function(item){
+                var itemCRA = {
+                    id: service.getNextKey(ITEMCRA_SCHEMA), 
+                    idItem: item.id,
+                    idCRA: item.idCRA,
+                    startDate: item.startDate,
+                    endDate: item.endDate,
+                    actType: item.actType,
+                    workingDays: item.workingDays
+                };
+
+                list.push(itemCRA);
+                service.insert(ITEMCRA_SCHEMA, itemCRA);
+            });
+
+            this.state.listItemsCRA = list;
+        }
+    }
+
+    deleteCr(){
     }
 
     validatePressDelete(){
@@ -77,17 +126,18 @@ import Panel from '../../../components/Panel/Panel';
 
 
     validate(){
-              this.setState({statusId: 3, status: 'validé', statusLabel: 'Modifications interdites'});
-              this.props.navigation.navigate('CraConfirmation');
+        // Après sauvegarde en bdd, on reset le cache
+        service.delete(ITEMCRA_SCHEMA);
+        this.setState({statusId: 3, status: 'validé', statusLabel: 'Modifications interdites'});
+        this.props.navigation.navigate('CraConfirmation');
     }
 
-     modifyCRA(id,startDate,endDate,absType){
-            this.props.navigation.navigate('ActivitesDetail',{idCRA: id,startDate:startDate,endDate:endDate,
-              absType:absType});
-         }
+    modifyItemCRA(id){
+            this.props.navigation.navigate('ActivitesDetail',{ idItemCRA:id });
+    }
 
-     showDeleteButton()
-     {
+    showDeleteButton()
+    {
              //if(this.state.statusId == 1 || this.state.statusId == 2)
                  return <Button text="SUPPRIMER" buttonStyles={style.deleteButton}  onPress={() =>
                  Alert.alert(
@@ -99,37 +149,43 @@ import Panel from '../../../components/Panel/Panel';
                   ]
                   )
                   }/>
-     }
+    }
 
-     showDraftButton()
-     {
+    showDraftButton()
+    {
            // if(this.state.statusId == 1 || this.state.statusId == 2)
                 return <Button buttonStyles={style.draftButton} text="BROUILLON" onPress={() => this.saveDraft()} />
-     }
+    }
 
-     showValidateButton()
-     {
+    showValidateButton()
+    {
             //if(this.state.statusId == 1 || this.state.statusId == 2)
                 return <Button text="VALIDER"  onPress={() => this.validate()} />
-     }
+    }
 
 
-      afficherRow(){
-            return (this.state.listCRA.map((row, i) => (
-                <TouchableOpacity key={i} onPress={() => this.modifyCRA(row.id,row.startDate,row.endDate,row.absType)}>
-                    <Row
-                    style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
-                    borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
-                    textStyle={style.rowText}
-                    data={[row.startDate, row.endDate, row.absType, row.dayNumber]}/>
-                </TouchableOpacity>
-            )));
-       }
+    afficherRows(){
+        let items = service.get(ITEMCRA_SCHEMA); 
+        return this.getRows(items);  
+    }
 
-     handleValidate = () => {
-     //TODO Retourne sur la page des CRA
-      this.props.navigation.navigate('ActivitesListe');
-      };
+    getRows(tab)
+    {
+        return (tab.map((row, i) => (
+            <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(row.id)}>
+                <Row
+                style={[style.row, i%2 && {backgroundColor: '#FFFFFF'}]}
+                borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}
+                textStyle={style.rowText}
+                data={[row.startDate, row.endDate, row.actType, row.workingDays]}/>
+            </TouchableOpacity>
+        )));
+    }
+
+    handleValidate = () => {
+    //TODO Retourne sur la page des CRA
+    this.props.navigation.navigate('ActivitesListe');
+    };
 
 	render() {
        //Décralation du params transmis à l'écran courante.
@@ -137,7 +193,7 @@ import Panel from '../../../components/Panel/Panel';
 
 		return (
 			<View>
-				<ContainerTitre title={params.Idate} navigation={this.props.navigation}>
+				<ContainerTitre title={params.date} navigation={this.props.navigation}>
                   <View style={style.container}>
 
                     <View style={style.container1}>
@@ -187,7 +243,7 @@ import Panel from '../../../components/Panel/Panel';
                      <View style={style.container3}>
                           <Table style={style.table} borderStyle={{borderWidth: 1, borderColor: '#EEEEEE'}}>
                                <Row data={this.state.header} style={style.header} textStyle={style.headerText} />
-                                {this.afficherRow()}
+                                {this.afficherRows()}
                           </Table>
                      </View>
 

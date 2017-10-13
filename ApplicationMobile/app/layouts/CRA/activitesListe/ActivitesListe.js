@@ -51,13 +51,13 @@ import ActivitesConfirmation from '../activitesConfirmation/ActivitesConfirmatio
     }
 
     //Transfert du paramétre vers la page AjoutCRa
-    //Params : Idate
+    //Params : date
 	SendDataCRA(id, ItemDate){
-          this.props.navigation.navigate('AjoutCra',{idCRA: id, Idate: ItemDate});
+    	this.props.navigation.navigate('AjoutCra',{idCRA: id, date: ItemDate, isServiceCalled: true});
 	}
 
     AfficherAjoutCRa(){
-    this.props.navigation.navigate('AjoutCra',{Idate: 'Septembre 2017'});
+    	this.props.navigation.navigate('AjoutCra',{date: 'Octobre 2017', isServiceCalled: true});
     }
 
 	render() {
