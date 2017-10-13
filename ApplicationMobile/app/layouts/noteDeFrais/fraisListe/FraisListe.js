@@ -12,13 +12,16 @@ import { OptionFilter } from '../../../components/optionFilter';
 import { Button } from '../../../components/Buttons';
 import Accueil from '../../accueil/Accueil';
 import FraisAjout from '../fraisAjout/FraisAjout';
+import service from '../../../realm/service';
 
+const FRAIS_SCHEMA = 'Frais';
 
 class FraisListe extends React.Component {
 	 
 	constructor (props) {
 		super(props)
 		this.state = { title:'Note de frais' }
+		service.delete(FRAIS_SCHEMA);
 	}
 	
 	//Permet d'afficher l'ecran choisi dans le menu

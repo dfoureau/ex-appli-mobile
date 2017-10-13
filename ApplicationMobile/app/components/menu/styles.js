@@ -75,7 +75,7 @@ export default StyleSheet.create({
     },
 
     TextItemNews: {
-        right:50, 
+        right:100, 
         bottom: 6, 
         paddingLeft: 5.5, 
         minHeight: 16.5, 
