@@ -1,0 +1,1111 @@
+swagger: "2.0"
+info:
+  description: "Ce domaine contient l'ensemble de la spÃ©cification des services REST liÃ©s au projet de l'application mobile CAT-AMANIA."
+  version: "1.0.0"
+  title: "Services appli mobile CAT-AMANIA"
+  termsOfService: ""
+  contact:
+    email: "innova-RD@cat-amania.com"
+  license:
+    name: "Copyright 2017 Cat-Amania"
+host: "espacecollaborateur.cat-amania.com"
+basePath: "/api/1/"
+tags:
+- name: conges
+  description: Demandes de congÃ©s
+- name: CRA
+  description: Services REST relatifs aux CRA
+- name: annuaire
+  description: Services REST relatifs Ã  l'ANNUAIRE
+- name: login
+  description: Services REST relatifs au login
+- name: news
+  description: Services REST relatifs aux news
+- name: ndf
+  description: Services REST relatifs aux notes de frais
+- name: utilisateur
+  description: Services REST relatifs Ã  l'utilisateur
+
+schemes:
+- "https"
+
+paths:
+  /login:
+    post:
+      tags:
+      - "login"
+      summary: "S'identifier pour recevoir le token et accÃ©der aux services protÃ©gÃ©s"
+      operationId: "login"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "userAuthentication"
+        description: "Identification utilisateur"
+        required: true
+        schema:
+          $ref: "#/definitions/userAuthentication"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/token"
+        400:
+          description: "Format ID incorrect"
+        404:
+          description: "Identification incorrecte"
+  /utilisateur/matricule/{userId}:
+    get:
+      tags:
+      - "utilisateur"
+      summary: "Retourne le matricule de l'utilisateur en paramÃ¨tre"
+      description: "Pour rÃ©cupÃ©rer le numÃ©ro de matricule Ã  partir de l'id utilisateur."
+      operationId: "getNumMatriculeByUserId"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "ID utilisateur"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/numMatricule"
+        400:
+          description: "Format ID incorrect"
+        404:
+          description: "ID Utilisateur non trouvÃ©"
+      security:
+      - Bearer: []
+  /conges:
+    post:
+      tags:
+      - "conges"
+      summary: "CrÃ©er une nouvelle demande de congÃ©s"
+      description: ""
+      operationId: "createDemandeConges"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Demande de congÃ©s Ã  crÃ©er"
+        required: true
+        schema:
+            $ref: "#/definitions/demandeConges"
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      tags:
+      - "conges"
+      summary: "mettre Ã  jour une demande de congÃ©s"
+      description: ""
+      operationId: "updateDemandeConges"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Demande de congÃ©s Ã  mettre Ã  jour"
+        required: true
+        schema:
+            $ref: "#/definitions/demandeConges"
+      responses:
+        default:
+          description: "successful operation"
+  /conges/supprimer/{userId}/{numDemande}:
+    delete:
+      tags:
+      - "conges"
+      summary: "Supprimer une demande de congÃ©s"
+      description: "Supprimer une demande de congÃ©s"
+      operationId: "deleteDemandeConges"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "Id de l'utlisateur de la demande de congÃ©s"
+        required: true
+        type: "string"
+      - name: "numDemande"
+        in: "path"
+        description: "Id de la demande de congÃ©s"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Format paramÃ¨tres invalide"
+        404:
+          description: "Demande non trouvÃ©e"
+  /conges/solde/{userId}:
+    get:
+      tags:
+      - "conges"
+      summary: "Retourne le dernier solde congÃ©s et le dernier solde RTT de l'utilisateur en paramÃ¨tre"
+      description: "Pour rÃ©cupÃ©rer le solde des congÃ©s et le solde des RTT et la date du solde Ã  partir de l'id utilisateur."
+      operationId: "getDemandeCongesByUserId"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "ID utilisateur"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/soldeConges"
+        400:
+          description: "Format ID incorrect"
+        404:
+          description: "ID Utilisateur non trouvÃ©"
+      
+  /conges/{userId}/{annee}:
+    get:
+      tags:
+      - "conges"
+      summary: "Retourne toutes les demandes de congÃ©s de l'utilisateur en paramÃ¨tre pour l'annÃ©e en paramÃ¨tre"
+      description: "Retourne toutes les demandes de congÃ©s de l'utilisateur en paramÃ¨tre pour l'annÃ©e en paramÃ¨tre"
+      operationId: "findDemandesByUserAndYear"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "ID utilisateur"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "annee"
+        in: "path"
+        description: "annee des demandes"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema: 
+            $ref: "#/definitions/listeDemandesConges"
+        400:
+          description: "Format paramÃ¨tres incorrect"
+        404:
+          description: "ID Utilisateur non trouvÃ©"
+      security:
+      - Bearer: []     
+
+  /conges/typesabsences:
+    get:
+      tags:
+      - "conges"
+      summary: "Retourne les types absences congÃ©s"
+      description: "Retourne les types absences congÃ©s"
+      operationId: "typesAbsences"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/listeTypesAbsences"
+        400:
+          description: "Format ID incorrect"
+        404:
+          description: "ID Utilisateur non trouvÃ©"
+      security:
+      - Bearer: []      
+  /conges/{userId}/{annee}/{mois}:
+    get:
+      tags:
+      - "conges"
+      summary: "Retourne les congÃ©s du mois pour l'utilisateur donnÃ© en paramÃ¨tre"
+      description: "Retourne les congÃ©s du mois pour l'utilisateur donnÃ© en paramÃ¨tre"
+      operationId: "infosCongesDuMois"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "ID utilisateur"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "mois"
+        in: "path"
+        description: "Mois des demandes de congÃ©s"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "annee"
+        in: "path"
+        description: "Annee des demandes de congÃ©s"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/listeCongesDuMois"
+        400:
+          description: "Format ID incorrect"
+        404:
+          description: "ID Utilisateur non trouvÃ©"
+      security:
+        - Bearer: []
+  
+  /CRA/RA/{idRA}:
+    get:
+      tags:
+        - CRA
+      summary: Consulte un CRA unitaire
+      description: Retourne les informations d'un CRA unitaire
+      operationId: consultCRA
+      produces:
+        - application/json
+      parameters:
+        - name: idRA
+          in: path
+          description: id du CRA a consulter
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ReleveActivite'
+        '400':
+          description: KO
+        '404':
+          description: KO
+    put:
+      tags:
+        - CRA
+      summary: Mise Ã  jour d'un CRA
+      description: Mise Ã  jour d'un CRA
+      operationId: majCRA
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: idRA
+          in: path
+          description: id du relevÃ© Ã  mettre Ã  jour
+          required: true
+          type: integer
+          format: int64
+        - name: donnees
+          in: formData
+          description: donnÃ©es Ã  mettre Ã  jour
+          required: false
+          type: string
+        - name: etat
+          in: formData
+          description: etat Ã  envoyer brouillon ou validÃ©
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: KO 400
+        '404':
+          description: KO 404
+        '405':
+          description: Invalid input
+    delete:
+      tags:
+        - CRA
+      summary: Supprime un CRA unitaire
+      description: Supprime un CRA unitaire
+      operationId: supprCRA
+      produces:
+        - application/json
+      parameters:
+        - name: idRA
+          in: path
+          description: id du CRA a supprimer
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: KO
+        '404':
+          description: KO
+  
+  /CRA/{id}/{annee}:
+    get:
+      tags:
+        - CRA
+      summary: RamÃ¨ne la liste des CRA pour un collaborateur en fonction de l'annee
+      description: Retourne la liste des CRA
+      operationId: listCRA
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: id du collaborateur a consulter
+          required: true
+          type: integer
+          format: int64
+        - name: annee
+          in: path
+          description: 'annee a consulter, par defaut annee courante'
+          required: true
+          type: integer
+          format: int4
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ListeReleveActivite'
+        '400':
+          description: KO
+        '404':
+          description: KO
+  
+  /CRA/RA:
+    post:
+      tags:
+        - CRA
+      summary: Ajout d'un nouveau CRA
+      description: Ajout d'un nouveau relevÃ© d'activitÃ© pour un collaborateur
+      operationId: newCRA
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Informations du CRA Ã  insÃ©rer
+          required: true
+          schema:
+            $ref: '#/definitions/NouveauReleveActivite'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: KO 400
+        '404':
+          description: KO 404
+  
+  /annuaire/{idAgence}:
+    get:
+      tags:
+        - annuaire
+      summary: Retourne la liste des collaborateurs par Agence
+      description: Retourne la liste des collaborateurs par Agence
+      operationId: GetCollabAgence
+      produces:
+        - application/json
+      parameters:
+        - name: idAgence
+          in: path
+          description: id de l'agence
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/AnnuaireCollab'
+        '400':
+          description: KO 400
+        '404':
+          description: KO 404
+  
+  /annuaire/user{id}:
+    get:
+      tags:
+        - annuaire
+      summary: Retourne les dÃ©tails d'un collaborateur
+      description: Retourne les dÃ©tails d'un collaborateur
+      operationId: GetCollab
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: id du collaborateur
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/AnnuaireDetailCollab'
+        '400':
+          description: KO 400
+        '404':
+          description: KO 404
+  
+  /ndf:
+    post:
+      tags:
+        - ndf
+      summary: Ajout d'une note de frais
+      description: Ajout d'une note de frais dans la base de donnÃ©es
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: note de frais Ã  crÃ©er
+          required: true
+          schema:
+            $ref: '#/definitions/NoteDeFrais'
+      responses:
+        '200':
+          description: CrÃ©ation rÃ©ussie
+        '400':
+          description: 'Echec de la crÃ©ation, veuillez vÃ©rifier les donnÃ©es envoyÃ©es'
+  
+  /ndf/{idUser}:
+    get:
+      tags:
+        - ndf
+      summary: RÃ©cupÃ©ration des notes de frais de l'utilisateur
+      description: Renvoie les notes de frais trouvÃ©es avec l'idUser envoyÃ© en paramÃ¨tre
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: idUser
+          description: Identifiant du collaborateur
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: RÃ©cupÃ©ration rÃ©ussie
+        '400':
+          description: Identifiant collaborateur introuvable
+        '401':
+          description: Aucune note de frais pour ce collaborateur
+  
+  /ndf/{idUser}/{annee}/{mois}:
+    delete:
+      tags:
+        - ndf
+      summary: Suppression d'une note de frais
+      description: >-
+        Suppression de la note de frais trouvÃ© avec l'idUser, le mois et l'annÃ©e
+        envoyÃ©s en paramÃ©tre
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: idUser
+          description: identifiant du collaborateur
+          required: true
+          type: integer
+        - in: path
+          name: mois
+          description: mois de la note de frais
+          required: true
+          type: integer
+        - in: path
+          name: annee
+          description: annÃ©e de la note de frais
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Suppression rÃ©ussie
+        '400':
+          description: Identifiant collaborateur introuvable
+        '401':
+          description: Aucune note de frais pour ce collaborateur Ã  cette date
+    put:
+      tags:
+        - ndf
+      summary: Modification d'une note de frais
+      description: >-
+        Mise Ã  jour d'une note de frais si l'Ã©tat est Ã  'brouillon' ou 'Ã 
+        modifier'
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: idUser
+          description: identifiant du collaborateur
+          required: true
+          type: integer
+        - in: path
+          name: mois
+          description: mois de la note de frais
+          required: true
+          type: integer
+        - in: path
+          name: annee
+          description: annÃ©e de la note de frais
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: note de frais mise Ã  jour
+          required: true
+          schema:
+            $ref: '#/definitions/NoteDeFrais'
+      responses:
+        '200':
+          description: Mise Ã  jour rÃ©ussie
+        '400':
+          description: Identifiant collaborateur introuvable
+        '401':
+          description: Aucune note de frais pour ce collaborateur Ã  cette datte
+    get:
+      tags:
+        - ndf
+      summary: RÃ©cupÃ©ration d'une note de frais en fonction du mois et de l'annÃ©e
+      description: >-
+        RÃ©cupÃ©ration d'une note de frais d'un collaborateur en fonction du mois
+        et de l'annÃ©e
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: idUser
+          description: identifiant du collaborateur
+          required: true
+          type: integer
+        - in: path
+          name: mois
+          description: mois de la note de frais
+          required: true
+          type: integer
+        - in: path
+          name: annee
+          description: annÃ©e de la note de frais
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: RÃ©cupÃ©ration rÃ©ussie
+        '400':
+          description: Identifiant collaborateur introuvable
+        '401':
+          description: Aucune note de frais pour ce collaborateur Ã  cette date
+  
+  /utilisateur/{id}:
+    get:
+      tags:
+        - utilisateur
+      summary: Consulte les informations light d'un collaborateur
+      description: Retourne les informations light d'un collab
+      operationId: GetinfoCollab
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: id du collab a consulter
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/infoCollab'
+        '400':
+          description: KO
+        '404':
+          description: KO
+  
+  /news/{nombre}:
+    get:
+      tags:
+        - news
+      summary: Retourne les derniÃ¨res news
+      description: Retourne les derniÃ¨res news
+      operationId: GetNews
+      produces:
+        - application/json
+      parameters:
+        - name: nombre
+          in: path
+          description: nombre de news Ã  afficher
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/News'
+        '400':
+          description: KO 400
+        '404':
+          description: KO 404
+
+securityDefinitions:
+    Bearer:
+        type: "apiKey"
+        name: "Authorization"
+        in: "header"
+definitions:
+  utilisateur:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      prenom:
+        type: "string"
+      nom:
+        type: "string"
+    xml:
+      name: "utilisateur"
+  soldeConges:
+    type: "object"
+    properties:
+      userId:
+        type: "integer"
+        format: "int64"
+        example: "12345"
+      dateSolde:
+        type: "string"
+        format: "date-time"
+      nbConges:
+        type : "integer"
+        format: "int64"
+      nbRtt:
+        type : "integer"
+        format: "int64"
+    xml:
+      name: "soldeConges"
+  numMatricule:
+    type: "integer"
+    format: "int64"
+    example: "54321"
+    xml:
+      name: "numMatricule"
+  ligneConges:
+    type: "object"
+    properties:
+      numLigne:
+        type: "integer"
+        format: "int64"
+      dateDebut:
+        type: "string"
+        format: "date-time"
+      dateFin:
+        type: "string"
+        format: "date-time"
+      nbJours:
+        type: "integer"
+        format: "int64"
+    xml:
+      name: "ligneConges"
+  demandeConges:
+    type: "object"
+    properties:
+      numDemande: 
+        type: "integer"
+        format: "int64"
+      userId:
+        type: "integer"
+        format: "int64"
+      etat:
+        type: "string"
+        description: "Ã©tat de la demande de congÃ©s"
+        enum:
+        - "Brouillon"
+        - "En attente validation"
+        - "ValidÃ©e"
+      validateur:
+          $ref: "#/definitions/utilisateur"
+      dateEtat:
+        type: "string"
+        format: "date-time"
+      lignesDemandes: 
+        type: "array"
+        items:
+          $ref: "#/definitions/ligneConges"
+  listeDemandesConges:
+    type: "object"
+    properties:
+      demandeConges: 
+        type: "array"
+        items:
+          $ref: "#/definitions/demandeConges"
+  typeAbsences:
+    type: "object"
+    properties:
+      idType:
+        type: "integer"
+        format: "int64"
+      codeType:
+        type: "string"
+      libelleType:
+        type: "string"
+  listeTypesAbsences:
+    type: "object"
+    properties:
+      typeAbsences: 
+        type: "array"
+        items:
+          $ref: "#/definitions/typeAbsences"
+  absence:
+    type: "object"
+    properties:
+      date:
+        type: "string"
+        format: "date-time"
+      typeAbsence:
+        $ref: "#/definitions/typeAbsences"
+  listeCongesDuMois:
+    type: "object"
+    properties:
+      listeAbsences: 
+        type: "array"
+        items:
+          $ref: "#/definitions/absence"
+  ReleveActivite:
+    type: object
+    properties:
+      idRA:
+        type: integer
+        format: int10
+        example: '124'
+      libelleEtat:
+        type: string
+        format: varchar255
+        example: Brouillon
+      NbJOuvres:
+        type: integer
+        format: int2
+        example: '21'
+      NbJTravail:
+        type: number
+        format: dec4
+        example: '20,5'
+      NbJAbsence:
+        type: number
+        format: dec4
+        example: '0,5'
+      Client:
+        type: string
+        example: Innova
+      Responsable:
+        type: string
+        example: Adel Noureddine
+      Projet:
+        type: string
+        example: Appli Mobile
+      Commentaire:
+        type: string
+        example: Exemple de commentaire
+      TableauPeriodeActivite:
+        type: array
+        items:
+          type: object
+        properties:
+          datedebut:
+            type: string
+            format: date-time
+            example: 17/09/2017
+          datefin:
+            type: string
+            format: date-time
+            example: 19/09/2017
+          activite:
+            type: string
+            example: CP
+          nbJ:
+            type: integer
+            format: int2
+            example: '3'
+  ListeReleveActivite:
+    type: object
+    properties:
+      TableauPeriodeActivite:
+        type: array
+        items:
+          type: object
+        properties:
+          mois:
+            type: integer
+            format: int2
+            example: '10'
+          Annee:
+            type: integer
+            format: int4
+            example: '2017'
+          Tableau:
+            type: array
+            items:
+              type: object
+            properties:
+              Client:
+                type: string
+                example: Innova
+              Etat:
+                type: string
+                format: varchar
+                example: Brouillon
+  NouveauReleveActivite:
+    type: object
+    properties:
+      idCollab:
+        type: integer
+        format: int10
+        example: '121'
+      libelleEtat:
+        type: string
+        format: varchar255
+        example: Brouillon
+      NbJTravail:
+        type: number
+        format: dec4
+        example: '20,5'
+      NbJAbsence:
+        type: number
+        format: dec4
+        example: '0,5'
+      Client:
+        type: string
+        example: Innova
+      Responsable:
+        type: string
+        example: Adel Noureddine
+      Projet:
+        type: string
+        example: Appli Mobile
+      Commentaire:
+        type: string
+        example: Exemple de commentaire
+      TableauPeriodeActivite:
+        type: array
+        items:
+          type: object
+        properties:
+          datedebut:
+            type: string
+            format: date-time
+            example: 17/09/2017
+          datefin:
+            type: string
+            format: date-time
+            example: 19/09/2017
+          activite:
+            type: string
+            example: CP
+          nbJ:
+            type: integer
+            format: int2
+            example: '3'
+  AnnuaireDetailCollab:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: '123456'
+      nom:
+        type: string
+        format: varchar
+        example: Noureddine
+      prenom:
+        type: string
+        format: varchar
+        example: Adel
+      profil:
+        type: string
+        format: varchar
+        example: Production
+      nomEntite:
+        type: string
+        format: varchar
+        example: CAT-AMANIA
+      libelleAgence:
+        type: string
+        format: varchar
+        example: Atlantique
+      telMobile:
+        type: string
+        format: varchar
+        example: 0249521436
+      telClient:
+        type: string
+        format: varchar
+        example: 0623548596
+      mail:
+        type: string
+        format: varchar
+        example: a.noureddine@cat-amania.com
+      mailClient:
+        type: string
+        format: varchar
+        example: a.noureddine@innova.cat-amania.com
+  AnnuaireCollab:
+    type: object
+    properties:
+      ListeCollab:
+        type: array
+        items:
+          type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            example: '123456'
+          nom:
+            type: string
+            format: varchar
+            example: Nourredine
+          prenom:
+            type: string
+            format: varchar
+            example: Adel
+  NoteDeFrais:
+    type: object
+    properties:
+      idUser:
+        type: integer
+        format: int64
+      mois:
+        type: integer
+        format: int64
+      annee:
+        type: integer
+        format: int64
+      etat:
+        type: integer
+        format: int32
+      notesDeFrais:
+        type: array
+        items:
+          type: object
+          properties:
+            client:
+              type: string
+            lieu:
+              type: string
+            nbKM:
+              type: integer
+              format: int32
+            montantForfait:
+              type: number
+            montantFraisSNCF:
+              type: number
+            montantNbZone:
+              type: number
+            montantPourcentage:
+              type: integer
+              format: int32
+            montantHotel:
+              type: number
+            montantRepas:
+              type: number
+            montantInvitation:
+              type: number
+            montantTaxi:
+              type: number
+            montantEssence:
+              type: number
+            montantParking:
+              type: number
+            montantFrais:
+              type: number
+            libelleFrais:
+              type: string
+            jour:
+              type: integer
+              format: int32
+  token:
+    type: string
+  userAuthentication:
+    type: object
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+  infoCollab:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int10
+        example: '124'
+      nom:
+        type: string
+        example: Noureddine
+      prenom:
+        type: string
+        example: Adel
+      profil:
+        type: string
+        example: Production
+      entite:
+        type: string
+        example: CAT-AMANIA
+      Agence:
+        type: string
+        example: Atlantique
+      Responsable:
+        type: string
+        example: Gerard Lusteau
+  infoConges:
+    type: object
+    properties:
+      numMat:
+        type: integer
+        format: int10
+        example: '124'
+      date:
+        type: string
+        format: date-time
+        example: 17/09/2017
+      nbCP:
+        type: integer
+        format: dec4
+        example: '10,0'
+      nbRTT:
+        type: number
+        format: dec4
+        example: '0,5'
+  News:
+    type: array
+    items:
+      type: object
+    properties:
+      titre:
+        type: string
+        example: Titre de la news
+      contenu:
+        type: string
+        example: Contenu de la news
+      date:
+        type: string
+        format: date-time
+        example: 17/09/2017
+      photo:
+        type: string
+        example: 'http://test.net/photo.jpg'
+      file:
+        type: string
+        example: 'http://test.net/news.pdf'
