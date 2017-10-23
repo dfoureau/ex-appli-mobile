@@ -56,33 +56,7 @@ paths:
           description: "Format ID incorrect"
         404:
           description: "Identification incorrecte"
-  /utilisateur/matricule/{userId}:
-    get:
-      tags:
-      - "utilisateur"
-      summary: "Retourne le matricule de l'utilisateur en paramètre"
-      description: "Pour récupérer le numéro de matricule à  partir de l'id utilisateur."
-      operationId: "getNumMatriculeByUserId"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "userId"
-        in: "path"
-        description: "ID utilisateur"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/numMatricule"
-        400:
-          description: "Format ID incorrect"
-        404:
-          description: "ID Utilisateur non trouvé"
-      security:
-      - Bearer: []
+ 
   /conges:
     post:
       tags:
@@ -499,7 +473,10 @@ paths:
           type: integer
       responses:
         '200':
-          description: Récupération réussie
+           description: OK
+          schema:
+            $ref: '#/definitions/ListeNoteDeFrais'
+
         '400':
           description: Identifiant collaborateur introuvable
         '401':
@@ -1035,6 +1012,27 @@ definitions:
             jour:
               type: integer
               format: int32
+  ListeNoteDeFrais:
+    type: object
+    properties:
+      idUser:
+        type: integer
+        format: int64
+      mois:
+        type: integer
+        format: int64
+      annee:
+        type: integer
+        format: int64
+      etat:
+        type: integer
+        format: int32
+      montanttotal:
+        type: number
+        format: dec4
+      datevalidation:
+        type: string
+        format: date
   token:
     type: string
   userAuthentication:
