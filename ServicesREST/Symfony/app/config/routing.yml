@@ -1,0 +1,7 @@
+app:
+  resource: @AppBundle/Controller/
+  type:     annotation
+
+security:
+  resource: @AppBundle/Security/
+  type:     annotation

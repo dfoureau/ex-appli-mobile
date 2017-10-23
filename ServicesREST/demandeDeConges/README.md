@@ -1,1 +1,0 @@
-Projet application mobile : code pour les services REST
