@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  description: "Ce domaine contient l'ensemble de la spÃ©cification des services REST liÃ©s au projet de l'application mobile CAT-AMANIA."
+  description: "Ce domaine contient l'ensemble de la spécification des services REST liés au projet de l'application mobile CAT-AMANIA."
   version: "1.0.0"
   title: "Services appli mobile CAT-AMANIA"
   termsOfService: ""
@@ -12,11 +12,11 @@ host: "espacecollaborateur.cat-amania.com"
 basePath: "/api/1/"
 tags:
 - name: conges
-  description: Demandes de congÃ©s
+  description: Demandes de congés
 - name: CRA
   description: Services REST relatifs aux CRA
 - name: annuaire
-  description: Services REST relatifs Ã  l'ANNUAIRE
+  description: Services REST relatifs à  l'ANNUAIRE
 - name: login
   description: Services REST relatifs au login
 - name: news
@@ -24,7 +24,7 @@ tags:
 - name: ndf
   description: Services REST relatifs aux notes de frais
 - name: utilisateur
-  description: Services REST relatifs Ã  l'utilisateur
+  description: Services REST relatifs à  l'utilisateur
 
 schemes:
 - "https"
@@ -34,7 +34,7 @@ paths:
     post:
       tags:
       - "login"
-      summary: "S'identifier pour recevoir le token et accÃ©der aux services protÃ©gÃ©s"
+      summary: "S'identifier pour recevoir le token et accéder aux services protégés"
       operationId: "login"
       consumes:
       - "application/x-www-form-urlencoded"
@@ -56,12 +56,12 @@ paths:
           description: "Format ID incorrect"
         404:
           description: "Identification incorrecte"
-
+ 
   /conges:
     post:
       tags:
       - "conges"
-      summary: "CrÃ©er une nouvelle demande de congÃ©s"
+      summary: "Créer une nouvelle demande de congés"
       description: ""
       operationId: "createDemandeConges"
       consumes:
@@ -71,7 +71,7 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        description: "Demande de congÃ©s Ã  crÃ©er"
+        description: "Demande de congés à  créer"
         required: true
         schema:
             $ref: "#/definitions/demandeConges"
@@ -81,7 +81,7 @@ paths:
     put:
       tags:
       - "conges"
-      summary: "mettre Ã  jour une demande de congÃ©s"
+      summary: "mettre à  jour une demande de congés"
       description: ""
       operationId: "updateDemandeConges"
       consumes:
@@ -91,7 +91,7 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        description: "Demande de congÃ©s Ã  mettre Ã  jour"
+        description: "Demande de congés à  mettre à  jour"
         required: true
         schema:
             $ref: "#/definitions/demandeConges"
@@ -102,33 +102,33 @@ paths:
     delete:
       tags:
       - "conges"
-      summary: "Supprimer une demande de congÃ©s"
-      description: "Supprimer une demande de congÃ©s"
+      summary: "Supprimer une demande de congés"
+      description: "Supprimer une demande de congés"
       operationId: "deleteDemandeConges"
       produces:
       - "application/json"
       parameters:
       - name: "userId"
         in: "path"
-        description: "Id de l'utlisateur de la demande de congÃ©s"
+        description: "Id de l'utlisateur de la demande de congés"
         required: true
         type: "string"
       - name: "numDemande"
         in: "path"
-        description: "Id de la demande de congÃ©s"
+        description: "Id de la demande de congés"
         required: true
         type: "string"
       responses:
         400:
-          description: "Format paramÃ¨tres invalide"
+          description: "Format paramètres invalide"
         404:
-          description: "Demande non trouvÃ©e"
+          description: "Demande non trouvée"
   /conges/solde/{userId}:
     get:
       tags:
       - "conges"
-      summary: "Retourne le dernier solde congÃ©s et le dernier solde RTT de l'utilisateur en paramÃ¨tre"
-      description: "Pour rÃ©cupÃ©rer le solde des congÃ©s et le solde des RTT et la date du solde Ã  partir de l'id utilisateur."
+      summary: "Retourne le dernier solde congés et le dernier solde RTT de l'utilisateur en paramètre"
+      description: "Pour récupérer le solde des congés et le solde des RTT et la date du solde à  partir de l'id utilisateur."
       operationId: "getDemandeCongesByUserId"
       produces:
       - "application/json"
@@ -147,14 +147,14 @@ paths:
         400:
           description: "Format ID incorrect"
         404:
-          description: "ID Utilisateur non trouvÃ©"
+          description: "ID Utilisateur non trouvé"
       
   /conges/{userId}/{annee}:
     get:
       tags:
       - "conges"
-      summary: "Retourne toutes les demandes de congÃ©s de l'utilisateur en paramÃ¨tre pour l'annÃ©e en paramÃ¨tre"
-      description: "Retourne toutes les demandes de congÃ©s de l'utilisateur en paramÃ¨tre pour l'annÃ©e en paramÃ¨tre"
+      summary: "Retourne toutes les demandes de congés de l'utilisateur en paramètre pour l'année en paramètre"
+      description: "Retourne toutes les demandes de congés de l'utilisateur en paramètre pour l'année en paramètre"
       operationId: "findDemandesByUserAndYear"
       produces:
       - "application/json"
@@ -177,9 +177,9 @@ paths:
           schema: 
             $ref: "#/definitions/listeDemandesConges"
         400:
-          description: "Format paramÃ¨tres incorrect"
+          description: "Format paramètres incorrect"
         404:
-          description: "ID Utilisateur non trouvÃ©"
+          description: "ID Utilisateur non trouvé"
       security:
       - Bearer: []     
 
@@ -187,8 +187,8 @@ paths:
     get:
       tags:
       - "conges"
-      summary: "Retourne les types absences congÃ©s"
-      description: "Retourne les types absences congÃ©s"
+      summary: "Retourne les types absences congés"
+      description: "Retourne les types absences congés"
       operationId: "typesAbsences"
       produces:
       - "application/json"
@@ -200,15 +200,15 @@ paths:
         400:
           description: "Format ID incorrect"
         404:
-          description: "ID Utilisateur non trouvÃ©"
+          description: "ID Utilisateur non trouvé"
       security:
       - Bearer: []      
   /conges/{userId}/{annee}/{mois}:
     get:
       tags:
       - "conges"
-      summary: "Retourne les congÃ©s du mois pour l'utilisateur donnÃ© en paramÃ¨tre"
-      description: "Retourne les congÃ©s du mois pour l'utilisateur donnÃ© en paramÃ¨tre"
+      summary: "Retourne les congés du mois pour l'utilisateur donné en paramètre"
+      description: "Retourne les congés du mois pour l'utilisateur donné en paramètre"
       operationId: "infosCongesDuMois"
       produces:
       - "application/json"
@@ -221,13 +221,13 @@ paths:
         format: "int64"
       - name: "mois"
         in: "path"
-        description: "Mois des demandes de congÃ©s"
+        description: "Mois des demandes de congés"
         required: true
         type: "integer"
         format: "int64"
       - name: "annee"
         in: "path"
-        description: "Annee des demandes de congÃ©s"
+        description: "Annee des demandes de congés"
         required: true
         type: "integer"
         format: "int64"
@@ -239,7 +239,7 @@ paths:
         400:
           description: "Format ID incorrect"
         404:
-          description: "ID Utilisateur non trouvÃ©"
+          description: "ID Utilisateur non trouvé"
       security:
         - Bearer: []
   
@@ -271,8 +271,8 @@ paths:
     put:
       tags:
         - CRA
-      summary: Mise Ã  jour d'un CRA
-      description: Mise Ã  jour d'un CRA
+      summary: Mise à  jour d'un CRA
+      description: Mise à  jour d'un CRA
       operationId: majCRA
       consumes:
         - application/x-www-form-urlencoded
@@ -281,18 +281,18 @@ paths:
       parameters:
         - name: idRA
           in: path
-          description: id du relevÃ© Ã  mettre Ã  jour
+          description: id du relevé à  mettre à  jour
           required: true
           type: integer
           format: int64
         - name: donnees
           in: formData
-          description: donnÃ©es Ã  mettre Ã  jour
+          description: données à  mettre à  jour
           required: false
           type: string
         - name: etat
           in: formData
-          description: etat Ã  envoyer brouillon ou validÃ©
+          description: etat à  envoyer brouillon ou validé
           required: false
           type: integer
       responses:
@@ -331,7 +331,7 @@ paths:
     get:
       tags:
         - CRA
-      summary: RamÃ¨ne la liste des CRA pour un collaborateur en fonction de l'annee
+      summary: Ramène la liste des CRA pour un collaborateur en fonction de l'annee
       description: Retourne la liste des CRA
       operationId: listCRA
       produces:
@@ -364,7 +364,7 @@ paths:
       tags:
         - CRA
       summary: Ajout d'un nouveau CRA
-      description: Ajout d'un nouveau relevÃ© d'activitÃ© pour un collaborateur
+      description: Ajout d'un nouveau relevé d'activité pour un collaborateur
       operationId: newCRA
       consumes:
         - application/json
@@ -373,7 +373,7 @@ paths:
       parameters:
         - in: body
           name: body
-          description: Informations du CRA Ã  insÃ©rer
+          description: Informations du CRA à  insérer
           required: true
           schema:
             $ref: '#/definitions/NouveauReleveActivite'
@@ -415,8 +415,8 @@ paths:
     get:
       tags:
         - annuaire
-      summary: Retourne les dÃ©tails d'un collaborateur
-      description: Retourne les dÃ©tails d'un collaborateur
+      summary: Retourne les détails d'un collaborateur
+      description: Retourne les détails d'un collaborateur
       operationId: GetCollab
       produces:
         - application/json
@@ -441,23 +441,23 @@ paths:
       tags:
         - ndf
       summary: Ajout d'une note de frais
-      description: Ajout d'une note de frais dans la base de donnÃ©es
+      description: Ajout d'une note de frais dans la base de données
       produces:
         - application/json
       parameters:
         - in: body
           name: body
-          description: note de frais Ã  crÃ©er
+          description: note de frais à  créer
           required: true
           schema:
             $ref: '#/definitions/NoteDeFrais'
       responses:
         '200':
-          description: CrÃ©ation rÃ©ussie
+          description: Création réussie
         '400':
-          description: 'Echec de la crÃ©ation, veuillez vÃ©rifier les donnÃ©es envoyÃ©es'
+          description: 'Echec de la création, veuillez vérifier les données envoyées'
   
-  '/ndf/{idUser}':
+  /ndf/{idUser}:
     get:
       tags:
         - ndf
@@ -475,7 +475,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/ListeNoteDeFrais'
+           $ref: '#/definitions/ListeNoteDeFrais'
         '400':
           description: Identifiant collaborateur introuvable
         '401':
@@ -487,8 +487,8 @@ paths:
         - ndf
       summary: Suppression d'une note de frais
       description: >-
-        Suppression de la note de frais trouvÃ© avec l'idUser, le mois et l'annÃ©e
-        envoyÃ©s en paramÃ©tre
+        Suppression de la note de frais trouvé avec l'idUser, le mois et l'année
+        envoyés en paramétre
       produces:
         - application/json
       parameters:
@@ -504,22 +504,22 @@ paths:
           type: integer
         - in: path
           name: annee
-          description: annÃ©e de la note de frais
+          description: année de la note de frais
           required: true
           type: integer
       responses:
         '200':
-          description: Suppression rÃ©ussie
+          description: Suppression réussie
         '400':
           description: Identifiant collaborateur introuvable
         '401':
-          description: Aucune note de frais pour ce collaborateur Ã  cette date
+          description: Aucune note de frais pour ce collaborateur à  cette date
     put:
       tags:
         - ndf
       summary: Modification d'une note de frais
       description: >-
-        Mise Ã  jour d'une note de frais si l'Ã©tat est Ã  'brouillon' ou 'Ã 
+        Mise à  jour d'une note de frais si l'état est à  'brouillon' ou 'à 
         modifier'
       produces:
         - application/json
@@ -536,29 +536,29 @@ paths:
           type: integer
         - in: path
           name: annee
-          description: annÃ©e de la note de frais
+          description: année de la note de frais
           required: true
           type: integer
         - in: body
           name: body
-          description: note de frais mise Ã  jour
+          description: note de frais mise à  jour
           required: true
           schema:
             $ref: '#/definitions/NoteDeFrais'
       responses:
         '200':
-          description: Mise Ã  jour rÃ©ussie
+          description: Mise à  jour réussie
         '400':
           description: Identifiant collaborateur introuvable
         '401':
-          description: Aucune note de frais pour ce collaborateur Ã  cette datte
+          description: Aucune note de frais pour ce collaborateur à  cette datte
     get:
       tags:
         - ndf
-      summary: RÃ©cupÃ©ration d'une note de frais en fonction du mois et de l'annÃ©e
+      summary: Récupération d'une note de frais en fonction du mois et de l'année
       description: >-
-        RÃ©cupÃ©ration d'une note de frais d'un collaborateur en fonction du mois
-        et de l'annÃ©e
+        Récupération d'une note de frais d'un collaborateur en fonction du mois
+        et de l'année
       produces:
         - application/json
       parameters:
@@ -574,16 +574,16 @@ paths:
           type: integer
         - in: path
           name: annee
-          description: annÃ©e de la note de frais
+          description: année de la note de frais
           required: true
           type: integer
       responses:
         '200':
-          description: RÃ©cupÃ©ration rÃ©ussie
+          description: Récupération réussie
         '400':
           description: Identifiant collaborateur introuvable
         '401':
-          description: Aucune note de frais pour ce collaborateur Ã  cette date
+          description: Aucune note de frais pour ce collaborateur à  cette date
   
   /utilisateur/{id}:
     get:
@@ -615,15 +615,15 @@ paths:
     get:
       tags:
         - news
-      summary: Retourne les derniÃ¨res news
-      description: Retourne les derniÃ¨res news
+      summary: Retourne les dernières news
+      description: Retourne les dernières news
       operationId: GetNews
       produces:
         - application/json
       parameters:
         - name: nombre
           in: path
-          description: nombre de news Ã  afficher
+          description: nombre de news à  afficher
           required: true
           type: integer
       responses:
@@ -706,11 +706,11 @@ definitions:
         format: "int64"
       etat:
         type: "string"
-        description: "Ã©tat de la demande de congÃ©s"
+        description: "état de la demande de congés"
         enum:
         - "Brouillon"
         - "En attente validation"
-        - "ValidÃ©e"
+        - "Validée"
       validateur:
           $ref: "#/definitions/utilisateur"
       dateEtat:
