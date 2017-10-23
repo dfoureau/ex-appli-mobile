@@ -473,10 +473,9 @@ paths:
           type: integer
       responses:
         '200':
-           description: OK
+          description: OK
           schema:
-            $ref: '#/definitions/ListeNoteDeFrais'
-
+           $ref: '#/definitions/ListeNoteDeFrais'
         '400':
           description: Identifiant collaborateur introuvable
         '401':
