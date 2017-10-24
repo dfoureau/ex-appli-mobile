@@ -1,119 +1,119 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions } from "react-native";
 
-var {height, width} = Dimensions.get('window');
+var { height, width } = Dimensions.get("window");
 export default StyleSheet.create({
-    text: {
-        color: 'black',
-        fontSize: 16,
-        padding: 2,
-        margin: 2
-      },
+  text: {
+    color: "black",
+    fontSize: 16,
+    padding: 2,
+    margin: 2,
+  },
 
-      statusLabel: {
-        color: 'purple',
-        fontSize: 16
-      },
-    
-      textInputYear: {
-        borderWidth: 1,
-        color: 'black',
-        height: 25, 
-        width: 70,
-        padding: 2,
-        marginTop: 4,
-        textAlign: 'center',
-        textAlignVertical: 'center'
-      },
-    
-      textInputCounter: {
-        borderWidth: 1,
-        color: 'black',
-        height: 25, 
-        width: 40,
-        padding: 2,
-        marginTop: 4,
-        textAlign: 'center',
-        textAlignVertical: 'center'
-      },
+  statusLabel: {
+    color: "purple",
+    fontSize: 16,
+  },
 
-    container: {
-        flexDirection: 'column',
-        height:height,
-        width:width
-      },
-    
-      container1: {
-        flexDirection: 'row',
-        marginTop: 10,
-        marginHorizontal: 10
-      },
+  textInputYear: {
+    borderWidth: 1,
+    color: "black",
+    height: 25,
+    width: 70,
+    padding: 2,
+    marginTop: 4,
+    textAlign: "center",
+    textAlignVertical: "center",
+  },
 
-      containerStatus: {
-        flexDirection: 'row',
-        alignItems : 'center'
-      },
+  textInputCounter: {
+    borderWidth: 1,
+    color: "black",
+    height: 25,
+    width: 40,
+    padding: 2,
+    marginTop: 4,
+    textAlign: "center",
+    textAlignVertical: "center",
+  },
 
-      containerStatusLabel : {
-        flex:1,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems : 'center'
-      },
+  container: {
+    flexDirection: "column",
+    height: height,
+    width: width,
+  },
 
-      container2: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginHorizontal: 10
-      },
+  container1: {
+    flexDirection: "row",
+    marginTop: 10,
+    marginHorizontal: 10,
+  },
 
-      containerInfoElement: {
-        flexDirection: 'row'
-      },
+  containerStatus: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
 
-      container3: {
-        flex:0.75,
-        marginTop:10,
-        marginHorizontal: 10,
-        flexDirection: 'column'
-      },
+  containerStatusLabel: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
-      containerTable: {
-        marginBottom:20
-      },
+  container2: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginHorizontal: 10,
+  },
 
-      container4: {
-        flexDirection:'row', 
-        justifyContent:'flex-end',
-        marginHorizontal: 10
-      },
+  containerInfoElement: {
+    flexDirection: "row",
+  },
 
-      header: {
-        height: 25, 
-        backgroundColor: '#CCCCCC' 
-      },
+  container3: {
+    flex: 0.75,
+    marginTop: 10,
+    marginHorizontal: 10,
+    flexDirection: "column",
+  },
 
-      headerText: {
-        fontSize: 14,
-        color:'#000000',
-        textAlign: 'center'
-      },
+  containerTable: {
+    marginBottom: 20,
+  },
 
-      row: {
-        height: 30,
-        backgroundColor: '#EEEEEE'
-      },
+  container4: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginHorizontal: 10,
+  },
 
-      rowText: {
-        fontSize: 12,
-        color:'#000000',
-        textAlign: 'center'
-      },
+  header: {
+    height: 25,
+    backgroundColor: "#CCCCCC",
+  },
 
-      deleteButton: {
-        backgroundColor: '#FF0000'
-      },
+  headerText: {
+    fontSize: 14,
+    color: "#000000",
+    textAlign: "center",
+  },
 
-      draftButton: {
-        backgroundColor: '#808080'
-      }
+  row: {
+    height: 30,
+    backgroundColor: "#EEEEEE",
+  },
+
+  rowText: {
+    fontSize: 12,
+    color: "#000000",
+    textAlign: "center",
+  },
+
+  deleteButton: {
+    backgroundColor: "#FF0000",
+  },
+
+  draftButton: {
+    backgroundColor: "#808080",
+  },
 });

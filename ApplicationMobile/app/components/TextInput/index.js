@@ -1,4 +1,4 @@
-import InputWithButton from './Input';
-import styles from './styles';
+import InputWithButton from "./Input";
+import styles from "./styles";
 
 export { InputWithButton, styles };

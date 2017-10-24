@@ -1,25 +1,25 @@
-import { StyleSheet, Dimensions } from 'react-native';
-  
-var {height, width} = Dimensions.get('window');
+import { StyleSheet, Dimensions } from "react-native";
 
-  export default   StyleSheet.create({
-      text: {
-        color: '#000000',
-        fontSize: 12
-      },
+var { height, width } = Dimensions.get("window");
 
-      text2: {
-        paddingHorizontal:25
-      },
+export default StyleSheet.create({
+  text: {
+    color: "#000000",
+    fontSize: 12,
+  },
 
-      text3: {
-        paddingBottom:15
-      },
+  text2: {
+    paddingHorizontal: 25,
+  },
 
-      titleNews: {
-        color: '#000000',
-        fontSize: 12,
-        fontWeight: 'bold',
-        paddingBottom: 5
-      }
-  });
+  text3: {
+    paddingBottom: 15,
+  },
+
+  titleNews: {
+    color: "#000000",
+    fontSize: 12,
+    fontWeight: "bold",
+    paddingBottom: 5,
+  },
+});

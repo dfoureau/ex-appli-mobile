@@ -1,4 +1,4 @@
-import OptionFilter from './OptionFilter';
-import styles from './styles';
+import OptionFilter from "./OptionFilter";
+import styles from "./styles";
 
 export { OptionFilter, styles };

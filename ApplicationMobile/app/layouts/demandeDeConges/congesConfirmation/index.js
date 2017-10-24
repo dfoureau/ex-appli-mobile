@@ -1,4 +1,4 @@
-import CongesConfirmation from './CongesConfirmation';
-import styles from './styles';
+import CongesConfirmation from "./CongesConfirmation";
+import styles from "./styles";
 
 export { CongesConfirmation, styles };

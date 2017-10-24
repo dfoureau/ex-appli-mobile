@@ -1,1 +1,1 @@
-import './layouts/connexion/Connexion.js';
+import "./layouts/connexion/Connexion.js";
