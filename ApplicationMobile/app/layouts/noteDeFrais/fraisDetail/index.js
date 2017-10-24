@@ -1,4 +1,4 @@
-import FraisDetail from './FraisDetail';
-import styles from './styles';
+import FraisDetail from "./FraisDetail";
+import styles from "./styles";
 
 export { FraisDetail, styles };

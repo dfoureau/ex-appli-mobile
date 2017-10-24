@@ -1,13 +1,13 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import { View, TextInput, TouchableHighlight, Text } from 'react-native';
-import color from 'color';
+import PropTypes from "prop-types";
+import React from "react";
+import { View, TextInput, TouchableHighlight, Text } from "react-native";
+import color from "color";
 
-import styles from './styles';
+import styles from "./styles";
 
-const InputWithButton = (props) => {
+const InputWithButton = props => {
   const underlayColor = color(styles.$buttonBackgroundColorBase).darken(
-    styles.$buttonBackgroundColorModifier,
+    styles.$buttonBackgroundColorModifier
   );
 
   const containerStyles = [styles.container];
@@ -17,7 +17,11 @@ const InputWithButton = (props) => {
 
   return (
     <View style={containerStyles}>
-      <TextInput style={styles.input} underlineColorAndroid="transparent" {...props} />
+      <TextInput
+        style={styles.input}
+        underlineColorAndroid="transparent"
+        {...props}
+      />
     </View>
   );
 };

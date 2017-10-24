@@ -1,40 +1,39 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions } from "react-native";
 
-var {height, width} = Dimensions.get('window');
+var { height, width } = Dimensions.get("window");
 
 export default StyleSheet.create({
-      
   container: {
-    display: 'flex',
-    flexDirection: 'column'
+    display: "flex",
+    flexDirection: "column",
   },
-  
+
   container1: {
-    display: 'flex',
-    flexDirection: 'row',
-    margin:10,
+    display: "flex",
+    flexDirection: "row",
+    margin: 10,
   },
 
-  containerPicker:{
-    flexDirection: 'row',
-    borderWidth:1,
-    width:110,
-    height:29,
-    alignItems : 'center',
+  containerPicker: {
+    flexDirection: "row",
+    borderWidth: 1,
+    width: 110,
+    height: 29,
+    alignItems: "center",
   },
 
-  containerButton:{
+  containerButton: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems : 'center',
-    marginRight:5
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    marginRight: 5,
   },
 
   container2: {
-    flex:1,
-    margin:10,
-    padding: 5
+    flex: 1,
+    margin: 10,
+    padding: 5,
   },
 
   containerList: {
@@ -42,33 +41,32 @@ export default StyleSheet.create({
   },
 
   containerPeriod: {
-    flexDirection: 'row'
+    flexDirection: "row",
   },
 
   containerIcon: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end'
+    flexDirection: "row",
+    justifyContent: "flex-end",
   },
 
   periodText: {
-    color: 'black',
-    fontSize: 16
+    color: "black",
+    fontSize: 16,
   },
 
   amountText: {
-    color: 'gray',
-    fontSize: 14
+    color: "gray",
+    fontSize: 14,
   },
 
   statusText: {
-    color: 'gray',
-    fontSize: 14
+    color: "gray",
+    fontSize: 14,
   },
 
   listIcon: {
-    height: 15, 
-    width: 15
+    height: 15,
+    width: 15,
   },
-  
 });

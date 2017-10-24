@@ -1,52 +1,50 @@
-import { StyleSheet,
-    Dimensions, } from 'react-native';
-  
-  
-  var {height, width} = Dimensions.get('window');
-  const bleu1 = "#2298AA";
-  const bleu2 = "#2ABBDD";
-  const bleu3 = "#355A86";
-  export default   StyleSheet.create({
-      scrollView:{ 
-        width:width,
-        height:height,
-        backgroundColor:'#fff'
-      },
-      container: {
-        padding: 10,
-        paddingTop: 20,
-        width:width,
-      },
-      firstSection: {
-        paddingTop: 27,
-      },
-      secondSection: {
-        paddingTop: 5,
-      },
-      containerRow: {
-        flex:1,
-        paddingLeft: 10,
-        width:width,
-      },
-      text: {
-        fontSize: 16,
-      },
-      containerIcon: {
-        marginRight: 10,
-        flexDirection:'row',
-        flex: .20,
-        alignItems: 'center',
-      },
-      iconProfile: {
-        height:55,
-        width:55,
-        borderRadius:50, 
-        marginTop: 20,
-      },
-      icon: {
-        height:45,
-        width:45,
-        //borderRadius:50,
-        marginTop: 5 
-      },
-  });
+import { StyleSheet, Dimensions } from "react-native";
+
+var { height, width } = Dimensions.get("window");
+const bleu1 = "#2298AA";
+const bleu2 = "#2ABBDD";
+const bleu3 = "#355A86";
+export default StyleSheet.create({
+  scrollView: {
+    width: width,
+    height: height,
+    backgroundColor: "#fff",
+  },
+  container: {
+    padding: 10,
+    paddingTop: 20,
+    width: width,
+  },
+  firstSection: {
+    paddingTop: 27,
+  },
+  secondSection: {
+    paddingTop: 5,
+  },
+  containerRow: {
+    flex: 1,
+    paddingLeft: 10,
+    width: width,
+  },
+  text: {
+    fontSize: 16,
+  },
+  containerIcon: {
+    marginRight: 10,
+    flexDirection: "row",
+    flex: 0.2,
+    alignItems: "center",
+  },
+  iconProfile: {
+    height: 55,
+    width: 55,
+    borderRadius: 50,
+    marginTop: 20,
+  },
+  icon: {
+    height: 45,
+    width: 45,
+    //borderRadius:50,
+    marginTop: 5,
+  },
+});
