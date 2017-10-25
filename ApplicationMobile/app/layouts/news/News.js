@@ -2,11 +2,14 @@ import React from "react";
 import { View, Text, Image, FlatList } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "../../styles/Styles";
-
+import NewsItem from "./NewsItem";
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../components/containerAccueil/ContainerAccueil";
 
 import Accueil from "../accueil/Accueil";
+
+
+
 
 class News extends React.Component {
   constructor(props) {
@@ -29,129 +32,125 @@ class News extends React.Component {
           <FlatList
             data={[
               {
-                key: 1,
-                not: "CRA à valider",
-                type: "CRA",
-                status: 1,
+                titre: "Titre de la news 1",
+                contenu: "Contenu de la news",
+                date: "17/09/2017",
+                photo: "http://test.net/photo.jpg",
+                file: "http://test.net/news.pdf",
               },
               {
-                key: 2,
-                not: "NDF à saisir",
-                type: "NDF",
-                status: 2,
+                titre: "Titre de la news 2",
+                contenu: "Contenu de la news",
+                date: "17/09/2017",
+                photo: "http://test.net/photo.jpg",
+                file: "http://test.net/news.pdf",
               },
               {
-                key: 3,
-                not: "Actualité demande de congé",
-                type: "DC",
-                status: 1,
+                titre: "Titre de la news 3",
+                contenu: "Contenu de la news",
+                date: "17/09/2017",
+                photo: "http://test.net/photo.jpg",
+                file: "http://test.net/news.pdf",
               },
               {
-                key: 4,
-                not: "Informations",
-                type: "INF",
-                status: 2,
+                titre: "Titre de la news 4",
+                contenu: "Contenu de la news",
+                date: "17/09/2017",
+                photo: "http://test.net/photo.jpg",
+                file: "http://test.net/news.pdf",
               },
               {
-                key: 5,
-                not: "CRA à valider",
-                type: "CRA",
-                status: 2,
+                titre: "Titre de la news 5",
+                contenu: "Contenu de la news",
+                date: "17/09/2017",
+                photo: "http://test.net/photo.jpg",
+                file: "http://test.net/news.pdf",
               },
               {
-                key: 6,
-                not: "NDF à saisir",
-                type: "NDF",
-                status: 2,
+                titre: "Titre de la news 6",
+                contenu: "Contenu de la news",
+                date: "17/09/2017",
+                photo: "http://test.net/photo.jpg",
+                file: "http://test.net/news.pdf",
               },
               {
-                key: 7,
-                not: "Informations",
-                type: "INF",
-                status: 2,
+                titre: "Titre de la news 7",
+                contenu: "Contenu de la news",
+                date: "17/09/2017",
+                photo: "http://test.net/photo.jpg",
+                file: "http://test.net/news.pdf",
               },
               {
-                key: 8,
-                not: "NDF à saisir",
-                type: "NDF",
-                status: 1,
+                titre: "Titre de la news 8",
+                contenu: "Contenu de la news",
+                date: "17/09/2017",
+                photo: "http://test.net/photo.jpg",
+                file: "http://test.net/news.pdf",
               },
               {
-                key: 9,
-                not: "Actualité demande de congé",
-                type: "DC",
-                status: 2,
+                titre: "Titre de la news 9",
+                contenu: "Contenu de la news",
+                date: "17/09/2017",
+                photo: "http://test.net/photo.jpg",
+                file: "http://test.net/news.pdf",
               },
               {
-                key: 10,
-                not: "CRA à saisir",
-                type: "CRA",
-                status: 2,
+                titre: "Titre de la news 10",
+                contenu: "Contenu de la news",
+                date: "17/09/2017",
+                photo: "http://test.net/photo.jpg",
+                file: "http://test.net/news.pdf",
               },
               {
-                key: 11,
-                not: "NDF à saisir",
-                type: "NDF",
-                status: 3,
+                titre: "Titre de la news 11",
+                contenu: "Contenu de la news",
+                date: "17/09/2017",
+                photo: "http://test.net/photo.jpg",
+                file: "http://test.net/news.pdf",
               },
               {
-                key: 12,
-                not: "Informations",
-                type: "INF",
-                status: 3,
+                titre: "Titre de la news 12",
+                contenu: "Contenu de la news",
+                date: "17/09/2017",
+                photo: "http://test.net/photo.jpg",
+                file: "http://test.net/news.pdf",
               },
               {
-                key: 13,
-                not: "Actualité demande de congé",
-                type: "DC",
-                status: 1,
+                titre: "Titre de la news 13",
+                contenu: "Contenu de la news",
+                date: "17/09/2017",
+                photo: "http://test.net/photo.jpg",
+                file: "http://test.net/news.pdf",
               },
               {
-                key: 14,
-                not: "NDF à saisir",
-                type: "NDF",
-                status: 3,
+                titre: "Titre de la news 14",
+                contenu: "Contenu de la news",
+                date: "17/09/2017",
+                photo: "http://test.net/photo.jpg",
+                file: "http://test.net/news.pdf",
               },
               {
-                key: 15,
-                not: "CRA à valider",
-                type: "CRA",
-                status: 3,
+                titre: "Titre de la news 15",
+                contenu: "Contenu de la news",
+                date: "17/09/2017",
+                photo: "http://test.net/photo.jpg",
+                file: "http://test.net/news.pdf",
               },
               {
-                key: 16,
-                not: "NDF à saisir",
-                type: "NDF",
-                status: 2,
+                titre: "Titre de la news 16",
+                contenu: "Contenu de la news",
+                date: "17/09/2017",
+                photo: "http://test.net/photo.jpg",
+                file: "http://test.net/news.pdf",
               },
             ]}
+
+            keyExtractor = { item => item.titre}
+
             renderItem={({ item }) => (
-              <View>
-                <View style={Style.firstView}>
-                  <View style={Style.secondView}>
-                    <Text style={Style.listFirstEltText}>{item.not}</Text>
-                  </View>
-                  <View style={Style.thirdView}>
-                    <Text style={Style.listDate}>15/08/2017</Text>
-                  </View>
-                </View>
-                <View style={Style.firstView}>
-                  <View style={Style.secondView}>
-                    <Text style={Style.listText}>{item.not}</Text>
-                  </View>
-                  <View style={Style.thirdView}>
-                    <Image
-                      style={Style.listIcon}
-                      source={
-                        item.status == 1
-                          ? require("../../images/icons/check2.png")
-                          : null
-                      }
-                    />
-                  </View>
-                </View>
-              </View>
+                <NewsItem style = {{height : 85}} {...item} />
             )}
+
           />
         </ContainerAccueil>
       </View>
