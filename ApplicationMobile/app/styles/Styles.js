@@ -103,40 +103,4 @@ export default StyleSheet.create({
     marginBottom: -30,
     color: "black",
   },
-
-
-
-  //NewsItem
-  newsItem: {
-    margin : 5,
-    padding : 10,
-    //height : 85,
-    flexDirection : 'row',
-    backgroundColor :"red",
-  },
-  newsItemL: {
-    flex : 1,
-    flexDirection : 'row',
-    backgroundColor :"blue",
-  },
-  newsItemLImg: {
-    //margin : 5,
-
-
-  },
-  newsItemR: {
-    backgroundColor :"blue",
-    flex : 4,
-    flexDirection : 'row',
-  },
-  newsItemRL: {
-    backgroundColor :"blue",
-    flex : 3,
-    flexDirection : 'row',
-  },
-  newsItemRR: {
-    backgroundColor :"green",
-    flex : 1,
-    flexDirection : 'row',
-  },
 });

@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Image, FlatList } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "../../styles/Styles";
-import NewsItem from "./NewsItem";
+import NewsItem from "../../components/newsItem/NewsItem";
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../components/containerAccueil/ContainerAccueil";
 
