@@ -94,29 +94,6 @@ class CongesController extends Controller
 	 */
 	public function createDemandeConges($data)
 	{
-		// Exemple de jason 
-		// {
-		// 	"userId": 124124251,
-		// 	"etat": "Brouillon",
-		// 	"dateEtat": "2017-10-23T12:00:19.871Z",
-		// 	"lignesDemandes": [
-		// 		{
-		// 			"numLigne": 1,
-		// 			"dateDebut": "2017-10-12T12:00:19.872Z",
-		// 			"dateFin": "2017-10-12T12:00:19.872Z",
-		// 			"nbJours": 1,
-		// 			"typeabs" : 1
-		// 		},
-		// 		{
-		// 			"numLigne": 2,
-		// 			"dateDebut": "2017-10-13T12:00:19.872Z",
-		// 			"dateFin": "2017-10-23T12:00:19.872Z",
-		// 			"nbJours": 10,
-		// 			"typeabs" : 1
-		// 		}
-		// 	]
-		// }
-
 		// Récupère l'userId à partir du $data
 		$userId = $data['userId'];
 // Ou on le recupere à partir du token
@@ -127,11 +104,13 @@ class CongesController extends Controller
 		$stmt->execute();
 
 		$retour= $stmt->fetchAll();
-		// S'il n'existe pas de ligne c'est qu'il n'y a jamais eu de demande de congés, donc on la met à 1
-		if (count($retour) == 0) {
+		
+		if (count($retour) == 0) { // Il n'existe pas de ligne; il n'y a jamais eu de demande de congés, donc on la met à 1
+
 			$numDemande = '1';
-		} else {
-			// S'il existe une ligne, on récupère et on incrémente d'1
+
+		} else { // S'il existe une ligne, on récupère et on incrémente d'1
+		
 			foreach($retour as $key => $value) {
 				$numDemande = $value['num'] + 1 ;
 			}
@@ -396,6 +375,10 @@ class CongesController extends Controller
 			$tYearReq = $tMonth == 12 ? $tYear + 1 : $tYear;
 			$tMonthReq = $tMonth == 12 ? 1 : $tMonth + 1;
 
+			// Pour le AND : La date de debut du congé est égale au mois et a l'année recherchée
+			// 		ou bien La date de fin du congé est égale au mois et a l'année recherchée
+			// 		ou bien l'année recherchée est comprise entre les intervalles de début et fin de congé:
+			// 			Prise de plus d'un mois de congé
 			$sql = "
 				SELECT 
 					numDemande,
@@ -437,49 +420,71 @@ class CongesController extends Controller
 				for ($i = 1; $i <= $nbJourMois; $i++) {
 					$arrDay = array(
 						"jour" 	=> $i,
-						"code" 	=> "1.0",
+						"code" 	=> "1,0",
 						"etat" 	=> ""
 					);
 					array_push($arrRes, $arrDay);
 				}
 
 			} else {
+
+				$dateDu = $dateAu = $timeDu = $timeAu = array();
+				$midi = new \DateTime('12:00:00');
+
 				// Tableau des jours du mois
 				for ($i = 1; $i <= $nbJourMois; $i++) {
 					$arrDay = array();
 
 					// Date en cours de traitement
 					$processedDate = new \DateTime($tYear . "-" . $tMonth . "-" . $i);
+					$hasDemiJournee = false;
 
-					$dateDu = $dateAu = array();
 					// Les congés trouvés pour le mois $month
 					foreach ($conge as $keyC => $valueC) {
 
-						// Creation de dates à partir des info de la requete
+						// Il y a une virgule donc une demi-journée
+						if (explode('.', $valueC["nbJour"])) {
+						  $hasDemiJournee = true;
+						}
+
+						// Creation de dates à partir des infos de la requete
 						if (!array_key_exists($keyC, $dateDu) && empty($dateDu[$keyC])) {
 							$dateTmpDu = explode(" ", $valueC["dateDu"]);
-                            $dateDu[$keyC] = new \DateTime($dateTmpDu[0]);
+							$dateDu[$keyC] = new \DateTime($dateTmpDu[0]);
+							$timeDu[$keyC] = new \DateTime($dateTmpDu[1]);
 						}
 						if (!array_key_exists($keyC, $dateAu) && empty($dateAu[$keyC])) {
 							$dateTmpAu = explode(" ", $valueC["dateAu"]);
-                            $dateAu[$keyC] = new \DateTime($dateTmpAu[0]);
+							$dateAu[$keyC] = new \DateTime($dateTmpAu[0]);
+							$timeAu[$keyC] = new \DateTime($dateTmpAu[1]);
 						}
 
+						// La date est comprise dans l'intervalle du congé en cours de traitement
 						if (empty($arrDay) && $processedDate >= $dateDu[$keyC] && $processedDate <= $dateAu[$keyC]) {
 							$arrDay = array(
 								"jour" 	=> $i,
 								"code" 	=> $valueC["code"],
 								"etat" 	=> $valueC["etat"]
 							);
-						} elseif (!empty($arrDay) && $processedDate >= $dateDu && $processedDate <= $dateAu) {
-							$arrDay["code"] = $arrDay["code"] . "+" . $valueC["code"];
+
+							// La date est égale à une des bornes de l'intervalle de congé est c'est une demi-journée
+							if ($hasDemiJournee && (($processedDate == $dateDu[$keyC] && $timeDu[$keyC] == $midi) 
+								|| ($processedDate == $dateAu[$keyC] && $timeAu[$keyC] == $midi))) {
+
+								$arrDay["code"] = "0,5" . $valueC["code"];
+							}
+
+						// 2 intervalles ont des infos le meme jour: 2 demi-journées
+						} elseif (!empty($arrDay) && $processedDate >= $dateDu[$keyC] && $processedDate <= $dateAu[$keyC]) {
+							$arrDay["code"] = $arrDay["code"] . "+" . "0,5" . $valueC["code"];
 						}
 					}
 
+					// Pas de congés a cette date
 					if (empty($arrDay)) {
 						$arrDay = array(
 							"jour" 	=> $i,
-							"code" 	=> "1.0",
+							"code" 	=> "1,0",
 							"etat" 	=> ""
 						);
 					}
