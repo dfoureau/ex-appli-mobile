@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use AppBundle\Security\LoginController;
 
 class NewsController extends Controller
 {
@@ -18,6 +19,11 @@ class NewsController extends Controller
      */
     public function news(Request $request, $nombre)
     {
+		/*$log=new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth,403);
+          }*/
   
       if((int)($nombre)<=0){
            $message=array('message'=>'Paramètre nombre incorrect');
@@ -25,7 +31,9 @@ class NewsController extends Controller
        }
 
 
-    	//TODO récupéerer l'id de l'utilisateur dans le token
+    	//récupérer l'id de l'utilisateur dans le token
+		//$idUser = $retourAuth['id'];
+		// Pour les tests on prend un id fixe
     	$idUser = 124123958;
 
     	//TODO mettre les paramètres dans un fichier de config
