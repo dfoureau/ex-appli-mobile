@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Debug\Exception\ContextErrorException;
 
-
 class CongesController extends Controller
 {
 
@@ -393,154 +392,107 @@ class CongesController extends Controller
 		$tMonth = (int) $month;
 
 		if (is_int($tUserId) && is_int($tYear) && is_int($tMonth)) {
-// Output : liste des jours du mois ayant une absence
-// numéro du jour
-// type absence
-// etat
 
-// Ne prendre en compte que les états validés ou en attente validation
-// Si le jour est travaillé, renseigner : 1.0
-// Sinon, renseigner le type AB, CP...	
-
-// TODO : Finir la requete	
+			$tYearReq = $tMonth == 12 ? $tYear + 1 : $tYear;
+			$tMonthReq = $tMonth == 12 ? 1 : $tMonth + 1;
 
 			$sql = "
 				SELECT 
 					numDemande,
 					dateDu, 
 					dateAu,
-					idTypeAbs,
+					demandesconges.idTypeAbs,
 					nbJour,
-					etat
-				FROM demandesconges
+					etat,
+					code
+				FROM 
+					demandesconges,
+					typesabsences
 				WHERE (demandesconges.etat = 1 OR demandesconges.etat = 2)
 				AND (
 						(EXTRACT(YEAR from dateDu) = " . $tYear . " AND EXTRACT(MONTH from dateDu) = " . $tMonth . ")
 						OR 
-						(EXTRACT(YEAR from dateAu) >= " . $tYear . " AND EXTRACT(MONTH from dateAu) = " . $tMonth . ")
+						(EXTRACT(YEAR from dateAu) = " . $tYear . " AND EXTRACT(MONTH from dateAu) = " . $tMonth . ")
+						OR
+						(dateDu < '" . $tYear . "-" . $tMonth . "-01' AND dateAu >= '" . $tYearReq . "-" . $tMonthReq . "-01')
 					)
 				AND idUser = " . $tUserId . "
+				AND demandesconges.idTypeAbs = typesabsences.idTypeAbs
 				ORDER BY dateDu ASC";
 
 			$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
 			$stmt->execute();
-			$retour = $conge = $stmt->fetchAll();
+			$conge = $stmt->fetchAll();
 
-// Si retour n'est pas vide
+			// Calcul le nombre de jour dans un mois
+			$mois = mktime(0, 0, 0, $tMonth, 1, $tYear);
+			$nbJourMois = intval(date("t", $mois));
 
-			$sql = "
-				SELECT *
-				FROM
-				(
-					SELECT 
-						DATE(D1.dte1) AS c1
-					FROM (
-						SELECT '" . $tYear . "-" . $tMonth . "-01' AS dte1 UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 1 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 2 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 3 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 4 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 5 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 6 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 7 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 8 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 9 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 10 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 11 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 12 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 13 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 14 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 15 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 16 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 17 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 18 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 19 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 20 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 21 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 22 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 23 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 24 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 25 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 26 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 27 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 28 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 29 DAY) UNION ALL
-						SELECT DATE_ADD('2017-08-01', INTERVAL 30 DAY) 
-					) AS D1
-				) AS mois
-				LEFT OUTER JOIN
-				(
-					SELECT 
-						c2,
-						DC.idTypeAbs,
-						DC.etat
-					FROM
-					(
-						SELECT DATE(D2.dte2) AS c2
-						FROM (
-							SELECT '" . $tYear . "-" . $tMonth . "-01' AS dte2 UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 1 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 2 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 3 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 4 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 5 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 6 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 7 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 8 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 9 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 10 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 11 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 12 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 13 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 14 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 15 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 16 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 17 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 18 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 19 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 20 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 21 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 22 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 23 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 24 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 25 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 26 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 27 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 28 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 29 DAY) UNION ALL
-							SELECT DATE_ADD('2017-08-01', INTERVAL 30 DAY) 
-						) AS D2
-					) AS mois2,
-					demandesconges AS DC
-				WHERE c2 BETWEEN ";
+			$arrRes = array();
 
-            $or = false;
-            foreach ($conge as $key => $value) {
-				if ($or) {
-					$sql .= " OR c2 BETWEEN ";
+			// Pas de congés pour cette période, envoie un tableau vide
+			if (count($conge) == 0) {
+				
+				// Tableau des jours du mois
+				for ($i = 1; $i <= $nbJourMois; $i++) {
+					$arrDay = array(
+						"jour" 	=> $i,
+						"code" 	=> "1.0",
+						"etat" 	=> ""
+					);
+					array_push($arrRes, $arrDay);
 				}
 
-				$sql .= "'" . $value["dateDu"] . "' AND '" . $value["dateAu"] . "'";
+			} else {
+				// Tableau des jours du mois
+				for ($i = 1; $i <= $nbJourMois; $i++) {
+					$arrDay = array();
 
-				if (!$or) {
-					$or = true;
+					// Date en cours de traitement
+					$processedDate = new \DateTime($tYear . "-" . $tMonth . "-" . $i);
+
+					$dateDu = $dateAu = array();
+					// Les congés trouvés pour le mois $month
+					foreach ($conge as $keyC => $valueC) {
+
+						// Creation de dates à partir des info de la requete
+						if (!array_key_exists($keyC, $dateDu) && empty($dateDu[$keyC])) {
+							$dateDu[$keyC] = new \DateTime(explode(" ", $valueC["dateDu"])[0]);
+						}
+						if (!array_key_exists($keyC, $dateAu) && empty($dateAu[$keyC])) {
+							$dateAu[$keyC] = new \DateTime(explode(" ", $valueC["dateAu"])[0]);
+						}
+
+						if (empty($arrDay) && $processedDate >= $dateDu[$keyC] && $processedDate <= $dateAu[$keyC]) {
+							$arrDay = array(
+								"jour" 	=> $i,
+								"code" 	=> $valueC["code"],
+								"etat" 	=> $valueC["etat"]
+							);
+						} elseif (!empty($arrDay) && $processedDate >= $dateDu && $processedDate <= $dateAu) {
+							$arrDay["code"] = $arrDay["code"] . "+" . $valueC["code"];
+						}
+					}
+
+					if (empty($arrDay)) {
+						$arrDay = array(
+							"jour" 	=> $i,
+							"code" 	=> "1.0",
+							"etat" 	=> ""
+						);
+					}
+
+					array_push($arrRes, $arrDay);
 				}
 			}
 
-			$sql .= "
-				) as liste 
-				ON mois.c1 = liste.c2";
-
-			$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-			$stmt->execute();
-			$retour = $stmt->fetchAll();
-			
-			if (count($retour) != 0) {
-				return new JsonResponse($retour, Response::HTTP_OK);
+			if (count($arrRes) != 0) {
+				return new JsonResponse($arrRes, Response::HTTP_OK);
 			} else {
 				$message = array('message' => 'Informations non trouvées : ' . $tUserId);
 				return new JsonResponse($message, Response::HTTP_NOT_FOUND);
 			}
+
 		} else {
 			$message = array('message' => 'Format paramètres incorrect');
 			return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
