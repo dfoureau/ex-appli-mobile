@@ -457,10 +457,12 @@ class CongesController extends Controller
 
 						// Creation de dates à partir des info de la requete
 						if (!array_key_exists($keyC, $dateDu) && empty($dateDu[$keyC])) {
-							$dateDu[$keyC] = new \DateTime(explode(" ", $valueC["dateDu"])[0]);
+							$dateTmpDu = explode(" ", $valueC["dateDu"]);
+                            $dateDu[$keyC] = new \DateTime($dateTmpDu[0]);
 						}
 						if (!array_key_exists($keyC, $dateAu) && empty($dateAu[$keyC])) {
-							$dateAu[$keyC] = new \DateTime(explode(" ", $valueC["dateAu"])[0]);
+							$dateTmpAu = explode(" ", $valueC["dateAu"]);
+                            $dateAu[$keyC] = new \DateTime($dateTmpAu[0]);
 						}
 
 						if (empty($arrDay) && $processedDate >= $dateDu[$keyC] && $processedDate <= $dateAu[$keyC]) {
