@@ -21,11 +21,11 @@ class CraController extends Controller
     function getCra(Request $request,$idRA){
 
         //Vérification token
-        $log = new LoginController();
+        /*$log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth,400);
-        }
+        }*/
     
         // Requête SQL pour sélectionner les relevés activités en fonction de l'idRA
         $sql = 'SELECT r.idRA,r.mois,r.annee, e.libelle, r.nbJourTravailles, r.nbJourAbs, r.client, r.responsable, r.projet,r.commentaires, r.valeursSaisies FROM relevesactivites r INNER JOIN etatra e ON r.etat = e.id WHERE idRA = "'.$idRA.'";';
@@ -136,11 +136,11 @@ class CraController extends Controller
     function getListCraByCollaborateur(Request $request, $id, $annee = -1 ){
 
         //Vérification token
-        $log = new LoginController();
+        /*$log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth,400);
-        }
+        }*/
 
         //Test si le paramètre année est valorisé, si non on le valorise par l'année en cours
         if($annee == -1)
@@ -190,11 +190,11 @@ class CraController extends Controller
     function deleteCraAction(Request $request, $idRA){
 
         //Vérification token
-        $log = new LoginController();
+        /*$log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth,400);
-        }
+        }*/
 
         $retourDelete = $this->deleteCra($idRA);
         return new JsonResponse($retourDelete["message"], $retourDelete["code"]);
@@ -207,11 +207,11 @@ class CraController extends Controller
     function addCraAction(Request $request){
         
         //Vérification token
-        $log = new LoginController();
+        /*$log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth,400);
-        }
+        }*/
 
         $retourAdd = $this->addCra($request);
         return new JsonResponse($retourAdd["message"], $retourAdd["code"]);
@@ -330,11 +330,11 @@ class CraController extends Controller
     function updateCra(Request $request, $idRA){
 
         //Vérification token
-        $log = new LoginController();
+        /*$log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth,400);
-        }
+        }*/
 
         //Suppression du CRA
         $retourDelete = $this->deleteCra($idRA);
