@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use AppBundle\Security\LoginController;
 
 class AnnuaireController extends Controller
 {
@@ -19,6 +20,11 @@ class AnnuaireController extends Controller
     public function annuaire(Request $request, $idAgence)
     {
 
+	       /*$log=new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth,403);
+          }*/
        if((int)($idAgence)<=0){
            $message=array('message'=>'Paramètre idAgence incorrect');
             return new JsonResponse($message,400);
@@ -44,6 +50,11 @@ class AnnuaireController extends Controller
      */
     public function infos_collab(Request $request, $userId)
     {
+		       /*$log=new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth,403);
+          }*/
   
       if((int)($userId)<=0){
            $message=array('message'=>'Paramètre userId incorrect');
