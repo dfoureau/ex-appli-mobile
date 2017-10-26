@@ -2,16 +2,134 @@ import React from "react";
 import { View, Text, Image, FlatList } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "../../styles/Styles";
-
+import NewsItem from "../../components/newsItem/NewsItem";
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../components/containerAccueil/ContainerAccueil";
 
 import Accueil from "../accueil/Accueil";
 
+
+
+
 class News extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { title: "News" };
+    this.state = { title: "News" ,
+                   newsList:  [
+                        {
+                          titre: "Titre de la news 1",
+                          contenu: "Contenu de la news et c'est vraiment super long, je sais pas quoi écrire omg blablabkla nieeeeeeeeeeeeeeee j'aime pas les framboises ",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 2",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+
+                        },
+                        {
+                          titre: "Titre de la news 3",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 4",
+                          contenu: "Contenu de la news et c'est vraiment super long, je sais pas quoi écrire omg blablabkla nieeeeeeeeeeeeeeee j'aime pas les framboises ",
+                          date: "17/09/2017",
+
+
+                        },
+                        {
+                          titre: "Titre de la news 5",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 6",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 7",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 8",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 9",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 10",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 11",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 12",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 13",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 14",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 15",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 16",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                      ],
+                    };
   }
 
   //Permet d'afficher l'ecran choisi dans le menu
@@ -27,131 +145,14 @@ class News extends React.Component {
           afficherEcran={this.afficherEcranParent.bind(this)}
         >
           <FlatList
-            data={[
-              {
-                key: 1,
-                not: "CRA à valider",
-                type: "CRA",
-                status: 1,
-              },
-              {
-                key: 2,
-                not: "NDF à saisir",
-                type: "NDF",
-                status: 2,
-              },
-              {
-                key: 3,
-                not: "Actualité demande de congé",
-                type: "DC",
-                status: 1,
-              },
-              {
-                key: 4,
-                not: "Informations",
-                type: "INF",
-                status: 2,
-              },
-              {
-                key: 5,
-                not: "CRA à valider",
-                type: "CRA",
-                status: 2,
-              },
-              {
-                key: 6,
-                not: "NDF à saisir",
-                type: "NDF",
-                status: 2,
-              },
-              {
-                key: 7,
-                not: "Informations",
-                type: "INF",
-                status: 2,
-              },
-              {
-                key: 8,
-                not: "NDF à saisir",
-                type: "NDF",
-                status: 1,
-              },
-              {
-                key: 9,
-                not: "Actualité demande de congé",
-                type: "DC",
-                status: 2,
-              },
-              {
-                key: 10,
-                not: "CRA à saisir",
-                type: "CRA",
-                status: 2,
-              },
-              {
-                key: 11,
-                not: "NDF à saisir",
-                type: "NDF",
-                status: 3,
-              },
-              {
-                key: 12,
-                not: "Informations",
-                type: "INF",
-                status: 3,
-              },
-              {
-                key: 13,
-                not: "Actualité demande de congé",
-                type: "DC",
-                status: 1,
-              },
-              {
-                key: 14,
-                not: "NDF à saisir",
-                type: "NDF",
-                status: 3,
-              },
-              {
-                key: 15,
-                not: "CRA à valider",
-                type: "CRA",
-                status: 3,
-              },
-              {
-                key: 16,
-                not: "NDF à saisir",
-                type: "NDF",
-                status: 2,
-              },
-            ]}
+            data={this.state.newsList}
+
+            keyExtractor = { item => item.titre}
+
             renderItem={({ item }) => (
-              <View>
-                <View style={Style.firstView}>
-                  <View style={Style.secondView}>
-                    <Text style={Style.listFirstEltText}>{item.not}</Text>
-                  </View>
-                  <View style={Style.thirdView}>
-                    <Text style={Style.listDate}>15/08/2017</Text>
-                  </View>
-                </View>
-                <View style={Style.firstView}>
-                  <View style={Style.secondView}>
-                    <Text style={Style.listText}>{item.not}</Text>
-                  </View>
-                  <View style={Style.thirdView}>
-                    <Image
-                      style={Style.listIcon}
-                      source={
-                        item.status == 1
-                          ? require("../../images/icons/check2.png")
-                          : null
-                      }
-                    />
-                  </View>
-                </View>
-              </View>
+                <NewsItem {...item} />
             )}
+
           />
         </ContainerAccueil>
       </View>
