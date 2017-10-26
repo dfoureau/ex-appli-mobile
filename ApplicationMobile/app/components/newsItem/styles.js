@@ -12,7 +12,7 @@ export default StyleSheet.create({
     minHeight : 85,
     flexDirection : 'row',
     borderWidth : 1,
-    backgroundColor : "#d0d0d0",
+    backgroundColor : "#FFF",
   },
 
   newsItemL: {
