@@ -461,22 +461,34 @@ class CongesController extends Controller
 
 						// La date est comprise dans l'intervalle du congé en cours de traitement
 						if (empty($arrDay) && $processedDate >= $dateDu[$keyC] && $processedDate <= $dateAu[$keyC]) {
+
+							$code2Carac = substr($valueC["code"], 0, 2);
 							$arrDay = array(
 								"jour" 	=> $i,
-								"code" 	=> $valueC["code"],
+								"code" 	=> $code2Carac,
 								"etat" 	=> $valueC["etat"]
 							);
 
-							// La date est égale à une des bornes de l'intervalle de congé est c'est une demi-journée
+							// La date est égale à une des bornes de l'intervalle de congé et c'est une demi-journée
 							if ($hasDemiJournee && (($processedDate == $dateDu[$keyC] && $timeDu[$keyC] == $midi) 
 								|| ($processedDate == $dateAu[$keyC] && $timeAu[$keyC] == $midi))) {
 
-								$arrDay["code"] = "0,5" . $valueC["code"];
+								$arrDay["code"] = "0,5+" . $code2Carac;
 							}
 
 						// 2 intervalles ont des infos le meme jour: 2 demi-journées
 						} elseif (!empty($arrDay) && $processedDate >= $dateDu[$keyC] && $processedDate <= $dateAu[$keyC]) {
-							$arrDay["code"] = $arrDay["code"] . "+" . "0,5" . $valueC["code"];
+							
+							$code2Carac = substr($valueC["code"], 0, 2);
+							
+							// L'id de la table valeurjourouvre RT est toujours en premier; pour faire correspondre le code a l'id de cette table:
+							if (strtolower($code2Carac) == 'rt') {
+								// Les 2 derniers caracteres de la valeur deja presente ajouté aux autres infos
+								// Ex: 0,5RT+0,5CP
+								$arrDay["code"] = "0,5" . $code2Carac . "+0,5" . substr($arrDay["code"], -2);
+							} else {
+								$arrDay["code"] = "0,5" . substr($arrDay["code"], -2) . "+0,5" . $code2Carac;
+							}
 						}
 					}
 
