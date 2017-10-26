@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Debug\Exception\ContextErrorException;
+use AppBundle\Controller\UtilsController;
+use AppBundle\Security\LoginController;
+
 
 class CongesController extends Controller
 {
@@ -115,7 +118,7 @@ class CongesController extends Controller
 				$numDemande = $value['num'] + 1 ;
 			}
 // Ou de la fonction
-// $numDemande = Utils::getMaxNumDemande($id);
+// $numDemande = UtilsController::getMaxNumDemande($userId);
 
 			switch ($data['etat']){
 				case "Brouillon" :
@@ -459,36 +462,47 @@ class CongesController extends Controller
 							$timeAu[$keyC] = new \DateTime($dateTmpAu[1]);
 						}
 
-						// La date est comprise dans l'intervalle du congé en cours de traitement
-						if (empty($arrDay) && $processedDate >= $dateDu[$keyC] && $processedDate <= $dateAu[$keyC]) {
+						// La date n'est ni un jour férié ni un weekend
+						if (!UtilsController::estJourWE($i, $tMonth, $tYear) && !UtilsController::estJourFerie($i, $tMonth, $tYear)) {
 
-							$code2Carac = substr($valueC["code"], 0, 2);
+							// La date est comprise dans l'intervalle du congé en cours de traitement
+							if (empty($arrDay) && $processedDate >= $dateDu[$keyC] && $processedDate <= $dateAu[$keyC]) {
+
+								$code2Carac = substr($valueC["code"], 0, 2);
+								$arrDay = array(
+									"jour" 	=> $i,
+									"code" 	=> $code2Carac,
+									"etat" 	=> $valueC["etat"]
+								);
+
+								// La date est égale à une des bornes de l'intervalle de congé et c'est une demi-journée
+								if ($hasDemiJournee && (($processedDate == $dateDu[$keyC] && $timeDu[$keyC] == $midi) 
+									|| ($processedDate == $dateAu[$keyC] && $timeAu[$keyC] == $midi))) {
+
+									$arrDay["code"] = "0,5+" . $code2Carac;
+								}
+
+							// 2 intervalles ont des infos le meme jour: 2 demi-journées
+							} elseif (!empty($arrDay) && $processedDate >= $dateDu[$keyC] && $processedDate <= $dateAu[$keyC]) {
+								
+								$code2Carac = substr($valueC["code"], 0, 2);
+								
+								// Dans l'id de la table valeurjourouvre RT est toujours en premier; pour faire correspondre le code a l'id de cette table:
+								if (strtolower($code2Carac) == 'rt') {
+									// Les 2 derniers caracteres de la valeur deja presente ajouté aux autres infos
+									// Ex: 0,5RT+0,5CP
+									$arrDay["code"] = "0,5" . $code2Carac . "+0,5" . substr($arrDay["code"], -2);
+								} else {
+									$arrDay["code"] = "0,5" . substr($arrDay["code"], -2) . "+0,5" . $code2Carac;
+								}
+							}
+						// La date est un jour férié ou un weekend
+						} else {
 							$arrDay = array(
 								"jour" 	=> $i,
-								"code" 	=> $code2Carac,
-								"etat" 	=> $valueC["etat"]
+								"code" 	=> "0,0",
+								"etat" 	=> ""
 							);
-
-							// La date est égale à une des bornes de l'intervalle de congé et c'est une demi-journée
-							if ($hasDemiJournee && (($processedDate == $dateDu[$keyC] && $timeDu[$keyC] == $midi) 
-								|| ($processedDate == $dateAu[$keyC] && $timeAu[$keyC] == $midi))) {
-
-								$arrDay["code"] = "0,5+" . $code2Carac;
-							}
-
-						// 2 intervalles ont des infos le meme jour: 2 demi-journées
-						} elseif (!empty($arrDay) && $processedDate >= $dateDu[$keyC] && $processedDate <= $dateAu[$keyC]) {
-							
-							$code2Carac = substr($valueC["code"], 0, 2);
-							
-							// L'id de la table valeurjourouvre RT est toujours en premier; pour faire correspondre le code a l'id de cette table:
-							if (strtolower($code2Carac) == 'rt') {
-								// Les 2 derniers caracteres de la valeur deja presente ajouté aux autres infos
-								// Ex: 0,5RT+0,5CP
-								$arrDay["code"] = "0,5" . $code2Carac . "+0,5" . substr($arrDay["code"], -2);
-							} else {
-								$arrDay["code"] = "0,5" . substr($arrDay["code"], -2) . "+0,5" . $code2Carac;
-							}
 						}
 					}
 
