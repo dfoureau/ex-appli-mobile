@@ -38,14 +38,24 @@ class Accueil extends React.Component {
       news: [
         {
           id: 1,
-          titre: "Zeeletter de Juin 2017",
-          contenu:
-            "QUESTIONNAIRE SOCIAL CAT-AMANIA \nIl y a un an, nous avons été un certain nombre à répondre à un questionnaire, à l'initiative du CE, sur notre bien-être chez CAT-AMANIA.",
+          titre: "Titre de la news 1",
+          contenu: "Contenu de la news et c'est vraiment super long, je sais pas quoi écrire omg blablabkla nieeeeeeeeeeeeeeee j'aime pas les framboises ",
+          date: "17/09/2017",
+          file: "http://test.net/news.pdf",
         },
         {
           id: 2,
-          titre: "Zeeletter de Mai 2017",
-          contenu: "La Smart Connexion",
+          titre: "Titre de la news 1",
+          contenu: "Contenu de la news et c'est vraiment super long, je sais pas quoi écrire omg blablabkla nieeeeeeeeeeeeeeee j'aime pas les framboises ",
+          date: "17/09/2017",
+          file: "http://test.net/news.pdf",
+        },
+        {
+          id: 3,
+          titre: "Titre de la news 1",
+          contenu: "Contenu de la news et c'est vraiment super long, je sais pas quoi écrire omg blablabkla nieeeeeeeeeeeeeeee j'aime pas les framboises ",
+          date: "17/09/2017",
+          file: "http://test.net/news.pdf",
         },
       ],
     };
