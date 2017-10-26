@@ -8,8 +8,8 @@ export default StyleSheet.create({
   //NewsItem
   newsItem: {
     margin : 5,
-    padding : 10,
-    height : 85,
+    padding : 5,
+    height : 185,
     flexDirection : 'row',
     backgroundColor :"red",
   },
@@ -24,9 +24,8 @@ export default StyleSheet.create({
   newsItemLImg: {
     height : 50,
     width : 50,
-
-
   },
+
   newsItemR: {
     backgroundColor : "blue",
     flex : 4,
@@ -41,16 +40,25 @@ export default StyleSheet.create({
   newsItemRR: {
     backgroundColor :"green",
     flex : 1,
-    flexDirection : 'row',
+    alignItems : "center",
+    justifyContent : "center",
+  },
+
+  newsItemRImg: {
+    height : 50,
+    width : 50,
   },
 
   title: {
 
   },
+
   content: {
 
   },
+
   date: {
-    justifyContent : "flex-end",
+    
   },
+
 });

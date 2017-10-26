@@ -43,21 +43,21 @@ class News extends React.Component {
                 contenu: "Contenu de la news",
                 date: "17/09/2017",
                 photo: "http://test.net/photo.jpg",
-                file: "http://test.net/news.pdf",
+
               },
               {
                 titre: "Titre de la news 3",
                 contenu: "Contenu de la news",
                 date: "17/09/2017",
-                photo: "http://test.net/photo.jpg",
+
                 file: "http://test.net/news.pdf",
               },
               {
                 titre: "Titre de la news 4",
                 contenu: "Contenu de la news",
                 date: "17/09/2017",
-                photo: "http://test.net/photo.jpg",
-                file: "http://test.net/news.pdf",
+                
+
               },
               {
                 titre: "Titre de la news 5",
@@ -148,7 +148,7 @@ class News extends React.Component {
             keyExtractor = { item => item.titre}
 
             renderItem={({ item }) => (
-                <NewsItem style = {{height : 85}} {...item} />
+                <NewsItem {...item} />
             )}
 
           />
