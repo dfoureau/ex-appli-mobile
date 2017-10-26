@@ -6,6 +6,7 @@ import Style from "./Styles";
 /**container de l'accueil */
 import ContainerAccueil from "../../components/containerAccueil/ContainerAccueil";
 import Panel from "../../components/Panel/Panel";
+import NewsItem from "../../components/newsItem/NewsItem";
 
 import { ActivitesListe } from "../CRA/activitesListe";
 import { FraisListe } from "../noteDeFrais/fraisListe";
@@ -37,14 +38,14 @@ class Accueil extends React.Component {
       news: [
         {
           id: 1,
-          title: "Zeeletter de Juin 2017",
-          content:
+          titre: "Zeeletter de Juin 2017",
+          contenu:
             "QUESTIONNAIRE SOCIAL CAT-AMANIA \nIl y a un an, nous avons été un certain nombre à répondre à un questionnaire, à l'initiative du CE, sur notre bien-être chez CAT-AMANIA.",
         },
         {
           id: 2,
-          title: "Zeeletter de Mai 2017",
-          content: "La Smart Connexion",
+          titre: "Zeeletter de Mai 2017",
+          contenu: "La Smart Connexion",
         },
       ],
     };
@@ -58,8 +59,7 @@ class Accueil extends React.Component {
   renderItemNews() {
     return this.state.news.map(item => (
       <View key={item.id}>
-        <Text style={Style.titleNews}>{item.title}</Text>
-        <Text style={[Style.text, Style.text3]}>{item.content}</Text>
+        <NewsItem {...item}/>
       </View>
     ));
   }
