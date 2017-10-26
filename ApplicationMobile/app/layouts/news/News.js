@@ -33,7 +33,7 @@ class News extends React.Component {
             data={[
               {
                 titre: "Titre de la news 1",
-                contenu: "Contenu de la news",
+                contenu: "Contenu de la news et c'est vraiment super long, je sais pas quoi écrire omg blablabkla nieeeeeeeeeeeeeeee j'aime pas les framboises ",
                 date: "17/09/2017",
                 photo: "http://test.net/photo.jpg",
                 file: "http://test.net/news.pdf",
@@ -54,9 +54,9 @@ class News extends React.Component {
               },
               {
                 titre: "Titre de la news 4",
-                contenu: "Contenu de la news",
+                contenu: "Contenu de la news et c'est vraiment super long, je sais pas quoi écrire omg blablabkla nieeeeeeeeeeeeeeee j'aime pas les framboises ",
                 date: "17/09/2017",
-                
+
 
               },
               {

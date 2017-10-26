@@ -9,14 +9,14 @@ export default StyleSheet.create({
   newsItem: {
     margin : 5,
     padding : 5,
-    height : 185,
+    minHeight : 85,
     flexDirection : 'row',
-    backgroundColor :"red",
+    borderWidth : 1,
+    backgroundColor : "#d0d0d0",
   },
 
   newsItemL: {
     flex : 1,
-    backgroundColor :"yellow",
     alignItems : "center",
     justifyContent : "center",
   },
@@ -27,18 +27,24 @@ export default StyleSheet.create({
   },
 
   newsItemR: {
-    backgroundColor : "blue",
     flex : 4,
+  },
+
+  newsItemRT: {
+    flexDirection : 'row',
+    alignItems : "stretch",
+    justifyContent : "space-between",
+  },
+
+  newsItemRB: {
     flexDirection : 'row',
   },
 
-  newsItemRL: {
-    backgroundColor :"blue",
+  newsItemRBL: {
     flex : 3,
   },
 
-  newsItemRR: {
-    backgroundColor :"green",
+  newsItemRBR: {
     flex : 1,
     alignItems : "center",
     justifyContent : "center",
@@ -50,15 +56,17 @@ export default StyleSheet.create({
   },
 
   title: {
-
+    fontWeight : "bold",
+    color : "black",
   },
 
   content: {
-
+    color : "black",
   },
 
   date: {
-    
+
+
   },
 
 });
