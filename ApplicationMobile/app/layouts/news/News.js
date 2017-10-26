@@ -14,7 +14,122 @@ import Accueil from "../accueil/Accueil";
 class News extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { title: "News" };
+    this.state = { title: "News" ,
+                   newsList:  [
+                        {
+                          titre: "Titre de la news 1",
+                          contenu: "Contenu de la news et c'est vraiment super long, je sais pas quoi écrire omg blablabkla nieeeeeeeeeeeeeeee j'aime pas les framboises ",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 2",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+
+                        },
+                        {
+                          titre: "Titre de la news 3",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 4",
+                          contenu: "Contenu de la news et c'est vraiment super long, je sais pas quoi écrire omg blablabkla nieeeeeeeeeeeeeeee j'aime pas les framboises ",
+                          date: "17/09/2017",
+
+
+                        },
+                        {
+                          titre: "Titre de la news 5",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 6",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 7",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 8",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 9",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 10",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 11",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 12",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 13",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 14",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 15",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                        {
+                          titre: "Titre de la news 16",
+                          contenu: "Contenu de la news",
+                          date: "17/09/2017",
+                          photo: "http://test.net/photo.jpg",
+                          file: "http://test.net/news.pdf",
+                        },
+                      ],
+                    };
   }
 
   //Permet d'afficher l'ecran choisi dans le menu
@@ -30,120 +145,7 @@ class News extends React.Component {
           afficherEcran={this.afficherEcranParent.bind(this)}
         >
           <FlatList
-            data={[
-              {
-                titre: "Titre de la news 1",
-                contenu: "Contenu de la news et c'est vraiment super long, je sais pas quoi écrire omg blablabkla nieeeeeeeeeeeeeeee j'aime pas les framboises ",
-                date: "17/09/2017",
-                photo: "http://test.net/photo.jpg",
-                file: "http://test.net/news.pdf",
-              },
-              {
-                titre: "Titre de la news 2",
-                contenu: "Contenu de la news",
-                date: "17/09/2017",
-                photo: "http://test.net/photo.jpg",
-
-              },
-              {
-                titre: "Titre de la news 3",
-                contenu: "Contenu de la news",
-                date: "17/09/2017",
-
-                file: "http://test.net/news.pdf",
-              },
-              {
-                titre: "Titre de la news 4",
-                contenu: "Contenu de la news et c'est vraiment super long, je sais pas quoi écrire omg blablabkla nieeeeeeeeeeeeeeee j'aime pas les framboises ",
-                date: "17/09/2017",
-
-
-              },
-              {
-                titre: "Titre de la news 5",
-                contenu: "Contenu de la news",
-                date: "17/09/2017",
-                photo: "http://test.net/photo.jpg",
-                file: "http://test.net/news.pdf",
-              },
-              {
-                titre: "Titre de la news 6",
-                contenu: "Contenu de la news",
-                date: "17/09/2017",
-                photo: "http://test.net/photo.jpg",
-                file: "http://test.net/news.pdf",
-              },
-              {
-                titre: "Titre de la news 7",
-                contenu: "Contenu de la news",
-                date: "17/09/2017",
-                photo: "http://test.net/photo.jpg",
-                file: "http://test.net/news.pdf",
-              },
-              {
-                titre: "Titre de la news 8",
-                contenu: "Contenu de la news",
-                date: "17/09/2017",
-                photo: "http://test.net/photo.jpg",
-                file: "http://test.net/news.pdf",
-              },
-              {
-                titre: "Titre de la news 9",
-                contenu: "Contenu de la news",
-                date: "17/09/2017",
-                photo: "http://test.net/photo.jpg",
-                file: "http://test.net/news.pdf",
-              },
-              {
-                titre: "Titre de la news 10",
-                contenu: "Contenu de la news",
-                date: "17/09/2017",
-                photo: "http://test.net/photo.jpg",
-                file: "http://test.net/news.pdf",
-              },
-              {
-                titre: "Titre de la news 11",
-                contenu: "Contenu de la news",
-                date: "17/09/2017",
-                photo: "http://test.net/photo.jpg",
-                file: "http://test.net/news.pdf",
-              },
-              {
-                titre: "Titre de la news 12",
-                contenu: "Contenu de la news",
-                date: "17/09/2017",
-                photo: "http://test.net/photo.jpg",
-                file: "http://test.net/news.pdf",
-              },
-              {
-                titre: "Titre de la news 13",
-                contenu: "Contenu de la news",
-                date: "17/09/2017",
-                photo: "http://test.net/photo.jpg",
-                file: "http://test.net/news.pdf",
-              },
-              {
-                titre: "Titre de la news 14",
-                contenu: "Contenu de la news",
-                date: "17/09/2017",
-                photo: "http://test.net/photo.jpg",
-                file: "http://test.net/news.pdf",
-              },
-              {
-                titre: "Titre de la news 15",
-                contenu: "Contenu de la news",
-                date: "17/09/2017",
-                photo: "http://test.net/photo.jpg",
-                file: "http://test.net/news.pdf",
-              },
-              {
-                titre: "Titre de la news 16",
-                contenu: "Contenu de la news",
-                date: "17/09/2017",
-                photo: "http://test.net/photo.jpg",
-                file: "http://test.net/news.pdf",
-              },
-            ]}
+            data={this.state.newsList}
 
             keyExtractor = { item => item.titre}
 
