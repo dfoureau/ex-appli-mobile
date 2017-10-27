@@ -31,7 +31,7 @@ class NdfController extends Controller
 		
 		if (ctype_digit($id) && ctype_digit($annee) && ctype_digit($mois)) 
 		{
-      $id = (int) $id;
+      $id = (int) $id;  
       $annee = (int) $annee;
       $mois = (int) $mois;
 
