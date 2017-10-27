@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, FlatList, Linking} from "react-native";
+import { View, Text, Image, FlatList, Linking, TouchableHighlight} from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "./styles";
 
@@ -23,10 +23,12 @@ export default class NewsItem extends React.Component {
 
     let linkElement = null;//will be a link if exist
     if (this.props.file != null) {
-      linkElement = <View style = {Style.newsItemRBR}>
-      <Image style = {Style.newsItemRImg}
-          source={require("../../images/imageNewsLink.png")}
-          onPress = {()=> Linking.openURL(this.props.file) } />
+      linkElement =
+      <View style = {Style.newsItemRBR}>
+        <TouchableHighlight onPress = {()=> Linking.openURL(this.props.file) }>
+          <Image style = {Style.newsItemRImg}
+            source={require("../../images/imageNewsLink.png")} />
+        </TouchableHighlight>
       </View>;
     }
     return(
