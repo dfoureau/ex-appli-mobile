@@ -1,14 +1,13 @@
 <?php
 
-namespace TestApiBundle\Controller;
+namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use FOS\RestBundle\Controller\Annotations\View;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use AppBundle\Controller\UtilsController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Security\LoginController;
 
 
@@ -133,7 +132,7 @@ class CraController extends Controller
     *@Route("/CRA/{id}"), name="getListCraByCollaborateur")
     *@Method("GET")
     */
-    function getListCraByCollaborateur(Request $request, $id, $annee = -1 ){
+     function getListCraByCollaborateur(Request $request, $id, $annee = -1 ){
 
         //Vérification token
         /*$log = new LoginController();
@@ -148,13 +147,53 @@ class CraController extends Controller
             $annee = date("Y");
         }
 
-        $sql = "SELECT r.idUser, r.idRA, r.mois, r.annee, r.client, e.libelle FROM relevesactivites r INNER JOIN etatra e ON r.etat = e.id WHERE r.idUser = '$id' AND r.annee = '$annee' ORDER BY r.mois asc;";
+        $sql = "SELECT r.iduser, r.idRA, r.mois, r.annee, r.client, e.libelle FROM relevesactivites r INNER JOIN etatra e ON r.etat = e.id WHERE r.idUser = '$id' AND r.annee = '$annee'  ORDER BY r.mois asc;";
 
         $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
         $stmt->execute();
-        $retour= $stmt->fetchAll();
+        //$retour= $stmt->fetchAll();
 
-        if(count($retour) == 0){
+		$list= $stmt->fetchAll();
+		
+		 if(count($list)!=0){
+          $etat='';
+          $annee='';
+          $mois='';
+          $id='';
+		  $idRA = '';
+          $listeCra=array();
+		  //$listeCraMois=array();
+          
+		  //for($i=0; $i<count($list);$i++){
+		  foreach($list as $key=>$row) {
+
+            $rowCra = array();
+			$rowCra['mois']=$row['mois'];
+			$rowCra['idRa']=$row['idRA'];
+            $rowCra['client']=$row['client'];
+            $rowCra['Etat']=$row['libelle'];
+			
+            if (array_key_exists($rowCra['mois'], $listeCra)){
+            	$listeCraMois = $listeCra[$rowCra['mois']];
+            	$listeCraMois[] = $rowCra;
+            	$listeCra[$rowCra['mois']] =  $listeCraMois;
+            }
+			else{
+				$listeCraMois = array();
+				$listeCraMois[] = $rowCra;
+				$listeCra[$rowCra['mois']] = $listeCraMois;
+			}
+
+		   }
+		  
+         }
+		          //$retour=array('idUser'=>$id, 'mois'=>$mois,'annee'=>$annee,'etat'=>$etat, 'notesDeFrais'=>$listNdf);
+          $retour=array('annee' =>$annee, 'Tableau'=>$listeCra);
+          
+            return new JsonResponse($retour,Response::HTTP_OK);
+		 
+		
+        if(count($list) == 0){
                 $message = array('message' => "Aucun CRA trouvé pour l'idUtilisateur: ".$id. " et l'année: ".$annee);
                 return new JsonResponse($message,400);
         }
@@ -213,23 +252,29 @@ class CraController extends Controller
             return new JsonResponse($retourAuth,400);
         }*/
 
-        $retourAdd = $this->addCra($request);
+        $data = json_decode(file_get_contents('php://input'), true);
+        try{
+            $retourAdd = $this->addCra($data);
+        }
+        catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
+            return new JsonResponse("Problème de paramètres ", Response::HTTP_BAD_REQUEST);
+        }
         return new JsonResponse($retourAdd["message"], $retourAdd["code"]);
     }
 
     
-    function addCra(Request $request){
-        //Récupération des paramétres dans la requête
-        $idCollab = $request->request->get("idCollab");
-        $libelleEtat = $request->request->get("libelleEtat");
-        $nbJTravail = $request->request->get("NbJTravail");
-        $nbJAbsence = $request->request->get("NbJAbsence");
-        $client = $request->request->get("Client");
-        $responsable = $request->request->get("Responsable");
-        $projet = $request->request->get("Projet");
-        $commentaire = $request->request->get("Commentaire");
-        $mois = $request->request->get("Mois");
-        $tableauCRA = $request->request->get("TableauPeriodeActivite");
+    function addCra($data){
+        
+        $idCollab = $data['idCollab'];
+        $libelleEtat = $data['libelleEtat'];
+        $nbJTravail = $data['nbJTravail'];
+        $nbJAbsence = $data['nbJAbsence'];
+        $client = $data['client'];
+        $responsable = $data['responsable'];
+        $projet = $data['projet'];
+        $commentaire = $data['commentaires'];
+        $mois = $data['mois'];
+        $tableauCRA = $data['TableauCRA'];
 
         $annee = date('Y');
         if(empty($mois)){
@@ -237,7 +282,7 @@ class CraController extends Controller
         }
 
         //Vérification des champs obligatoires
-        if(empty($idCollab)){
+        /*if(empty($idCollab)){
             $message = array('message' => "Le champ idCollab est obligatoire");
             return array('message' =>$message, 'code'=>400);
         }
@@ -264,18 +309,31 @@ class CraController extends Controller
         if(empty($tableauCRA)){
             $message = array('message' => "Le champ TableauPeriodeActivite est obligatoire");
             return array('message' =>$message, 'code'=>400);
-        }
+        }*/
 
-        if($libelleEtat == 'Brouillon'){
+        /*if($libelleEtat == 'Brouillon'){
             $etat = '1';
         }
-        else if($libelleEtat == 'Validé'){
-            $etat = '3';
-        }
+		else if($libelleEtat == 'En attente validation'){
+            $etat = '2';
+		 }
         else{
             $etat = "0";
+        }*/
+		
+		switch ($libelleEtat){
+            case "Brouillon" :
+              $etat = 0;
+              break;
+            case "En attente validation" :
+              $etat = 1;
+              break;
+            //Etats validés ou A modifier interdits, autres états inconnus
+            default :
+              $retour=array('message'=>'Etat invalide','code'=>Response::HTTP_BAD_REQUEST);
+              return $retour;
+              break;       
         }
-
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ////////////// Algorithme pour transformer les périodes des CRA en chaine de caractères pour la BDD /////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -342,8 +400,11 @@ class CraController extends Controller
           return new JsonResponse($retourDelete['message'],$retourDelete['code']);
         }
 
+	
+		
         //Création du CRA
-        $retourAdd = $this->addCra($request);
+        $retourAdd = $this->addCraAction($request);
+		return $retourAdd;
         if($retourAdd["code"] != 200){
             return new JsonResponse($retourAdd["message"], $retourAdd["code"]);
         }
