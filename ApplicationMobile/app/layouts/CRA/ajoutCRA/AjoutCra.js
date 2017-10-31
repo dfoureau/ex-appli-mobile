@@ -19,6 +19,9 @@ import {
   Cell,
 } from "react-native-table-component";
 
+import moment from "moment";
+
+
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
@@ -46,7 +49,7 @@ class AjoutCra extends React.Component {
 
   setInitialValues() {
     const { params } = this.props.navigation.state;
-
+    let dateStr = moment().format("MMMM YYYY");
     this.state = {
       title: "",
       statusId: 1,
@@ -56,8 +59,8 @@ class AjoutCra extends React.Component {
       TextComment: " ",
       status: "nouveau",
       statusLabel: "Nouveau CRA",
-      header: ["Date du", "Date au", "Activité", "Nb. jours"],
-      monthSelected: "Octobre 2017",
+      header: ["Date", "Activité"],
+      monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1),//la premiere lettre du mois en majuscule
       listItemsCRA: params.isServiceCalled ? this.getItemsCRA() : [],
     };
 
@@ -115,10 +118,10 @@ class AjoutCra extends React.Component {
           startDate: item.startDate,
           endDate: item.endDate,
           actType: item.actType,
-          workingDays: item.workingDays,
+          workingDays: 1,
         };
 
-        list.push(itemCRA);
+        list.push(itemCRA);//need to replace, not to push
         service.insert(ITEMCRA_SCHEMA, itemCRA);
       });
 
@@ -203,7 +206,7 @@ class AjoutCra extends React.Component {
           style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
           textStyle={style.rowText}
-          data={[row.startDate, row.endDate, row.actType, row.workingDays]}
+          data={[row.startDate,row.actType]}
         />
       </TouchableOpacity>
     ));
@@ -304,6 +307,8 @@ class AjoutCra extends React.Component {
                 </View>
               </View>
             </View>
+
+            <Button text="Editer une Periode" > Periode</Button>
 
             <View style={style.container3}>
               <Table
