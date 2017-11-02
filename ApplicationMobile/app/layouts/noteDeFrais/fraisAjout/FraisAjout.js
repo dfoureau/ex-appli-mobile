@@ -65,7 +65,7 @@ class FraisAjout extends React.Component {
         "Novembre 2017",
         "Décembre 2017",
       ],
-      monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1),
+      monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1),//date actuelle
       listFrais: initListAndTotals.listFrais,
       totalMontant: initListAndTotals.totalAReglerAllFrais,
       totalClient: initListAndTotals.totalClientAllFrais,

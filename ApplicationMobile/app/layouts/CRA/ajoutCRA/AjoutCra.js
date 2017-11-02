@@ -61,7 +61,8 @@ class AjoutCra extends React.Component {
       statusLabel: "Nouveau CRA",
       header: ["Date", "Activité"],
       monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1),//la premiere lettre du mois en majuscule
-      listItemsCRA: params.isServiceCalled ? this.getItemsCRA() : [],
+      listItemsCRA: params.isServiceCalled ? this.getItemsCRA() : [],//liste des cra du mois, doit être ordonée
+      modifiedLines: [],//liste des lignes à modifier si validation
     };
 
     if (params.isServiceCalled) {
@@ -155,8 +156,14 @@ class AjoutCra extends React.Component {
     this.props.navigation.navigate("CraConfirmation");
   }
 
-  modifyItemCRA(id) {
-    this.props.navigation.navigate("ActivitesDetail", { idItemCRA: id });
+  modifyItemCRA(l) {
+    this.props.navigation.navigate("ActivitesDetail", { line : l,
+                                                        parent: this});
+  }
+
+  modifyPeriodeCRA() {
+    this.props.navigation.navigate("ActivitesDetail", { line : -1,
+                                                        parent : this});
   }
 
   showDeleteButton() {
@@ -201,7 +208,7 @@ class AjoutCra extends React.Component {
 
   getRows(tab) {
     return tab.map((row, i) => (
-      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(row.id)}>
+      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(i)}>
         <Row
           style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
@@ -214,7 +221,7 @@ class AjoutCra extends React.Component {
 
   handleValidate = () => {
     //TODO Retourne sur la page des CRA
-    this.props.navigation.navigate("ActivitesListe");
+    this.props.navigation.navigate("ActivitesListe");//navigate back
   };
 
   render() {
@@ -308,7 +315,7 @@ class AjoutCra extends React.Component {
               </View>
             </View>
 
-            <Button text="Editer une Periode" > Periode</Button>
+            <Button text="Editer une Periode" onPress = {() =>{service.delete(ITEMCRA_SCHEMA);this.forceUpdate() }}> Periode</Button>
 
             <View style={style.container3}>
               <Table

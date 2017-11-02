@@ -21,7 +21,9 @@ import { Button } from "../../../components/Buttons";
 import Accueil from "../../accueil/Accueil";
 import Calendar from "../../../components/calendar/Calendar";
 import styles from "./styles";
-import service from "../../../realm/service";
+
+
+//import service from "../../../realm/service";
 
 const ITEMCRA_SCHEMA = "ItemCRA";
 
@@ -31,67 +33,75 @@ class ActivitesDetail extends React.Component {
     this.setInitialValues();
   }
 
-  // Permet d'afficher l'ecran choisi dans le menu
-  afficherEcranParent(ecran) {
-    this.props.navigation.navigate(ecran);
-  }
 
   setInitialValues() {
     const { params } = this.props.navigation.state;
-    var itemCRA = service.getByPrimaryKey(ITEMCRA_SCHEMA, params.idItemCRA);
 
-    this.state = {
-      title: "Détails période",
-      id: params.idItemCRA,
-      idItem: itemCRA.id,
-      idCRA: itemCRA.idCRA,
-      startDate: itemCRA.startDate,
-      endDate: itemCRA.endDate,
-      actType: itemCRA.actType,
-      workingDays: itemCRA.workingDays,
-      activitesListe: [
-        { code: "1.0" },
-        { code: "IC", label: "Intercontrat" },
-        { code: "FO", label: "Formation" },
-        { code: "AM", label: "Arrêt maladie" },
-        { code: "AB", label: "Absence diverse" },
-        { code: "0.5+FO", label: "0.5 + Formation" },
-        { code: "0.5+AM", label: "0.5 + Arrêt maladie" },
-        { code: "0.5+AB", label: "0.5 + Absence diverse" },
-      ],
-      activiteClicked: { code: itemCRA.actType },
-    };
+    var parent = params.parent;
+
+    if(params.line == -1){
+      this.state = {
+        title: "Détails jours",
+        isPeriod: true,
+        month : parent.state.monthSelected,//for the calendar
+        linesToChange: [],
+        activitesListe: [
+          { code: "1.0" },
+          { code: "IC", label: "Intercontrat" },
+          { code: "FO", label: "Formation" },
+          { code: "AM", label: "Arrêt maladie" },
+          { code: "AB", label: "Absence diverse" },
+          { code: "0.5+FO", label: "0.5 + Formation" },
+          { code: "0.5+AM", label: "0.5 + Arrêt maladie" },
+          { code: "0.5+AB", label: "0.5 + Absence diverse" },
+        ],
+        activiteClicked: { code: "1.0" },
+      };
+    }else {
+      let tmp =parent.state.listItemsCRA[params.line];
+      this.state = {
+        title: "Détails jour",
+        isPeriod: false,
+        linesToChange:[params.line],
+        activitesListe: [
+          { code: "1.0" },
+          { code: "IC", label: "Intercontrat" },
+          { code: "FO", label: "Formation" },
+          { code: "AM", label: "Arrêt maladie" },
+          { code: "AB", label: "Absence diverse" },
+          { code: "0.5+FO", label: "0.5 + Formation" },
+          { code: "0.5+AM", label: "0.5 + Arrêt maladie" },
+          { code: "0.5+AB", label: "0.5 + Absence diverse" },
+        ],
+        activiteClicked: { code: tmp.actType },
+      };
+    }
+
   }
 
   choixActivite = activite => {
     // Change le bouton sélectionné
-    this.setState({ activiteClicked: activite });
+    var tmp = this.state;
+    tmp.activiteClicked = activite;
+    this.setState(tmp);
   };
 
   handleValidate() {
     const { params } = this.props.navigation.state;
-    this.saveItemCRA(params.idItemCRA);
+    //this.saveItemCRA(params.idItemCRA);
     // Retour à la page d'ajout
-    this.props.navigation.navigate("AjoutCra", {
+    /*this.props.navigation.navigate("AjoutCra", {//return to prec instead
       idCRA: null,
       date: null,
       isServiceCalled: false,
-    });
-  }
-
-  saveItemCRA(idItemCRA) {
-    var item = {
-      id: idItemCRA,
-      idItem: this.state.idItem,
-      idCRA: this.state.idCRA,
-      startDate: this.state.startDate,
-      endDate: this.state.endDate,
-      actType: this.state.activiteClicked.code,
-      workingDays: this.state.workingDays,
-    };
-
-    // Mise à jour d'un item
-    service.update(ITEMCRA_SCHEMA, item);
+    });*/
+    var parentState = params.parent.state;
+    /*for (var i = 0; i < this.state.linesToChange.length; i++) {
+      parentState.listItemsCRA[this.state.linesToChange[i]]=this.state.activiteClicked.code;
+      parentState.modifiedLines = [...new Set(parentState.modifiedLines)];//on ajoute la ligne modifié sans garder les doublons
+    }*/parentState.listItemsCRA = [];
+    params.parent.setState(parentState);//force l'appel de la fonction render sur la page précedente
+    this.props.navigation.dispatch(NavigationActions.back());//on retourne à la page précédente qui à été modifié
   }
 
   // Gère le rendu des boutons sur plusieurs lignes, et gère le toggle
@@ -145,6 +155,30 @@ class ActivitesDetail extends React.Component {
     return buttons;
   };
 
+  renderDate()
+  {
+    let ret = null;
+    if(this.state.isPeriod)
+    {
+      ret = <View style={styles.calendarContainer}>
+        <View style={styles.calendarFlexContainer}>
+          <Text style={styles.calendarText}>calendar </Text>
+        </View>
+
+      </View>;
+    }else {
+      ret =<View style={styles.calendarContainer}>
+        <View style={styles.calendarFlexContainer}>
+          <Text style={styles.calendarText}>date </Text>
+        </View>
+
+      </View>;
+    }
+
+
+
+    return ret;
+  };
   //Gère l'affichage du détail d'une activité quand sélectionnée
   renderDetailActivite() {
     let activite = this.state.activiteClicked;
@@ -166,25 +200,7 @@ class ActivitesDetail extends React.Component {
           navigation={this.props.navigation}
         >
           <View style={Style.firstView}>
-            <View style={styles.calendarContainer}>
-              <View style={styles.calendarFlexContainer}>
-                <Text style={styles.calendarText}>Du</Text>
-                <Calendar
-                  style={styles.calendarComponent}
-                  date={this.state.startDate}
-                  onValueChange={newDate =>
-                    this.setState({ startDate: newDate })}
-                />
-              </View>
-              <View style={styles.calendarFlexContainer}>
-                <Text style={styles.calendarText}>Au</Text>
-                <Calendar
-                  style={styles.calendarComponent}
-                  date={this.state.endDate}
-                  onValueChange={newDate => this.setState({ endDate: newDate })}
-                />
-              </View>
-            </View>
+            {this.renderDate()}
           </View>
           <View style={Style.firstView}>
             <View style={styles.detailActivite}>
