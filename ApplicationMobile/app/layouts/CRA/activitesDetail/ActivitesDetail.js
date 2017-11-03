@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "../../../styles/Styles";
-
+import moment from "moment";
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
@@ -19,7 +19,7 @@ import { SearchFilter } from "../../../components/searchFilter";
 import { OptionFilter } from "../../../components/optionFilter";
 import { Button } from "../../../components/Buttons";
 import Accueil from "../../accueil/Accueil";
-import Calendar from "../../../components/calendar/Calendar";
+import { Calendar } from "react-native-calendars";
 import styles from "./styles";
 
 
@@ -62,6 +62,7 @@ class ActivitesDetail extends React.Component {
       this.state = {
         title: "Détails jour",
         isPeriod: false,
+        date: tmp.startDate,
         linesToChange:[params.line],
         activitesListe: [
           { code: "1.0" },
@@ -88,19 +89,12 @@ class ActivitesDetail extends React.Component {
 
   handleValidate() {
     const { params } = this.props.navigation.state;
-    //this.saveItemCRA(params.idItemCRA);
-    // Retour à la page d'ajout
-    /*this.props.navigation.navigate("AjoutCra", {//return to prec instead
-      idCRA: null,
-      date: null,
-      isServiceCalled: false,
-    });*/
     var parentState = params.parent.state;
-    /*for (var i = 0; i < this.state.linesToChange.length; i++) {
-      parentState.listItemsCRA[this.state.linesToChange[i]]=this.state.activiteClicked.code;
+    for (var i = 0; i < this.state.linesToChange.length; i++) {
+      parentState.listItemsCRA[this.state.linesToChange[i]].actType=this.state.activiteClicked.code;
       parentState.modifiedLines = [...new Set(parentState.modifiedLines)];//on ajoute la ligne modifié sans garder les doublons
-    }*/parentState.listItemsCRA = [];
-    params.parent.setState(parentState);//force l'appel de la fonction render sur la page précedente
+    }
+    params.parent.forceUpdate();//force l'appel de la fonction render sur la page précedente
     this.props.navigation.dispatch(NavigationActions.back());//on retourne à la page précédente qui à été modifié
   }
 
@@ -155,28 +149,58 @@ class ActivitesDetail extends React.Component {
     return buttons;
   };
 
+  onDateSelected(day) {
+
+    let index = day.day-1;
+    let set = new Set(this.state.linesToChange);
+    if (!set.has(index)) {
+      //Ajout d'une date dans le tableau
+      set.add(index);
+    } else{
+      //Suppression d'une date du tableau
+      set.delete(index);
+    }
+    this.state.linesToChange= [...set];
+    this.forceUpdate();
+  }
+
+  convertDates() {
+    //Converti les dates selectionnees stockees sous forme de tableau en objet
+    let datesObject = {};
+    this.state.linesToChange.forEach(date => {
+      datesObject[date+1] = [
+        { startingDay: true, color: "#355A86" },
+        { endingDay: true, color: "#355A86", textColor: "#ffff" },
+      ];
+    });
+    return datesObject;
+  }
+
+
   renderDate()
   {
     let ret = null;
     if(this.state.isPeriod)
     {
-      ret = <View style={styles.calendarContainer}>
-        <View style={styles.calendarFlexContainer}>
-          <Text style={styles.calendarText}>calendar </Text>
-        </View>
+      ret =
+      <View style={styles.containerCalendar}>
+        <Calendar
 
-      </View>;
+          hideArrows={true}
+          markedDates={this.convertDates()}
+          markingType={"interactive"}
+          onDayPress={day => this.onDateSelected(day)}
+        />
+      </View>
+    ;
     }else {
       ret =<View style={styles.calendarContainer}>
-        <View style={styles.calendarFlexContainer}>
-          <Text style={styles.calendarText}>date </Text>
-        </View>
+
+          <Text style={styles.calendarText}>{this.state.date} </Text>
+
 
       </View>;
     }
-
-
-
     return ret;
   };
   //Gère l'affichage du détail d'une activité quand sélectionnée
