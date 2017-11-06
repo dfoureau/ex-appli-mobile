@@ -155,7 +155,6 @@ class ContainerHeader extends Component {
                 source={require("../../images/icons/calendar.png")}
               />
               <Text style={styles.TextItemMenu}>News</Text>
-              {this.afficherNews(this.state.nbNews)}
             </View>
           </TouchableOpacity>
           <TouchableOpacity

@@ -78,13 +78,12 @@ class FraisDetail extends React.Component {
     // dans le cas d'une modifcation d'un frais on alimente le tableau de date avec la date du frais (correspondant à son id)
     if (this.props.navigation.state.params.idFrais != null)
       return [moment(this.props.navigation.state.params.idFrais, "DD-MM-YYYY")];
-    let arr = [],
-      month = this.props.navigation.state.params.month, //numero du mois de la NDF
-      date = moment({ y: "2017", M: month, d: 1 }), //Date de depart : le 1er du mois
+    var arr = [],
+      month = this.props.navigation.state.params.month, //chaine de caractère du mois de la NDF
+      date = moment().month(month).date(1), //Date de depart : le 1er du mois
       monthOk = true; //verif que le mois est toujours le bon
-
     while (monthOk) {
-      if (date.month() == month) {
+      if (date.month() == moment().month(month).month()) {
         if (business.isWeekDay(date)) {
           //Si weekend on ajoute pas
           arr.push(date.format("YYYY-MM-DD"));
