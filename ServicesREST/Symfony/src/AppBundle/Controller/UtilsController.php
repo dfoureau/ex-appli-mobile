@@ -1,10 +1,44 @@
 <?php
 
-namespace TestApiBundle\Controller;
+namespace AppBundle\Controller;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class UtilsController extends Controller
 {
+	 /**
+	 * Teste si une chaine est un entier et si oui si il est supérieur à 0
+	 *
+	 * @param 	string 	$value 		Valeur à tester
+	 *
+	 * @return 	bool
+	 */
+	static function isPositifInt($value) {
+		if (ctype_digit($value) && (int) $value > 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Teste si une chaine est une date valide
+	 *
+	 * @param 	string 	$value 		Valeur à tester
+	 *
+	 * @return 	bool
+	 */
+	static function isValidDate($value) {
+
+		$date = explode("T", $value);
+		
+		if (strlen($date[0]) == 10) {
+			$date = explode("-", $date[0]);
+			return checkdate($date[1], $date[2], $date[0]);
+		}
+
+		return false;
+	}
+
 	static function formatDate( $date ) {
 	  
 	  $date_heure = split( " ", $date );
