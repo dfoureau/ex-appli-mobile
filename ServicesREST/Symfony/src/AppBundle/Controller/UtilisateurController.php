@@ -6,53 +6,103 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Debug\Exception\ContextErrorException;
+use AppBundle\Controller\UtilsController;
 use AppBundle\Security\LoginController;
 
 class UtilisateurController extends Controller
 {
-    /**
-     * @Route("/utilisateur/{id}", name="utilisateur")
-       @Method("GET")
-     */
-    public function GetinfoCollab(Request $request, $id)
-    {
-       
 
-   $log=new LoginController(); /* AppBundle\Security\LoginController */
-       
-       /*$retourAuth = $log->checkAuthentification($this);
+
+	/**
+	* @Route("/utilisateur/{id}", name="utilisateur")
+  * @Method({"GET"})
+     */
+    public function utilisateur(Request $request, $id)
+    {
+
+	       /*$log=new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth,403);
           }*/
-		
+       
+	   
+	   
+	   if (UtilsController::isPositifInt($id)) {
 
-        $sql = 'SELECT users.id,users.nom,users.prenom,entitesjuridiques.nomEntite as entite,profils.libelle as profil,societeagence.nomSocieteAgence as agence, 
-                CASE 
-                WHEN users.idmanager = "0" THEN "Adel Zeboss"
-                ELSE (select concat(u2.prenom," ",u2.nom) from users u2 where users.idmanager = u2.id)
-                END AS manager, users.dateEntree 
-                FROM users, societeagence, profils, entitesjuridiques, users users2
-                where users.idmanager = users2.id
-                and users.id = "'.$id.'"
-                and societeagence.idsocieteagence = users.idagence 
-                and users.idprofil = profils.idprofil
-                and users.idEntiteJuridique = entitesjuridiques.idEntite';
+			$id = (int) $id;
+	   
+	  
+	   
 
-        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+       
+      $sql='select users.id as id,users.nom as nom,users.prenom,profils.libelle as profil,entitesjuridiques.nomEntite as entite,societeagence.nomSocieteAgence as agence from users, profils, entitesjuridiques,societeagence 
+			where users.id = "'.$id.'" 
+			and users.idprofil = profils.idProfil
+			and users.idEntiteJuridique = entitesjuridiques.idEntite
+			and users.idagence = societeagence.idSocieteAgence';
+
+    	$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
         $stmt->execute();
-
-       $retour= $stmt->fetchAll();
-
-       if(count($retour)==0){
-           $message=array('message'=>'Introuvable');
+       	$retour= $stmt->fetchAll();
+		
+		$manager = $this->getUserManager($id);
+		//$nom=$retour['nom'];
+		
+		$retour[0]['responsable'] = $manager;
+		
+		
+		//$retour=array('id'=>$id, 'nom' => $nom, 'responsable'=>$manager);
+		
+       	if(count($retour)==0){
+         	$message=array('message'=>'Utilisateur non trouvé '.$id);
             return new JsonResponse($message,400);
-       }
-       else
-       { 
-       return new JsonResponse($retour,200);
-       }  
+       	}
+       else 
+	return new JsonResponse($retour);
     }
-    
+	else {
+
+			$message = array('message' => 'Paramètre id incorrect: ' . $id);
+			return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+
+		}
+	}
+	
+public function getUserManager($id)
+    {
+	   /*$log=new LoginController();
+      $retourAuth = $log->checkAuthentification($this);
+      if (array_key_exists("erreur", $retourAuth)) {
+        return new JsonResponse($retourAuth,400);
+      }*/
+
+      $sql = 'SELECT idManager as manager FROM users WHERE id = '.$id;
+
+      $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+      $stmt->execute();
+	  $retour= $stmt->fetch();
+	  
+	  if ($retour['manager'] == 0) {
+			$retour="Non défini"; 
+			return $retour;
+		}
+		else 
+		{
+			
+	  $idManager=$retour['manager'];
+	  
+	  $sql = 'SELECT concat(prenom," ",nom) as manager FROM users WHERE id = '.$idManager;
+
+      $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+      $stmt->execute();
+	  $retour= $stmt->fetch();
+	  
+      return $retour['manager'];
+	  }
+    }
+
 }
- 
