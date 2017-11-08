@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, Linking, TouchableHighlight } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
-import Style from "./Styles";
+import Style from "./styles";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
@@ -10,7 +10,10 @@ import Accueil from "../../accueil/Accueil";
 class APropos extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { title: "À Propos" };
+    this.state = {
+      title: "À Propos",
+      lienSupportJira: "http://jira.svc.cat-amania.com/"
+    };
   }
 
   //Permet d'afficher l'ecran choisi dans le menu
@@ -19,6 +22,7 @@ class APropos extends React.Component {
   }
 
   render() {
+    lienSupportJira = this.state.lienSupportJira;
     return (
       <View>
         <ContainerAccueil
@@ -47,7 +51,7 @@ class APropos extends React.Component {
 
             <TouchableHighlight 
               underlayColor = "white"
-              onPress={() => Linking.openURL("http://jira.svc.cat-amania.com/")}>
+              onPress={() => Linking.openURL(lienSupportJira)}>
               <Text style={Style.texteLien}>
                 Envoyer un rapport de bug ou une demande d'aide
               </Text>
