@@ -32,7 +32,7 @@ export default StyleSheet.create({
 
   container2: {
     flex: 1,
-    margin: 10,
+    margin: 20,
     padding: 5,
   },
 

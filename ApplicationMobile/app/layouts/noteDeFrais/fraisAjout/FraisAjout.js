@@ -42,9 +42,14 @@ class FraisAjout extends React.Component {
     this.setInitialValues();
   }
 
-  setInitialValues() {
-    var initListAndTotals = this.initListAndTotals();
+  //Récupération des paramètres de navigation
+  static navigationOptions = ({ navigation }) => ({
+    idUser: navigation.state.params.idUser,
+    month: navigation.state.params.month,
+    year: navigation.state.params.year,
+  });
 
+  setInitialValues() {
     this.state = {
       title: "Note de frais",
       statusId: 1,
@@ -66,11 +71,56 @@ class FraisAjout extends React.Component {
         "Décembre 2017",
       ],
       monthSelected: "Octobre 2017",
-      listFrais: initListAndTotals.listFrais,
-      totalMontant: initListAndTotals.totalAReglerAllFrais,
-      totalClient: initListAndTotals.totalClientAllFrais,
+      listFrais: [],
+      totalMontant: 0,
+      totalClient: 0,
       nbJours: 0,
     };
+  }
+
+  getNDF(year, month){
+    var that = this;
+    fetch('http://localhost:8000/ndf/1000000/'+year+'/'+month)
+    .then(function(response) {
+      if (response.status >= 400) {
+        throw new Error("Bad response from server");
+      }
+      return response.json();
+    })
+    .then(function(ndf) {
+        //Construction du tableau de la note de frais
+        var frais = ndf["notesDeFrais"];
+        let tableauFrais = [];
+        
+        frais.forEach(function(item){
+          tableauFrais.push({
+            dateShort: item["jour"],
+            client: item["client"],
+            montant: 0,
+            id: item["jour"],
+          })
+        });
+
+        that.setState({listFrais: tableauFrais});
+    });
+  }
+
+  componentDidMount(){
+    var that = this;
+    //Récupération des paramètres de navigation
+    const { params } = this.props.navigation.state;
+
+    //Test pour savoir si on ajoute ou si on consulte une NDF
+    if(params.month != null){
+      this.getNDF(params.year, params.month);
+    }
+    else{
+      var initListAndTotals = this.initListAndTotals();
+      that.setState({
+        listFrais: initListAndTotals.listFrais,
+        totalMontant: initListAndTotals.totalAReglerAllFrais,
+        totalClient: initListAndTotals.totalClientAllFrais});
+    }
   }
 
   // Méthode permettant de calculer le total à régler d'un frais
@@ -98,6 +148,7 @@ class FraisAjout extends React.Component {
 
   // Méthode permettant l'initialisation de la liste des frais et des totaux (montant à régler et client)
   initListAndTotals() {
+
     // intialisation des totaux globaux
     var totalAReglerAllFrais = 0;
     var totalClientAllFrais = 0;
