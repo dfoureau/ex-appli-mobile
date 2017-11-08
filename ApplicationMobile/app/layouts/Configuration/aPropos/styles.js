@@ -6,6 +6,7 @@ texte: {
     fontSize: 16,
     paddingVertical: 10,
     paddingHorizontal: 10,
+    textAlign: "justify",
 },
 
 texteLien: {
@@ -13,6 +14,7 @@ texteLien: {
     fontSize: 16,
     paddingVertical: 10,
     paddingHorizontal: 10,
+    textAlign: "justify",
 }
 
 });

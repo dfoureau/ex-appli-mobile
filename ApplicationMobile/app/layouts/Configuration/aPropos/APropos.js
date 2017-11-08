@@ -27,8 +27,19 @@ class APropos extends React.Component {
         >
           <View style={{ paddingVertical: 20 }}>
             <Text style={Style.texte}>
-              2017 &copy; Cat-Amania
+              Dans le but de favoriser l'interaction en mobilité avec l'entreprise et entre les collaborateurs, CAT-AMANIA fourni a ses collaborateurs des smartphones
+              dans le cadre du projet SMART CONNEXIONS.
+              {"\n"}
+              Avec cette application, le projet SMART CONNEXIONS fournit aux collaborateurs un accès à l'espace collaborateur directement depuis leur smartphones
+              à travers d'une application mobile.
+              {"\n"}
+              Cette dernière a été développée par le programme INNOVA grâce à votre collaboration et vos travaux au sein d'INNOVA.
             </Text>
+
+            <Text style={Style.texte}>
+              Tous droits réservés &copy; 2017 Cat-Amania
+            </Text>
+
             <Text style={Style.texte}>
               Version : 1.0.0{" "}
             </Text>
