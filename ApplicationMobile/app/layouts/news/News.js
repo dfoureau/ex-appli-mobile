@@ -1,162 +1,93 @@
 import React from "react";
-import { View, Text, Image, FlatList } from "react-native";
+import { View, Text, Image, FlatList, ActivityIndicator } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "../../styles/Styles";
 import NewsItem from "../../components/newsItem/NewsItem";
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../components/containerAccueil/ContainerAccueil";
+import StyleLayout from "./styles";
 
 import Accueil from "../accueil/Accueil";
-
-
-
 
 class News extends React.Component {
   constructor(props) {
     super(props);
     this.state = { title: "News" ,
-                   newsList:  [
-                        {
-                          titre: "Titre de la news 1",
-                          contenu: "Contenu de la news et c'est vraiment super long, je sais pas quoi écrire omg blablabkla nieeeeeeeeeeeeeeee j'aime pas les framboises ",
-                          date: "17/09/2017",
-                          photo: "http://test.net/photo.jpg",
-                          file: "http://test.net/news.pdf",
-                        },
-                        {
-                          titre: "Titre de la news 2",
-                          contenu: "Contenu de la news",
-                          date: "17/09/2017",
-                          photo: "http://test.net/photo.jpg",
-
-                        },
-                        {
-                          titre: "Titre de la news 3",
-                          contenu: "Contenu de la news",
-                          date: "17/09/2017",
-
-                          file: "http://test.net/news.pdf",
-                        },
-                        {
-                          titre: "Titre de la news 4",
-                          contenu: "Contenu de la news et c'est vraiment super long, je sais pas quoi écrire omg blablabkla nieeeeeeeeeeeeeeee j'aime pas les framboises ",
-                          date: "17/09/2017",
-
-
-                        },
-                        {
-                          titre: "Titre de la news 5",
-                          contenu: "Contenu de la news",
-                          date: "17/09/2017",
-                          photo: "http://test.net/photo.jpg",
-                          file: "http://test.net/news.pdf",
-                        },
-                        {
-                          titre: "Titre de la news 6",
-                          contenu: "Contenu de la news",
-                          date: "17/09/2017",
-                          photo: "http://test.net/photo.jpg",
-                          file: "http://test.net/news.pdf",
-                        },
-                        {
-                          titre: "Titre de la news 7",
-                          contenu: "Contenu de la news",
-                          date: "17/09/2017",
-                          photo: "http://test.net/photo.jpg",
-                          file: "http://test.net/news.pdf",
-                        },
-                        {
-                          titre: "Titre de la news 8",
-                          contenu: "Contenu de la news",
-                          date: "17/09/2017",
-                          photo: "http://test.net/photo.jpg",
-                          file: "http://test.net/news.pdf",
-                        },
-                        {
-                          titre: "Titre de la news 9",
-                          contenu: "Contenu de la news",
-                          date: "17/09/2017",
-                          photo: "http://test.net/photo.jpg",
-                          file: "http://test.net/news.pdf",
-                        },
-                        {
-                          titre: "Titre de la news 10",
-                          contenu: "Contenu de la news",
-                          date: "17/09/2017",
-                          photo: "http://test.net/photo.jpg",
-                          file: "http://test.net/news.pdf",
-                        },
-                        {
-                          titre: "Titre de la news 11",
-                          contenu: "Contenu de la news",
-                          date: "17/09/2017",
-                          photo: "http://test.net/photo.jpg",
-                          file: "http://test.net/news.pdf",
-                        },
-                        {
-                          titre: "Titre de la news 12",
-                          contenu: "Contenu de la news",
-                          date: "17/09/2017",
-                          photo: "http://test.net/photo.jpg",
-                          file: "http://test.net/news.pdf",
-                        },
-                        {
-                          titre: "Titre de la news 13",
-                          contenu: "Contenu de la news",
-                          date: "17/09/2017",
-                          photo: "http://test.net/photo.jpg",
-                          file: "http://test.net/news.pdf",
-                        },
-                        {
-                          titre: "Titre de la news 14",
-                          contenu: "Contenu de la news",
-                          date: "17/09/2017",
-                          photo: "http://test.net/photo.jpg",
-                          file: "http://test.net/news.pdf",
-                        },
-                        {
-                          titre: "Titre de la news 15",
-                          contenu: "Contenu de la news",
-                          date: "17/09/2017",
-                          photo: "http://test.net/photo.jpg",
-                          file: "http://test.net/news.pdf",
-                        },
-                        {
-                          titre: "Titre de la news 16",
-                          contenu: "Contenu de la news",
-                          date: "17/09/2017",
-                          photo: "http://test.net/photo.jpg",
-                          file: "http://test.net/news.pdf",
-                        },
-                      ],
-                    };
+      newsList:  [
+          {
+            news_titre: null,
+            news_contenu: null,
+            news_date: null,
+            news_photo: null,
+            file: null,
+          }
+        ],
+        isReady: false,
+        webServiceLien: "http://172.16.177.140:80/prj-appli-mobile/ServicesREST/Symfony/web/news/10"
+      };
   }
-
+  
+  componentDidMount() {
+	var that = this;
+    fetch(this.state.webServiceLien)
+    .then(function(response) {
+      if (response.status >= 400) {
+        throw new Error("Bad response from server");
+      }
+      return response.json();
+    })
+    .then(function(foncnews) {
+      that.setState({newsList: foncnews, isReady: true})
+    });
+	
+  }
+  
   //Permet d'afficher l'ecran choisi dans le menu
   afficherEcranParent(ecran) {
     this.props.navigation.navigate(ecran);
   }
 
   render() {
-    return (
+    if (!this.state.isReady) {
+      return (   
       <View>
-        <ContainerAccueil
-          title={this.state.title}
-          afficherEcran={this.afficherEcranParent.bind(this)}
-        >
-          <FlatList
-            data={this.state.newsList}
+      <ContainerAccueil
+        title={this.state.title}
+        afficherEcran={this.afficherEcranParent.bind(this)}
+      >
+        <ActivityIndicator
+        color="#8b008b"
+        size="large"
+         />
+        <Text style={StyleLayout.texte}>
+          Récupération des donées. Veuillez patienter.
+        </Text>
 
-            keyExtractor = { item => item.titre}
+      </ContainerAccueil>
+    </View>
+    )
 
-            renderItem={({ item }) => (
-                <NewsItem {...item} />
-            )}
+    } else {
+      return (
+        <View>
+          <ContainerAccueil
+            title={this.state.title}
+            afficherEcran={this.afficherEcranParent.bind(this)}
+          >
+            <FlatList
+              data={this.state.newsList}
 
-          />
-        </ContainerAccueil>
-      </View>
-    );
+              keyExtractor = { item => item.news_titre}
+
+              renderItem={({ item }) => (
+                  <NewsItem {...item} />
+              )}
+
+            />
+          </ContainerAccueil>
+        </View>
+      );
+    }
   }
 }
 

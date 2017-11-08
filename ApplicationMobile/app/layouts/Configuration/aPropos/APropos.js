@@ -12,7 +12,6 @@ class APropos extends React.Component {
     super(props);
     this.state = {
       title: "À Propos",
-      lienSupportJira: "http://jira.svc.cat-amania.com/"
     };
   }
 
@@ -22,7 +21,8 @@ class APropos extends React.Component {
   }
 
   render() {
-    lienSupportJira = this.state.lienSupportJira;
+    lienSupportJira: "http://jira.svc.cat-amania.com/"
+
     return (
       <View>
         <ContainerAccueil
