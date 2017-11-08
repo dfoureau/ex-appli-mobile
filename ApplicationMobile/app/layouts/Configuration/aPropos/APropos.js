@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, Linking, TouchableHighlight } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
-import styles from "./styles";
+import Style from "./styles";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
@@ -10,7 +10,9 @@ import Accueil from "../../accueil/Accueil";
 class APropos extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { title: "À Propos" };
+    this.state = {
+      title: "À Propos",
+    };
   }
 
   //Permet d'afficher l'ecran choisi dans le menu
@@ -19,6 +21,8 @@ class APropos extends React.Component {
   }
 
   render() {
+    lienSupportJira: "http://jira.svc.cat-amania.com/"
+
     return (
       <View>
         <ContainerAccueil
@@ -26,33 +30,32 @@ class APropos extends React.Component {
           afficherEcran={this.afficherEcranParent.bind(this)}
         >
           <View style={{ paddingVertical: 20 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                paddingVertical: 10,
-                paddingHorizontal: 10,
-              }}
-            >
-              2017 &copy; Cat-Amania
+            <Text style={Style.texte}>
+              Dans le but de favoriser l'interaction en mobilité avec l'entreprise et entre les collaborateurs, CAT-AMANIA fourni a ses collaborateurs des smartphones
+              dans le cadre du projet SMART CONNEXION.
+              {"\n"}
+              Avec cette application, le projet SMART CONNEXION fournit aux collaborateurs un accès à l'espace collaborateur directement depuis leur smartphones
+              à travers d'une application mobile.
+              {"\n"}
+              Cette dernière a été développée par le programme INNOVA grâce à votre collaboration et vos travaux au sein d'INNOVA.
             </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                paddingVertical: 10,
-                paddingHorizontal: 10,
-              }}
-            >
+
+            <Text style={Style.texte}>
+              Tous droits réservés &copy; 2017 Cat-Amania
+            </Text>
+
+            <Text style={Style.texte}>
               Version : 1.0.0{" "}
             </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                paddingVertical: 10,
-                paddingHorizontal: 10,
-              }}
-            >
-              Rapports de bugs ou demande d'aide : site de support sur Jira
-            </Text>
+
+
+            <TouchableHighlight 
+              underlayColor = "white"
+              onPress={() => Linking.openURL(lienSupportJira)}>
+              <Text style={Style.texteLien}>
+                Envoyer un rapport de bug ou une demande d'aide
+              </Text>
+            </TouchableHighlight>
           </View>
         </ContainerAccueil>
       </View>
