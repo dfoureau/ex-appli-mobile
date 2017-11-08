@@ -58,9 +58,10 @@ class News extends React.Component {
         <ActivityIndicator
         color="#8b008b"
         size="large"
+        style={StyleLayout.loader}
          />
         <Text style={StyleLayout.texte}>
-          Récupération des donées. Veuillez patienter.
+          Récupération des données. Veuillez patienter.
         </Text>
 
       </ContainerAccueil>
