@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, Linking, TouchableHighlight } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
-import styles from "./styles";
+import Style from "./Styles";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
@@ -26,33 +26,21 @@ class APropos extends React.Component {
           afficherEcran={this.afficherEcranParent.bind(this)}
         >
           <View style={{ paddingVertical: 20 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                paddingVertical: 10,
-                paddingHorizontal: 10,
-              }}
-            >
+            <Text style={Style.texte}>
               2017 &copy; Cat-Amania
             </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                paddingVertical: 10,
-                paddingHorizontal: 10,
-              }}
-            >
+            <Text style={Style.texte}>
               Version : 1.0.0{" "}
             </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                paddingVertical: 10,
-                paddingHorizontal: 10,
-              }}
-            >
-              Rapports de bugs ou demande d'aide : site de support sur Jira
-            </Text>
+
+
+            <TouchableHighlight 
+              underlayColor = "white"
+              onPress={() => Linking.openURL("http://jira.svc.cat-amania.com/")}>
+              <Text style={Style.texteLien}>
+                Envoyer un rapport de bug ou une demande d'aide
+              </Text>
+            </TouchableHighlight>
           </View>
         </ContainerAccueil>
       </View>
