@@ -81,7 +81,7 @@ class FraisListe extends React.Component {
     .then(function(response) {
       if (response.status >= 400) {
         that.setState({data: []})
-        throw new Error("Bad response from server");
+        console.warn("Aucune note de frais trouvée !");
       }
       return response.json();
     })
@@ -95,6 +95,16 @@ class FraisListe extends React.Component {
     that.setState({year: _year});
 
     this.getNDFByUser(_year);
+  }
+
+  //Fonction permettant de conditionner l'affichage du bloc valideur
+  checkItem(item){
+    if(item.statusId == 2 && item.valideur != null && item.dateactionetat != null){
+      return true;
+    }
+    else{
+      return false;
+    }
   }
 
   render() {
@@ -163,7 +173,7 @@ class FraisListe extends React.Component {
                       </Text>
                       <Text style={style.statusText}>
                         Etat : {item.etat}
-                        {item.statusId == 2 ? (
+                        {this.checkItem(item) == true ? (
                           <Text>
                             {" "}
                             par {item.valideur} le {item.dateactionetat}
