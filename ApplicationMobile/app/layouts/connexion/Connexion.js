@@ -12,6 +12,9 @@ import {
   Alert,
   ScrollView,
   KeyboardAvoidingView,
+  StatusBar,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 import CheckBox from "react-native-check-box";
 import { StackNavigator, NavigationActions } from "react-navigation";
@@ -41,12 +44,29 @@ class Connexion extends React.Component {
       login: connexionParams != null ? connexionParams.login : "",
       mdp: connexionParams != null ? connexionParams.mdp : "",
       saveIdChecked: connexionParams != null ? true : false,
+      modalVisible: false,
     };
   }
 
   mdpOublie(text) {}
 
   seConnecter() {
+
+    /*
+    Alert.alert(
+      "Veuillez patienter",
+      "Connexion au service en cours...",
+      [],
+      { cancelable: false }
+    );*/
+
+    this.setModalVisible(true);
+
+    this.props.navigation.navigate("Accueil");
+
+    this.setModalVisible(false);
+
+    /*
     // On supprime automatiquement les paramètres de connexion en cache
     service.delete(CONNEXION_PARAMS_SCHEMA);
 
@@ -64,7 +84,7 @@ class Connexion extends React.Component {
     this.props.navigation.navigate("Accueil");
     if (this.state.mdp == "admin") {
       this.props.navigation.navigate("Accueil");
-    }
+    }*/
   }
 
   // Modification checkbox de sauvgarde des ids
@@ -74,9 +94,45 @@ class Connexion extends React.Component {
     }));
   }
 
+  setModalVisible(visible) {
+    this.setState({modalVisible: visible});
+  }
+
   render() {
     return (
       <KeyboardAvoidingView behavior="padding" style={Style.mainView}>
+        <StatusBar backgroundColor="#355a86" barStyle="light-content" />
+
+        <Modal
+          visible={this.state.modalVisible}
+          animationType="slide"
+          transparent={false}
+          onRequestClose={() => {}}
+          >
+          <View style={{
+          flex: 1,
+          flexDirection: 'column',
+          justifyContent: 'center',
+          backgroundColor: '#00000080',
+          alignItems: 'center'}}>
+          <View style={{
+            width: 250,
+            height: 200,
+            backgroundColor: '#fff',
+            padding: 20,}}>
+
+              <ActivityIndicator
+                color="#8b008b"
+                size="large"
+                style={Style.loader}
+                />
+              <Text style={Style.texte}>
+                Connexion en cours, veuillez patienter.
+              </Text>
+              </View>
+          </View>
+        </Modal>
+
         <View style={Style.logoContainer}>
           <Image
             style={Style.logo}
