@@ -70,7 +70,7 @@ class FraisAjout extends React.Component {
         "Novembre 2017",
         "Décembre 2017",
       ],
-      monthSelected: "Octobre 2017",
+      monthSelected: "Novembre 2017",
       listFrais: [],
       totalMontant: 0,
       totalClient: 0,
@@ -91,17 +91,32 @@ class FraisAjout extends React.Component {
         //Construction du tableau de la note de frais
         var frais = ndf["notesDeFrais"];
         let tableauFrais = [];
+        // intialisation des totaux globaux
+        var totalAReglerAllFrais = 0;
+        var totalClientAllFrais = 0;
         
         frais.forEach(function(item){
+          // on calcul les totaux
+          totauxFrais = that.CalculTotauxApi(item);
+          // on incrémentes les totaux globaux
+          totalAReglerAllFrais += totauxFrais.totalAReglerFrais;
+          totalClientAllFrais += totauxFrais.totalClientFrais;
           tableauFrais.push({
             dateShort: item["jour"],
             client: item["client"],
-            montant: 0,
+            montant: totauxFrais != null ? totauxFrais.totalAReglerFrais : "",
             id: item["jour"],
           })
         });
 
-        that.setState({listFrais: tableauFrais});
+        that.setState({
+          listFrais: tableauFrais,
+          totalMontant: totalAReglerAllFrais,
+          totalClient: totalClientAllFrais,
+          status: ndf["etat"],
+          statusLabel: "",
+        });
+
     });
   }
 
@@ -121,6 +136,29 @@ class FraisAjout extends React.Component {
         totalMontant: initListAndTotals.totalAReglerAllFrais,
         totalClient: initListAndTotals.totalClientAllFrais});
     }
+  }
+
+  //Méthode permettant de calcul les totaux pour les frais provenant de l'API
+  CalculTotauxApi(frais){
+
+    var total = (parseFloat(frais["indemKM"]) * parseFloat(frais["nbKM"]) +
+    parseFloat(frais["montantForfait"]) +
+    parseFloat(frais["montantFraisSNCF"]) +
+    parseFloat(frais["montantPourcentage"]) +
+    parseFloat(frais["montantHotel"]) +
+    parseFloat(frais["montantRepas"]) +
+    parseFloat(frais["montantInvitation"]) +
+    parseFloat(frais["montantPeages"]) +
+    parseFloat(frais["montantEssence"]) +
+    parseFloat(frais["montantTaxi"]) +
+    parseFloat(frais["montantParking"]) +
+    parseFloat(frais["montantDivers"])
+    );
+
+    return {
+      totalAReglerFrais: total,
+      totalClientFrais: frais["facturable"] == 1 ? total : 0,
+    };
   }
 
   // Méthode permettant de calculer le total à régler d'un frais
@@ -253,8 +291,17 @@ class FraisAjout extends React.Component {
     this.props.navigation.navigate("FraisConfirmation");
   }
 
+  checketat(etat) {
+    if(etat == "Validé" || etat == "En attente de validation"){
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+
   showDeleteButton() {
-    if (this.state.statusId == 2)
+    if (this.state.etat == "Brouillon")
       return (
         <Button
           buttonStyles={styles.deleteButton}
@@ -273,7 +320,7 @@ class FraisAjout extends React.Component {
   }
 
   showDraftButton() {
-    if (this.state.statusId == 1 || this.state.statusId == 2)
+    if (this.state.status == "nouveau" || this.state.status == "Brouillon")
       return (
         <Button
           buttonStyles={styles.draftButton}
@@ -284,7 +331,7 @@ class FraisAjout extends React.Component {
   }
 
   showValidateButton() {
-    if (this.state.statusId == 1 || this.state.statusId == 2)
+    if (this.state.status == "nouveau" || this.state.status == "Brouillon")
       return <Button text="VALIDER" onPress={() => this.validateNDF()} />;
   }
 
@@ -328,11 +375,13 @@ class FraisAjout extends React.Component {
                   {/*<Text style={styles.text}>Nombre de jours : {this.state.nbJours}</Text>*/}
                 </View>
                 <View style={styles.containerButton}>
-                  <Button
-                    text="AJOUTER FORFAIT"
-                    onPress={() => this.addNDF(this.state.monthSelected)}
-                    buttonStyles={Style.addButton}
-                  />
+                  {this.checketat(this.state.status) == true ? (
+                    <Button
+                      text="AJOUTER FORFAIT"
+                      onPress={() => this.addNDF(this.state.monthSelected)}
+                      buttonStyles={Style.addButton}
+                    />
+                  ) : null}
                 </View>
               </View>
               <View style={styles.container2}>
