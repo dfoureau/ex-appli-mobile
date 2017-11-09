@@ -4,22 +4,65 @@ var { height, width } = Dimensions.get("window");
 const bleu1 = "#2298AA";
 const bleu2 = "#2ABBDD";
 const bleu3 = "#355A86";
+
 export default StyleSheet.create({
-  scrollView: { width: width, height: height, backgroundColor: "#355a86" },
+  mainView: {
+    backgroundColor: "#355a86",
+    flex: 1,
+  },
+
+  logoContainer: {
+    alignItems: "center",
+    flexGrow: 1,
+    justifyContent: "center",
+  },
+
+  formContainer: {
+    padding: 20,
+  },
+
+  logo: {
+    width: 260,
+    height: 77,
+  },
+
+  input: {
+    height: 40,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    color: "#FFFF",
+    fontSize: 18,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+  },
+
+  checkbox: {
+    marginBottom: 20,
+  },
+
   viewContainer: {
     marginTop: 150,
     width: width,
     justifyContent: "center",
     alignItems: "center",
   },
-  viewChamps: {
+
+  btnSeconnecter: {
+    fontSize: 30,
+    marginTop: 20,
+    alignItems: "center",
+  },
+
+  txtMdpOublie: {
+    fontSize: 15,
+    color: "#2298AA",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 120,
   },
-  viewSeConnecter: { marginTop: 20, alignItems: "center" },
-  btnSeconnecter: { fontSize: 30 },
-  viewMdpOublie: { marginTop: 20, alignItems: "center" },
+
+  viewMdpOublie: {
+    alignItems: "center"
+  },
+
   touchMdpOublie: {
     width: 200,
     height: 50,
@@ -31,25 +74,5 @@ export default StyleSheet.create({
     color: "#2298AA",
     justifyContent: "center",
     alignItems: "center",
-  },
-  inputContainer: {
-    borderLeftWidth: 2,
-    borderRightWidth: 2,
-    borderTopWidth: 2,
-    borderBottomWidth: 2,
-    height: 50,
-    marginTop: 20,
-  },
-  checkbox: {
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  input: {
-    height: 50,
-    backgroundColor: "#ffffff",
-    paddingLeft: 15,
-    paddingRight: 15,
-    borderWidth: 0,
-    fontSize: 19,
   },
 });

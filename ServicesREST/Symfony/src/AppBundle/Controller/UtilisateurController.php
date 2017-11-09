@@ -14,31 +14,21 @@ use AppBundle\Security\LoginController;
 
 class UtilisateurController extends Controller
 {
-
-
 	/**
 	* @Route("/utilisateur/{id}", name="utilisateur")
-  * @Method({"GET"})
+    * @Method({"GET"})
      */
     public function utilisateur(Request $request, $id)
     {
-
 	       /*$log=new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth,403);
           }*/
-       
-	   
 	   
 	   if (UtilsController::isPositifInt($id)) {
-
 			$id = (int) $id;
-	   
-	  
-	   
 
-       
       $sql='select users.id as id,users.nom as nom,users.prenom,profils.libelle as profil,entitesjuridiques.nomEntite as entite,societeagence.nomSocieteAgence as agence from users, profils, entitesjuridiques,societeagence 
 			where users.id = "'.$id.'" 
 			and users.idprofil = profils.idProfil

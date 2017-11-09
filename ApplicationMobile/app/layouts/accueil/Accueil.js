@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList,ActivityIndicator } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "./Styles";
 
@@ -22,45 +22,81 @@ class Accueil extends React.Component {
     this.state = {
       //On définit les différentes variables
       title: "Cat-Amania",
-      userInfo: {
-        idUser: 803,
-        firstName: "Prénom",
-        lastName: "NOM",
-        branch: "Production",
-        agency: "Lille",
-        manager: "John DOE",
-        vacationInfo: {
-          period: "07/2017",
-          CPCounter: "55.0",
-          RTTCounter: "10.0",
-        },
-      },
-      news: [
-        {
-          id: 1,
-          titre: "Titre de la news 1",
-          contenu: "Contenu de la news et c'est vraiment super long, je sais pas quoi écrire omg blablabkla nieeeeeeeeeeeeeeee j'aime pas les framboises ",
-          date: "17/09/2017",
-          file: "http://test.net/news.pdf",
-        },
-        {
-          id: 2,
-          titre: "Titre de la news 1",
-          contenu: "Contenu de la news et c'est vraiment super long, je sais pas quoi écrire omg blablabkla nieeeeeeeeeeeeeeee j'aime pas les framboises ",
-          date: "17/09/2017",
-          file: "http://test.net/news.pdf",
-        },
-        {
-          id: 3,
-          titre: "Titre de la news 1",
-          contenu: "Contenu de la news et c'est vraiment super long, je sais pas quoi écrire omg blablabkla nieeeeeeeeeeeeeeee j'aime pas les framboises ",
-          date: "17/09/2017",
-          file: "http://test.net/news.pdf",
-        },
+      user: [ 
+      {
+        id: null,
+        nom: null,
+        prenom: null,
+        profil: null,
+        entite: null,
+        agence: null,
+        responsable: null
+      }
       ],
+      conges : [
+      {
+      id : null,
+      datesolde : null,
+      cp : null,
+      rtt : null
+      }
+      ],
+        news: [
+          {
+            id: null,
+            titre: null,
+            contenu: null,
+            date: null,
+            file: null
+          }
+        ],
+      isReadyw1: false,
+      isReadyw2: false,
+      isReadyw3: false,
+      webServiceLien1: "http://172.16.177.140:80/prj-appli-mobile/ServicesREST/Symfony/web/app_dev.php/utilisateur/10",
+      webServiceLien2: "http://172.16.177.140:80/prj-appli-mobile/ServicesREST/Symfony/web/conges/solde/10",
+      webServiceLien3: "http://172.16.177.140:80/prj-appli-mobile/ServicesREST/Symfony/web/news/3"
     };
   }
 
+    componentDidMount() {
+	var that = this;
+    fetch(this.state.webServiceLien1)
+    .then(function(response) {
+      if (response.status >= 400) {
+        throw new Error("GetUtilisateur : Bad response from server");
+      }
+      return response.json();
+    })
+    .then(function(foncuser) {
+      that.setState({user: foncuser, isReadyw1: true})
+    });
+	
+	var that = this;
+    fetch(this.state.webServiceLien2)
+    .then(function(response) {
+      if (response.status >= 400) {
+        throw new Error("GetConges : Bad response from server");
+      }
+      return response.json();
+    })
+    .then(function(fonconges) {
+      that.setState({conges: fonconges, isReadyw2: true})
+    });
+	
+	var that = this;
+    fetch(this.state.webServiceLien3)
+    .then(function(response) {
+      if (response.status >= 400) {
+        throw new Error("GetNews : Bad response from server");
+      }
+      return response.json();
+    })
+    .then(function(foncnews) {
+      that.setState({news: foncnews, isReadyw3: true})
+    });
+	
+  }
   //Permet d'afficher l'ecran choisi dans le menu
   afficherEcranParent(ecran) {
     this.props.navigation.navigate(ecran);
@@ -75,39 +111,60 @@ class Accueil extends React.Component {
   }
 
   render() {
-    return (
-      <ContainerAccueil
-        title={this.state.title}
-        afficherEcran={this.afficherEcranParent.bind(this)}
-      >
-        <Panel title="INFORMATIONS PERSONNELLES">
-          <Text style={Style.text}>
-            Bienvenue {this.state.userInfo.firstName}{" "}
-            {this.state.userInfo.lastName}
-          </Text>
-          <Text style={Style.text}>Entité juridique : CAT-AMANIA</Text>
-          <Text style={Style.text}>Profil : {this.state.userInfo.branch}</Text>
-          <Text style={Style.text}>Agence : {this.state.userInfo.agency}</Text>
-          <Text style={Style.text}>
-            Manager : {this.state.userInfo.manager}
-          </Text>
-        </Panel>
-        <Panel title="SOLDES CONGES">
-          <Text style={Style.text}>
-            Sur votre bulletin de salaire du{" "}
-            {this.state.userInfo.vacationInfo.period}, votre solde de congés se
-            compose de la manière suivante :
-          </Text>
-          <Text style={[Style.text, Style.text2]}>
-            - solde CP : {this.state.userInfo.vacationInfo.CPCounter}
-          </Text>
-          <Text style={[Style.text, Style.text2]}>
-            - solde RTT : {this.state.userInfo.vacationInfo.RTTCounter}
-          </Text>
-        </Panel>
-        <Panel title="NEWS">{this.renderItemNews()}</Panel>
-      </ContainerAccueil>
-    );
+	  if (!this.state.isReadyw1 || !this.state.isReadyw2 || !this.state.isReadyw2) {
+      return (
+        <View>
+        <ContainerAccueil
+          title={this.state.title}
+          afficherEcran={this.afficherEcranParent.bind(this)}
+        >
+          <ActivityIndicator
+        color="#8b008b"
+        size="large"
+        style={Style.loader}
+         />
+        <Text style={Style.texte}>
+          Récupération des données. Veuillez patienter.
+        </Text>
+
+        </ContainerAccueil>
+      </View>
+      )
+    } else {
+      return (
+        <ContainerAccueil
+          title={this.state.title}
+          afficherEcran={this.afficherEcranParent.bind(this)}
+        >
+          <Panel title="INFORMATIONS PERSONNELLES">
+            <Text style={Style.text}>
+              Bienvenue {this.state.user[0]['prenom']}{" "}
+              {this.state.user[0]['nom']}
+            </Text>
+            <Text style={Style.text}>Entité juridique : {this.state.user[0]['entite']}</Text>
+            <Text style={Style.text}>Profil : {this.state.user[0]['profil']}</Text>
+            <Text style={Style.text}>Agence : {this.state.user[0]['agence']}</Text>
+            <Text style={Style.text}>
+              Manager : {this.state.user[0]['responsable']}
+            </Text>
+          </Panel>
+          <Panel title="SOLDES CONGES">
+            <Text style={Style.text}>
+              Sur votre bulletin de salaire du{" "}
+              {this.state.conges[0]['datesolde']}, votre solde de congés se
+              compose de la manière suivante :
+            </Text>
+            <Text style={[Style.text, Style.text2]}>
+              - solde CP : {this.state.conges[0]['cp']}
+            </Text>
+            <Text style={[Style.text, Style.text2]}>
+              - solde RTT : {this.state.conges[0]['rtt']}
+            </Text>
+          </Panel>
+          <Panel title="NEWS">{this.renderItemNews()}</Panel>
+        </ContainerAccueil>
+      );
+   }
   }
 }
 

@@ -22,4 +22,18 @@ export default StyleSheet.create({
     fontWeight: "bold",
     paddingBottom: 5,
   },
+
+  texte: {
+    fontSize: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    textAlign: "center",
+    color: "#8b008b",
+},
+
+loader: {
+    marginTop : 20,
+    marginBottom : 20,
+}
+
 });

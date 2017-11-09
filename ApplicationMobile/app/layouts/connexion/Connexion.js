@@ -11,6 +11,7 @@ import {
   Text,
   Alert,
   ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 import CheckBox from "react-native-check-box";
 import { StackNavigator, NavigationActions } from "react-navigation";
@@ -75,60 +76,66 @@ class Connexion extends React.Component {
 
   render() {
     return (
-      <ScrollView style={Style.scrollView}>
-        <View style={{ flex: 1 }}>
-          <View style={Style.viewContainer}>
-            <Image source={require("../../images/logo.png")} />
-          </View>
-          <View style={Style.viewChamps}>
-            <View style={{ alignItems: "center" }}>
-              <View style={{ width: 320 }}>
-                <View style={Style.inputContainer}>
-                  <TextInput
-                    placeholder="Login"
-                    value={this.state.login}
-                    style={Style.input}
-                    onChangeText={text => this.setState({ login: text })}
-                  />
-                </View>
-                <View style={Style.inputContainer}>
-                  <TextInput
-                    placeholder="Mot de passe"
-                    value={this.state.mdp}
-                    secureTextEntry={true}
-                    style={Style.input}
-                    onChangeText={text => this.setState({ mdp: text })}
-                  />
-                </View>
+      <KeyboardAvoidingView behavior="padding" style={Style.mainView}>
+        <View style={Style.logoContainer}>
+          <Image
+            style={Style.logo}
+            source={require("../../images/logo.png")}
+            />
+       </View>
 
-                <CheckBox
-                  onClick={() => this.handleChecked()}
-                  isChecked={this.state.saveIdChecked}
-                  rightText="Se souvenir de moi"
-                  rightTextStyle={{ color: "white", fontSize: 16 }}
-                  style={Style.checkbox}
-                  checkBoxColor="white"
-                />
-              </View>
-              <View style={Style.viewSeConnecter}>
-                <Button
-                  title="Se connecter"
-                  onPress={() => this.seConnecter()}
-                  style={Style.btnSeconnecter}
-                />
-              </View>
-              <View style={Style.viewMdpOublie}>
-                <TouchableHighlight
-                  onPress={() => this.mdpOublie()}
-                  style={Style.touchMdpOublie}
-                >
-                  <Text style={Style.txtMdpOublie}>Mot de passe oublié</Text>
-                </TouchableHighlight>
-              </View>
-            </View>
+        <View style={Style.formContainer}>
+          <TextInput
+            placeholder="Login"
+            value={this.state.login}
+            style={Style.input}
+            returnKeyType="next"
+            autoCorrect={false}
+            autoCapitalize="none"
+            autoFocus={true}
+            underlineColorAndroid='transparent'
+            onSubmitEditing={() => this.passwordInput.focus()}
+            placeholderTextColor="rgba(255, 255, 255, 0.7)"
+            onChangeText={text => this.setState({ login: text })}
+            />
+          <TextInput
+            placeholder="Mot de passe"
+            value={this.state.mdp}
+            secureTextEntry={true}
+            style={Style.input}
+            returnKeyType="go"
+            underlineColorAndroid='transparent'
+            placeholderTextColor="rgba(255, 255, 255, 0.7)"
+            ref={(input) => this.passwordInput = input}
+            onChangeText={text => this.setState({ mdp: text })}
+            onSubmitEditing={() => this.seConnecter()}
+          />
+          <CheckBox
+            onClick={() => this.handleChecked()}
+            isChecked={this.state.saveIdChecked}
+            rightText="Se souvenir de moi"
+            rightTextStyle={{ color: "rgba(255, 255, 255, 0.7)", fontSize: 16 }}
+            style={Style.checkbox}
+            checkBoxColor="rgba(255, 255, 255, 0.7)"
+            />
+          <Button
+            title="Se connecter"
+            onPress={() => this.seConnecter()}
+            style={Style.btnSeconnecter}
+            />
+          <View style={Style.viewMdpOublie}>
+            <TouchableHighlight
+              underlayColor = "rgba(255, 255, 255, 0.2)"
+              onPress={() => this.mdpOublie()}
+              style={Style.touchMdpOublie}
+            >
+              <Text style={Style.txtMdpOublie}>
+                Mot de passe oublié
+              </Text>
+            </TouchableHighlight>
           </View>
         </View>
-      </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }
