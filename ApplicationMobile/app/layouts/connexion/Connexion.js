@@ -13,14 +13,20 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   StatusBar,
-  Modal,
-  ActivityIndicator,
 } from "react-native";
 import CheckBox from "react-native-check-box";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "./Styles";
 import Accueil from "../accueil/Accueil";
 import service from "../../realm/service";
+
+import {
+	showToast,
+	showNotification,
+	showLoading,
+	hideLoading,
+	hide
+} from 'react-native-notifyer';
 
 const CONNEXION_PARAMS_SCHEMA = "ConnexionParams";
 
@@ -44,29 +50,44 @@ class Connexion extends React.Component {
       login: connexionParams != null ? connexionParams.login : "",
       mdp: connexionParams != null ? connexionParams.mdp : "",
       saveIdChecked: connexionParams != null ? true : false,
-      modalVisible: false,
+      token: "",
+      isReady: false,
+      webServiceLien1: "http://185.57.13.103/rest/web/app_dev.php/login",
+      obj : {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: "",
+      }
     };
   }
 
-  mdpOublie(text) {}
+  async seConnecter() {
+    showLoading("Connexion en cours. Veuillez patientier...");
 
-  seConnecter() {
+    try {
+      // Récupérer login/mdp
+      this.state.obj.body = "login=" + this.state.login + "&password=" + this.state.mdp;
 
-    /*
-    Alert.alert(
-      "Veuillez patienter",
-      "Connexion au service en cours...",
-      [],
-      { cancelable: false }
-    );*/
+      // On se connecte
+      let response = await fetch(this.state.webServiceLien1, this.state.obj);
+      let res = await response.text();
+      if (response.status >=200 && response.status < 300) {
+          this.setState({error : "", isReady : true});
+          let accessToken = res;
+          console.log("res token : " + accessToken);
+      }
+      else {
+        let error = res;
+        throw error;
+      }	
+    } catch(error){
+      hideLoading();
+      console.log("error : " + error);
+      var id = showToast("Erreur : Login et/ou mot de passe incorrecte");
+    }
 
-    this.setModalVisible(true);
-
-    this.props.navigation.navigate("Accueil");
-
-    this.setModalVisible(false);
-
-    /*
     // On supprime automatiquement les paramètres de connexion en cache
     service.delete(CONNEXION_PARAMS_SCHEMA);
 
@@ -75,16 +96,16 @@ class Connexion extends React.Component {
         login: this.state.login != null ? this.state.login : "",
         mdp: this.state.mdp != null ? this.state.mdp : "",
         // TODO récupérer le token après appel au service REST
-        tokenREST: "",
+        tokenREST: this.state.token,
       };
       // on insére les nouveaux paramètres de connexion en cache
       service.insert(CONNEXION_PARAMS_SCHEMA, connexionParams);
     }
 
-    this.props.navigation.navigate("Accueil");
-    if (this.state.mdp == "admin") {
+    if (this.state.isReady === true) {
+      hideLoading();
       this.props.navigation.navigate("Accueil");
-    }*/
+    }
   }
 
   // Modification checkbox de sauvgarde des ids
@@ -94,45 +115,12 @@ class Connexion extends React.Component {
     }));
   }
 
-  setModalVisible(visible) {
-    this.setState({modalVisible: visible});
-  }
-
   render() {
+    lienMdpOublie: "https://espacecollaborateur.cat-amania.com/espacecollaborateur/connexion.php"
+
     return (
       <KeyboardAvoidingView behavior="padding" style={Style.mainView}>
         <StatusBar backgroundColor="#355a86" barStyle="light-content" />
-
-        <Modal
-          visible={this.state.modalVisible}
-          animationType="slide"
-          transparent={false}
-          onRequestClose={() => {}}
-          >
-          <View style={{
-          flex: 1,
-          flexDirection: 'column',
-          justifyContent: 'center',
-          backgroundColor: '#00000080',
-          alignItems: 'center'}}>
-          <View style={{
-            width: 250,
-            height: 200,
-            backgroundColor: '#fff',
-            padding: 20,}}>
-
-              <ActivityIndicator
-                color="#8b008b"
-                size="large"
-                style={Style.loader}
-                />
-              <Text style={Style.texte}>
-                Connexion en cours, veuillez patienter.
-              </Text>
-              </View>
-          </View>
-        </Modal>
-
         <View style={Style.logoContainer}>
           <Image
             style={Style.logo}
@@ -182,7 +170,7 @@ class Connexion extends React.Component {
           <View style={Style.viewMdpOublie}>
             <TouchableHighlight
               underlayColor = "rgba(255, 255, 255, 0.2)"
-              onPress={() => this.mdpOublie()}
+              onPress={() => Linking.openURL(lienMdpOublie)}
               style={Style.touchMdpOublie}
             >
               <Text style={Style.txtMdpOublie}>
