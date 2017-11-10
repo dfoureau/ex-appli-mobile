@@ -92,7 +92,7 @@ class ContainerHeader extends Component {
             <View style={styles.ItemMenuView}>
               <Image
                 style={styles.IconItemMenu}
-                source={require("../../images/icons/calendar.png")}
+                source={require("../../images/icons/accueil.png")}
               />
               <Text style={styles.TextItemMenu}>Accueil</Text>
             </View>

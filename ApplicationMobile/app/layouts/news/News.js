@@ -14,17 +14,18 @@ class News extends React.Component {
     super(props);
     this.state = { title: "News" ,
       newsList:  [
-          {
-            news_titre: null,
-            news_contenu: null,
-            news_date: null,
-            news_photo: null,
-            file: null,
-          }
-        ],
-        isReady: false,
-        webServiceLien: "http://172.16.177.140:80/prj-appli-mobile/ServicesREST/Symfony/web/news/10"
-      };
+        {
+          news_id: null,
+          news_titre: null,
+          news_contenu: null,
+          news_date: null,
+          news_file: null,
+		      news_photo : null
+        }
+      ],
+      isReady: false,
+      webServiceLien: "http://185.57.13.103/rest/web/app_dev.php/news/10"
+    };
   }
   
   componentDidMount() {

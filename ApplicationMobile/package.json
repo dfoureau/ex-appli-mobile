@@ -15,6 +15,7 @@
     "react-native-check-box": "^2.0.1",
     "react-native-communications": "^2.2.1",
     "react-native-datepicker": "^1.6.0",
+    "react-native-notifyer": "^0.9.3",
     "react-native-table-component": "^1.0.5",
     "react-navigation": "^1.0.0-beta.11",
     "realm": "^1.12.0",

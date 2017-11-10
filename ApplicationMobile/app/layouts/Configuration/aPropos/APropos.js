@@ -21,7 +21,7 @@ class APropos extends React.Component {
   }
 
   render() {
-    lienSupportJira: "http://jira.svc.cat-amania.com/"
+    let lienSupportJira = "http://jira.svc.cat-amania.com/"
 
     return (
       <View>

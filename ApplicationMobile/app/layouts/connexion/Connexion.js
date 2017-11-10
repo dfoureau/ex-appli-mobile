@@ -11,12 +11,23 @@ import {
   Text,
   Alert,
   ScrollView,
+  KeyboardAvoidingView,
+  StatusBar,
+  Linking,
 } from "react-native";
 import CheckBox from "react-native-check-box";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "./Styles";
 import Accueil from "../accueil/Accueil";
 import service from "../../realm/service";
+
+import {
+	showToast,
+	showNotification,
+	showLoading,
+	hideLoading,
+	hide
+} from 'react-native-notifyer';
 
 const CONNEXION_PARAMS_SCHEMA = "ConnexionParams";
 
@@ -40,12 +51,44 @@ class Connexion extends React.Component {
       login: connexionParams != null ? connexionParams.login : "",
       mdp: connexionParams != null ? connexionParams.mdp : "",
       saveIdChecked: connexionParams != null ? true : false,
+      token: "",
+      isReady: false,
+      webServiceLien1: "http://185.57.13.103/rest/web/app_dev.php/login",
+      obj : {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: "",
+      }
     };
   }
 
-  mdpOublie(text) {}
+  async seConnecter() {
+    showLoading("Connexion en cours. Veuillez patientier...");
 
-  seConnecter() {
+    try {
+      // Récupérer login/mdp
+      this.state.obj.body = "login=" + this.state.login + "&password=" + this.state.mdp;
+
+      // On se connecte
+      let response = await fetch(this.state.webServiceLien1, this.state.obj);
+      let res = await response.text();
+      if (response.status >=200 && response.status < 300) {
+          this.setState({error : "", isReady : true});
+          let accessToken = res;
+          console.log("res token : " + accessToken);
+      }
+      else {
+        let error = res;
+        throw error;
+      }	
+    } catch(error){
+      hideLoading();
+      console.log("error : " + error);
+      var id = showToast("Erreur : Login et/ou mot de passe incorrecte");
+    }
+
     // On supprime automatiquement les paramètres de connexion en cache
     service.delete(CONNEXION_PARAMS_SCHEMA);
 
@@ -54,14 +97,14 @@ class Connexion extends React.Component {
         login: this.state.login != null ? this.state.login : "",
         mdp: this.state.mdp != null ? this.state.mdp : "",
         // TODO récupérer le token après appel au service REST
-        tokenREST: "",
+        tokenREST: this.state.token,
       };
       // on insére les nouveaux paramètres de connexion en cache
       service.insert(CONNEXION_PARAMS_SCHEMA, connexionParams);
     }
 
-    this.props.navigation.navigate("Accueil");
-    if (this.state.mdp == "admin") {
+    if (this.state.isReady === true) {
+      hideLoading();
       this.props.navigation.navigate("Accueil");
     }
   }
@@ -74,61 +117,70 @@ class Connexion extends React.Component {
   }
 
   render() {
-    return (
-      <ScrollView style={Style.scrollView}>
-        <View style={{ flex: 1 }}>
-          <View style={Style.viewContainer}>
-            <Image source={require("../../images/logo.png")} />
-          </View>
-          <View style={Style.viewChamps}>
-            <View style={{ alignItems: "center" }}>
-              <View style={{ width: 320 }}>
-                <View style={Style.inputContainer}>
-                  <TextInput
-                    placeholder="Login"
-                    value={this.state.login}
-                    style={Style.input}
-                    onChangeText={text => this.setState({ login: text })}
-                  />
-                </View>
-                <View style={Style.inputContainer}>
-                  <TextInput
-                    placeholder="Mot de passe"
-                    value={this.state.mdp}
-                    secureTextEntry={true}
-                    style={Style.input}
-                    onChangeText={text => this.setState({ mdp: text })}
-                  />
-                </View>
+    let lienMdpOublie = "https://espacecollaborateur.cat-amania.com/espacecollaborateur/connexion.php"
 
-                <CheckBox
-                  onClick={() => this.handleChecked()}
-                  isChecked={this.state.saveIdChecked}
-                  rightText="Se souvenir de moi"
-                  rightTextStyle={{ color: "white", fontSize: 16 }}
-                  style={Style.checkbox}
-                  checkBoxColor="white"
-                />
-              </View>
-              <View style={Style.viewSeConnecter}>
-                <Button
-                  title="Se connecter"
-                  onPress={() => this.seConnecter()}
-                  style={Style.btnSeconnecter}
-                />
-              </View>
-              <View style={Style.viewMdpOublie}>
-                <TouchableHighlight
-                  onPress={() => this.mdpOublie()}
-                  style={Style.touchMdpOublie}
-                >
-                  <Text style={Style.txtMdpOublie}>Mot de passe oublié</Text>
-                </TouchableHighlight>
-              </View>
-            </View>
+    return (
+      <KeyboardAvoidingView behavior="padding" style={Style.mainView}>
+        <StatusBar backgroundColor="#355a86" barStyle="light-content" />
+        <View style={Style.logoContainer}>
+          <Image
+            style={Style.logo}
+            source={require("../../images/logo.png")}
+            />
+       </View>
+
+        <View style={Style.formContainer}>
+          <TextInput
+            placeholder="Login"
+            value={this.state.login}
+            style={Style.input}
+            returnKeyType="next"
+            autoCorrect={false}
+            autoCapitalize="none"
+            autoFocus={true}
+            underlineColorAndroid='transparent'
+            onSubmitEditing={() => this.passwordInput.focus()}
+            placeholderTextColor="rgba(255, 255, 255, 0.7)"
+            onChangeText={text => this.setState({ login: text })}
+            />
+          <TextInput
+            placeholder="Mot de passe"
+            value={this.state.mdp}
+            secureTextEntry={true}
+            style={Style.input}
+            returnKeyType="go"
+            underlineColorAndroid='transparent'
+            placeholderTextColor="rgba(255, 255, 255, 0.7)"
+            ref={(input) => this.passwordInput = input}
+            onChangeText={text => this.setState({ mdp: text })}
+            onSubmitEditing={() => this.seConnecter()}
+          />
+          <CheckBox
+            onClick={() => this.handleChecked()}
+            isChecked={this.state.saveIdChecked}
+            rightText="Se souvenir de moi"
+            rightTextStyle={{ color: "rgba(255, 255, 255, 0.7)", fontSize: 16 }}
+            style={Style.checkbox}
+            checkBoxColor="rgba(255, 255, 255, 0.7)"
+            />
+          <Button
+            title="Se connecter"
+            onPress={() => this.seConnecter()}
+            style={Style.btnSeconnecter}
+            />
+          <View style={Style.viewMdpOublie}>
+            <TouchableHighlight
+              underlayColor = "rgba(255, 255, 255, 0.2)"
+              onPress={() => Linking.openURL(lienMdpOublie)}
+              style={Style.touchMdpOublie}
+            >
+              <Text style={Style.txtMdpOublie}>
+                Mot de passe oublié
+              </Text>
+            </TouchableHighlight>
           </View>
         </View>
-      </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }
