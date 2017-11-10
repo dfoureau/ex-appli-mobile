@@ -23,80 +23,81 @@ class Accueil extends React.Component {
       //On définit les différentes variables
       title: "Cat-Amania",
       user: [ 
-      {
-        id: null,
-        nom: null,
-        prenom: null,
-        profil: null,
-        entite: null,
-        agence: null,
-        responsable: null
-      }
+        {
+          id: null,
+          nom: null,
+          prenom: null,
+          profil: null,
+          entite: null,
+          agence: null,
+          responsable: null
+        }
       ],
       conges : [
-      {
-      id : null,
-      datesolde : null,
-      cp : null,
-      rtt : null
-      }
+        {
+        id : null,
+        datesolde : null,
+        cp : null,
+        rtt : null
+        }
       ],
-        news: [
-          {
-            id: null,
-            titre: null,
-            contenu: null,
-            date: null,
-            file: null
-          }
-        ],
+      news: [
+        {
+          news_id: null,
+          news_titre: null,
+          news_contenu: null,
+          news_date: null,
+          news_file: null,
+		      news_photo : null
+        }
+      ],
       isReadyw1: false,
       isReadyw2: false,
       isReadyw3: false,
-      webServiceLien1: "http://172.16.177.140:80/prj-appli-mobile/ServicesREST/Symfony/web/app_dev.php/utilisateur/10",
-      webServiceLien2: "http://172.16.177.140:80/prj-appli-mobile/ServicesREST/Symfony/web/conges/solde/10",
-      webServiceLien3: "http://172.16.177.140:80/prj-appli-mobile/ServicesREST/Symfony/web/news/3"
+      webServiceLien1: "http://185.57.13.103/rest/web/app_dev.php/utilisateur/124124251",
+      webServiceLien2: "http://185.57.13.103/rest/web/app_dev.php/conges/solde/124124251",
+      webServiceLien3: "http://185.57.13.103/rest/web/app_dev.php/news/3"
     };
   }
 
-    componentDidMount() {
-	var that = this;
-    fetch(this.state.webServiceLien1)
-    .then(function(response) {
-      if (response.status >= 400) {
-        throw new Error("GetUtilisateur : Bad response from server");
-      }
-      return response.json();
-    })
-    .then(function(foncuser) {
-      that.setState({user: foncuser, isReadyw1: true})
+  componentDidMount() {
+    var that = this;
+      fetch(this.state.webServiceLien1)
+      .then(function(response) {
+        if (response.status >= 400) {
+          throw new Error("GetUtilisateur : Bad response from server");
+        }
+        return response.json();
+      })
+      .then(function(foncuser) {
+        that.setState({user: foncuser, isReadyw1: true})
     });
-	
-	var that = this;
-    fetch(this.state.webServiceLien2)
-    .then(function(response) {
-      if (response.status >= 400) {
-        throw new Error("GetConges : Bad response from server");
-      }
-      return response.json();
-    })
-    .then(function(fonconges) {
-      that.setState({conges: fonconges, isReadyw2: true})
+    
+    var that = this;
+      fetch(this.state.webServiceLien2)
+      .then(function(response) {
+        if (response.status >= 400) {
+          throw new Error("GetConges : Bad response from server");
+        }
+        return response.json();
+      })
+      .then(function(fonconges) {
+        that.setState({conges: fonconges, isReadyw2: true})
     });
-	
-	var that = this;
-    fetch(this.state.webServiceLien3)
-    .then(function(response) {
-      if (response.status >= 400) {
-        throw new Error("GetNews : Bad response from server");
-      }
-      return response.json();
-    })
-    .then(function(foncnews) {
-      that.setState({news: foncnews, isReadyw3: true})
+    
+    var that = this;
+      fetch(this.state.webServiceLien3)
+      .then(function(response) {
+        if (response.status >= 400) {
+          throw new Error("GetNews : Bad response from server");
+        }
+        return response.json();
+      })
+      .then(function(foncnews) {
+        that.setState({news: foncnews, isReadyw3: true})
     });
-	
   }
+
   //Permet d'afficher l'ecran choisi dans le menu
   afficherEcranParent(ecran) {
     this.props.navigation.navigate(ecran);

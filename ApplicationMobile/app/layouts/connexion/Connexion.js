@@ -13,6 +13,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   StatusBar,
+  Linking,
 } from "react-native";
 import CheckBox from "react-native-check-box";
 import { StackNavigator, NavigationActions } from "react-navigation";
@@ -116,7 +117,7 @@ class Connexion extends React.Component {
   }
 
   render() {
-    lienMdpOublie: "https://espacecollaborateur.cat-amania.com/espacecollaborateur/connexion.php"
+    let lienMdpOublie = "https://espacecollaborateur.cat-amania.com/espacecollaborateur/connexion.php"
 
     return (
       <KeyboardAvoidingView behavior="padding" style={Style.mainView}>
