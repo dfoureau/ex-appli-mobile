@@ -79,7 +79,7 @@ class News extends React.Component {
             <FlatList
               data={this.state.newsList}
 
-              keyExtractor = { item => item.news_titre}
+              keyExtractor = { item => item.news_id}
 
               renderItem={({ item }) => (
                   <NewsItem {...item} />

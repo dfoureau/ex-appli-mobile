@@ -137,7 +137,6 @@ class Connexion extends React.Component {
             returnKeyType="next"
             autoCorrect={false}
             autoCapitalize="none"
-            autoFocus={true}
             underlineColorAndroid='transparent'
             onSubmitEditing={() => this.passwordInput.focus()}
             placeholderTextColor="rgba(255, 255, 255, 0.7)"
