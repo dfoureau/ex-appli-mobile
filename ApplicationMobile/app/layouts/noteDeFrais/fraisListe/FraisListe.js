@@ -81,7 +81,7 @@ class FraisListe extends React.Component {
     .then(function(response) {
       if (response.status >= 400) {
         that.setState({data: []})
-        console.warn("Aucune note de frais trouvée !");
+        console.warn("Aucune note de frais trouvée en "+year);
       }
       return response.json();
     })
