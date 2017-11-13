@@ -105,8 +105,8 @@ class Accueil extends React.Component {
   }
 
   renderItemNews() {
-    return this.state.news.map(item => (
-      <View>
+    return this.state.news.map((item, index) => (
+      <View key={index}>
         <NewsItem {...item}/>
       </View>
     ));
