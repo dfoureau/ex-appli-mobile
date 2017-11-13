@@ -40,17 +40,17 @@ class CongesController extends Controller
 
 			$tUserId = (int) $userId;
 
-			$sql = 'SELECT 
-						users.id, 
-						concat(RIGHT(concat("0", soldesconges.mois), 2), soldesconges.annee) AS datesolde, 
-						soldesconges.cp, 
-						soldesconges.rtt 
-					FROM 
-						users,
-						soldesconges 
-					WHERE users.numMat = soldesconges.nummat
-					AND users.id = "'.$tUserId.'" 
-					ORDER BY concat(annee, mois) DESC limit 1';
+			$sql = "SELECT 
+                        users.id, 
+                        concat(RIGHT(concat('0', soldesconges.mois), 2),'/', soldesconges.annee) AS datesolde, 
+                        soldesconges.cp, 
+                        soldesconges.rtt 
+                    FROM 
+                        users,
+                        soldesconges 
+                    WHERE users.numMat = soldesconges.nummat
+                    AND users.id = " . $tUserId . " 
+                    ORDER BY concat(annee, mois) DESC limit 1";
 
 			$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
 			$stmt->execute();
@@ -351,22 +351,24 @@ class CongesController extends Controller
 			$tYear = (int) $year;
 
 			$sql = "SELECT
-						numDemande,
-						dateDu, 
-						dateAu,
-						SUM(nbJour) as nbJour,
-						etat,
-						concat(users.prenom,' ', users.nom) as valid,
-						dateactionetat
-					FROM 
-						demandesconges,
-						users
-					WHERE users.id = demandesconges.validateur
-					AND EXTRACT(YEAR from dateDu) <= " . $tYear . "
-					AND EXTRACT(YEAR from dateAu) >= " . $tYear . "
-					AND idUser=" . $tUserId . " 
-					GROUP BY numDemande, EXTRACT(MONTH from dateDu), EXTRACT(YEAR from dateDu)
-					ORDER BY dateDu DESC";
+                        numDemande,
+                        min(DATE_FORMAT(dateDu, '%d/%m/%Y')) AS dateDuMin, 
+                        max(DATE_FORMAT(dateAu, '%d/%m/%Y')) AS dateAuMax,
+                        SUM(nbJour) AS nbJour,
+                        demandesconges.etat,
+                        demandesconges.validateur,
+                        concat(users.prenom,' ', users.nom) AS valid,
+                        DATE_FORMAT(dateactionetat, '%d/%m/%Y') AS dateactionetat,
+                        etatra.libelle AS libelleEtat
+                    FROM 
+                        demandesconges
+                    LEFT JOIN etatra ON demandesconges.etat = etatra.id
+                    LEFT JOIN users ON demandesconges.validateur = users.id
+                    WHERE idUser = " . $tUserId . "
+                    AND EXTRACT(YEAR from dateDu) <= " . $tYear . "
+                    AND EXTRACT(YEAR from dateAu) >= " . $tYear . "
+                    GROUP BY numDemande
+                    ORDER BY dateDu DESC";
 
 			$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
 			$stmt->execute();

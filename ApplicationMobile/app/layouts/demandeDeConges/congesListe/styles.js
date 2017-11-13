@@ -73,12 +73,15 @@ export default StyleSheet.create({
 
   container3: {
     flex: 1,
-    margin: 10,
+    margin: 0,
     padding: 5,
   },
 
   containerList: {
-    marginBottom: 20,
+    margin : 5,
+    padding : 5,
+    borderWidth : 1,
+    backgroundColor : "#FFF",
   },
 
   containerPeriod: {
