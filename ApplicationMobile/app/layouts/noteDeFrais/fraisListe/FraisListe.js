@@ -11,14 +11,6 @@ import {
 import { StackNavigator, NavigationActions } from "react-navigation";
 import style from "./styles";
 
-import {
-	showToast,
-	showNotification,
-	showLoading,
-	hideLoading,
-	hide
-} from 'react-native-notifyer';
-
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
 import { ContainerFilters } from "../../../components/containerFilters";
@@ -28,6 +20,14 @@ import { Button } from "../../../components/Buttons";
 import Accueil from "../../accueil/Accueil";
 import FraisAjout from "../fraisAjout/FraisAjout";
 import service from "../../../realm/service";
+
+import {
+	showToast,
+	showNotification,
+	showLoading,
+	hideLoading,
+	hide
+} from 'react-native-notifyer';
 
 const FRAIS_SCHEMA = "Frais";
 
@@ -84,16 +84,18 @@ class FraisListe extends React.Component {
   }
 
   getNDFByUser(year){
+    showLoading("Chargement en cours. Veuillez patientier...");
     var that = this;
     fetch('http://185.57.13.103/rest/web/app_dev.php/ndf/'+year+'/1000000')
     .then(function(response) {
       if (response.status >= 400) {
         that.setState({data: []})
-        showToast("Aucune note de frais trouvée pour l'année " + year);
       }
+      hideLoading();
       return response.json();
     })
     .then(function(ndf) {
+      hideLoading();
       that.setState({data: ndf})
     });
   }
@@ -107,15 +109,21 @@ class FraisListe extends React.Component {
 
   //Fonction permettant de conditionner l'affichage du bloc valideur
   checkItem(item){
-    if(item.statusId == 2 && item.valideur != null && item.dateactionetat != null){
+    if (item.statusId == 2 && item.valideur != null && item.dateactionetat != null) {
       return true;
     }
-    else{
+    else {
       return false;
     }
   }
 
   render() {
+    if (this.state.data && this.state.data.length > 0) {
+      textePasDeDonnes = <Text style={style.texteMessage}>{this.state.data.length} notes de frais trouvées</Text>;
+    } else {
+      textePasDeDonnes = <Text style={style.texteMessage}>Aucune note de frais trouvée</Text>;
+    }
+
     return (
       <View>
         <ContainerAccueil
@@ -151,6 +159,7 @@ class FraisListe extends React.Component {
           </View>
           {/* Container liste des NDF */}
           <View style={style.container2}>
+            {textePasDeDonnes}
             <FlatList
               data={this.state.data}
               renderItem={({ item }) => (

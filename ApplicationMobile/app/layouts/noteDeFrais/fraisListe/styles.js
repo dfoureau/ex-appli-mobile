@@ -69,4 +69,9 @@ export default StyleSheet.create({
     height: 15,
     width: 15,
   },
+
+  texteMessage: {
+    marginBottom: 20,
+  },
+
 });
