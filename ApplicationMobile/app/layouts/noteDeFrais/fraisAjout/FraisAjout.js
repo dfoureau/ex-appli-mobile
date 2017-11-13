@@ -23,6 +23,14 @@ import styles from "./styles";
 import moment from "moment";
 import "moment/locale/fr";
 
+import {
+	showToast,
+	showNotification,
+	showLoading,
+	hideLoading,
+	hide
+} from 'react-native-notifyer';
+
 // IMPORT DES COMPOSANTS EXOTIQUE
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
 import { ContainerFilters } from "../../../components/containerFilters";
@@ -80,7 +88,7 @@ class FraisAjout extends React.Component {
 
   getNDF(year, month){
     var that = this;
-    fetch('http://localhost:8000/ndf/1000000/'+year+'/'+month)
+    fetch('http://185.57.13.103/rest/web/app_dev.php/ndf/1000000/'+year+'/'+month)
     .then(function(response) {
       if (response.status >= 400) {
         //Réinitialisation des valeurs
@@ -90,7 +98,7 @@ class FraisAjout extends React.Component {
           totalClient: 0,
           status: "",
         })
-        console.warn("Aucune note de frais trouvée en "+month+" "+year);
+        showToast("Aucune note de frais trouvée pour le mois " + month + " et l'année " + year);
       }
       return response.json();
     })

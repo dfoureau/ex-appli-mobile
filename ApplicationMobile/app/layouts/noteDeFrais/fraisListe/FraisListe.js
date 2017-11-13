@@ -11,6 +11,14 @@ import {
 import { StackNavigator, NavigationActions } from "react-navigation";
 import style from "./styles";
 
+import {
+	showToast,
+	showNotification,
+	showLoading,
+	hideLoading,
+	hide
+} from 'react-native-notifyer';
+
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
 import { ContainerFilters } from "../../../components/containerFilters";
@@ -77,11 +85,11 @@ class FraisListe extends React.Component {
 
   getNDFByUser(year){
     var that = this;
-    fetch('http://localhost:8000/ndf/'+year+'/1000000')
+    fetch('http://185.57.13.103/rest/web/app_dev.php/ndf/'+year+'/1000000')
     .then(function(response) {
       if (response.status >= 400) {
         that.setState({data: []})
-        console.warn("Aucune note de frais trouvée en "+year);
+        showToast("Aucune note de frais trouvée pour l'année " + year);
       }
       return response.json();
     })
@@ -108,7 +116,6 @@ class FraisListe extends React.Component {
   }
 
   render() {
-
     return (
       <View>
         <ContainerAccueil
@@ -184,6 +191,8 @@ class FraisListe extends React.Component {
                   </TouchableOpacity>
                 </View>
               )}
+
+              keyExtractor={(item, index) => index}
             />
           </View>
         </ContainerAccueil>
