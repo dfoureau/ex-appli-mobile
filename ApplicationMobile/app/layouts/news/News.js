@@ -1,11 +1,10 @@
 import React from "react";
 import { View, Text, Image, FlatList, ActivityIndicator } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
-import Style from "../../styles/Styles";
+import StyleGeneral from "../../styles/Styles";
 import NewsItem from "../../components/newsItem/NewsItem";
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../components/containerAccueil/ContainerAccueil";
-import StyleLayout from "./styles";
 
 import Accueil from "../accueil/Accueil";
 
@@ -59,10 +58,10 @@ class News extends React.Component {
         <ActivityIndicator
         color="#8b008b"
         size="large"
-        style={StyleLayout.loader}
+        style={StyleGeneral.loader}
          />
-        <Text style={StyleLayout.texte}>
-          Récupération des données. Veuillez patienter.
+        <Text style={StyleGeneral.texteLoader}>
+          Récupération des données. Veuillez patienter...
         </Text>
 
       </ContainerAccueil>

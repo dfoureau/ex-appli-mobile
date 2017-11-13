@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { View, Text, FlatList,ActivityIndicator } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "./Styles";
+import StyleGeneral from "../../styles/Styles";
 
 /**container de l'accueil */
 import ContainerAccueil from "../../components/containerAccueil/ContainerAccueil";
@@ -122,10 +123,10 @@ class Accueil extends React.Component {
           <ActivityIndicator
         color="#8b008b"
         size="large"
-        style={Style.loader}
+        style={StyleGeneral.loader}
          />
-        <Text style={Style.texte}>
-          Récupération des données. Veuillez patienter.
+        <Text style={StyleGeneral.texteLoader}>
+          Récupération des données. Veuillez patienter...
         </Text>
 
         </ContainerAccueil>

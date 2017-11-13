@@ -12,6 +12,7 @@ import {
 import { StackNavigator, NavigationActions } from "react-navigation";
 import style from "./styles";
 import styleButton from "../../../components/Buttons/styles";
+import StyleGeneral from "../../../styles/Styles";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
@@ -40,7 +41,8 @@ class CongesListe extends React.Component {
 			// WSLinkSolde: "http://185.57.13.103/rest/web/app_dev.php/conges/solde/124124251",
 			// WSLinkList: "http://185.57.13.103/rest/web/app_dev.php/conges/124124251/",
 			dataLoaded: false,
-			noData: false,
+      noData: false,
+      isReady: false,
 		};
 	}
 
@@ -111,21 +113,22 @@ class CongesListe extends React.Component {
 		fetch(this.state.WSLinkList + year)
 		.then(function(response) {
 			if (response.status == 400) {
-        that.setState({data: []});
+        that.setState({data: [], isReady: true});
 				//throw new Error("Bad response from server");
 			} else if (response.status == 404) {
-        that.setState({data: [], noData: true});
+        that.setState({data: [], noData: true, isReady: true});
 				//throw new Error("No data found");
       }
 			return response.json();
 		})
-		.then((conges) => this.setState({data: conges, dataLoaded: true})
+		.then((conges) => this.setState({data: conges, dataLoaded: true, isReady: true})
 		);
 	}
 
 	render() {
 	
-		if (!this.state.dataLoaded && this.state.noData == false) {
+		//if (!this.state.dataLoaded && this.state.noData == false) {
+    if (!this.state.isReady) {
 			return (
 				<View>
 					<ContainerAccueil
@@ -135,10 +138,10 @@ class CongesListe extends React.Component {
 						<ActivityIndicator
 							color={"#8b008b"}
 							size={"large"}
-							style={style.loader}
+							style={StyleGeneral.loader}
 						/>
-						<Text style={style.texte}>
-							Récupération des données. Veuillez patienter.
+						<Text style={StyleGeneral.texteLoader}>
+							Récupération des données. Veuillez patienter...
 						</Text>
 					</ContainerAccueil>
 				</View>

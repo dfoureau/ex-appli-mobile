@@ -7,9 +7,11 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import style from "./styles";
+import StyleGeneral from "../../../styles/Styles";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
@@ -20,14 +22,6 @@ import { Button } from "../../../components/Buttons";
 import Accueil from "../../accueil/Accueil";
 import FraisAjout from "../fraisAjout/FraisAjout";
 import service from "../../../realm/service";
-
-import {
-	showToast,
-	showNotification,
-	showLoading,
-	hideLoading,
-	hide
-} from 'react-native-notifyer';
 
 const FRAIS_SCHEMA = "Frais";
 
@@ -52,6 +46,7 @@ class FraisListe extends React.Component {
         "Décembre",
       ],
       year: "",
+      isReady: false,
     };
     service.delete(FRAIS_SCHEMA);
   }
@@ -84,19 +79,16 @@ class FraisListe extends React.Component {
   }
 
   getNDFByUser(year){
-    showLoading("Chargement en cours. Veuillez patientier...");
     var that = this;
     fetch('http://185.57.13.103/rest/web/app_dev.php/ndf/'+year+'/1000000')
     .then(function(response) {
       if (response.status >= 400) {
-        that.setState({data: []})
+        that.setState({data: [], isReady: true})
       }
-      hideLoading();
       return response.json();
     })
     .then(function(ndf) {
-      hideLoading();
-      that.setState({data: ndf})
+      that.setState({data: ndf, isReady: true})
     });
   }
 
@@ -124,89 +116,109 @@ class FraisListe extends React.Component {
       textePasDeDonnes = <Text style={style.texteMessage}>Aucune note de frais trouvée</Text>;
     }
 
-    return (
-      <View>
-        <ContainerAccueil
-          title={this.state.title}
-          afficherEcran={this.afficherEcranParent.bind(this)}
-        >
-          <View style={style.container}>
-            {/* Container filtre et ajout de NDF*/}
-            <View style={style.container1}>
-              <View style={style.containerPicker}>
-                <Picker
-                  style={{ width: 110 }}
-                  selectedValue={this.state.year}
-                  onValueChange={(itemValue, itemIndex) =>
-                    this.reloadNDFByYear(itemValue)}
-                >
-                  <Picker.Item label="2017" value="2017" />
-                  <Picker.Item label="2016" value="2016" />
-                  <Picker.Item label="2015" value="2015" />
-                  <Picker.Item label="2014" value="2014" />
-                  <Picker.Item label="2013" value="2013" />
-                  <Picker.Item label="2012" value="2012" />
-                  <Picker.Item label="2011" value="2011" />
-                  <Picker.Item label="2010" value="2010" />
-                  <Picker.Item label="2009" value="2009" />
-                  <Picker.Item label="2008" value="2008" />
-                </Picker>
-              </View>
-              <View style={style.containerButton}>
-                <Button text="AJOUTER" onPress={() => this.addNDF()} />
+    if (!this.state.isReady) {
+			return (
+				<View>
+					<ContainerAccueil
+						title={this.state.title}
+						afficherEcran={this.afficherEcranParent.bind(this)}
+					>
+						<ActivityIndicator
+							color={"#8b008b"}
+							size={"large"}
+							style={StyleGeneral.loader}
+						/>
+						<Text style={StyleGeneral.texteLoader}>
+							Récupération des données. Veuillez patienter...
+						</Text>
+					</ContainerAccueil>
+				</View>
+			);
+		} else {
+      return (
+        <View>
+          <ContainerAccueil
+            title={this.state.title}
+            afficherEcran={this.afficherEcranParent.bind(this)}
+          >
+            <View style={style.container}>
+              {/* Container filtre et ajout de NDF*/}
+              <View style={style.container1}>
+                <View style={style.containerPicker}>
+                  <Picker
+                    style={{ width: 110 }}
+                    selectedValue={this.state.year}
+                    onValueChange={(itemValue, itemIndex) =>
+                      this.reloadNDFByYear(itemValue)}
+                  >
+                    <Picker.Item label="2017" value="2017" />
+                    <Picker.Item label="2016" value="2016" />
+                    <Picker.Item label="2015" value="2015" />
+                    <Picker.Item label="2014" value="2014" />
+                    <Picker.Item label="2013" value="2013" />
+                    <Picker.Item label="2012" value="2012" />
+                    <Picker.Item label="2011" value="2011" />
+                    <Picker.Item label="2010" value="2010" />
+                    <Picker.Item label="2009" value="2009" />
+                    <Picker.Item label="2008" value="2008" />
+                  </Picker>
+                </View>
+                <View style={style.containerButton}>
+                  <Button text="AJOUTER" onPress={() => this.addNDF()} />
+                </View>
               </View>
             </View>
-          </View>
-          {/* Container liste des NDF */}
-          <View style={style.container2}>
-            {textePasDeDonnes}
-            <FlatList
-              data={this.state.data}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  key={item.idUser}
-                  onPress={() => this.getNDF(item.idUser, item.mois, item.annee)}
-                >
-                <View style={style.containerList}>
-                    <View style={style.containerPeriod}>
-                      <Text style={style.periodText}>
-                        {this.state.months[item.mois-1]} {item.annee}
-                      </Text>
-                      <View style={style.containerIcon}>
-                        <Image
-                          style={style.listIcon}
-                          source={
-                            item.statusId == 2
-                              ? require("../../../images/icons/check2.png")
-                              : null
-                          }
-                        />
+            {/* Container liste des NDF */}
+            <View style={style.container2}>
+              {textePasDeDonnes}
+              <FlatList
+                data={this.state.data}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    key={item.idUser}
+                    onPress={() => this.getNDF(item.idUser, item.mois, item.annee)}
+                  >
+                  <View style={style.containerList}>
+                      <View style={style.containerPeriod}>
+                        <Text style={style.periodText}>
+                          {this.state.months[item.mois-1]} {item.annee}
+                        </Text>
+                        <View style={style.containerIcon}>
+                          <Image
+                            style={style.listIcon}
+                            source={
+                              item.statusId == 2
+                                ? require("../../../images/icons/check2.png")
+                                : null
+                            }
+                          />
+                        </View>
+                      </View>
+                      <View>
+                        <Text style={style.amountText}>
+                          Montant : {item.montantTotal} €
+                        </Text>
+                        <Text style={style.statusText}>
+                          Etat : {item.etat}
+                          {this.checkItem(item) == true ? (
+                            <Text>
+                              {" "}
+                              par {item.valideur} le {item.dateactionetat}
+                            </Text>
+                          ) : null}
+                        </Text>
                       </View>
                     </View>
-                    <View>
-                      <Text style={style.amountText}>
-                        Montant : {item.montantTotal} €
-                      </Text>
-                      <Text style={style.statusText}>
-                        Etat : {item.etat}
-                        {this.checkItem(item) == true ? (
-                          <Text>
-                            {" "}
-                            par {item.valideur} le {item.dateactionetat}
-                          </Text>
-                        ) : null}
-                      </Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              )}
+                  </TouchableOpacity>
+                )}
 
-              keyExtractor={(item, index) => index}
-            />
-          </View>
-        </ContainerAccueil>
-      </View>
-    );
+                keyExtractor={(item, index) => index}
+              />
+            </View>
+          </ContainerAccueil>
+        </View>
+      );
+    }
   }
 }
 
