@@ -34,35 +34,7 @@ class AnnuaireListe extends React.Component {
     this.state = {
       //On définit les différentes variables
       title: "Annuaire",
-      sectionList: [
-        {
-          key: "201707",
-          title: "A",
-          data: [
-            { key: "2", nom: "ABEL", prenom: "Bologne" },
-            { key: "3", nom: "AFFELOU", prenom: "Bologne" },
-            { key: "2", nom: "Roger", prenom: "Bologne" },
-            { key: "2", nom: "Denise", prenom: "Bologne" },
-            { key: "2", nom: "Brigitte", prenom: "Bologne" },
-          ],
-        },
-        {
-          key: "201706",
-          title: "B",
-          data: [
-            { key: "4", nom: "BIREE", prenom: "Bologne" },
-            { key: "5", nom: "BONNEAU", prenom: "Bologne" },
-          ],
-        },
-        {
-          key: "201705",
-          title: "D",
-          data: [
-            { key: "6", nom: "DAMOIN", prenom: "Bologne" },
-            { key: "7", nom: "DUCOIN", prenom: "Bologne" },
-          ],
-        },
-      ],
+      annuaire: []
     };
   }
 
@@ -72,8 +44,8 @@ class AnnuaireListe extends React.Component {
   }
 
   //Renvoie l'item
-  _renderItemComponent = ({ item }) => (
-    <TouchableHighlight onPress={() => this.afficherContact(item.key)}>
+  renderItemComponent = ({ item }) => (
+    <TouchableHighlight onPress={() => this.afficherContact(item.id)}>
       <View style={styles.item}>
         <View style={styles.itemRow}>
           <Image
@@ -105,30 +77,52 @@ class AnnuaireListe extends React.Component {
 
   //Fonction qui permet de filtrer la liste des noms
   filtreNom(text) {
-    //Il faut modifier la variable sectionList du state afin de mettre à jour la liste
-    this.setState({
-      sectionList: [
-        {
-          key: "201706",
-          title: "B",
-          data: [
-            { key: "4", nom: "BIREE", prenom: "Bologne" },
-            { key: "5", nom: "BONNEAU", prenom: "Bologne" },
-          ],
-        },
-        {
-          key: "201705",
-          title: "D",
-          data: [
-            { key: "6", nom: "DAMOIN", prenom: "Bologne" },
-            { key: "7", nom: "DUCOIN", prenom: "Bologne" },
-          ],
-        },
-      ],
+    // Il faut modifier la variable sectionList du state afin de mettre à jour la liste
+  }
+
+  prepareSectionsData(annuaire){
+    const result = [];
+    if(!annuaire) {
+      return result;
+    }
+    let previousLetter = null;
+    annuaire.forEach((value) => {
+      if(!value || !value.nom){
+        return;
+      }
+      const contact = {...value, key: value.id};
+      const currentLetter = contact.nom.charAt(0);
+      let section = null;
+      if(previousLetter === currentLetter) {
+        section = result[result.length -1];
+      } else {
+        section = {
+          key: result.length,
+          title: currentLetter,
+          data: []
+        };
+        result.push(section);
+        previousLetter = currentLetter;
+      }
+      section.data.push(contact);
     });
+    return result;
+  }
+
+  componentDidMount() {
+    const idAgence = 1;
+    const serverURL = 'http://185.57.13.103/rest';
+    const requestURL = `${serverURL}/web/app_dev.php/annuaire/${idAgence}`;
+    return fetch(requestURL)
+    .then((response) => response.json())
+    .then((responseJson) => {
+      this.setState({'annuaire': responseJson});
+    })
+    .catch((error) => { console.error(error); });
   }
 
   render() {
+    const sections = this.prepareSectionsData(this.state.annuaire);
     return (
       <View>
         <ContainerAccueil
@@ -143,8 +137,8 @@ class AnnuaireListe extends React.Component {
           <View style={styles.container}>
             <SectionList
               style={styles.sectionContain}
-              sections={this.state.sectionList}
-              renderItem={this._renderItemComponent}
+              sections={sections}
+              renderItem={this.renderItemComponent}
               renderSectionHeader={this.renderSectionHeader}
               ItemSeparatorComponent={this.renderItemSeparator}
             />
