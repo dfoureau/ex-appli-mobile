@@ -105,7 +105,7 @@ class Accueil extends React.Component {
 
   renderItemNews() {
     return this.state.news.map(item => (
-      <View key={item.id}>
+      <View>
         <NewsItem {...item}/>
       </View>
     ));
