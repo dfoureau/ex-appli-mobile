@@ -163,11 +163,11 @@ class FraisListe extends React.Component {
             <FlatList
               data={this.state.data}
               renderItem={({ item }) => (
+                <TouchableOpacity
+                  key={item.idUser}
+                  onPress={() => this.getNDF(item.idUser, item.mois, item.annee)}
+                >
                 <View style={style.containerList}>
-                  <TouchableOpacity
-                    key={item.idUser}
-                    onPress={() => this.getNDF(item.idUser, item.mois, item.annee)}
-                  >
                     <View style={style.containerPeriod}>
                       <Text style={style.periodText}>
                         {this.state.months[item.mois-1]} {item.annee}
@@ -197,8 +197,8 @@ class FraisListe extends React.Component {
                         ) : null}
                       </Text>
                     </View>
-                  </TouchableOpacity>
-                </View>
+                  </View>
+                </TouchableOpacity>
               )}
 
               keyExtractor={(item, index) => index}
