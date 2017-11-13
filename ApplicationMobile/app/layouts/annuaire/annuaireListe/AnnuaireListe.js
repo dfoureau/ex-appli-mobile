@@ -13,13 +13,14 @@ import {
   Console,
   TextInput,
   Alert,
+  Picker,
 } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import styles from "./styles";
+import StyleGeneral from "../../../styles/Styles";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
-
 import { ContainerHeader } from "../../../components/containerHeader";
 import { ContainerFilters } from "../../../components/containerFilters";
 import { SearchFilter } from "../../../components/searchFilter";
@@ -34,7 +35,9 @@ class AnnuaireListe extends React.Component {
     this.state = {
       //On définit les différentes variables
       title: "Annuaire",
-      annuaire: []
+      annuaire: [],
+      isReady: false,
+      idAgence: 1,
     };
   }
 
@@ -109,43 +112,93 @@ class AnnuaireListe extends React.Component {
     return result;
   }
 
-  componentDidMount() {
-    const idAgence = 1;
-    const serverURL = 'http://185.57.13.103/rest';
-    const requestURL = `${serverURL}/web/app_dev.php/annuaire/${idAgence}`;
+  reloadAnnuaireByAgence(_idAgence) {
+    this.state.idAgence = _idAgence;
+    requestURL = 'http://185.57.13.103/rest/web/app_dev.php/annuaire/' + _idAgence;
     return fetch(requestURL)
     .then((response) => response.json())
     .then((responseJson) => {
-      this.setState({'annuaire': responseJson});
+      this.setState({'annuaire': responseJson, isReady: true});
     })
-    .catch((error) => { console.error(error); });
+    .catch((error) => {
+      console.error(error);
+    });
+  }
+
+  componentDidMount() {
+    this.reloadAnnuaireByAgence(1);
   }
 
   render() {
     const sections = this.prepareSectionsData(this.state.annuaire);
-    return (
-      <View>
-        <ContainerAccueil
-          title={this.state.title}
-          afficherEcran={this.afficherEcranParent.bind(this)}
-        >
-          <ContainerFilters>
-            <OptionFilter />
-            <SearchFilter />
-          </ContainerFilters>
 
-          <View style={styles.container}>
-            <SectionList
-              style={styles.sectionContain}
-              sections={sections}
-              renderItem={this.renderItemComponent}
-              renderSectionHeader={this.renderSectionHeader}
-              ItemSeparatorComponent={this.renderItemSeparator}
-            />
-          </View>
+    if (!this.state.isReady) {
+      return (   
+      <View>
+      <ContainerAccueil
+        title={this.state.title}
+        afficherEcran={this.afficherEcranParent.bind(this)}
+      >
+        <ActivityIndicator
+        color="#8b008b"
+        size="large"
+        style={StyleGeneral.loader}
+         />
+        <Text style={StyleGeneral.texteLoader}>
+          Récupération des données. Veuillez patienter.
+        </Text>
+
         </ContainerAccueil>
       </View>
-    );
+      )
+    } else {
+      return (
+        <View>
+          <ContainerAccueil
+            title={this.state.title}
+            afficherEcran={this.afficherEcranParent.bind(this)}
+          >
+            <ContainerFilters>
+              <View style={styles.ContainerOptionFilter}>
+                <Text style={styles.LabelOptionFilter} adjustsFontSizeToFitWidth="true">
+                  Agence
+                </Text>
+                <Picker
+                  style={styles.OptionFilter}
+                  selectedValue={this.state.idAgence}
+                  onValueChange={(itemValue, itemIndex) =>
+                    this.reloadAnnuaireByAgence(itemValue)}
+                >
+                  <Picker.Item label="Ile de France" value="1" />
+                  <Picker.Item label="Atlantique" value="3" />
+                  <Picker.Item label="Niort" value="4" />
+                  <Picker.Item label="Tours" value="5" />
+                  <Picker.Item label="Orléans" value="9" />
+                  <Picker.Item label="Lille" value="11" />
+                  <Picker.Item label="Bordeaux" value="12" />
+                  <Picker.Item label="Rabat" value="13" />
+                  <Picker.Item label="Lyon" value="14" />
+                  <Picker.Item label="Luxembourg" value="15" />
+                  <Picker.Item label="Toulouse" value="16" />
+                  <Picker.Item label="Rennes" value="17" />
+                </Picker>
+              </View>
+              <SearchFilter />
+            </ContainerFilters>
+
+            <View style={styles.container}>
+              <SectionList
+                style={styles.sectionContain}
+                sections={sections}
+                renderItem={this.renderItemComponent}
+                renderSectionHeader={this.renderSectionHeader}
+                ItemSeparatorComponent={this.renderItemSeparator}
+              />
+            </View>
+          </ContainerAccueil>
+        </View>
+      );
+   }
   }
 }
 

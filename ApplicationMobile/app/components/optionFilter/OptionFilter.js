@@ -17,7 +17,7 @@ class OptionFilter extends React.Component {
           style={styles.OptionFilter}
           selectedValue={this.state.city}
           onValueChange={(itemValue, itemIndex) =>
-            this.setState({ city: itemValue })}
+            this.setState({ idAgence: itemValue })}
         >
           <Picker.Item label="Ile de France" value="1" />
           <Picker.Item label="Atlantique" value="3" />
