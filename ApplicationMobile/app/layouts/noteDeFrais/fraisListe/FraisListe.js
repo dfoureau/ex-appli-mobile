@@ -21,12 +21,38 @@ import Accueil from "../../accueil/Accueil";
 import FraisAjout from "../fraisAjout/FraisAjout";
 import service from "../../../realm/service";
 
+import {
+	showToast,
+	showNotification,
+	showLoading,
+	hideLoading,
+	hide
+} from 'react-native-notifyer';
+
 const FRAIS_SCHEMA = "Frais";
 
 class FraisListe extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { title: "Note de frais" };
+    this.state = { 
+      title: "Note de frais",
+      data: [],
+      months: [
+        "Janvier",
+        "Février",
+        "Mars",
+        "Avril",
+        "Mai",
+        "Juin",
+        "Juillet",
+        "Août",
+        "Septembre",
+        "Octobre",
+        "Novembre",
+        "Décembre",
+      ],
+      year: "",
+    };
     service.delete(FRAIS_SCHEMA);
   }
 
@@ -37,7 +63,7 @@ class FraisListe extends React.Component {
 
   addNDF() {
     this.props.navigation.navigate("FraisAjout", {
-      idNDF: null,
+      idUser: null,
       month: null,
       year: null,
     });
@@ -45,47 +71,58 @@ class FraisListe extends React.Component {
 
   getNDF(id, month, year) {
     this.props.navigation.navigate("FraisAjout", {
-      idNDF: id,
+      idUser: id,
       month: month,
       year: year,
     });
   }
 
+  componentDidMount() {
+    var today = new Date();
+    var year = today.getFullYear();
+    this.getNDFByUser(year);
+  }
+
+  getNDFByUser(year){
+    showLoading("Chargement en cours. Veuillez patientier...");
+    var that = this;
+    fetch('http://185.57.13.103/rest/web/app_dev.php/ndf/'+year+'/1000000')
+    .then(function(response) {
+      if (response.status >= 400) {
+        that.setState({data: []})
+      }
+      hideLoading();
+      return response.json();
+    })
+    .then(function(ndf) {
+      hideLoading();
+      that.setState({data: ndf})
+    });
+  }
+
+  reloadNDFByYear(_year){
+    var that = this;
+    that.setState({year: _year});
+
+    this.getNDFByUser(_year);
+  }
+
+  //Fonction permettant de conditionner l'affichage du bloc valideur
+  checkItem(item){
+    if (item.statusId == 2 && item.valideur != null && item.dateactionetat != null) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
   render() {
-    /*status => 1: validé, 2: brouillon, 3: en attente de validation */
-    const data = [
-      {
-        key: 0,
-        id: 0,
-        month: "Août",
-        year: "2017",
-        amount: 75,
-        statusId: 3,
-        status: "en attente de validation",
-      },
-      {
-        key: 1,
-        id: 1,
-        month: "Juillet",
-        year: "2017",
-        amount: 203,
-        statusId: 1,
-        status: "validé",
-        userValidation: "Anne Edythe",
-        dateValidation: "02/08/2017",
-      },
-      {
-        key: 2,
-        id: 2,
-        month: "Mars",
-        year: "2017",
-        amount: 512,
-        statusId: 1,
-        status: "validé",
-        userValidation: "Anne Edythe",
-        dateValidation: "04/04/2017",
-      },
-    ];
+    if (this.state.data && this.state.data.length > 0) {
+      textePasDeDonnes = <Text style={style.texteMessage}>{this.state.data.length} notes de frais trouvées</Text>;
+    } else {
+      textePasDeDonnes = <Text style={style.texteMessage}>Aucune note de frais trouvée</Text>;
+    }
 
     return (
       <View>
@@ -101,16 +138,18 @@ class FraisListe extends React.Component {
                   style={{ width: 110 }}
                   selectedValue={this.state.year}
                   onValueChange={(itemValue, itemIndex) =>
-                    this.setState({ year: itemValue })}
+                    this.reloadNDFByYear(itemValue)}
                 >
-                  <Picker.Item label="Année" value="0" />
-                  <Picker.Item label="2017" value="1" />
-                  <Picker.Item label="2016" value="2" />
-                  <Picker.Item label="2015" value="3" />
-                  <Picker.Item label="2014" value="4" />
-                  <Picker.Item label="2013" value="5" />
-                  <Picker.Item label="2012" value="6" />
-                  <Picker.Item label="2011" value="7" />
+                  <Picker.Item label="2017" value="2017" />
+                  <Picker.Item label="2016" value="2016" />
+                  <Picker.Item label="2015" value="2015" />
+                  <Picker.Item label="2014" value="2014" />
+                  <Picker.Item label="2013" value="2013" />
+                  <Picker.Item label="2012" value="2012" />
+                  <Picker.Item label="2011" value="2011" />
+                  <Picker.Item label="2010" value="2010" />
+                  <Picker.Item label="2009" value="2009" />
+                  <Picker.Item label="2008" value="2008" />
                 </Picker>
               </View>
               <View style={style.containerButton}>
@@ -120,23 +159,24 @@ class FraisListe extends React.Component {
           </View>
           {/* Container liste des NDF */}
           <View style={style.container2}>
+            {textePasDeDonnes}
             <FlatList
-              data={data}
+              data={this.state.data}
               renderItem={({ item }) => (
+                <TouchableOpacity
+                  key={item.idUser}
+                  onPress={() => this.getNDF(item.idUser, item.mois, item.annee)}
+                >
                 <View style={style.containerList}>
-                  <TouchableOpacity
-                    key={item.id}
-                    onPress={() => this.getNDF(item.id, item.month, item.year)}
-                  >
                     <View style={style.containerPeriod}>
                       <Text style={style.periodText}>
-                        {item.month} {item.year}
+                        {this.state.months[item.mois-1]} {item.annee}
                       </Text>
                       <View style={style.containerIcon}>
                         <Image
                           style={style.listIcon}
                           source={
-                            item.statusId == 1
+                            item.statusId == 2
                               ? require("../../../images/icons/check2.png")
                               : null
                           }
@@ -145,21 +185,23 @@ class FraisListe extends React.Component {
                     </View>
                     <View>
                       <Text style={style.amountText}>
-                        Montant : {item.amount} €
+                        Montant : {item.montantTotal} €
                       </Text>
                       <Text style={style.statusText}>
-                        Etat : {item.status}
-                        {item.statusId == 1 ? (
+                        Etat : {item.etat}
+                        {this.checkItem(item) == true ? (
                           <Text>
                             {" "}
-                            par {item.userValidation} le {item.dateValidation}
+                            par {item.valideur} le {item.dateactionetat}
                           </Text>
                         ) : null}
                       </Text>
                     </View>
-                  </TouchableOpacity>
-                </View>
+                  </View>
+                </TouchableOpacity>
               )}
+
+              keyExtractor={(item, index) => index}
             />
           </View>
         </ContainerAccueil>
