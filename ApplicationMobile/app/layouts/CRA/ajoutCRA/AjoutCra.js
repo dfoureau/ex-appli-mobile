@@ -372,13 +372,15 @@ class AjoutCra extends React.Component {
   }
 
   modifyItemCRA(l) {
-    this.props.navigation.navigate("ActivitesDetail", { line : l,
-                                                        parent: this});
+    this.props.navigation.navigate("ActivitesDetail", {
+      line : l,
+      parent: this});
   }
 
   modifyPeriodeCRA() {
-    this.props.navigation.navigate("ActivitesDetail", { line : -1,
-                                                        parent : this});
+    this.props.navigation.navigate("ActivitesDetail", {
+      line : -1,
+      parent : this});
   }
 
   showDeleteButton() {
