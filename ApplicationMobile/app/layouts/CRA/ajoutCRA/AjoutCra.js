@@ -19,6 +19,9 @@ import {
   Cell,
 } from "react-native-table-component";
 
+import moment from "moment";
+
+
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
@@ -41,12 +44,11 @@ class AjoutCra extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     idCRA: navigation.state.params.idCRA,
     date: navigation.state.params.date,
-    isServiceCalled: navigation.state.params.isServiceCalled, // TODO: à supprimer, juste pr la démo
   });
 
   setInitialValues() {
     const { params } = this.props.navigation.state;
-
+    let dateStr = moment().format("MMMM YYYY");
     this.state = {
       title: "",
       statusId: 1,
@@ -56,9 +58,10 @@ class AjoutCra extends React.Component {
       TextComment: " ",
       status: "nouveau",
       statusLabel: "Nouveau CRA",
-      header: ["Date du", "Date au", "Activité", "Nb. jours"],
-      monthSelected: "Octobre 2017",
-      listItemsCRA: params.isServiceCalled ? this.getItemsCRA() : [],
+      header: ["Date", "Activité"],
+      monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1),//la premiere lettre du mois en majuscule
+      listItemsCRA:  this.getItemsCRA(),//liste des cra du mois, doit être ordonée
+      modifiedLines: [],//liste des lignes à modifier si validation
     };
 
     if (params.isServiceCalled) {
@@ -74,6 +77,222 @@ class AjoutCra extends React.Component {
   getItemsCRA() {
     // Appel au service
     var listItemsCRA = [
+      {
+        id: 1,
+        idCRA: 0,
+        startDate: "01/10/2017",
+        endDate: "13/10/2017",
+        actType: "1.0",
+        workingDays: 9,
+      },
+      {
+        id: 2,
+        idCRA: 0,
+        startDate: "14/10/2017",
+        endDate: "14/10/2017",
+        actType: "0.5+AM",
+        workingDays: 1,
+      },
+      {
+        id: 3,
+        idCRA: 0,
+        startDate: "15/10/2017",
+        endDate: "31/10/2017",
+        actType: "1.0",
+        workingDays: 11,
+      },
+      {
+        id: 1,
+        idCRA: 0,
+        startDate: "01/10/2017",
+        endDate: "13/10/2017",
+        actType: "1.0",
+        workingDays: 9,
+      },
+      {
+        id: 2,
+        idCRA: 0,
+        startDate: "14/10/2017",
+        endDate: "14/10/2017",
+        actType: "0.5+AM",
+        workingDays: 1,
+      },
+      {
+        id: 3,
+        idCRA: 0,
+        startDate: "15/10/2017",
+        endDate: "31/10/2017",
+        actType: "1.0",
+        workingDays: 11,
+      },
+      {
+        id: 1,
+        idCRA: 0,
+        startDate: "01/10/2017",
+        endDate: "13/10/2017",
+        actType: "1.0",
+        workingDays: 9,
+      },
+      {
+        id: 2,
+        idCRA: 0,
+        startDate: "14/10/2017",
+        endDate: "14/10/2017",
+        actType: "0.5+AM",
+        workingDays: 1,
+      },
+      {
+        id: 3,
+        idCRA: 0,
+        startDate: "15/10/2017",
+        endDate: "31/10/2017",
+        actType: "1.0",
+        workingDays: 11,
+      },
+      {
+        id: 1,
+        idCRA: 0,
+        startDate: "01/10/2017",
+        endDate: "13/10/2017",
+        actType: "1.0",
+        workingDays: 9,
+      },
+      {
+        id: 2,
+        idCRA: 0,
+        startDate: "14/10/2017",
+        endDate: "14/10/2017",
+        actType: "0.5+AM",
+        workingDays: 1,
+      },
+      {
+        id: 3,
+        idCRA: 0,
+        startDate: "15/10/2017",
+        endDate: "31/10/2017",
+        actType: "1.0",
+        workingDays: 11,
+      },
+      {
+        id: 1,
+        idCRA: 0,
+        startDate: "01/10/2017",
+        endDate: "13/10/2017",
+        actType: "1.0",
+        workingDays: 9,
+      },
+      {
+        id: 2,
+        idCRA: 0,
+        startDate: "14/10/2017",
+        endDate: "14/10/2017",
+        actType: "0.5+AM",
+        workingDays: 1,
+      },
+      {
+        id: 3,
+        idCRA: 0,
+        startDate: "15/10/2017",
+        endDate: "31/10/2017",
+        actType: "1.0",
+        workingDays: 11,
+      },
+      {
+        id: 1,
+        idCRA: 0,
+        startDate: "01/10/2017",
+        endDate: "13/10/2017",
+        actType: "1.0",
+        workingDays: 9,
+      },
+      {
+        id: 2,
+        idCRA: 0,
+        startDate: "14/10/2017",
+        endDate: "14/10/2017",
+        actType: "0.5+AM",
+        workingDays: 1,
+      },
+      {
+        id: 3,
+        idCRA: 0,
+        startDate: "15/10/2017",
+        endDate: "31/10/2017",
+        actType: "1.0",
+        workingDays: 11,
+      },
+      {
+        id: 1,
+        idCRA: 0,
+        startDate: "01/10/2017",
+        endDate: "13/10/2017",
+        actType: "1.0",
+        workingDays: 9,
+      },
+      {
+        id: 2,
+        idCRA: 0,
+        startDate: "14/10/2017",
+        endDate: "14/10/2017",
+        actType: "0.5+AM",
+        workingDays: 1,
+      },
+      {
+        id: 3,
+        idCRA: 0,
+        startDate: "15/10/2017",
+        endDate: "31/10/2017",
+        actType: "1.0",
+        workingDays: 11,
+      },
+      {
+        id: 1,
+        idCRA: 0,
+        startDate: "01/10/2017",
+        endDate: "13/10/2017",
+        actType: "1.0",
+        workingDays: 9,
+      },
+      {
+        id: 2,
+        idCRA: 0,
+        startDate: "14/10/2017",
+        endDate: "14/10/2017",
+        actType: "0.5+AM",
+        workingDays: 1,
+      },
+      {
+        id: 3,
+        idCRA: 0,
+        startDate: "15/10/2017",
+        endDate: "31/10/2017",
+        actType: "1.0",
+        workingDays: 11,
+      },
+      {
+        id: 1,
+        idCRA: 0,
+        startDate: "01/10/2017",
+        endDate: "13/10/2017",
+        actType: "1.0",
+        workingDays: 9,
+      },
+      {
+        id: 2,
+        idCRA: 0,
+        startDate: "14/10/2017",
+        endDate: "14/10/2017",
+        actType: "0.5+AM",
+        workingDays: 1,
+      },
+      {
+        id: 3,
+        idCRA: 0,
+        startDate: "15/10/2017",
+        endDate: "31/10/2017",
+        actType: "1.0",
+        workingDays: 11,
+      },
       {
         id: 1,
         idCRA: 0,
@@ -115,10 +334,10 @@ class AjoutCra extends React.Component {
           startDate: item.startDate,
           endDate: item.endDate,
           actType: item.actType,
-          workingDays: item.workingDays,
+          workingDays: 1,
         };
 
-        list.push(itemCRA);
+        list.push(itemCRA);//need to replace, not to push
         service.insert(ITEMCRA_SCHEMA, itemCRA);
       });
 
@@ -152,8 +371,16 @@ class AjoutCra extends React.Component {
     this.props.navigation.navigate("CraConfirmation");
   }
 
-  modifyItemCRA(id) {
-    this.props.navigation.navigate("ActivitesDetail", { idItemCRA: id });
+  modifyItemCRA(l) {
+    this.props.navigation.navigate("ActivitesDetail", {
+      line : l,
+      parent: this});
+  }
+
+  modifyPeriodeCRA() {
+    this.props.navigation.navigate("ActivitesDetail", {
+      line : -1,
+      parent : this});
   }
 
   showDeleteButton() {
@@ -192,18 +419,18 @@ class AjoutCra extends React.Component {
   }
 
   afficherRows() {
-    let items = service.get(ITEMCRA_SCHEMA);
+    let items = this.state.listItemsCRA;
     return this.getRows(items);
   }
 
   getRows(tab) {
     return tab.map((row, i) => (
-      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(row.id)}>
+      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(i)}>
         <Row
           style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
           textStyle={style.rowText}
-          data={[row.startDate, row.endDate, row.actType, row.workingDays]}
+          data={[row.startDate,row.actType]}
         />
       </TouchableOpacity>
     ));
@@ -211,7 +438,7 @@ class AjoutCra extends React.Component {
 
   handleValidate = () => {
     //TODO Retourne sur la page des CRA
-    this.props.navigation.navigate("ActivitesListe");
+    this.props.navigation.navigate("ActivitesListe");//navigate back
   };
 
   render() {
@@ -304,6 +531,8 @@ class AjoutCra extends React.Component {
                 </View>
               </View>
             </View>
+
+            <Button text="Editer une Periode" onPress = {() => this.modifyPeriodeCRA()}> Periode</Button>
 
             <View style={style.container3}>
               <Table
