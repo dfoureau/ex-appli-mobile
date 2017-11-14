@@ -8,10 +8,11 @@ import {
   TouchableHighlight,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { StackNavigator, NavigationActions, Navigator } from "react-navigation";
 import style from "./styles";
-import Style from "../../../styles/Styles";
+import StyleGeneral from "../../../styles/Styles";
 
 import CRAItem from "../../../components/CRAItem/CRAItem";
 
@@ -29,7 +30,42 @@ import ActivitesConfirmation from "../activitesConfirmation/ActivitesConfirmatio
 class ActivitesListe extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { title: "Relevés d'Activités" };
+    this.state = {
+      title: "Relevés d'Activités",
+      data : [],
+      isReady: false,
+      isData: false,
+      webServiceLien1: "http://185.57.13.103/rest/web/app_dev.php/CRA/124124251/",
+    };
+  }
+
+  getDemandesByUserAndYear(_annee) {
+    var that = this;
+		fetch(this.state.webServiceLien1 + _annee)
+		.then(function(response) {
+			if (response.status == 400) {
+        that.setState({
+          data: [],
+          isReady: true,
+          isData: false,
+        });
+			} else if (response.status == 404) {
+        that.setState({
+          data: [],
+          isData: false,
+          isReady: true,});
+      }
+			return response.json();
+		})
+		.then((cra) => this.setState({
+      data: cra,
+      isData: true,
+      isReady: true,})
+		);
+	}
+
+  componentDidMount() {
+    this.getDemandesByUserAndYear(2017);
   }
 
   //Permet d'afficher l'ecran choisi dans le menu
@@ -78,125 +114,122 @@ class ActivitesListe extends React.Component {
   }
 
   render() {
-    /*status => 1: validé, 2: brouillon, 3: en cours de validation */
-    const data = [
-      {
-        key: 1,
-        Id: 1,
-        moreThanOne: false,
-        hideDate: false,
-        manyElt: false,
-        date: "Août 2017",
-        client: "La banque de Nantes",
-        status: 2,
-      },
-      {
-        key: 2,
-        Id: 2,
-        moreThanOne: true,
-        hideDate: false,
-        manyElt: true,
-        date: "Juillet 2017",
-        client: "La banque de Paris",
-        status: 1,
-      },
-      {
-        key: 3,
-        Id: 3,
-        moreThanOne: true,
-        date: "Juillet 2017",
-        hideDate: true,
-        client: "La banque de Paris",
-        status: 1,
-        manyElt: true,
-      },
-      {
-        key: 4,
-        Id: 4,
-        moreThanOne: false,
-        manyElt: false,
-        hideDate: false,
-        date: "Juin 2017",
-        client: "Cat-Amania",
-        status: 1,
-      },
-    ];
-
-    return (
-      <View>
-        <ContainerAccueil
-          title={this.state.title}
-          afficherEcran={this.afficherEcranParent.bind(this)}
-        >
-          <View style={style.container}>
-            <View style={style.container2}>
-              <View style={style.containerPicker}>
-                <Picker
-                  style={{
-                    width: 120,
-                  }}
-                  selectedValue={this.state.month}
-                  onValueChange={(itemValue, itemIndex) =>
-                    this.setState({ month: itemValue })}
-                >
-                  <Picker.Item label="Année" value="0" />
-                  <Picker.Item label="2017" value="1" />
-                  <Picker.Item label="2016" value="2" />
-                  <Picker.Item label="2015" value="3" />
-                  <Picker.Item label="2014" value="4" />
-                  <Picker.Item label="2013" value="5" />
-                  <Picker.Item label="2012" value="6" />
-                  <Picker.Item label="2011" value="7" />
-                </Picker>
+    if (!this.state.isReady) {
+			return (
+				<View>
+					<ContainerAccueil
+						title={this.state.title}
+						afficherEcran={this.afficherEcranParent.bind(this)}
+					>
+						<ActivityIndicator
+							color={"#8b008b"}
+							size={"large"}
+							style={StyleGeneral.loader}
+						/>
+						<Text style={StyleGeneral.texteLoader}>
+							Récupération des données. Veuillez patienter...
+						</Text>
+					</ContainerAccueil>
+				</View>
+			);
+		} else {
+      return (
+        <View>
+          <ContainerAccueil
+            title={this.state.title}
+            afficherEcran={this.afficherEcranParent.bind(this)}
+          >
+            <View style={style.container}>
+              <View style={style.container2}>
+                <View style={style.containerPicker}>
+                  <Picker
+                    style={{
+                      width: 120,
+                    }}
+                    selectedValue={this.state.month}
+                    onValueChange={(itemValue, itemIndex) =>
+                      this.setState({ month: itemValue })}
+                  >
+                    <Picker.Item label="Année" value="0" />
+                    <Picker.Item label="2017" value="1" />
+                    <Picker.Item label="2016" value="2" />
+                    <Picker.Item label="2015" value="3" />
+                    <Picker.Item label="2014" value="4" />
+                    <Picker.Item label="2013" value="5" />
+                    <Picker.Item label="2012" value="6" />
+                    <Picker.Item label="2011" value="7" />
+                  </Picker>
+                </View>
+                <View style={style.containerButton}>
+                  <Button
+                    text="AJOUTER"
+                    onPress={() => this.AfficherAjoutCRa()}
+                  />
+                </View>
               </View>
-              <View style={style.containerButton}>
-                <Button
-                  text="AJOUTER"
-                  onPress={() => this.AfficherAjoutCRa()}
-                />
-              </View>
-            </View>
 
-            <FlatList
-              data={data}
-              renderItem={({ item }) =>
-                !item.moreThanOne ? (
-                  <View>
+              {!this.state.isData &&
+                <Text style={style.texte}>
+                  Aucunes données trouvées pour cette année.
+                </Text>
+              }
+
+              {this.state.isData && 
+              <FlatList 
+                data={this.state.data}
+                keyExtractor={(item, index) => index}
+                renderItem={({ item }) => (
+                  !item.moreThanOne ? (
+                    <View>
+                    <Text style={StyleGeneral.periodText}>
+                    {!item.hideDate ? item.date : null}
+                    </Text>
                     <TouchableOpacity
-                      key={item.Id}
-                      onPress={() => this.SendDataCRA(item.Id, item.date)}
+                    key={item.numDemande}
+                    onPress={() => this.SendDataCRA(item.Id, item.date)}
                     >
-                      <CRAItem
-                        date={item.date}
-                        client={item.client}
-                        status={item.status}
-                        key={item.Id}
-                        manyElt={item.manyElt}
-                      />
+                      <View style={style.containerList}>
+                        <CRAItem
+                          date={item.date}
+                          client={item.client}
+                          status={item.status}
+                          key={item.Id}
+                          manyElt={item.manyElt}
+                        />
+                      </View>
                     </TouchableOpacity>
-                  </View>
-                ) : (
-                  <View>
+                    </View>
+                  ) : (
+                    <View>
+                    <Text style={StyleGeneral.periodText}>
+                    {!item.hideDate ? item.date : null}
+                    </Text>
                     <TouchableOpacity
-                      key={item.Id}
-                      onPress={() => this.SendDataCRA(item.Id, item.date)}
+                    key={item.numDemande}
+                    onPress={() => this.SendDataCRA(item.Id, item.date)}
                     >
-                      <CRAItem
-                        date={item.date}
-                        client={item.client}
-                        status={item.status}
-                        key={item.Id}
-                        hideDate={item.hideDate}
-                        manyElt={item.manyElt}
-                      />
+                      <View style={style.containerList}>
+                        <CRAItem
+                          date={item.date}
+                          client={item.client}
+                          status={item.status}
+                          key={item.Id}
+                          hideDate={item.hideDate}
+                          manyElt={item.manyElt}
+                        />
+                      </View>
                     </TouchableOpacity>
-                  </View>
+                    </View>
+                  )
+
                 )}
-            />
-          </View>
-        </ContainerAccueil>
-      </View>
-    );
+									/>
+              }
+            </View>
+          </ContainerAccueil>
+        </View>
+      );
+    }
   }
 }
 

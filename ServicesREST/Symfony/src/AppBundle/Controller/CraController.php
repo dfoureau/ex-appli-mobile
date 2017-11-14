@@ -134,75 +134,178 @@ class CraController extends Controller
     */
      function getListCraByCollaborateur(Request $request, $id, $annee = -1 ){
 
+        
         //Vérification token
         /*$log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth,400);
         }*/
-
-        //Test si le paramètre année est valorisé, si non on le valorise par l'année en cours
+		//Test si le paramètre année est valorisé, si non on le valorise par l'année en cours
         if($annee == -1)
         {
             $annee = date("Y");
         }
 
-        $sql = "SELECT r.iduser, r.idRA, r.mois, r.annee, r.client, e.libelle FROM relevesactivites r INNER JOIN etatra e ON r.etat = e.id WHERE r.idUser = '$id' AND r.annee = '$annee'  ORDER BY r.mois asc;";
+        $sql = "SELECT r.idUser as idUser, r.idRA as Id, r.mois,r.annee as annee, r.client, r.etat as status FROM relevesactivites r INNER JOIN etatra e ON r.etat = e.id WHERE r.idUser = '$id' AND r.annee = '$annee'  ORDER BY r.mois asc;";
 
         $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
         $stmt->execute();
         //$retour= $stmt->fetchAll();
 
-		$list= $stmt->fetchAll();
+		$retour= $stmt->fetchAll();
+		$liste=array();
+		for($i=0; $i<count($retour);$i++){
 		
-		 if(count($list)!=0){
-          $etat='';
-          $annee='';
-          $mois='';
-          $id='';
-		  $idRA = '';
-          $listeCra=array();
-		  //$listeCraMois=array();
-          
-		  //for($i=0; $i<count($list);$i++){
-		  foreach($list as $key=>$row) {
-
-            $rowCra = array();
-			$rowCra['mois']=$row['mois'];
-			$rowCra['idRa']=$row['idRA'];
-            $rowCra['client']=$row['client'];
-            $rowCra['Etat']=$row['libelle'];
+		
+			$row=$retour[$i];
+			$mois = $row['mois'];
 			
-            if (array_key_exists($rowCra['mois'], $listeCra)){
-            	$listeCraMois = $listeCra[$rowCra['mois']];
-            	$listeCraMois[] = $rowCra;
-            	$listeCra[$rowCra['mois']] =  $listeCraMois;
-            }
-			else{
-				$listeCraMois = array();
-				$listeCraMois[] = $rowCra;
-				$listeCra[$rowCra['mois']] = $listeCraMois;
+			switch ($row['mois']){
+				case "1" :
+					$libelleMois = "Janvier";
+					break;
+				case "2" :
+					$libelleMois = "Février";
+					break;
+				case "3" :
+				$libelleMois = "Mars";
+				break;
+				case "4" :
+				$libelleMois = "Avril";
+				break;
+				case "5" :
+				$libelleMois = "Mai";
+				break;
+				case "6" :
+				$libelleMois = "Juin";
+				break;
+				case "7" :
+				$libelleMois = "Juillet";
+				break;
+				case "8" :
+				$libelleMois = "Août";
+				break;
+				case "9" :
+				$libelleMois = "Septembre";
+				break;
+				case "10" :
+				$libelleMois = "Octobre";
+				break;
+				case "11" :
+				$libelleMois = "Novembre";
+				break;
+				case "12" :
+				$libelleMois = "Décembre";
+				break;
+					// Etats validés ou A modifier interdits, autres états inconnus
 			}
-
-		   }
+			
+			$idUser = $row['idUser'];
+			$id = $row['Id'];
+			$date = $libelleMois." ".$row['annee'];
+			
+			
+			$client = $row['client'];
+			$status = $row['status'];
+			
+			$moreThanOne = $this->getMoreThanOne($mois,$idUser);
+			$hideDate =$this->getHideDate($id,$mois,$idUser);
+			$manyElt =$moreThanOne;
+			
+			
+			// on rajoute les éléments manquants
+			$key = strval($i+1);
+			
+			$retour[$i]['key'] = $key;
+			$retour[$i]['hideDate'] =$hideDate;
+			$retour[$i]['moreThanOne'] = $moreThanOne;
+			$retour[$i]['manyElt'] = $manyElt;
+			
+			
+		$liste[] = array('key'=>$key,'Id'=>$id, 'date' => $date, 'client'=>$client, 'status'=>$status,'moreThanOne' => $moreThanOne,'hideDate' => $hideDate,'manyElt' => $manyElt);
+			
+		}
 		  
-         }
-		          //$retour=array('idUser'=>$id, 'mois'=>$mois,'annee'=>$annee,'etat'=>$etat, 'notesDeFrais'=>$listNdf);
-          $retour=array('annee' =>$annee, 'Tableau'=>$listeCra);
-          
-            return new JsonResponse($retour,Response::HTTP_OK);
+          return new JsonResponse($liste,Response::HTTP_OK);
 		 
 		
-        if(count($list) == 0){
+        if(count($retour) == 0){
                 $message = array('message' => "Aucun CRA trouvé pour l'idUtilisateur: ".$id. " et l'année: ".$annee);
                 return new JsonResponse($message,400);
         }
         else{
+
             return new JsonResponse($retour);
         }        
     }
 
     
+	public function getMoreThanOne($mois,$idUser)
+    {
+	   /*$log=new LoginController();
+      $retourAuth = $log->checkAuthentification($this);
+      if (array_key_exists("erreur", $retourAuth)) {
+        return new JsonResponse($retourAuth,400);
+      }*/
+
+      $sql = "select count(idRA) as nb from relevesactivites where mois = '$mois' and idUser = '$idUser'";
+
+      $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+      $stmt->execute();
+	  $retour= $stmt->fetch();
+	  
+	   if ($retour['nb'] == 1) {
+			$retour=false; 
+			return $retour;
+		}
+		else {
+			$retour=true; 
+			return $retour;
+		}
+	  }
+	  
+	  public function getHideDate($id,$mois,$idUser)
+    {
+	   /*$log=new LoginController();
+      $retourAuth = $log->checkAuthentification($this);
+      if (array_key_exists("erreur", $retourAuth)) {
+        return new JsonResponse($retourAuth,400);
+      }*/
+
+      $sql = "select count(idRA) as nb from relevesactivites where mois = '$mois' and idUser = '$idUser'";
+
+      $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+      $stmt->execute();
+	  $retour= $stmt->fetch();
+	  
+	   if ($retour['nb'] == 1) {
+			$retour=false; 
+			return $retour;
+		}
+		else {
+			
+		$sql = "select min(idRA) as idRA  from relevesactivites where mois = '$mois' and idUser = '$idUser'";
+		$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+		$stmt->execute();
+		$retour= $stmt->fetch();
+
+		if ($retour['idRA'] != $id) {
+			$retour=true;
+			return $retour;
+		}
+		else {
+			$retour = false;
+			return $retour;
+		}
+	  }
+	}
+	  	 
+    
+	
+	
+	
+	
     function deleteCra($idRA){
 
         $sql = 'DELETE FROM relevesactivites WHERE idRA = '.$idRA.';';

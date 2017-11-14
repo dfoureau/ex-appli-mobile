@@ -35,9 +35,6 @@ export default class CRAItem extends Component {
         }
       >
         <View style={Style.secondView}>
-          <Text style={Style.periodText}>
-            {!this.state.hideDate ? this.state.date : null}
-          </Text>
           <Text>Client : {this.state.client}</Text>
           <View style={Style.fourthView}>
             <View>
