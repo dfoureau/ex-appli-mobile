@@ -126,8 +126,7 @@ export default StyleSheet.create({
   container2: {
     display: "flex",
     flexDirection: "row",
-    marginTop: 20,
-    margin: 20,
+    marginTop: 10,
   },
 
   containerPicker: {
@@ -155,7 +154,10 @@ export default StyleSheet.create({
   },
 
   containerList: {
-    marginBottom: 20,
+    margin : 5,
+    padding : 5,
+    borderWidth : 1,
+    backgroundColor : "#FFF",
   },
 
   containerPeriod: {

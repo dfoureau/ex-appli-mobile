@@ -34,34 +34,38 @@ class ActivitesListe extends React.Component {
       title: "Relevés d'Activités",
       data : [],
       isReady: false,
-      webServiceLien1: "http://185.57.13.103/rest/web/app_dev.php/CRA/124124251/2017",
+      isData: false,
+      webServiceLien1: "http://185.57.13.103/rest/web/app_dev.php/CRA/124124251/",
     };
   }
 
-  async componentDidMount() {
-    try {
-      // Récupérer login/mdp
-      //this.state.obj.body = "login=" + this.state.login + "&password=" + this.state.mdp;
-
-      // On se connecte
-      let response = await fetch(this.state.webServiceLien1);
-      let res = await response.text();
-      if (response.status >=200 && response.status < 300) {
-          this.setState({
-            error : "",
-            isReady : true,
-            data : res
-          });
-           //this.state.data = res;
-          console.log("res data : " + this.state.data);
+  getDemandesByUserAndYear(_annee) {
+    var that = this;
+		fetch(this.state.webServiceLien1 + _annee)
+		.then(function(response) {
+			if (response.status == 400) {
+        that.setState({
+          data: [],
+          isReady: true,
+          isData: false,
+        });
+			} else if (response.status == 404) {
+        that.setState({
+          data: [],
+          isData: false,
+          isReady: true,});
       }
-      else {
-        let error = res;
-        throw error;
-      }	
-    } catch(error){
-      console.log("error : " + error);
-    }
+			return response.json();
+		})
+		.then((cra) => this.setState({
+      data: cra,
+      isData: true,
+      isReady: true,})
+		);
+	}
+
+  componentDidMount() {
+    this.getDemandesByUserAndYear(2017);
   }
 
   //Permet d'afficher l'ecran choisi dans le menu
@@ -164,16 +168,27 @@ class ActivitesListe extends React.Component {
                 </View>
               </View>
 
-              <FlatList
+              {!this.state.isData &&
+                <Text style={style.texte}>
+                  Aucunes données trouvées pour cette année.
+                </Text>
+              }
+
+              {this.state.isData && 
+              <FlatList 
                 data={this.state.data}
                 keyExtractor={(item, index) => index}
-                renderItem={({ item }) =>
+                renderItem={({ item }) => (
                   !item.moreThanOne ? (
                     <View>
-                      <TouchableOpacity
-                        key={item.Id}
-                        onPress={() => this.SendDataCRA(item.Id, item.date)}
-                      >
+                    <Text style={StyleGeneral.periodText}>
+                    {!item.hideDate ? item.date : null}
+                    </Text>
+                    <TouchableOpacity
+                    key={item.numDemande}
+                    onPress={() => this.SendDataCRA(item.Id, item.date)}
+                    >
+                      <View style={style.containerList}>
                         <CRAItem
                           date={item.date}
                           client={item.client}
@@ -181,14 +196,19 @@ class ActivitesListe extends React.Component {
                           key={item.Id}
                           manyElt={item.manyElt}
                         />
-                      </TouchableOpacity>
+                      </View>
+                    </TouchableOpacity>
                     </View>
                   ) : (
                     <View>
-                      <TouchableOpacity
-                        key={item.Id}
-                        onPress={() => this.SendDataCRA(item.Id, item.date)}
-                      >
+                    <Text style={StyleGeneral.periodText}>
+                    {!item.hideDate ? item.date : null}
+                    </Text>
+                    <TouchableOpacity
+                    key={item.numDemande}
+                    onPress={() => this.SendDataCRA(item.Id, item.date)}
+                    >
+                      <View style={style.containerList}>
                         <CRAItem
                           date={item.date}
                           client={item.client}
@@ -197,10 +217,14 @@ class ActivitesListe extends React.Component {
                           hideDate={item.hideDate}
                           manyElt={item.manyElt}
                         />
-                      </TouchableOpacity>
+                      </View>
+                    </TouchableOpacity>
                     </View>
-                  )}
-              />
+                  )
+
+                )}
+									/>
+              }
             </View>
           </ContainerAccueil>
         </View>
