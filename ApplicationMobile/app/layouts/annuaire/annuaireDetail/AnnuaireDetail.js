@@ -123,7 +123,7 @@ class AnnuaireDetail extends React.Component {
                         Fonction : {this.state.list[0]['libelle']}
                       </Text>
                       <Text style={styles.text}>
-                        Agence : {this.state.list[0]['idAgence']}
+                        Agence : {this.state.list[0]['agence']}
                       </Text>
                     </View>
                   </View>
@@ -137,6 +137,7 @@ class AnnuaireDetail extends React.Component {
               </View>
 
               {/*TELEPHONE 1*/}
+              {this.state.list[0]['telmobile'] != "" && 
               <View style={[Style.firstView, styles.firstSection]}>
                 <View style={Style.secondView}>
                   <View style={styles.container}>
@@ -162,8 +163,10 @@ class AnnuaireDetail extends React.Component {
                   </TouchableOpacity>
                 </View>
               </View>
+              }
 
               {/*TELEPHONE 2*/}
+              {this.state.list[0]['telclient'] != "" && 
               <View style={[Style.firstView, styles.secondSection]}>
                 <View style={Style.secondView}>
                   <View style={styles.container}>
@@ -189,8 +192,10 @@ class AnnuaireDetail extends React.Component {
                   </TouchableOpacity>
                 </View>
               </View>
+              }
 
               {/*EMAIL 1 */}
+              {this.state.list[0]['mail'] != "" && 
               <View style={[Style.firstView, styles.firstSection]}>
                 <View style={Style.secondView}>
                   <View style={styles.container}>
@@ -219,8 +224,10 @@ class AnnuaireDetail extends React.Component {
                   </TouchableOpacity>
                 </View>
               </View>
+              }
 
               {/*EMAIL 2*/}
+              {this.state.list[0]['mailclient'] != "" && 
               <View style={[Style.firstView, styles.secondSection]}>
                 <View style={Style.secondView}>
                   <View style={styles.container}>
@@ -249,6 +256,8 @@ class AnnuaireDetail extends React.Component {
                   </TouchableOpacity>
                 </View>
               </View>
+              }
+
             </View>
           </ContainerTitre>
         </View>

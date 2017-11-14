@@ -79,14 +79,14 @@ class AnnuaireController extends Controller
 						id,
 						nom,
 						prenom,
-						idAgence,
 						entitesjuridiques.nomEntite,
 						users.idprofil,
 						profils.libelle,
 						telmobile,
 						telclient,
 						mail,
-						mailclient 
+						mailclient,
+						societeagence.nomSocieteAgence as agence
 					FROM 
 						users,
 						societeagence,
@@ -95,7 +95,8 @@ class AnnuaireController extends Controller
 					WHERE idAgence = idSocieteAgence 
 					AND users.identitejuridique = entitesjuridiques.idEntite 
 					AND users.idprofil = profils.idprofil 
-					AND users.archive != "O" 
+					AND users.archive != "O"
+					AND users.idagence = societeagence.idSocieteAgence
 					AND id = ' . $tUserId;
 			
 			$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
