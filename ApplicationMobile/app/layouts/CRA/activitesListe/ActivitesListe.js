@@ -35,12 +35,14 @@ class ActivitesListe extends React.Component {
       data : [],
       isReady: false,
       isData: false,
+      annee: "",
       webServiceLien1: "http://185.57.13.103/rest/web/app_dev.php/CRA/124124251/",
     };
   }
 
   getDemandesByUserAndYear(_annee) {
     var that = this;
+    this.state.annee = _annee;
 		fetch(this.state.webServiceLien1 + _annee)
 		.then(function(response) {
 			if (response.status == 400) {
@@ -61,7 +63,7 @@ class ActivitesListe extends React.Component {
       data: cra,
       isData: true,
       isReady: true,})
-		);
+    );
 	}
 
   componentDidMount() {
@@ -146,18 +148,17 @@ class ActivitesListe extends React.Component {
                     style={{
                       width: 120,
                     }}
-                    selectedValue={this.state.month}
+                    selectedValue={this.state.annee}
                     onValueChange={(itemValue, itemIndex) =>
-                      this.setState({ month: itemValue })}
+                      this.getDemandesByUserAndYear(itemValue)}
                   >
-                    <Picker.Item label="Année" value="0" />
-                    <Picker.Item label="2017" value="1" />
-                    <Picker.Item label="2016" value="2" />
-                    <Picker.Item label="2015" value="3" />
-                    <Picker.Item label="2014" value="4" />
-                    <Picker.Item label="2013" value="5" />
-                    <Picker.Item label="2012" value="6" />
-                    <Picker.Item label="2011" value="7" />
+                    <Picker.Item label="2017" value="2017" />
+                    <Picker.Item label="2016" value="2016" />
+                    <Picker.Item label="2015" value="2015" />
+                    <Picker.Item label="2014" value="2014" />
+                    <Picker.Item label="2013" value="2013" />
+                    <Picker.Item label="2012" value="2012" />
+                    <Picker.Item label="2011" value="2011" />
                   </Picker>
                 </View>
                 <View style={style.containerButton}>
@@ -168,8 +169,10 @@ class ActivitesListe extends React.Component {
                 </View>
               </View>
 
-              {!this.state.isData &&
-                <Text style={style.texte}>
+              <View style={style.container3}>
+
+              {(this.state.data.length <= 0) &&
+                <Text style={StyleGeneral.texte}>
                   Aucunes données trouvées pour cette année.
                 </Text>
               }
@@ -225,6 +228,7 @@ class ActivitesListe extends React.Component {
                 )}
 									/>
               }
+              </View>
             </View>
           </ContainerAccueil>
         </View>
