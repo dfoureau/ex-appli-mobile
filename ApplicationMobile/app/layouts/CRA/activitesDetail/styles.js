@@ -13,12 +13,17 @@ export default StyleSheet.create({
     flex: 1,
     alignItems: "center",
     marginTop: 10,
+
+  },
+  containerCalendar: {
+    margin: 10,
+    flex: 1,
+    height: 380,
   },
   calendarText: {
     flex: 0.15,
     fontWeight: "600",
     fontSize: 16,
-    paddingLeft: 30,
   },
   calendarComponent: {
     flex: 0.2,

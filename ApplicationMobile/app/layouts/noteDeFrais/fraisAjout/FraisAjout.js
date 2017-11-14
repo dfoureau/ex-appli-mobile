@@ -58,6 +58,8 @@ class FraisAjout extends React.Component {
   });
 
   setInitialValues() {
+    var initListAndTotals = this.initListAndTotals();
+    let dateStr = moment().format("MMMM YYYY");
     this.state = {
       title: "Note de frais",
       statusId: 1,
@@ -78,7 +80,7 @@ class FraisAjout extends React.Component {
         "Novembre",
         "Décembre",
       ],
-      monthSelected: "",
+      monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1),//date actuelle
       listFrais: [],
       totalMontant: 0,
       totalClient: 0,
