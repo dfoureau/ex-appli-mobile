@@ -79,6 +79,7 @@ class AnnuaireController extends Controller
 						id,
 						nom,
 						prenom,
+						idAgence,
 						entitesjuridiques.nomEntite,
 						users.idprofil,
 						profils.libelle,
