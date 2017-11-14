@@ -38,6 +38,7 @@ class AnnuaireListe extends React.Component {
       annuaire: [],
       isReady: false,
       idAgence: 1,
+      searchName: "",
     };
   }
 
@@ -125,6 +126,15 @@ class AnnuaireListe extends React.Component {
     });
   }
 
+  reloadAnnuaireByName(_searchedName) {
+    var annuaire2 = this.state.annuaire;
+    annuaire2 = annuaire2.filter((item) => {
+      return (item.nom.toLowerCase().match(_searchedName) || item.prenom.toLowerCase().match(_searchedName))
+    })
+
+    this.setState({'annuaire': annuaire2, isReady: true});
+  }
+
   componentDidMount() {
     this.reloadAnnuaireByAgence(1);
   }
@@ -183,7 +193,23 @@ class AnnuaireListe extends React.Component {
                   <Picker.Item label="Rennes" value="17" />
                 </Picker>
               </View>
-              <SearchFilter />
+              
+              <View>
+                <TextInput
+                  style={styles.SearchFilter}
+                  placeholder="Rechercher"
+                  placeholderTextColor="#000000"
+                  underlineColorAndroid={"transparent"}
+                  onChangeText={(searchName) => this.setState({searchName})}
+                  onSubmitEditing={() => this.reloadAnnuaireByName(this.state.searchName)}
+                />
+                <TouchableHighlight style={styles.touchableSearchIcon} onPress={() => this.reloadAnnuaireByName(this.state.searchName)}>
+                  <Image
+                    style={styles.SearchIcon}
+                    source={require("../../../images/icons/SearchIcon.png")}
+                  />
+                </TouchableHighlight>
+              </View>
             </ContainerFilters>
 
             <View style={styles.container}>

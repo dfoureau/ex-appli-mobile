@@ -119,4 +119,34 @@ export default StyleSheet.create({
     color: "#000",
     //fontSize:16,
   },
+
+  SearchFilter: {
+    minWidth: width * 0.6,
+    height: 40,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 3,
+    fontSize: 16,
+    padding: 0,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingBottom: 2,
+    marginBottom: 10,
+  },
+
+  SearchIcon: {
+    width: 32,
+    height: 32,
+    position: "absolute",
+    top: 3,
+    right: 2,
+  },
+
+  touchableSearchIcon: {
+    width: 64,
+    height: 32,
+    position: "absolute",
+    top: 3,
+    right: 2,
+  },
+  
 });
