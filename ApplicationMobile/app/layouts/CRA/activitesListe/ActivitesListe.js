@@ -146,7 +146,7 @@ class ActivitesListe extends React.Component {
                 <View style={style.containerPicker}>
                   <Picker
                     style={{
-                      width: 120,
+                      width: 110,
                     }}
                     selectedValue={this.state.annee}
                     onValueChange={(itemValue, itemIndex) =>
@@ -184,7 +184,7 @@ class ActivitesListe extends React.Component {
                 renderItem={({ item }) => (
                   !item.moreThanOne ? (
                     <View>
-                    <Text style={StyleGeneral.periodText}>
+                    <Text style={style.periodTextTitre}>
                     {!item.hideDate ? item.date : null}
                     </Text>
                     <TouchableOpacity
@@ -204,7 +204,7 @@ class ActivitesListe extends React.Component {
                     </View>
                   ) : (
                     <View>
-                    <Text style={StyleGeneral.periodText}>
+                    <Text style={style.periodTextTitre}>
                     {!item.hideDate ? item.date : null}
                     </Text>
                     <TouchableOpacity

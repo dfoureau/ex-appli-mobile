@@ -73,14 +73,12 @@ export default StyleSheet.create({
   firstViewCRA: {
     display: "flex",
     flexDirection: "row",
-    marginBottom: 25,
     marginLeft: 15,
   },
   firstViewCRANoMargin: {
     display: "flex",
     flexDirection: "row",
     marginLeft: 15,
-    marginBottom: 15,
   },
 
   periodText: {

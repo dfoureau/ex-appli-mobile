@@ -127,15 +127,16 @@ export default StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     marginTop: 10,
+    marginLeft: 10,
+    marginRight: 10,
   },
 
   containerPicker: {
     flexDirection: "row",
     borderWidth: 1,
-    width: 118,
+    width: 110,
     height: 29,
     alignItems: "center",
-    marginLeft: -3,
   },
 
   containerButton: {
@@ -143,13 +144,12 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
-    marginRight: 10,
-    height: 30,
+    marginRight: 5,
   },
 
   container3: {
     flex: 1,
-    margin: 10,
+    margin: 0,
     padding: 5,
   },
 
@@ -188,5 +188,11 @@ export default StyleSheet.create({
   listIcon: {
     height: 15,
     width: 15,
+  },
+
+  periodTextTitre: {
+    color: "black",
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
