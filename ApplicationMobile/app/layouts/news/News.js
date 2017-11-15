@@ -6,7 +6,7 @@ import NewsItem from "../../components/newsItem/NewsItem";
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../components/containerAccueil/ContainerAccueil";
 
-import Accueil from "../accueil/Accueil";
+import configurationAppli from "../../configuration/Configuration";
 
 class News extends React.Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class News extends React.Component {
         }
       ],
       isReady: false,
-      webServiceLien: "http://185.57.13.103/rest/web/app_dev.php/news/10"
+      webServiceLien: configurationAppli.apiURL + "news/10",
     };
   }
   

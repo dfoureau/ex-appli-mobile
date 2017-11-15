@@ -23,6 +23,8 @@ import Accueil from "../../accueil/Accueil";
 import FraisAjout from "../fraisAjout/FraisAjout";
 import service from "../../../realm/service";
 
+import configurationAppli from "../../../configuration/Configuration";
+
 import moment from "moment";
 
 import {
@@ -58,7 +60,7 @@ class FraisListe extends React.Component {
       year: moment().format("YYYY"),
       isReady: false,
       isData: false,
-      webServiceLien: 'http://185.57.13.103/rest/web/app_dev.php/ndf/',
+      webServiceLien: configurationAppli.apiURL + "ndf/",
     };
     service.delete(FRAIS_SCHEMA);
   }
@@ -94,7 +96,7 @@ class FraisListe extends React.Component {
     showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
     this.state.year = _annee;
-    fetch(this.state.webServiceLien + _annee + '/1000000')
+    fetch(this.state.webServiceLien + _annee + '/' + configurationAppli.userID)
     .then(function(response) {
       if (response.status >= 400) {
         that.setState({
@@ -133,7 +135,7 @@ class FraisListe extends React.Component {
 
   render() {
     if (this.state.data && this.state.data.length > 0) {
-      textePasDeDonnes = <Text style={style.texteMessage}>{this.state.data.length} notes de frais trouvées</Text>;
+      textePasDeDonnes = <Text></Text>;
     } else {
       textePasDeDonnes = <Text style={style.texteMessage}>Aucune note de frais trouvée</Text>;
     }

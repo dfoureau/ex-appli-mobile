@@ -29,6 +29,8 @@ import { OptionFilter } from "../../../components/optionFilter";
 // IMPORT DES LAYOUTS NAVIGABLES
 import { AnnuaireDetail } from "../annuaireDetail";
 
+import configurationAppli from "../../../configuration/Configuration";
+
 class AnnuaireListe extends React.Component {
   constructor(props) {
     super(props);
@@ -115,7 +117,7 @@ class AnnuaireListe extends React.Component {
 
   reloadAnnuaireByAgence(_idAgence) {
     this.state.idAgence = _idAgence;
-    requestURL = 'http://185.57.13.103/rest/web/app_dev.php/annuaire/' + _idAgence;
+    requestURL = configurationAppli.apiURL + 'annuaire/' + _idAgence;
     return fetch(requestURL)
     .then((response) => response.json())
     .then((responseJson) => {
@@ -136,7 +138,7 @@ class AnnuaireListe extends React.Component {
   }
 
   componentDidMount() {
-    this.reloadAnnuaireByAgence(1);
+    this.reloadAnnuaireByAgence(configurationAppli.idAgence);
   }
 
   render() {

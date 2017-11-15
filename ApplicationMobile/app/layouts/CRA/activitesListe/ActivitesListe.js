@@ -27,6 +27,8 @@ import ActivitesDetail from "../activitesDetail/ActivitesDetail";
 import AjoutCra from "../ajoutCRA/AjoutCra";
 import ActivitesConfirmation from "../activitesConfirmation/ActivitesConfirmation";
 
+import configurationAppli from "../../../configuration/Configuration";
+
 import moment from "moment";
 
 import {
@@ -46,7 +48,7 @@ class ActivitesListe extends React.Component {
       isReady: false,
       isData: false,
       annee: moment().format("YYYY"),
-      webServiceLien: "http://185.57.13.103/rest/web/app_dev.php/CRA/124124251/",
+      webServiceLien: configurationAppli.apiURL + "CRA/" + configurationAppli.userID + "/",
     };
   }
 

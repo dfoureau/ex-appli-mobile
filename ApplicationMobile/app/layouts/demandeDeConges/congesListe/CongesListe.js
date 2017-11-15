@@ -23,6 +23,8 @@ import { Button } from "../../../components/Buttons";
 import Accueil from "../../accueil/Accueil";
 import CongesAjout from "../congesAjout/CongesAjout";
 
+import configurationAppli from "../../../configuration/Configuration";
+
 import moment from "moment";
 
 import {
@@ -44,10 +46,8 @@ class CongesListe extends React.Component {
 			dateSolde: "",
 			soldeRTT: "",
 			soldeConges: "",
-	// TODO : Construction de l'adresse a partir d'un fichier de config 
-	// TODO : Recuperation de l'idUser
-			WSLinkSolde: "http://185.57.13.103/rest/web/app_dev.php/conges/solde/124124251",
-			WSLinkList: "http://185.57.13.103/rest/web/app_dev.php/conges/124124251/",
+			WSLinkSolde: configurationAppli.apiURL + "conges/solde/" + configurationAppli.userID,
+			WSLinkList: configurationAppli.apiURL + "conges/" + configurationAppli.userID + "/",
 			dataLoaded: false,
 			noData: false,
 			isReady: false,
@@ -90,54 +90,58 @@ class CongesListe extends React.Component {
 
 	// Retourne le dernier solde congés et le dernier solde RTT de l'utilisateur en paramère
 	getDemandeCongesByUserId() {
-		var that = this;
-		fetch(this.state.WSLinkSolde)
-		.then(function(response) {
-			if (response.status >= 400) {
+		try {
+			var that = this;
+			fetch(this.state.WSLinkSolde)
+			.then(function(response) {
+				if (response.status >= 400) {
+					that.setState({
+						dateSolde: "",
+						soldeRTT: '',
+						soldeConges: ''
+					});
+					throw new Error("Bad response from server");
+				}
+				return response.json();
+			})
+			.then(function(solde) {
 				that.setState({
-					dateSolde: "",
-					soldeRTT: '',
-					soldeConges: ''
+					dateSolde: solde[0]["datesolde"],
+					soldeRTT: solde[0]['rtt'],
+					soldeConges: solde[0]['cp'],
 				});
-				throw new Error("Bad response from server");
-			}
-			return response.json();
-		})
-		.then(function(solde) {
-			that.setState({
-				dateSolde: solde[0]["datesolde"],
-				soldeRTT: solde[0]['rtt'],
-				soldeConges: solde[0]['cp'],
 			});
-		});
+		} catch (error) {}
 	}
 
 	// Retourne toutes les demandes de congés de l'utilisateur en paramètre pour l'année en paramètre
 	getDemandesByUserAndYear(year) {
 		showLoading("Récupération des données. Veuillez patienter...");
-   		var that = this;
-		fetch(this.state.WSLinkList + year)
-		.then(function(response) {
-			if (response.status == 400) {
-        that.setState({data: [], isReady: true});
-				//throw new Error("Bad response from server");
-			} else if (response.status == 404) {
-        that.setState({
-			data: [],
-			noData: true,
-			isReady: true
-		});
-				//throw new Error("No data found");
-	  }
-	  	hideLoading();
-			return response.json();
-		})
-		.then((conges) => this.setState({
-				data: conges,
-				dataLoaded: true,
+		try {
+			var that = this;
+			fetch(this.state.WSLinkList + year)
+			.then(function(response) {
+				if (response.status == 400) {
+			that.setState({data: [], isReady: true});
+					//throw new Error("Bad response from server");
+				} else if (response.status == 404) {
+			that.setState({
+				data: [],
+				noData: true,
 				isReady: true
+			});
+					//throw new Error("No data found");
+		}
+			hideLoading();
+				return response.json();
 			})
-		);
+			.then((conges) => this.setState({
+					data: conges,
+					dataLoaded: true,
+					isReady: true
+				})
+			);
+		} catch (error) {}
 	}
 
 	render() {
