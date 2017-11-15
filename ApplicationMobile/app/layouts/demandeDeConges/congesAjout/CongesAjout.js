@@ -1,22 +1,31 @@
 import React from "react";
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  AsyncStorage,
+	View,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	Alert,
+	AsyncStorage,
 } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import {
-  Table,
-  TableWrapper,
-  Row,
-  Rows,
-  Col,
-  Cols,
-  Cell,
+	Table,
+	TableWrapper,
+	Row,
+	Rows,
+	Col,
+	Cols,
+	Cell,
 } from "react-native-table-component";
+import {
+	showToast,
+	showNotification,
+	showLoading,
+	hideLoading,
+	hide
+} from 'react-native-notifyer';
+import 'whatwg-fetch';
+// npm install whatwg-fetch --save
 import style from "./styles";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
@@ -29,269 +38,372 @@ import service from "../../../realm/service";
 
 const PERIOD_SCHEMA = "Period";
 
+// SCREEN < DEMANDE DE CONGES
 class CongesAjout extends React.Component {
-  constructor(props) {
-    super(props);
-    this.setInitialValues();
-  }
+	constructor(props) {
+		super(props);
+		this.setInitialValues();
+	}
 
-  static navigationOptions = ({ navigation }) => ({
-    idConge: navigation.state.params.idConge,
-  });
+	// Récupération des paramètres de navigation
+	static navigationOptions = ({ navigation }) => ({
+		idConge: navigation.state.params.idConge,
+		month: navigation.state.params.month,
+		year: navigation.state.params.year,
+	});
 
-  setInitialValues() {
-    const { params } = this.props.navigation.state;
+	setInitialValues() {
+		const { params } = this.props.navigation.state;
 
-    if (params.idConge == null) {
-      // Nouvelle demande de congé
-      this.state = {
-        title: "Demande de congés",
-        statusId: 1,
-        status: "nouveau",
-        statusLabel: "Nouvelle DC",
-        header: ["Date du", "Date au", "Type d'abs", "Nb. jours"],
-        periods: [],
-      };
-    } else {
-      // Congé existant en base
-      var conge = {
-        id: 2,
-        startDate: "18/08/2017",
-        endDate: "25/08/2017",
-        dayNumber: 6,
-        statusId: 2,
-        status: "brouillon",
-        periods: [
-          {
-            id: 1,
-            startDate: "18/08/2017",
-            startPeriod: "1",
-            endDate: "20/08/2017",
-            endPeriod: "2",
-            absTypeId: "CP",
-            workingDays: 2,
-          },
-          {
-            id: 2,
-            startDate: "22/08/2017",
-            startPeriod: "1",
-            endDate: "25/08/2017",
-            endPeriod: "2",
-            absTypeId: "RT",
-            workingDays: 4,
-          },
-        ],
-      };
+		this.state = {
+			title: "Demande de congés",
+			statusId: 1,
+			status: "nouveau",
+			statusLabel: "Nouvelle DC",
+			header: ["Date du", "Date au", "Type d'abs", "Nb. jours"],
+			periods: [],
+			WSLinkSolde: "http://185.57.13.103/rest/web/app_dev.php/conges/solde/124124251",
+			WSLinkPeriode: "http://185.57.13.103/rest/web/app_dev.php/conges/periodes/124124251/",
+			WSLinkCreate: "http://185.57.13.103/rest/web/app_dev.php/conges",
+      userId: 124124251,
+			obj : {
+				method: '',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: "",
+			},
+			dateSolde: "",
+			soldeRTT: "",
+			soldeConges: "",
+			dataSaved: false,
+			numDemande: null,
+		};
 
-      this.state = {
-        title: "Demande de congés",
-        statusId: conge.statusId,
-        status: conge.status,
-        statusLabel: "DC en brouillon",
-        header: ["Date du", "Date au", "Type d'abs", "Nb. jours"],
-        periods: conge.periods,
-      };
-    }
-  }
+		if (params.numDemande !== null) {
 
-  //Permet d'afficher l'ecran choisi dans le menu
-  afficherEcranParent(ecran) {
-    this.props.navigation.navigate(ecran);
-  }
+			// Récupere les périodes
+			this.getPeriodeCongesByUserIdNumDemande(params.numDemande);
 
-  addNewPeriod() {
-    this.props.navigation.navigate("CongesPeriode", {
-      idConge: this.props.navigation.state.idConge,
-      idPeriod: null,
-    });
-  }
+			// Congé existant en base
+			this.state.numDemande = params.numDemande;
+			this.state.statusId = params.etat;
+			this.state.status = params.libelleEtat;
+			this.state.dateDemande = params.dateDemande;
+			this.state.statusLabel = "DC en brouillon";
+		}
+	}
 
-  modifyPeriod(id, isNew) {
-    this.props.navigation.navigate("CongesPeriode", {
-      idConge: this.props.navigation.state.idConge,
-      idPeriod: id,
-      isNew: isNew,
-    });
-  }
+	componentDidMount() {
+		this.getSoldeCongesByUserId();
+	}
 
-  deleteConge() {
-    this.props.navigation.navigate("CongesConfirmation");
-  }
+	// Retourne toutes les périodes de congés de l'utilisateur et du numéro de demande en paramètre
+	getPeriodeCongesByUserIdNumDemande(numDemande) {
+		var that = this;
 
-  saveDraft() {
-    this.setState({
-      statusId: 2,
-      status: "brouillon",
-      statusLabel: "DC en brouillon",
-    });
-    this.props.navigation.navigate("CongesConfirmation");
-  }
+		fetch(this.state.WSLinkPeriode + numDemande)
+		.then(function(response) {
+			if (response.status >= 400) {
+				that.setState({
+					periods: [],
+				});
+				throw new Error("Bad response from server");
+			}
+			return response.json();
+		})
+		.then(function(p) {
+			that.setState({
+				periods: p,
+			});
+		});
+	}
 
-  validateConge() {
-    this.setState({
-      statusId: 3,
-      status: "validé",
-      statusLabel: "Modifications interdites",
-    });
-    // Après sauvegarde en bdd, on reset le cache
-    service.delete(PERIOD_SCHEMA);
+	// Retourne le dernier solde congés et le dernier solde RTT de l'utilisateur en paramère
+	getSoldeCongesByUserId() {
+		var that = this;
 
-    this.props.navigation.navigate("CongesConfirmation");
-  }
+		fetch(this.state.WSLinkSolde)
+		.then(function(response) {
+			if (response.status >= 400) {
+				that.setState({
+					dateSolde: "",
+					soldeRTT: '',
+					soldeConges: ''
+				});
+				throw new Error("Bad response from server");
+			}
+			return response.json();
+		})
+		.then(function(solde) {
+			that.setState({
+				dateSolde: solde[0]["datesolde"],
+				soldeRTT: solde[0]['rtt'],
+				soldeConges: solde[0]['cp'],
+			});
+		});
+	}
 
-  getRows(tab, isNew) {
-    return tab.map((row, i) => (
-      <TouchableOpacity
-        key={i}
-        onPress={() => this.modifyPeriod(row.id, isNew)}
-      >
-        <Row
-          style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
-          borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
-          textStyle={style.rowText}
-          data={[row.startDate, row.endDate, row.absTypeId, row.workingDays]}
-        />
-      </TouchableOpacity>
-    ));
-  }
+	// Permet d'afficher l'ecran choisi dans le menu
+	afficherEcranParent(ecran) {
+		this.props.navigation.navigate(ecran);
+	}
 
-  afficherRows() {
-    // Périodes existants en base
-    let periods = this.state.periods;
-    return this.getRows(periods, false);
-  }
+	addNewPeriod() {
+		this.props.navigation.navigate("CongesPeriode", {
+			idConge: this.props.navigation.state.idConge,
+			idPeriod: null,
+		});
+	}
 
-  afficherNewRows() {
-    // Périodes non encore enregistrées en base
-    let newPeriods = service.get(PERIOD_SCHEMA);
-    return this.getRows(newPeriods, true);
-  }
+	modifyPeriod(id, isNew) {
+		this.props.navigation.navigate("CongesPeriode", {
+			idConge: this.props.navigation.state.idConge,
+			idPeriod: id,
+			isNew: isNew,
+		});
+	}
 
-  showDeleteButton() {
-    // if(this.state.statusId == 2)
-    return (
-      <Button
-        buttonStyles={style.deleteButton}
-        text="SUPPRIMER"
-        onPress={() =>
-          Alert.alert(
-            "Suppression",
-            "Etes-vous sûr de vouloir supprimer le congé ?",
-            [
-              { text: "Non", onPress: () => console.log("Cancel!") },
-              { text: "Oui", onPress: () => this.deleteConge() },
-            ]
-          )}
-      />
-    );
-  }
+	deleteConge() {
+		this.props.navigation.navigate("CongesConfirmation");
+	}
 
-  showDraftButton() {
-    // if(this.state.statusId == 1 || this.state.statusId == 2)
-    return (
-      <Button
-        buttonStyles={style.draftButton}
-        text="BROUILLON"
-        onPress={() => this.saveDraft()}
-      />
-    );
-  }
+	saveDraft() {
+		this.setState({
+			statusId: 2,
+			status: "brouillon",
+			statusLabel: "DC en brouillon",
+		});
+		this.props.navigation.navigate("CongesConfirmation");
+	}
 
-  showValidateButton() {
-    // if(this.state.statusId == 1 || this.state.statusId == 2)
-    return <Button text="VALIDER" onPress={() => this.validateConge()} />;
-  }
+	validateConge() {
+		if (this.state.numDemande !== null) {
+			sendDemandeConges('POST');
+		} else {
+			sendDemandeConges('PUT');
+		}
+	}
 
-  render() {
-    return (
-      <ContainerTitre
-        title={this.state.title}
-        navigation={this.props.navigation}
-      >
-        <View style={style.container}>
-          <View style={style.container1}>
-            <View style={style.containerStatus}>
-              <Text style={style.text}>Etat : {this.state.status}</Text>
-            </View>
-            <View style={style.containerStatusLabel}>
-              <Text style={style.statusLabel}>{this.state.statusLabel}</Text>
-            </View>
-          </View>
-          <View style={style.container2}>
-            <View style={style.containerInfoElement}>
-              <Text style={style.text}>Solde au :</Text>
-              <TextInput
-                style={style.textInputYear}
-                value={"09/2017"}
-                editable={false}
-                underlineColorAndroid="transparent"
-              />
-            </View>
-            <View style={style.containerInfoElement}>
-              <Text style={style.text}>RTT :</Text>
-              <TextInput
-                style={style.textInputCounter}
-                value="11.0"
-                editable={false}
-                underlineColorAndroid="transparent"
-              />
-            </View>
-            <View style={style.containerInfoElement}>
-              <Text style={style.text}>CP :</Text>
-              <TextInput
-                style={style.textInputCounter}
-                value={"25.0"}
-                editable={false}
-                underlineColorAndroid="transparent"
-              />
-            </View>
-          </View>
-          <View style={style.container3}>
-            <View style={style.containerTable}>
-              <Table borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}>
-                <Row
-                  data={this.state.header}
-                  style={style.header}
-                  textStyle={style.headerText}
-                />
-                {this.afficherRows()}
-                {this.afficherNewRows()}
-              </Table>
-            </View>
-            <View>
-              <Button
-                text="AJOUTER NOUVELLE PERIODE"
-                onPress={() => this.addNewPeriod()}
-              />
-            </View>
-          </View>
-          <View style={style.container4}>
-            {this.showDeleteButton()}
-            {this.showDraftButton()}
-            {this.showValidateButton()}
-          </View>
-        </View>
-      </ContainerTitre>
-    );
-  }
+// TODO finir le post
+	sendDemandeConges(method) {
+		showLoading("Enregistrement en cours. Veuillez patientier...");
+		
+		var arrPeriodes = [];
+		this.state.periods.map((periodes) => {
+			arrPeriodes.push(
+				{
+					numLigne: parseInt(periodes.numLigne),
+					dateDebut: periodes.dateDu,
+					dateFin: periodes.dateAu,
+					nbJours: parseInt(periodes.nbJour),
+					typeabs: parseInt(periodes.typeabs),
+				}
+			);
+		});
+
+		this.state.obj.method = method;
+		this.state.obj.body = JSON.stringify({
+				userId: this.state.userId,
+				etat: this.state.status,
+				dateEtat: this.state.dateDemande,
+				lignesDemandes: arrPeriodes,
+			});
+		var that = this;
+
+		fetch(this.state.WSLinkCreate, this.state.obj)
+		.then(function(response) {
+// console.warn(JSON.stringify({
+// 				userId: that.state.userId,
+// 				etat: that.state.status,
+// 				dateEtat: that.state.dateDemande,
+// 				lignesDemandes: arrPeriodes,
+// 			}));
+// console.warn(response.status);
+// console.warn(JSON.stringify(response.text()));
+			if (response.status >= 400) {
+				hideLoading();
+				console.log("error : status >= 400");
+				that.setState({
+					dataSaved: false,
+				});
+				var id = showToast("Erreur : l'enregistrement s'est mal passé");
+				throw new Error("Creation Error");
+			}
+			return response.json();
+		})
+		.then(function(solde) {
+			hideLoading();
+			that.setState({
+				dataSaved: true,
+				statusId: 3,
+				status: "validé",
+				statusLabel: "Modifications interdites",
+			});
+			// Après sauvegarde en bdd, on reset le cache
+			service.delete(PERIOD_SCHEMA);
+			this.props.navigation.navigate("CongesConfirmation");
+		})
+		.catch(function (error) {
+			hideLoading();
+			console.log("error : " + error);
+			var id = showToast("Erreur : l'enregistrement s'est mal passé // " + error);
+		});
+	}
+
+	getRows(tab, isNew) {
+		return tab.map((row, i) => (
+			<TouchableOpacity
+				key={i}
+				onPress={() => this.modifyPeriod(row.id, isNew)}
+			>
+				<Row
+					style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
+					borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
+					textStyle={style.rowText}
+					data={[row.dateDuFormated, row.dateAuFormated, row.codeTypeAbs, row.nbJour]}
+				/>
+			</TouchableOpacity>
+		));
+	}
+
+	afficherRows() {
+		// Périodes existants en base
+		let periods = this.state.periods;
+		return this.getRows(periods, false);
+	}
+
+	afficherNewRows() {
+		// Périodes non encore enregistrées en base
+		let newPeriods = service.get(PERIOD_SCHEMA);
+		return this.getRows(newPeriods, true);
+	}
+
+	showDeleteButton() {
+		// if(this.state.statusId == 2)
+		return (
+			<Button
+				buttonStyles={style.deleteButton}
+				text="SUPPRIMER"
+				onPress={() =>
+					Alert.alert(
+						"Suppression",
+						"Etes-vous sûr de vouloir supprimer le congé ?",
+						[
+							{ text: "Non", onPress: () => console.log("Cancel!") },
+							{ text: "Oui", onPress: () => this.deleteConge() },
+						]
+					)}
+			/>
+		);
+	}
+
+	showDraftButton() {
+		// if(this.state.statusId == 1 || this.state.statusId == 2)
+		return (
+			<Button
+				buttonStyles={style.draftButton}
+				text="BROUILLON"
+				onPress={() => this.saveDraft()}
+			/>
+		);
+	}
+
+	showValidateButton() {
+		// if(this.state.statusId == 1 || this.state.statusId == 2)
+		return <Button text="VALIDER" onPress={() => this.validateConge()} />;
+	}
+
+	render() {
+		return (
+			<ContainerTitre
+				title={this.state.title}
+				navigation={this.props.navigation}
+			>
+				<View style={style.container}>
+					<View style={style.container1}>
+						<View style={style.containerStatus}>
+							<Text style={style.text}>Etat : {this.state.status}</Text>
+						</View>
+						<View style={style.containerStatusLabel}>
+							<Text style={style.statusLabel}>{this.state.statusLabel}</Text>
+						</View>
+					</View>
+					<View style={style.container2}>
+						<View style={style.containerInfoElement}>
+							<Text style={style.text}>Solde au :</Text>
+							<TextInput
+								style={style.textInputYear}
+								value={this.state.dateSolde}
+								editable={false}
+								underlineColorAndroid="transparent"
+							/>
+						</View>
+						<View style={style.containerInfoElement}>
+							<Text style={style.text}>RTT :</Text>
+							<TextInput
+								style={style.textInputCounter}
+								value={this.state.soldeRTT}
+								editable={false}
+								underlineColorAndroid="transparent"
+							/>
+						</View>
+						<View style={style.containerInfoElement}>
+							<Text style={style.text}>CP :</Text>
+							<TextInput
+								style={style.textInputCounter}
+								value={this.state.soldeConges}
+								editable={false}
+								underlineColorAndroid="transparent"
+							/>
+						</View>
+					</View>
+					<View style={style.container3}>
+						<View style={style.containerTable}>
+							<Table borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}>
+								<Row
+									data={this.state.header}
+									style={style.header}
+									textStyle={style.headerText}
+								/>
+								{this.afficherRows()}
+								{this.afficherNewRows()}
+							</Table>
+						</View>
+						<View>
+							<Button
+								text="AJOUTER NOUVELLE PERIODE"
+								onPress={() => this.addNewPeriod()}
+							/>
+						</View>
+					</View>
+					<View style={style.container4}>
+						{this.showDeleteButton()}
+						{this.showDraftButton()}
+						{this.showValidateButton()}
+					</View>
+				</View>
+			</ContainerTitre>
+		);
+	}
 }
 
 // NAVIGATION AUTORISEE A PARTIR DE CE LAYOUT
 const navigation = StackNavigator({
-  CongesAjout: {
-    screen: CongesAjout,
-    navigationOptions: { header: null },
-  },
+	CongesAjout: {
+		screen: CongesAjout,
+		navigationOptions: { header: null },
+	},
 
-  CongesPeriode: {
-    screen: CongesPeriode,
-    navigationOptions: { header: null },
-  },
+	CongesPeriode: {
+		screen: CongesPeriode,
+		navigationOptions: { header: null },
+	},
 
-  CongesConfirmation: {
-    screen: CongesConfirmation,
-    navigationOptions: { header: null },
-  },
+	CongesConfirmation: {
+		screen: CongesConfirmation,
+		navigationOptions: { header: null },
+	},
 });
 
 // EXPORT DE LA NAVIGATION

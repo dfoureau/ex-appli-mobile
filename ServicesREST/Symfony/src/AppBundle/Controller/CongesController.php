@@ -41,16 +41,16 @@ class CongesController extends Controller
 			$tUserId = (int) $userId;
 
 			$sql = "SELECT 
-                        users.id, 
-                        concat(RIGHT(concat('0', soldesconges.mois), 2),'/', soldesconges.annee) AS datesolde, 
-                        soldesconges.cp, 
-                        soldesconges.rtt 
-                    FROM 
-                        users,
-                        soldesconges 
-                    WHERE users.numMat = soldesconges.nummat
-                    AND users.id = " . $tUserId . " 
-                    ORDER BY concat(annee, mois) DESC limit 1";
+						users.id, 
+						concat(RIGHT(concat('0', soldesconges.mois), 2),'/', soldesconges.annee) AS datesolde, 
+						soldesconges.cp, 
+						soldesconges.rtt 
+					FROM 
+						users,
+						soldesconges 
+					WHERE users.numMat = soldesconges.nummat
+					AND users.id = " . $tUserId . " 
+					ORDER BY concat(annee, mois) DESC limit 1";
 
 			$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
 			$stmt->execute();
@@ -145,7 +145,7 @@ class CongesController extends Controller
 				case "Brouillon" :
 					$etat = 0;
 					break;
-				case "En attente validation" :
+				case "En attente de validation" :
 					$etat = 1;
 					break;
 					// Etats validés ou A modifier interdits, autres états inconnus
@@ -326,7 +326,7 @@ class CongesController extends Controller
 	}
 
 	/**
-	 * Retourne toutes les demandes de congés de l'utilisateur en paramètre pour l'année en paramètre
+	 * Retourne toutes les demandes de congés de l'utilisateur et de l'année en paramètre
 	 * 
 	 * @param Request 	$request 		Requete en entrée
 	 * @param int 		$userId 		Identifiant de l'utilisateur
@@ -351,24 +351,24 @@ class CongesController extends Controller
 			$tYear = (int) $year;
 
 			$sql = "SELECT
-                        numDemande,
-                        min(DATE_FORMAT(dateDu, '%d/%m/%Y')) AS dateDuMin, 
-                        max(DATE_FORMAT(dateAu, '%d/%m/%Y')) AS dateAuMax,
-                        SUM(nbJour) AS nbJour,
-                        demandesconges.etat,
+						numDemande,
+						min(DATE_FORMAT(dateDu, '%d/%m/%Y')) AS dateDuMin, 
+						max(DATE_FORMAT(dateAu, '%d/%m/%Y')) AS dateAuMax,
+						SUM(nbJour) AS nbJour,
+						demandesconges.etat,
                         demandesconges.validateur,
-                        concat(users.prenom,' ', users.nom) AS valid,
-                        DATE_FORMAT(dateactionetat, '%d/%m/%Y') AS dateactionetat,
-                        etatra.libelle AS libelleEtat
-                    FROM 
-                        demandesconges
-                    LEFT JOIN etatra ON demandesconges.etat = etatra.id
+                        demandesconges.dateDemande,
+						concat(users.prenom,' ', users.nom) AS valid,
+						etatra.libelle AS libelleEtat
+					FROM 
+						demandesconges
+					LEFT JOIN etatra ON demandesconges.etat = etatra.id
                     LEFT JOIN users ON demandesconges.validateur = users.id
-                    WHERE idUser = " . $tUserId . "
-                    AND EXTRACT(YEAR from dateDu) <= " . $tYear . "
-                    AND EXTRACT(YEAR from dateAu) >= " . $tYear . "
-                    GROUP BY numDemande
-                    ORDER BY dateDu DESC";
+					WHERE idUser = " . $tUserId . "
+					AND EXTRACT(YEAR from dateDu) <= " . $tYear . "
+					AND EXTRACT(YEAR from dateAu) >= " . $tYear . "
+					GROUP BY numDemande
+					ORDER BY dateDu DESC";
 
 			$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
 			$stmt->execute();
@@ -378,6 +378,67 @@ class CongesController extends Controller
 				return new JsonResponse($retour, Response::HTTP_OK);
 			} else {
 				$message = array('message' => 'Utilisateur non trouvé : ' . $tUserId);
+				return new JsonResponse($message, Response::HTTP_NOT_FOUND);
+			}
+		} else {
+			$message = array('message' => 'Format paramètres incorrect');
+			return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+		}
+	}
+
+	/**
+	 * Retourne toutes les périodes de congés de l'utilisateur et du numéro de demande en paramètre
+	 * 
+	 * @param Request 	$request 		Requete en entrée
+	 * @param int 		$userId 		Identifiant de l'utilisateur
+	 * @param int 		$numDemande 	Numéro de la demande de congé
+	 *
+	 * @return JsonResponse
+	 *
+	 * @Route("/conges/periodes/{userId}/{numDemande}", name="periodes")
+	 * @Method("GET")
+	 */
+	public function getFindPeriodesByUserAndNumDemande(Request $request, $userId, $numDemande)
+	{
+		// $log=new LoginController();
+		// $retourAuth = $log->checkAuthentification($this);
+		// if (array_key_exists("erreur", $retourAuth)) {
+		// 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
+		// }
+
+		// Test les valeurs en entrée
+		if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numDemande)) {
+			$tUserId = (int) $userId;
+			$tNumDemande = (int) $numDemande;
+
+			$sql = "SELECT
+						numLigne,
+						DATE_FORMAT(dateDu, '%d/%m/%Y') AS dateDuFormated, 
+						DATE_FORMAT(dateAu, '%d/%m/%Y') AS dateAuFormated,
+						dateDu,
+						dateAu,
+						nbJour,
+						etat,
+						demandesconges.idTypeAbs AS typeabs,
+						typesabsences.code AS codeTypeAbs,
+						typesabsences.libelle AS libelleTypeAbs,
+						etatra.libelle AS libelleEtat
+					FROM 
+						demandesconges
+					LEFT JOIN etatra ON demandesconges.etat = etatra.id
+					LEFT JOIN typesabsences ON demandesconges.idTypeAbs = typesabsences.idTypeAbs
+					WHERE idUser = " . $tUserId . "
+					AND numDemande = " . $tNumDemande . "
+					ORDER BY dateDu";
+
+			$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+			$stmt->execute();
+			$retour = $stmt->fetchAll();
+
+			if (count($retour) != 0) {
+				return new JsonResponse($retour, Response::HTTP_OK);
+			} else {
+				$message = array('message' => 'Période non trouvée : ' . $tUserId);
 				return new JsonResponse($message, Response::HTTP_NOT_FOUND);
 			}
 		} else {

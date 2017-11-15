@@ -29,7 +29,7 @@ class UtilsController extends Controller
 	 */
 	static function isValidDate($value) {
 
-		$date = explode("T", $value);
+		$date = explode(" ", $value);
 		
 		if (strlen($date[0]) == 10) {
 			$date = explode("-", $date[0]);

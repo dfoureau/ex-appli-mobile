@@ -40,8 +40,6 @@ class CongesListe extends React.Component {
 	// TODO : Recuperation de l'idUser
 			WSLinkSolde: "http://185.57.13.103/rest/web/app_dev.php/conges/solde/124124251",
 			WSLinkList: "http://185.57.13.103/rest/web/app_dev.php/conges/124124251/",
-			// WSLinkSolde: "http://185.57.13.103/rest/web/app_dev.php/conges/solde/124124251",
-			// WSLinkList: "http://185.57.13.103/rest/web/app_dev.php/conges/124124251/",
 			dataLoaded: false,
 			noData: false,
 			isReady: false,
@@ -64,12 +62,12 @@ class CongesListe extends React.Component {
 		this.props.navigation.navigate("CongesAjout", { idConge: null });
 	}
 
-	getConge(id, dateD, dateA, codeC, nbj, etat, libEtat) {
+	getConge(num, dateDem, dateD, dateA, nbj, etat, libEtat) {
 		this.props.navigation.navigate("CongesAjout", { 
-			idConge: id,
-			dateDuMin: dateD,
-			dateAuMax: dateA,
-			codeConge: codeC,
+			numDemande: num,
+			dateDemande: dateDem,
+			dateDu: dateD,
+			dateAu: dateA,
 			nbJour: nbj,
 			etat: etat,
 			libelleEtat: libEtat,
@@ -118,12 +116,20 @@ class CongesListe extends React.Component {
         that.setState({data: [], isReady: true});
 				//throw new Error("Bad response from server");
 			} else if (response.status == 404) {
-        that.setState({data: [], noData: true, isReady: true});
+        that.setState({
+			data: [],
+			noData: true,
+			isReady: true
+		});
 				//throw new Error("No data found");
       }
 			return response.json();
 		})
-		.then((conges) => this.setState({data: conges, dataLoaded: true, isReady: true})
+		.then((conges) => this.setState({
+				data: conges,
+				dataLoaded: true,
+				isReady: true
+			})
 		);
 	}
 
@@ -225,8 +231,8 @@ class CongesListe extends React.Component {
 										renderItem={({ item }) => (
                       <TouchableOpacity
                         key={item.numDemande}
-                        onPress={() => this.getConge(item.numDemande, item.dateDuMin, item.dateAuMax, item.codeConge, 
-                          item.nbJour, item.etat, item.libelleEtat)}
+                        onPress={() => this.getConge(item.numDemande, item.dateDemande, item.dateDu, item.dateAu, 
+							item.nbJour, item.etat, item.libelleEtat)}
                       >
 											<View style={style.containerList}>
 													<View style={style.containerPeriod}>
