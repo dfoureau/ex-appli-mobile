@@ -377,7 +377,7 @@ class CongesController extends Controller
 			if (count($retour) != 0) {
 				return new JsonResponse($retour, Response::HTTP_OK);
 			} else {
-				$message = array('message' => 'Utilisateur non trouvé : ' . $tUserId);
+				$message = array('message' => 'Utilisateur non trouve : ' . $tUserId);
 				return new JsonResponse($message, Response::HTTP_NOT_FOUND);
 			}
 		} else {

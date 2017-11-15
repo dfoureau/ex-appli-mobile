@@ -27,7 +27,17 @@ import ActivitesDetail from "../activitesDetail/ActivitesDetail";
 import AjoutCra from "../ajoutCRA/AjoutCra";
 import ActivitesConfirmation from "../activitesConfirmation/ActivitesConfirmation";
 
+import configurationAppli from "../../../configuration/Configuration";
+
 import moment from "moment";
+
+import {
+	showToast,
+	showNotification,
+	showLoading,
+	hideLoading,
+	hide
+} from 'react-native-notifyer';
 
 class ActivitesListe extends React.Component {
   constructor(props) {
@@ -38,14 +48,15 @@ class ActivitesListe extends React.Component {
       isReady: false,
       isData: false,
       annee: moment().format("YYYY"),
-      webServiceLien1: "http://185.57.13.103/rest/web/app_dev.php/CRA/124124251/",
+      webServiceLien: configurationAppli.apiURL + "CRA/" + configurationAppli.userID + "/",
     };
   }
 
   getDemandesByUserAndYear(_annee) {
+    showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
     this.state.annee = _annee;
-		fetch(this.state.webServiceLien1 + _annee)
+		fetch(this.state.webServiceLien + _annee)
 		.then(function(response) {
 			if (response.status == 400) {
         that.setState({
@@ -57,14 +68,17 @@ class ActivitesListe extends React.Component {
         that.setState({
           data: [],
           isData: false,
-          isReady: true,});
+          isReady: true,
+        });
       }
+      hideLoading();
 			return response.json();
 		})
 		.then((cra) => this.setState({
       data: cra,
       isData: true,
-      isReady: true,})
+      isReady: true,
+    })
     );
 	}
 

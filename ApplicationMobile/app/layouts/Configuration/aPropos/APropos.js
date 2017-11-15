@@ -5,7 +5,8 @@ import Style from "./styles";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
-import Accueil from "../../accueil/Accueil";
+
+import configurationAppli from "../../../configuration/Configuration";
 
 class APropos extends React.Component {
   constructor(props) {
@@ -21,7 +22,7 @@ class APropos extends React.Component {
   }
 
   render() {
-    let lienSupportJira = "http://jira.svc.cat-amania.com/"
+    let lienSupportJira = configurationAppli.lienSupportJira
 
     return (
       <View>

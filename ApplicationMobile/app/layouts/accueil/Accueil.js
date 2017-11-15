@@ -17,6 +17,8 @@ import { News } from "../news";
 import { APropos } from "../Configuration/aPropos";
 import { Reglages } from "../Configuration/reglages";
 
+import configurationAppli from "../../configuration/Configuration";
+
 class Accueil extends React.Component {
   constructor(props) {
     super(props);
@@ -55,9 +57,9 @@ class Accueil extends React.Component {
       isReadyw1: false,
       isReadyw2: false,
       isReadyw3: false,
-      webServiceLien1: "http://185.57.13.103/rest/web/app_dev.php/utilisateur/124124251",
-      webServiceLien2: "http://185.57.13.103/rest/web/app_dev.php/conges/solde/124124251",
-      webServiceLien3: "http://185.57.13.103/rest/web/app_dev.php/news/3"
+      webServiceLien1: configurationAppli.apiURL + "utilisateur/" + configurationAppli.userID,
+      webServiceLien2: configurationAppli.apiURL + "conges/solde/" + configurationAppli.userID,
+      webServiceLien3: configurationAppli.apiURL + "news/3",
     };
   }
 
@@ -71,7 +73,10 @@ class Accueil extends React.Component {
         return response.json();
       })
       .then(function(foncuser) {
-        that.setState({user: foncuser, isReadyw1: true})
+        that.setState({
+          user: foncuser,
+          isReadyw1: true,
+        })
     });
     
     var that = this;
