@@ -25,6 +25,14 @@ import CongesAjout from "../congesAjout/CongesAjout";
 
 import moment from "moment";
 
+import {
+	showToast,
+	showNotification,
+	showLoading,
+	hideLoading,
+	hide
+} from 'react-native-notifyer';
+
 // SCREEN = DEMANDE DE CONGES
 class CongesListe extends React.Component {
 	constructor(props) {
@@ -108,7 +116,8 @@ class CongesListe extends React.Component {
 
 	// Retourne toutes les demandes de congés de l'utilisateur en paramètre pour l'année en paramètre
 	getDemandesByUserAndYear(year) {
-    var that = this;
+		showLoading("Récupération des données. Veuillez patienter...");
+   		var that = this;
     
 		fetch(this.state.WSLinkList + year)
 		.then(function(response) {
@@ -122,7 +131,8 @@ class CongesListe extends React.Component {
 			isReady: true
 		});
 				//throw new Error("No data found");
-      }
+	  }
+	  	hideLoading();
 			return response.json();
 		})
 		.then((conges) => this.setState({

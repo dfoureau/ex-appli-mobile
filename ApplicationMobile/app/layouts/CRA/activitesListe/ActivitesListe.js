@@ -29,6 +29,14 @@ import ActivitesConfirmation from "../activitesConfirmation/ActivitesConfirmatio
 
 import moment from "moment";
 
+import {
+	showToast,
+	showNotification,
+	showLoading,
+	hideLoading,
+	hide
+} from 'react-native-notifyer';
+
 class ActivitesListe extends React.Component {
   constructor(props) {
     super(props);
@@ -43,6 +51,7 @@ class ActivitesListe extends React.Component {
   }
 
   getDemandesByUserAndYear(_annee) {
+    showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
     this.state.annee = _annee;
 		fetch(this.state.webServiceLien1 + _annee)
@@ -59,6 +68,7 @@ class ActivitesListe extends React.Component {
           isData: false,
           isReady: true,});
       }
+      hideLoading();
 			return response.json();
 		})
 		.then((cra) => this.setState({

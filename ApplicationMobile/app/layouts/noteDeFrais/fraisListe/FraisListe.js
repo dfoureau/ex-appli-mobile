@@ -25,6 +25,14 @@ import service from "../../../realm/service";
 
 import moment from "moment";
 
+import {
+	showToast,
+	showNotification,
+	showLoading,
+	hideLoading,
+	hide
+} from 'react-native-notifyer';
+
 const FRAIS_SCHEMA = "Frais";
 
 class FraisListe extends React.Component {
@@ -81,12 +89,14 @@ class FraisListe extends React.Component {
   }
 
   getNDFByUser(year){
+    showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
     fetch('http://185.57.13.103/rest/web/app_dev.php/ndf/'+year+'/1000000')
     .then(function(response) {
       if (response.status >= 400) {
         that.setState({data: [], isReady: true})
       }
+      hideLoading();
       return response.json();
     })
     .then(function(ndf) {
