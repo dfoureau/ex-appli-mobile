@@ -57,6 +57,8 @@ class FraisListe extends React.Component {
       ],
       year: moment().format("YYYY"),
       isReady: false,
+      isData: false,
+      webServiceLien: 'http://185.57.13.103/rest/web/app_dev.php/ndf/',
     };
     service.delete(FRAIS_SCHEMA);
   }
@@ -88,24 +90,38 @@ class FraisListe extends React.Component {
     this.getNDFByUser(year);
   }
 
-  getNDFByUser(year){
+  getNDFByUser(_annee){
     showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
-    fetch('http://185.57.13.103/rest/web/app_dev.php/ndf/'+year+'/1000000')
+    this.state.annee = _annee;
+    fetch(this.state.webServiceLien + _annee + '1000000')
     .then(function(response) {
-      if (response.status >= 400) {
-        that.setState({data: [], isReady: true})
+      if (response.status == 400) {
+        that.setState({
+          data: [],
+          isReady: true,
+          isData: false,
+        });
+			} else if (response.status == 404) {
+        that.setState({
+          data: [],
+          isData: false,
+          isReady: true,
+        });
       }
       hideLoading();
       return response.json();
     })
     .then(function(ndf) {
-      that.setState({data: ndf, isReady: true})
+      that.setState({
+        data: ndf,
+        isReady: true,
+        isData: true,
+      })
     });
   }
 
   reloadNDFByYear(_year){
-    var that = this;
     that.setState({year: _year});
 
     this.getNDFByUser(_year);
@@ -122,12 +138,6 @@ class FraisListe extends React.Component {
   }
 
   render() {
-    if (this.state.data && this.state.data.length > 0) {
-      textePasDeDonnes = <Text style={style.texteMessage}>{this.state.data.length} notes de frais trouvées</Text>;
-    } else {
-      textePasDeDonnes = <Text style={style.texteMessage}>Aucune note de frais trouvée</Text>;
-    }
-
     if (!this.state.isReady) {
 			return (
 				<View>
@@ -182,7 +192,14 @@ class FraisListe extends React.Component {
             </View>
             {/* Container liste des NDF */}
             <View style={style.container2}>
-              {textePasDeDonnes}
+
+            {(this.state.data.length <= 0) &&
+                <Text style={StyleGeneral.texte}>
+                  Aucunes données trouvées pour cette année.
+                </Text>
+              }
+
+            {this.state.isData && 
               <FlatList
                 data={this.state.data}
                 renderItem={({ item }) => (
@@ -223,9 +240,9 @@ class FraisListe extends React.Component {
                     </View>
                   </TouchableOpacity>
                 )}
-
                 keyExtractor={(item, index) => index}
               />
+              }
             </View>
           </ContainerAccueil>
         </View>
