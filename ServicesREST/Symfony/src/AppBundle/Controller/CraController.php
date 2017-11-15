@@ -43,7 +43,11 @@ class CraController extends Controller
         unset($retour[0]["mois"]);
         $annee = $retour[0]["annee"];
         unset($retour[0]["annee"]);
-
+		
+		//on formate le mois pour qu'il soit plus joli
+		$moisf=substr(("0".$mois),-2,2);
+					
+		
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ////////////// Algorithme pour transformer la chaine de caractères de la BDD en période de CRA //////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,81 +62,59 @@ class CraController extends Controller
         if($premierJourDuMois == 0){
             $premierJourDuMois = 7;
         }
+		
+		
         //L'index commence à 0
-        $indexPremierJourDuMois = $premierJourDuMois - 1;
+        //$indexPremierJourDuMois = $premierJourDuMois - 1;
         $dernierJourDuMois = UtilsController::dernierJourMois($mois,$annee);
         //La fonction renvoie 0 si le premier jour est un dimanche
         if($dernierJourDuMois == 0){
             $dernierJourDuMois = 7;
         }
-        // L'index du dernier jour est égal à l'index du premier jour du mois + le nb de jours
-        $indexDernierJourDuMois = $indexPremierJourDuMois + $dernierJourDuMois;
-      
-        $chaineDateDebut = "";
-        $chaineDateFin = "";
-        $nbJours = 0;
-        $imputation = "";
-        //Boucle sur le tableau de valeurs saisies
-        foreach ($tabValeursSaisies as $key => $value) {
-            //Cas de la dernière imputation du mois
-            if($key == $indexDernierJourDuMois){
-                //On ferme la dernière période et récupération du jour précédent
-                $chaineDateFin = "Date fin: ".$dernierJourDuMois."/".$mois."/".$annee;
-                $tabNewPeriod = array();
-                $tabNewPeriod["dateDebut"] = $chaineDateDebut;
-                $tabNewPeriod["dateFin"] = $chaineDateFin;
-                $tabNewPeriod["activité"] = $imputation;
-                $tabNewPeriod["nbJours"] = $nbJours;
-                //Enregistrement de la période
-                array_push($tableauFinal, $tabNewPeriod);
-                break;
-            }
-            //Ajouter la condition $value != 0.0 si on compte pas les jours non ouvrés
-            else if($value != $imputation){
-                //test si c'est la première imputation du mois
-                if($chaineDateDebut == "" && $key == $indexPremierJourDuMois){
-                    $chaineDateDebut = "Date début: 1/".$mois."/".$annee;
-                    $nbJours ++;
-                    $imputation = $value;
-                }
-                //Nouvelle période
-                else if($key >= $indexPremierJourDuMois){
-                    //Récupération du jours précédent
-                    $chaineDateFin = "Date fin: ".($key-$indexPremierJourDuMois)."/".$mois."/".$annee;
-                    $tabNewPeriod = array();
-                    $tabNewPeriod["dateDebut"] = $chaineDateDebut;
-                    $tabNewPeriod["dateFin"] = $chaineDateFin;
-                    $tabNewPeriod["activité"] = $imputation;
-                    $tabNewPeriod["nbJours"] = $nbJours;
-                    //Enregistrement de la période
-                    array_push($tableauFinal, $tabNewPeriod);
+ 		
+		
 
-                    //Valorisation pour la nouvelle période
-                    $chaineDateDebut = "Date début: ".($key-($indexPremierJourDuMois-1))."/".$mois."/".$annee;
-                    $nbJours = 1;
-                    $imputation = $value;
-                }
-            }
-            //La période continue
-            //Ajouter la condition $value != 0.0 si on compte pas les jours non ouvrés
-            else if($value == $imputation && ($key >= $indexPremierJourDuMois)){
-                $nbJours ++;
-            }
-        }
+		//on élague le tableau tabValeursSaisies, on enlève les jours du mois précédent qui viennent encombrer le tableau inutilement
+		// on fait une boucle qui consiste à enlever n fois le premier element du tableau jusqu'à arriver au premier jour du mois, avec n = premier jour du mois
+		for ($i = 0; $i < $premierJourDuMois-1; $i++) {
+		unset ($tabValeursSaisies[0]);
+		//on remet les index dans le tableau proprement
+		$tabValeursSaisies = array_values($tabValeursSaisies);
+		}
+		
+		
+		//de ce fait notre tableau commence bien au premier jour du mois, il ne reste plus qu'à faire la boucle sur le nombre de jours du mois = $dernierJourDuMois
+		for ($j = 0; $j < $dernierJourDuMois; $j++){
+			
+			$jour = $j+1;
+			//on formate le jour afin qu'il soit plus joli
+			$jourf= substr("0".($j+1),-2,2);
+			
+			$date = $jourf."/".$moisf."/".$annee;
+			
+			  $tabNewPeriod = array();
+			  $tabNewPeriod["date"] = $date;
+			$tabNewPeriod["activité"] = $tabValeursSaisies[$j];
+			
+			
+				array_push($tableauFinal, $tabNewPeriod);
+		}
+		 
+		
+		$retour[0]["NbJOuvres"] = strval(UtilsController::nbJoursOuvresParMois($mois,$annee));
         $retour[0]["valeursSaisies"] = $tableauFinal;
-
+		 
         // Récupération du nombre de jours ouvrés dans le mois
-        $retour[0]["NbJOuvres"] = strval(UtilsController::nbJoursOuvresParMois($mois,$annee));
-            
+        
+         
         return new JsonResponse($retour);
     }
 
     /**
     *@Route("/CRA/{id}/{annee}", name="getListCraByCollaborateur")
-    *@Route("/CRA/{id}"), name="getListCraByCollaborateur")
     *@Method("GET")
     */
-     function getListCraByCollaborateur(Request $request, $id, $annee = -1 ){
+     function getListCraByCollaborateur(Request $request, $id, $annee){
 
         
         //Vérification token
@@ -142,10 +124,6 @@ class CraController extends Controller
             return new JsonResponse($retourAuth,400);
         }*/
 		//Test si le paramètre année est valorisé, si non on le valorise par l'année en cours
-        if($annee == -1)
-        {
-            $annee = date("Y");
-        }
 
         $sql = "SELECT r.idUser as idUser, r.idRA as Id, r.mois,r.annee as annee, r.client, r.etat as status FROM relevesactivites r INNER JOIN etatra e ON r.etat = e.id WHERE r.idUser = '$id' AND r.annee = '$annee'  ORDER BY r.mois asc;";
 
@@ -215,7 +193,7 @@ class CraController extends Controller
 			
 			
 			// on rajoute les éléments manquants
-			$key = strval($i+1);
+			$key = strval($i);
 			
 			$retour[$i]['key'] = $key;
 			$retour[$i]['hideDate'] =$hideDate;
@@ -243,11 +221,6 @@ class CraController extends Controller
     
 	public function getMoreThanOne($mois,$idUser)
     {
-	   /*$log=new LoginController();
-      $retourAuth = $log->checkAuthentification($this);
-      if (array_key_exists("erreur", $retourAuth)) {
-        return new JsonResponse($retourAuth,400);
-      }*/
 
       $sql = "select count(idRA) as nb from relevesactivites where mois = '$mois' and idUser = '$idUser'";
 
@@ -267,14 +240,8 @@ class CraController extends Controller
 	  
 	  public function getHideDate($id,$mois,$idUser)
     {
-	   /*$log=new LoginController();
-      $retourAuth = $log->checkAuthentification($this);
-      if (array_key_exists("erreur", $retourAuth)) {
-        return new JsonResponse($retourAuth,400);
-      }*/
 
       $sql = "select count(idRA) as nb from relevesactivites where mois = '$mois' and idUser = '$idUser'";
-
       $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
       $stmt->execute();
 	  $retour= $stmt->fetch();
@@ -360,7 +327,7 @@ class CraController extends Controller
             $retourAdd = $this->addCra($data);
         }
         catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
-            return new JsonResponse("Problème de paramètres ", Response::HTTP_BAD_REQUEST);
+            return new JsonResponse("Problème de paramètres mon gars !".$e, Response::HTTP_BAD_REQUEST);
         }
         return new JsonResponse($retourAdd["message"], $retourAdd["code"]);
     }
@@ -375,9 +342,9 @@ class CraController extends Controller
         $client = $data['client'];
         $responsable = $data['responsable'];
         $projet = $data['projet'];
-        $commentaire = $data['commentaires'];
+        $commentaire = $data['commentaire'];
         $mois = $data['mois'];
-        $tableauCRA = $data['TableauCRA'];
+        $tableauCRA = $data['tableauCRA'];
 
         $annee = date('Y');
         if(empty($mois)){
@@ -426,10 +393,10 @@ class CraController extends Controller
 		
 		switch ($libelleEtat){
             case "Brouillon" :
-              $etat = 0;
+              $etat = 1;
               break;
             case "En attente validation" :
-              $etat = 1;
+              $etat = 2;
               break;
             //Etats validés ou A modifier interdits, autres états inconnus
             default :
@@ -457,7 +424,7 @@ class CraController extends Controller
         
         foreach ($tableauCRA as $index => $tab) {
             //Ajout des imputations pour chaque période
-            $ChaineCRAFinal .= str_repeat($tab["activité"].";", $tab["nbJours"]);
+            $ChaineCRAFinal .= $tab["activité"].";";
         }
 
         $ChaineCRAFinal .= str_repeat("0.0;", 7 - $dernierJourDuMois);
