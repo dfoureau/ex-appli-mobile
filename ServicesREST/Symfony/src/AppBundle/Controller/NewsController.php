@@ -32,6 +32,7 @@ class NewsController extends Controller
 // Récupérer l'id de l'utilisateur dans le token
 // $idUser = $retourAuth['id'];
 // Pour les tests on prend un id fixe
+// TODO : MODIFIER ID USER => RECUPERER DEPUIS LE TOKEN
 $idUser = 124123958;
 
 //TODO mettre les paramètres dans un fichier de config

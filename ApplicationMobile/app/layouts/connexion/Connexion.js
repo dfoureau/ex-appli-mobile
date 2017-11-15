@@ -14,6 +14,7 @@ import {
   KeyboardAvoidingView,
   StatusBar,
   Linking,
+  Keyboard,
 } from "react-native";
 import CheckBox from "react-native-check-box";
 import { StackNavigator, NavigationActions } from "react-navigation";
@@ -68,6 +69,7 @@ class Connexion extends React.Component {
   }
 
   async seConnecter() {
+    Keyboard.dismiss();
     showLoading("Connexion en cours. Veuillez patientier...");
 
     try {

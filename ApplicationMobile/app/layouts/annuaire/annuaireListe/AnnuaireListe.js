@@ -128,6 +128,11 @@ class AnnuaireListe extends React.Component {
     });
   }
 
+  realoadAnnuaireByNameOnChange(_searchedName) {
+    this.state.searchName = _searchedName;
+    this.reloadAnnuaireByName(_searchedName);
+  }
+
   reloadAnnuaireByName(_searchedName) {
     var annuaire2 = this.state.annuaire;
     annuaire2 = annuaire2.filter((item) => {
@@ -202,7 +207,7 @@ class AnnuaireListe extends React.Component {
                   placeholder="Rechercher"
                   placeholderTextColor="#000000"
                   underlineColorAndroid={"transparent"}
-                  onChangeText={(searchName) => this.setState({searchName})}
+                  onChangeText={(searchName) => this.realoadAnnuaireByNameOnChange(searchName)}
                   onSubmitEditing={() => this.reloadAnnuaireByName(this.state.searchName)}
                 />
                 <TouchableHighlight style={styles.touchableSearchIcon} onPress={() => this.reloadAnnuaireByName(this.state.searchName)}>
