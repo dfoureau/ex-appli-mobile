@@ -93,20 +93,14 @@ class FraisListe extends React.Component {
   getNDFByUser(_annee){
     showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
-    this.state.annee = _annee;
-    fetch(this.state.webServiceLien + _annee + '1000000')
+    this.state.year = _annee;
+    fetch(this.state.webServiceLien + _annee + '/1000000')
     .then(function(response) {
-      if (response.status == 400) {
+      if (response.status >= 400) {
         that.setState({
           data: [],
           isReady: true,
           isData: false,
-        });
-			} else if (response.status == 404) {
-        that.setState({
-          data: [],
-          isData: false,
-          isReady: true,
         });
       }
       hideLoading();
@@ -122,8 +116,8 @@ class FraisListe extends React.Component {
   }
 
   reloadNDFByYear(_year){
-    that.setState({year: _year});
-
+    this.setState({year: _year});
+		this.setState({isData: false, isReady: false});
     this.getNDFByUser(_year);
   }
 
@@ -138,6 +132,12 @@ class FraisListe extends React.Component {
   }
 
   render() {
+    if (this.state.data && this.state.data.length > 0) {
+      textePasDeDonnes = <Text style={style.texteMessage}>{this.state.data.length} notes de frais trouvées</Text>;
+    } else {
+      textePasDeDonnes = <Text style={style.texteMessage}>Aucune note de frais trouvée</Text>;
+    }
+
     if (!this.state.isReady) {
 			return (
 				<View>
@@ -192,13 +192,8 @@ class FraisListe extends React.Component {
             </View>
             {/* Container liste des NDF */}
             <View style={style.container2}>
-
-            {(this.state.data.length <= 0) &&
-                <Text style={StyleGeneral.texte}>
-                  Aucunes données trouvées pour cette année.
-                </Text>
-              }
-
+            {textePasDeDonnes}
+            
             {this.state.isData && 
               <FlatList
                 data={this.state.data}

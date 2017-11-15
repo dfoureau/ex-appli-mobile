@@ -85,14 +85,12 @@ class CongesListe extends React.Component {
 	reloadDemandesConges(_year) {
 		this.setState({year: _year});
 		this.setState({dataLoaded: false, noData: false});
-		
 		this.getDemandesByUserAndYear(_year);
 	}
 
 	// Retourne le dernier solde congés et le dernier solde RTT de l'utilisateur en paramère
 	getDemandeCongesByUserId() {
 		var that = this;
-
 		fetch(this.state.WSLinkSolde)
 		.then(function(response) {
 			if (response.status >= 400) {
@@ -118,7 +116,6 @@ class CongesListe extends React.Component {
 	getDemandesByUserAndYear(year) {
 		showLoading("Récupération des données. Veuillez patienter...");
    		var that = this;
-    
 		fetch(this.state.WSLinkList + year)
 		.then(function(response) {
 			if (response.status == 400) {
