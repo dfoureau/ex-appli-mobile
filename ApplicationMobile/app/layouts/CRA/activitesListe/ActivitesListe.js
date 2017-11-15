@@ -27,6 +27,8 @@ import ActivitesDetail from "../activitesDetail/ActivitesDetail";
 import AjoutCra from "../ajoutCRA/AjoutCra";
 import ActivitesConfirmation from "../activitesConfirmation/ActivitesConfirmation";
 
+import moment from "moment";
+
 class ActivitesListe extends React.Component {
   constructor(props) {
     super(props);
@@ -35,7 +37,7 @@ class ActivitesListe extends React.Component {
       data : [],
       isReady: false,
       isData: false,
-      annee: "",
+      annee: moment().format("YYYY"),
       webServiceLien1: "http://185.57.13.103/rest/web/app_dev.php/CRA/124124251/",
     };
   }
@@ -67,7 +69,7 @@ class ActivitesListe extends React.Component {
 	}
 
   componentDidMount() {
-    this.getDemandesByUserAndYear(2017);
+    this.getDemandesByUserAndYear(this.state.annee);
   }
 
   //Permet d'afficher l'ecran choisi dans le menu

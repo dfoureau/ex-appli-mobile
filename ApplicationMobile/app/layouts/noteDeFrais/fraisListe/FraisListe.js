@@ -23,6 +23,8 @@ import Accueil from "../../accueil/Accueil";
 import FraisAjout from "../fraisAjout/FraisAjout";
 import service from "../../../realm/service";
 
+import moment from "moment";
+
 const FRAIS_SCHEMA = "Frais";
 
 class FraisListe extends React.Component {
@@ -45,7 +47,7 @@ class FraisListe extends React.Component {
         "Novembre",
         "Décembre",
       ],
-      year: "",
+      year: moment().format("YYYY"),
       isReady: false,
     };
     service.delete(FRAIS_SCHEMA);

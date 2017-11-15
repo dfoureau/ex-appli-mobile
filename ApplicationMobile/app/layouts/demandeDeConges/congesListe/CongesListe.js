@@ -23,6 +23,8 @@ import { Button } from "../../../components/Buttons";
 import Accueil from "../../accueil/Accueil";
 import CongesAjout from "../congesAjout/CongesAjout";
 
+import moment from "moment";
+
 // SCREEN = DEMANDE DE CONGES
 class CongesListe extends React.Component {
 	constructor(props) {
@@ -30,19 +32,19 @@ class CongesListe extends React.Component {
 		this.state = { 
 			title: "Demande de congés",
 			data: [],
-			year: "",
+			year: moment().format("YYYY"),
 			dateSolde: "",
 			soldeRTT: "",
 			soldeConges: "",
-// TODO : Construction de l'adresse a partir d'un fichier de config 
-// TODO : Recuperation de l'idUser
+	// TODO : Construction de l'adresse a partir d'un fichier de config 
+	// TODO : Recuperation de l'idUser
 			WSLinkSolde: "http://185.57.13.103/rest/web/app_dev.php/conges/solde/124124251",
 			WSLinkList: "http://185.57.13.103/rest/web/app_dev.php/conges/124124251/",
 			// WSLinkSolde: "http://185.57.13.103/rest/web/app_dev.php/conges/solde/124124251",
 			// WSLinkList: "http://185.57.13.103/rest/web/app_dev.php/conges/124124251/",
 			dataLoaded: false,
-      noData: false,
-      isReady: false,
+			noData: false,
+			isReady: false,
 		};
 	}
 
