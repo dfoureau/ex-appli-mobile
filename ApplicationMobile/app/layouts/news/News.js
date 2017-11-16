@@ -24,12 +24,17 @@ class News extends React.Component {
       ],
       isReady: false,
       webServiceLien: configurationAppli.apiURL + "news/10",
-    };
+	  obj : {
+        method: 'GET',
+        headers: {
+          'Authorization': "Bearer " + configurationAppli.userToken
+	  }}
+	  };
   }
   
   componentDidMount() {
 	var that = this;
-    fetch(this.state.webServiceLien)
+    fetch(this.state.webServiceLien, this.state.obj )
     .then(function(response) {
       if (response.status >= 400) {
         throw new Error("Bad response from server");
