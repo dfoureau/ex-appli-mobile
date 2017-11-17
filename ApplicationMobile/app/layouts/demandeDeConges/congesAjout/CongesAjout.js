@@ -47,14 +47,12 @@ class CongesAjout extends React.Component {
 
 	// Récupération des paramètres de navigation
 	static navigationOptions = ({ navigation }) => ({
-		idConge: navigation.state.params.idConge,
-		month: navigation.state.params.month,
-		year: navigation.state.params.year,
+		numDemande: navigation.state.params.numDemande,
 	});
 
 	setInitialValues() {
 		const { params } = this.props.navigation.state;
-
+		
 		this.state = {
 			title: "Demande de congés",
 			statusId: 1,
@@ -62,9 +60,12 @@ class CongesAjout extends React.Component {
 			statusLabel: "Nouvelle DC",
 			header: ["Date du", "Date au", "Type d'abs", "Nb. jours"],
 			periods: [],
-			WSLinkSolde: "http://185.57.13.103/rest/web/app_dev.php/conges/solde/124124251",
-			WSLinkPeriode: "http://185.57.13.103/rest/web/app_dev.php/conges/periodes/124124251/",
-			WSLinkCreate: "http://185.57.13.103/rest/web/app_dev.php/conges",
+WSLinkSolde: "http://localhost:8000/conges/solde/124124251",
+WSLinkPeriode: "http://localhost:8000/conges/periodes/124124251/",
+WSLinkCreate: "http://localhost:8000/conges",
+			// WSLinkSolde: "http://185.57.13.103/rest/web/app_dev.php/conges/solde/124124251",
+			// WSLinkPeriode: "http://185.57.13.103/rest/web/app_dev.php/conges/periodes/124124251/",
+			// WSLinkCreate: "http://185.57.13.103/rest/web/app_dev.php/conges",
       userId: 124124251,
 			obj : {
 				method: '',
@@ -151,16 +152,18 @@ class CongesAjout extends React.Component {
 
 	addNewPeriod() {
 		this.props.navigation.navigate("CongesPeriode", {
-			idConge: this.props.navigation.state.idConge,
+			numDemande: this.props.navigation.state.numDemande,
 			idPeriod: null,
+			parent: this,
 		});
 	}
 
 	modifyPeriod(id, isNew) {
 		this.props.navigation.navigate("CongesPeriode", {
-			idConge: this.props.navigation.state.idConge,
+			numDemande: this.props.navigation.state.numDemande,
 			idPeriod: id,
 			isNew: isNew,
+			parent: this,
 		});
 	}
 
@@ -179,9 +182,9 @@ class CongesAjout extends React.Component {
 
 	validateConge() {
 		if (this.state.numDemande !== null) {
-			sendDemandeConges('POST');
+			this.sendDemandeConges('POST');
 		} else {
-			sendDemandeConges('PUT');
+			this.sendDemandeConges('PUT');
 		}
 	}
 
@@ -194,6 +197,7 @@ class CongesAjout extends React.Component {
 			arrPeriodes.push(
 				{
 					numLigne: parseInt(periodes.numLigne),
+// TODO : les dates ne sont pas formatées comme il faut si elles proviennent d'une nouvelle période
 					dateDebut: periodes.dateDu,
 					dateFin: periodes.dateAu,
 					nbJours: parseInt(periodes.nbJour),
@@ -232,7 +236,7 @@ class CongesAjout extends React.Component {
 			}
 			return response.json();
 		})
-		.then(function(solde) {
+		.then(function(demandeConge) {
 			hideLoading();
 			that.setState({
 				dataSaved: true,
@@ -255,7 +259,7 @@ class CongesAjout extends React.Component {
 		return tab.map((row, i) => (
 			<TouchableOpacity
 				key={i}
-				onPress={() => this.modifyPeriod(row.id, isNew)}
+				onPress={() => this.modifyPeriod(row.numLigne, isNew)}
 			>
 				<Row
 					style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }]}

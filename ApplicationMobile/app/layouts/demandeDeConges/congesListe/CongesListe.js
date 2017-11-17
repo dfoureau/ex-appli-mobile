@@ -36,10 +36,12 @@ class CongesListe extends React.Component {
 			dateSolde: "",
 			soldeRTT: "",
 			soldeConges: "",
-	// TODO : Construction de l'adresse a partir d'un fichier de config 
-	// TODO : Recuperation de l'idUser
-			WSLinkSolde: "http://185.57.13.103/rest/web/app_dev.php/conges/solde/124124251",
-			WSLinkList: "http://185.57.13.103/rest/web/app_dev.php/conges/124124251/",
+// TODO : Construction de l'adresse a partir d'un fichier de config 
+// TODO : Recuperation de l'idUser
+WSLinkSolde: "http://localhost:8000/conges/solde/124124251",
+WSLinkList: "http://localhost:8000/conges/124124251/",
+			// WSLinkSolde: "http://185.57.13.103/rest/web/app_dev.php/conges/solde/124124251",
+			// WSLinkList: "http://185.57.13.103/rest/web/app_dev.php/conges/124124251/",
 			dataLoaded: false,
 			noData: false,
 			isReady: false,
