@@ -22,6 +22,7 @@ import { OptionFilter } from "../../../components/optionFilter";
 import { Button } from "../../../components/Buttons";
 import Accueil from "../../accueil/Accueil";
 import CongesAjout from "../congesAjout/CongesAjout";
+import {PickerRange} from "../../../components/PickerRange";
 
 import configurationAppli from "../../../configuration/Configuration";
 
@@ -39,7 +40,7 @@ import {
 class CongesListe extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = { 
+		this.state = {
 			title: "Demande de congés",
 			data: [],
 			year: moment().format("YYYY"),
@@ -65,7 +66,7 @@ class CongesListe extends React.Component {
 		this.getDemandesByUserAndYear(year);
 		this.getDemandeCongesByUserId();
 	}
-	
+
 	// Permet d'afficher l'ecran choisi dans le menu
 	afficherEcranParent(ecran) {
 		this.props.navigation.navigate(ecran);
@@ -76,7 +77,7 @@ class CongesListe extends React.Component {
 	}
 
 	getConge(num, dateDem, dateD, dateA, nbj, etat, libEtat) {
-		this.props.navigation.navigate("CongesAjout", { 
+		this.props.navigation.navigate("CongesAjout", {
 			numDemande: num,
 			dateDemande: dateDem,
 			dateDu: dateD,
@@ -150,7 +151,7 @@ class CongesListe extends React.Component {
 	}
 
 	render() {
-	
+
 		//if (!this.state.dataLoaded && this.state.noData == false) {
     if (!this.state.isReady) {
 			return (
@@ -172,6 +173,9 @@ class CongesListe extends React.Component {
 			);
 
 		} else {
+			let currentYear = moment().year();
+			let oldestYear = "2008";
+
 			return (
 				<View>
 					<ContainerAccueil
@@ -215,18 +219,10 @@ class CongesListe extends React.Component {
 									<Picker
 										style={{ width: 110 }}
 										selectedValue={this.state.year}
-										onValueChange={(itemValue, itemIndex) => 
+										onValueChange={(itemValue, itemIndex) =>
 											this.reloadDemandesConges(itemValue)}
 									>
-										<Picker.Item label="2017" value="2017" />
-										<Picker.Item label="2016" value="2016" />
-										<Picker.Item label="2015" value="2015" />
-										<Picker.Item label="2014" value="2014" />
-										<Picker.Item label="2013" value="2013" />
-										<Picker.Item label="2012" value="2012" />
-										<Picker.Item label="2011" value="2011" />
-										<Picker.Item label="2011" value="2010" />
-										<Picker.Item label="2009" value="2009" />
+										{PickerRange(currentYear, oldestYear)}
 									</Picker>
 								</View>
 								<View style={style.containerButton}>
@@ -240,14 +236,14 @@ class CongesListe extends React.Component {
 										Aucunes données trouvées pour cette année.
 									</Text>
 								}
-								{!this.state.noData && 
-									<FlatList 
+								{!this.state.noData &&
+									<FlatList
                     data={this.state.data}
                     keyExtractor={(item, index) => index}
 										renderItem={({ item }) => (
                       <TouchableOpacity
                         key={item.numDemande}
-                        onPress={() => this.getConge(item.numDemande, item.dateDemande, item.dateDu, item.dateAu, 
+                        onPress={() => this.getConge(item.numDemande, item.dateDemande, item.dateDu, item.dateAu,
 							item.nbJour, item.etat, item.libelleEtat)}
                       >
 											<View style={style.containerList}>

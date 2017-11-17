@@ -21,6 +21,7 @@ import ContainerAccueil from "../../../components/containerAccueil/ContainerAccu
 import { ContainerFilters } from "../../../components/containerFilters";
 import { SearchFilter } from "../../../components/searchFilter";
 import { OptionFilter } from "../../../components/optionFilter";
+import { PickerRange } from "../../../components/PickerRange";
 import Accueil from "../../accueil/Accueil";
 import { Button } from "../../../components/Buttons";
 import ActivitesDetail from "../activitesDetail/ActivitesDetail";
@@ -156,6 +157,9 @@ class ActivitesListe extends React.Component {
 				</View>
 			);
 		} else {
+      let currentYear = moment().year();
+      let oldestYear = 2008;
+
       return (
         <View>
           <ContainerAccueil
@@ -173,13 +177,7 @@ class ActivitesListe extends React.Component {
                     onValueChange={(itemValue, itemIndex) =>
                       this.getDemandesByUserAndYear(itemValue)}
                   >
-                    <Picker.Item label="2017" value="2017" />
-                    <Picker.Item label="2016" value="2016" />
-                    <Picker.Item label="2015" value="2015" />
-                    <Picker.Item label="2014" value="2014" />
-                    <Picker.Item label="2013" value="2013" />
-                    <Picker.Item label="2012" value="2012" />
-                    <Picker.Item label="2011" value="2011" />
+                    {PickerRange(currentYear, oldestYear)}
                   </Picker>
                 </View>
                 <View style={style.containerButton}>
@@ -198,8 +196,8 @@ class ActivitesListe extends React.Component {
                 </Text>
               }
 
-              {this.state.isData && 
-              <FlatList 
+              {this.state.isData &&
+              <FlatList
                 data={this.state.data}
                 keyExtractor={(item, index) => index}
                 renderItem={({ item }) => (
