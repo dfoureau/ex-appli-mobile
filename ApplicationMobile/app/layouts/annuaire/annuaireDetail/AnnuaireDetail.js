@@ -36,6 +36,11 @@ class AnnuaireDetail extends React.Component {
       id: this.props.navigation.state.params.cle,
       idReady: false,
       list: [],
+      obj : {
+        method: 'GET',
+        headers: {
+          'Authorization': "Bearer " + configurationAppli.userToken
+		  }}
     };
   }
 
@@ -71,7 +76,7 @@ class AnnuaireDetail extends React.Component {
 
   componentDidMount() {
     requestURL = configurationAppli.apiURL + 'annuaire/user/' + this.state.id;
-    return fetch(requestURL)
+    return fetch(requestURL, this.state.obj)
     .then((response) => response.json())
     .then((responseJson) => {
       this.setState({
