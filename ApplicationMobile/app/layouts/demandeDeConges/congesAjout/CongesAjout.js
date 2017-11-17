@@ -6,6 +6,7 @@ import {
 	TouchableOpacity,
 	Alert,
 	AsyncStorage,
+	ActivityIndicator,
 } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import {
@@ -22,11 +23,12 @@ import {
 	showNotification,
 	showLoading,
 	hideLoading,
-	hide
+	hide,
 } from 'react-native-notifyer';
 import 'whatwg-fetch';
-// npm install whatwg-fetch --save
+
 import style from "./styles";
+import StyleGeneral from "../../../styles/Styles";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
@@ -35,6 +37,8 @@ import Accueil from "../../accueil/Accueil";
 import CongesPeriode from "../congesPeriode/CongesPeriode";
 import CongesConfirmation from "../congesConfirmation/CongesConfirmation";
 import service from "../../../realm/service";
+
+import configurationAppli from "../../../configuration/Configuration";
 
 const PERIOD_SCHEMA = "Period";
 
@@ -51,8 +55,6 @@ class CongesAjout extends React.Component {
 	});
 
 	setInitialValues() {
-		const { params } = this.props.navigation.state;
-		
 		this.state = {
 			title: "Demande de congés",
 			statusId: 1,
@@ -60,17 +62,22 @@ class CongesAjout extends React.Component {
 			statusLabel: "Nouvelle DC",
 			header: ["Date du", "Date au", "Type d'abs", "Nb. jours"],
 			periods: [],
-WSLinkSolde: "http://localhost:8000/conges/solde/124124251",
-WSLinkPeriode: "http://localhost:8000/conges/periodes/124124251/",
-WSLinkCreate: "http://localhost:8000/conges",
-			// WSLinkSolde: "http://185.57.13.103/rest/web/app_dev.php/conges/solde/124124251",
-			// WSLinkPeriode: "http://185.57.13.103/rest/web/app_dev.php/conges/periodes/124124251/",
-			// WSLinkCreate: "http://185.57.13.103/rest/web/app_dev.php/conges",
-      userId: 124124251,
+			WSLinkSolde: configurationAppli.apiURL + "conges/solde/" + configurationAppli.userID,
+			WSLinkPeriode: configurationAppli.apiURL + "conges/periodes/" + configurationAppli.userID + "/",
+			WSLinkCreate: configurationAppli.apiURL + "conges",
+			userId: configurationAppli.userID,
+			objGET : {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'Authorization': "Bearer " + configurationAppli.userToken
+				},
+			}, 
 			obj : {
 				method: '',
 				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded'
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'Authorization': "Bearer " + configurationAppli.userToken
 				},
 				body: "",
 			},
@@ -78,36 +85,30 @@ WSLinkCreate: "http://localhost:8000/conges",
 			soldeRTT: "",
 			soldeConges: "",
 			dataSaved: false,
-			numDemande: null,
+			numDemande: this.props.navigation.state.params.numDemande,
+			isReady: false,
 		};
-
-		if (params.numDemande !== null) {
-
-			// Récupere les périodes
-			this.getPeriodeCongesByUserIdNumDemande(params.numDemande);
-
-			// Congé existant en base
-			this.state.numDemande = params.numDemande;
-			this.state.statusId = params.etat;
-			this.state.status = params.libelleEtat;
-			this.state.dateDemande = params.dateDemande;
-			this.state.statusLabel = "DC en brouillon";
-		}
 	}
 
 	componentDidMount() {
+		console.log(this.props.navigation.state.params.numDemande);
 		this.getSoldeCongesByUserId();
+		if (this.props.navigation.state.params.numDemande !== null) {
+			// Récupere les périodes
+			this.getPeriodeCongesByUserIdNumDemande(this.props.navigation.state.params.numDemande);
+		}
 	}
 
 	// Retourne toutes les périodes de congés de l'utilisateur et du numéro de demande en paramètre
 	getPeriodeCongesByUserIdNumDemande(numDemande) {
 		var that = this;
 
-		fetch(this.state.WSLinkPeriode + numDemande)
+		fetch(this.state.WSLinkPeriode + numDemande, this.state.objGET)
 		.then(function(response) {
 			if (response.status >= 400) {
 				that.setState({
 					periods: [],
+					idReady: true,
 				});
 				throw new Error("Bad response from server");
 			}
@@ -115,16 +116,43 @@ WSLinkCreate: "http://localhost:8000/conges",
 		})
 		.then(function(p) {
 			that.setState({
+				isReady: true,
 				periods: p,
 			});
 		});
+
+		// Congé existant en base
+		that.state.numDemande = that.props.navigation.state.params.numDemande;
+		that.state.statusId = that.props.navigation.state.params.etat;
+		that.state.status = that.props.navigation.state.params.libelleEtat;
+		that.state.dateDemande = that.props.navigation.state.params.dateDemande;
+
+		switch (that.state.status) {
+			case 0:
+				that.state.statusLabel = "Demande en brouillon";
+				break;
+			case 1:
+				that.state.statusLabel = "En attente de validation";
+				break;
+			case 2:
+				that.state.statusLabel = "Validée. Modifications interdites";
+				break;
+			case 3:
+				that.state.statusLabel = "Demande à modifier";
+				break;
+			default:
+				that.state.statusLabel = "Nouvelle demande";
+				break;
+		}
+
+		that.state.statusLabel = "DC en brouillon";
 	}
 
 	// Retourne le dernier solde congés et le dernier solde RTT de l'utilisateur en paramère
 	getSoldeCongesByUserId() {
 		var that = this;
 
-		fetch(this.state.WSLinkSolde)
+		fetch(this.state.WSLinkSolde, this.state.objGET)
 		.then(function(response) {
 			if (response.status >= 400) {
 				that.setState({
@@ -319,76 +347,97 @@ WSLinkCreate: "http://localhost:8000/conges",
 	}
 
 	render() {
-		return (
-			<ContainerTitre
-				title={this.state.title}
-				navigation={this.props.navigation}
-			>
-				<View style={style.container}>
-					<View style={style.container1}>
-						<View style={style.containerStatus}>
-							<Text style={style.text}>Etat : {this.state.status}</Text>
-						</View>
-						<View style={style.containerStatusLabel}>
-							<Text style={style.statusLabel}>{this.state.statusLabel}</Text>
-						</View>
-					</View>
-					<View style={style.container2}>
-						<View style={style.containerInfoElement}>
-							<Text style={style.text}>Solde au :</Text>
-							<TextInput
-								style={style.textInputYear}
-								value={this.state.dateSolde}
-								editable={false}
-								underlineColorAndroid="transparent"
-							/>
-						</View>
-						<View style={style.containerInfoElement}>
-							<Text style={style.text}>RTT :</Text>
-							<TextInput
-								style={style.textInputCounter}
-								value={this.state.soldeRTT}
-								editable={false}
-								underlineColorAndroid="transparent"
-							/>
-						</View>
-						<View style={style.containerInfoElement}>
-							<Text style={style.text}>CP :</Text>
-							<TextInput
-								style={style.textInputCounter}
-								value={this.state.soldeConges}
-								editable={false}
-								underlineColorAndroid="transparent"
-							/>
-						</View>
-					</View>
-					<View style={style.container3}>
-						<View style={style.containerTable}>
-							<Table borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}>
-								<Row
-									data={this.state.header}
-									style={style.header}
-									textStyle={style.headerText}
-								/>
-								{this.afficherRows()}
-								{this.afficherNewRows()}
-							</Table>
-						</View>
-						<View>
-							<Button
-								text="AJOUTER NOUVELLE PERIODE"
-								onPress={() => this.addNewPeriod()}
-							/>
-						</View>
-					</View>
-					<View style={style.container4}>
-						{this.showDeleteButton()}
-						{this.showDraftButton()}
-						{this.showValidateButton()}
-					</View>
+		if (!this.state.isReady) {
+			return (
+				<View>
+					<ContainerTitre
+						title={this.state.title}
+						afficherEcran={this.afficherEcranParent.bind(this)}
+					>
+						<ActivityIndicator
+							color={"#8b008b"}
+							size={"large"}
+							style={StyleGeneral.loader}
+						/>
+						<Text style={StyleGeneral.texteLoader}>
+							Récupération des données. Veuillez patienter...
+						</Text>
+					</ContainerTitre>
 				</View>
-			</ContainerTitre>
-		);
+			);
+
+		} else {
+			return (
+				<ContainerTitre
+					title={this.state.title}
+					navigation={this.props.navigation}
+				>
+					<View style={style.container}>
+						<View style={style.container1}>
+							<View style={style.containerStatus}>
+								<Text style={style.text}>Etat : {this.state.status}</Text>
+							</View>
+							<View style={style.containerStatusLabel}>
+								<Text style={style.statusLabel}>{this.state.statusLabel}</Text>
+							</View>
+						</View>
+						<View style={style.container2}>
+							<View style={style.containerInfoElement}>
+								<Text style={style.text}>Solde au :</Text>
+								<TextInput
+									style={style.textInputYear}
+									value={this.state.dateSolde}
+									editable={false}
+									underlineColorAndroid="transparent"
+								/>
+							</View>
+							<View style={style.containerInfoElement}>
+								<Text style={style.text}>RTT :</Text>
+								<TextInput
+									style={style.textInputCounter}
+									value={this.state.soldeRTT}
+									editable={false}
+									underlineColorAndroid="transparent"
+								/>
+							</View>
+							<View style={style.containerInfoElement}>
+								<Text style={style.text}>CP :</Text>
+								<TextInput
+									style={style.textInputCounter}
+									value={this.state.soldeConges}
+									editable={false}
+									underlineColorAndroid="transparent"
+								/>
+							</View>
+						</View>
+						<View style={style.container3}>
+							<View style={style.containerTable}>
+								<Table borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}>
+									<Row
+										data={this.state.header}
+										style={style.header}
+										textStyle={style.headerText}
+									/>
+									{this.afficherRows()}
+									{this.afficherNewRows()}
+								</Table>
+							</View>
+							<View>
+								<Button
+									text="AJOUTER NOUVELLE PERIODE"
+									onPress={() => this.addNewPeriod()}
+								/>
+							</View>
+						</View>
+						<View style={style.container4}>
+							{this.showDeleteButton()}
+							{this.showDraftButton()}
+							{this.showValidateButton()}
+						</View>
+					</View>
+				</ContainerTitre>
+			);
+		}
 	}
 }
 

@@ -56,7 +56,8 @@ class CongesListe extends React.Component {
 				method: 'GET',
 				headers: {
 				  'Authorization': "Bearer " + configurationAppli.userToken
-			}}
+				}
+			}
 		};
 	}
 
@@ -152,7 +153,6 @@ class CongesListe extends React.Component {
 
 	render() {
 
-		//if (!this.state.dataLoaded && this.state.noData == false) {
     if (!this.state.isReady) {
 			return (
 				<View>
