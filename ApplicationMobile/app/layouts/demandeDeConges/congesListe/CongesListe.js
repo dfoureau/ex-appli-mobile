@@ -22,29 +22,41 @@ import { OptionFilter } from "../../../components/optionFilter";
 import { Button } from "../../../components/Buttons";
 import Accueil from "../../accueil/Accueil";
 import CongesAjout from "../congesAjout/CongesAjout";
+import {PickerRange} from "../../../components/PickerRange";
+
+import configurationAppli from "../../../configuration/Configuration";
 
 import moment from "moment";
+
+import {
+	showToast,
+	showNotification,
+	showLoading,
+	hideLoading,
+	hide
+} from 'react-native-notifyer';
 
 // SCREEN = DEMANDE DE CONGES
 class CongesListe extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = { 
+		this.state = {
 			title: "Demande de congés",
 			data: [],
 			year: moment().format("YYYY"),
 			dateSolde: "",
 			soldeRTT: "",
 			soldeConges: "",
-// TODO : Construction de l'adresse a partir d'un fichier de config 
-// TODO : Recuperation de l'idUser
-WSLinkSolde: "http://localhost:8000/conges/solde/124124251",
-WSLinkList: "http://localhost:8000/conges/124124251/",
-			// WSLinkSolde: "http://185.57.13.103/rest/web/app_dev.php/conges/solde/124124251",
-			// WSLinkList: "http://185.57.13.103/rest/web/app_dev.php/conges/124124251/",
+			WSLinkSolde: configurationAppli.apiURL + "conges/solde/" + configurationAppli.userID,
+			WSLinkList: configurationAppli.apiURL + "conges/" + configurationAppli.userID + "/",
 			dataLoaded: false,
 			noData: false,
 			isReady: false,
+			obj : {
+				method: 'GET',
+				headers: {
+				  'Authorization': "Bearer " + configurationAppli.userToken
+			}}
 		};
 	}
 
@@ -54,7 +66,7 @@ WSLinkList: "http://localhost:8000/conges/124124251/",
 		this.getDemandesByUserAndYear(year);
 		this.getDemandeCongesByUserId();
 	}
-	
+
 	// Permet d'afficher l'ecran choisi dans le menu
 	afficherEcranParent(ecran) {
 		this.props.navigation.navigate(ecran);
@@ -65,7 +77,7 @@ WSLinkList: "http://localhost:8000/conges/124124251/",
 	}
 
 	getConge(num, dateDem, dateD, dateA, nbj, etat, libEtat) {
-		this.props.navigation.navigate("CongesAjout", { 
+		this.props.navigation.navigate("CongesAjout", {
 			numDemande: num,
 			dateDemande: dateDem,
 			dateDu: dateD,
@@ -79,64 +91,67 @@ WSLinkList: "http://localhost:8000/conges/124124251/",
 	reloadDemandesConges(_year) {
 		this.setState({year: _year});
 		this.setState({dataLoaded: false, noData: false});
-		
 		this.getDemandesByUserAndYear(_year);
 	}
 
 	// Retourne le dernier solde congés et le dernier solde RTT de l'utilisateur en paramère
 	getDemandeCongesByUserId() {
-		var that = this;
-
-		fetch(this.state.WSLinkSolde)
-		.then(function(response) {
-			if (response.status >= 400) {
+		try {
+			var that = this;
+			fetch(this.state.WSLinkSolde, this.state.obj)
+			.then(function(response) {
+				if (response.status >= 400) {
+					that.setState({
+						dateSolde: "",
+						soldeRTT: '',
+						soldeConges: ''
+					});
+					throw new Error("Bad response from server");
+				}
+				return response.json();
+			})
+			.then(function(solde) {
 				that.setState({
-					dateSolde: "",
-					soldeRTT: '',
-					soldeConges: ''
+					dateSolde: solde[0]["datesolde"],
+					soldeRTT: solde[0]['rtt'],
+					soldeConges: solde[0]['cp'],
 				});
-				throw new Error("Bad response from server");
-			}
-			return response.json();
-		})
-		.then(function(solde) {
-			that.setState({
-				dateSolde: solde[0]["datesolde"],
-				soldeRTT: solde[0]['rtt'],
-				soldeConges: solde[0]['cp'],
 			});
-		});
+		} catch (error) {}
 	}
 
 	// Retourne toutes les demandes de congés de l'utilisateur en paramètre pour l'année en paramètre
 	getDemandesByUserAndYear(year) {
-    var that = this;
-    
-		fetch(this.state.WSLinkList + year)
-		.then(function(response) {
-			if (response.status == 400) {
-        that.setState({data: [], isReady: true});
-				//throw new Error("Bad response from server");
-			} else if (response.status == 404) {
-        that.setState({
-			data: [],
-			noData: true,
-			isReady: true
-		});
-				//throw new Error("No data found");
-      }
-			return response.json();
-		})
-		.then((conges) => this.setState({
-				data: conges,
-				dataLoaded: true,
+		showLoading("Récupération des données. Veuillez patienter...");
+		try {
+			var that = this;
+			fetch(this.state.WSLinkList + year, this.state.obj)
+			.then(function(response) {
+				if (response.status == 400) {
+			that.setState({data: [], isReady: true});
+					//throw new Error("Bad response from server");
+				} else if (response.status == 404) {
+			that.setState({
+				data: [],
+				noData: true,
 				isReady: true
+			});
+					//throw new Error("No data found");
+		}
+			hideLoading();
+				return response.json();
 			})
-		);
+			.then((conges) => this.setState({
+					data: conges,
+					dataLoaded: true,
+					isReady: true
+				})
+			);
+		} catch (error) {}
 	}
 
 	render() {
-	
+
 		//if (!this.state.dataLoaded && this.state.noData == false) {
     if (!this.state.isReady) {
 			return (
@@ -158,6 +173,9 @@ WSLinkList: "http://localhost:8000/conges/124124251/",
 			);
 
 		} else {
+			let currentYear = moment().year();
+			let oldestYear = "2008";
+
 			return (
 				<View>
 					<ContainerAccueil
@@ -201,18 +219,10 @@ WSLinkList: "http://localhost:8000/conges/124124251/",
 									<Picker
 										style={{ width: 110 }}
 										selectedValue={this.state.year}
-										onValueChange={(itemValue, itemIndex) => 
+										onValueChange={(itemValue, itemIndex) =>
 											this.reloadDemandesConges(itemValue)}
 									>
-										<Picker.Item label="2017" value="2017" />
-										<Picker.Item label="2016" value="2016" />
-										<Picker.Item label="2015" value="2015" />
-										<Picker.Item label="2014" value="2014" />
-										<Picker.Item label="2013" value="2013" />
-										<Picker.Item label="2012" value="2012" />
-										<Picker.Item label="2011" value="2011" />
-										<Picker.Item label="2011" value="2010" />
-										<Picker.Item label="2009" value="2009" />
+										{PickerRange(currentYear, oldestYear)}
 									</Picker>
 								</View>
 								<View style={style.containerButton}>
@@ -226,14 +236,14 @@ WSLinkList: "http://localhost:8000/conges/124124251/",
 										Aucunes données trouvées pour cette année.
 									</Text>
 								}
-								{!this.state.noData && 
-									<FlatList 
+								{!this.state.noData &&
+									<FlatList
                     data={this.state.data}
                     keyExtractor={(item, index) => index}
 										renderItem={({ item }) => (
                       <TouchableOpacity
                         key={item.numDemande}
-                        onPress={() => this.getConge(item.numDemande, item.dateDemande, item.dateDu, item.dateAu, 
+                        onPress={() => this.getConge(item.numDemande, item.dateDemande, item.dateDu, item.dateAu,
 							item.nbJour, item.etat, item.libelleEtat)}
                       >
 											<View style={style.containerList}>

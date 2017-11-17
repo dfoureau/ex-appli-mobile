@@ -19,18 +19,29 @@ import { ContainerFilters } from "../../../components/containerFilters";
 import { SearchFilter } from "../../../components/searchFilter";
 import { OptionFilter } from "../../../components/optionFilter";
 import { Button } from "../../../components/Buttons";
+import { PickerRange } from "../../../components/PickerRange";
 import Accueil from "../../accueil/Accueil";
 import FraisAjout from "../fraisAjout/FraisAjout";
 import service from "../../../realm/service";
 
+import configurationAppli from "../../../configuration/Configuration";
+
 import moment from "moment";
+
+import {
+	showToast,
+	showNotification,
+	showLoading,
+	hideLoading,
+	hide
+} from 'react-native-notifyer';
 
 const FRAIS_SCHEMA = "Frais";
 
 class FraisListe extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
       title: "Note de frais",
       data: [],
       months: [
@@ -49,6 +60,13 @@ class FraisListe extends React.Component {
       ],
       year: moment().format("YYYY"),
       isReady: false,
+      isData: false,
+      webServiceLien: configurationAppli.apiURL + "ndf/",
+      obj : {
+        method: 'GET',
+        headers: {
+          'Authorization': "Bearer " + configurationAppli.userToken
+		  }}
     };
     service.delete(FRAIS_SCHEMA);
   }
@@ -80,24 +98,34 @@ class FraisListe extends React.Component {
     this.getNDFByUser(year);
   }
 
-  getNDFByUser(year){
+  getNDFByUser(_annee){
+    showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
-    fetch('http://185.57.13.103/rest/web/app_dev.php/ndf/'+year+'/1000000')
+    this.state.year = _annee;
+    fetch(this.state.webServiceLien + _annee + '/' + configurationAppli.userID, this.state.obj)
     .then(function(response) {
       if (response.status >= 400) {
-        that.setState({data: [], isReady: true})
+        that.setState({
+          data: [],
+          isReady: true,
+          isData: false,
+        });
       }
+      hideLoading();
       return response.json();
     })
     .then(function(ndf) {
-      that.setState({data: ndf, isReady: true})
+      that.setState({
+        data: ndf,
+        isReady: true,
+        isData: true,
+      })
     });
   }
 
   reloadNDFByYear(_year){
-    var that = this;
-    that.setState({year: _year});
-
+    this.setState({year: _year});
+		this.setState({isData: false, isReady: false});
     this.getNDFByUser(_year);
   }
 
@@ -113,7 +141,7 @@ class FraisListe extends React.Component {
 
   render() {
     if (this.state.data && this.state.data.length > 0) {
-      textePasDeDonnes = <Text style={style.texteMessage}>{this.state.data.length} notes de frais trouvées</Text>;
+      textePasDeDonnes = <Text></Text>;
     } else {
       textePasDeDonnes = <Text style={style.texteMessage}>Aucune note de frais trouvée</Text>;
     }
@@ -137,6 +165,11 @@ class FraisListe extends React.Component {
 				</View>
 			);
 		} else {
+
+      // Création d'un range décroissant de l'année courante jusqu'à 2008
+      let currentYear = moment().year();
+      let oldestYear = "2008";
+
       return (
         <View>
           <ContainerAccueil
@@ -153,16 +186,7 @@ class FraisListe extends React.Component {
                     onValueChange={(itemValue, itemIndex) =>
                       this.reloadNDFByYear(itemValue)}
                   >
-                    <Picker.Item label="2017" value="2017" />
-                    <Picker.Item label="2016" value="2016" />
-                    <Picker.Item label="2015" value="2015" />
-                    <Picker.Item label="2014" value="2014" />
-                    <Picker.Item label="2013" value="2013" />
-                    <Picker.Item label="2012" value="2012" />
-                    <Picker.Item label="2011" value="2011" />
-                    <Picker.Item label="2010" value="2010" />
-                    <Picker.Item label="2009" value="2009" />
-                    <Picker.Item label="2008" value="2008" />
+                    {PickerRange(currentYear, oldestYear)}
                   </Picker>
                 </View>
                 <View style={style.containerButton}>
@@ -172,7 +196,9 @@ class FraisListe extends React.Component {
             </View>
             {/* Container liste des NDF */}
             <View style={style.container2}>
-              {textePasDeDonnes}
+            {textePasDeDonnes}
+
+            {this.state.isData &&
               <FlatList
                 data={this.state.data}
                 renderItem={({ item }) => (
@@ -213,9 +239,9 @@ class FraisListe extends React.Component {
                     </View>
                   </TouchableOpacity>
                 )}
-
                 keyExtractor={(item, index) => index}
               />
+              }
             </View>
           </ContainerAccueil>
         </View>

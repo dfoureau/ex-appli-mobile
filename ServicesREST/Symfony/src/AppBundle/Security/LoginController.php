@@ -37,7 +37,7 @@ class LoginController extends Controller
         $passMd5= md5($password);
 
 
-        $sql='SELECT id,login,mail,pass_crypt, nom, prenom, dateEntree
+        $sql='SELECT id,login,idAgence,mail,pass_crypt, nom, prenom, dateEntree
                FROM users 
                where archive !="O" AND login="'.$login.'" AND pass_crypt = "'.$passMd5.'"';
 
@@ -56,6 +56,7 @@ class LoginController extends Controller
         $time= time() + 3600;
         $data=array(
             'id' => $user['id'],
+			'idAgence'=>$user['idAgence'],
             'exp' => $time // 1 hour expiration
         );
 
@@ -64,47 +65,68 @@ class LoginController extends Controller
                       ->encode($data);
 
         //Tableau retourné
-        $retour=array('id'=>$user['id'],
+       $retour=array('id'=>$user['id'],
+                      'idAgence'=>$user['idAgence'],
                       'token'=>$token);
 
-
+		//$retour = array("token"=>$token);
         return new JsonResponse($retour);
 
     }
 
     public function checkAuthentification($controller){
+		//file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . "pas e pb" ."\r\n", FILE_APPEND);
         //On récupère la liste des headers
-        $headers = apache_request_headers();
-        //On détermine si le token existe
-        if (!array_key_exists("Authorization", $headers)) {
+        $id = '';
+		$idAgence = '';
+		
+		$headers = apache_request_headers();
+		
+		/*foreach ($headers as $header => $value) {
+					
+		file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . $header.":".$value."\r\n", FILE_APPEND);
+		}*/
+
+		//On détermine si le token existe
+        if (!array_key_exists("authorization", $headers) &&  !array_key_exists("Authorization", $headers))  {
             //TODO erreur token non conforme
-            return array('erreur' => 'Token non présent', 'connexion' => 1);
+		//file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . "pb auth" ."\r\n", FILE_APPEND);
+		return array('erreur' => 'Token non présent', 'connexion' => 1);
         }
-
-        $tab=explode (' ',$headers['Authorization']);
-
-       if(!(count($tab)>1)){
-           //TODO message erreur
-           return array('erreur' => 'Token erreur', 'connexion' => 1);
-       }
-
-        //On récupère le token
-        $token=$tab[1];
-
+		
+		//on se retrouve avec un Bearer mlqdmqsldmqsljdqsmjl, il ne faut récupérer que le token
+		
+		if (array_key_exists("authorization", $headers)) {
+			
+		$tab = explode (" ",$headers['authorization']);
+		}
+		
+		if (array_key_exists("Authorization", $headers)) {
+			
+		$tab = explode (" ",$headers['Authorization']);
+		}
+		
+		$token = $tab[1];
+		
         $list = $controller->get('lexik_jwt_authentication.encoder')
                            ->decode($token);
 
         if($list===false){
             //TODO erreur decodage du token
             // Le token peut être expiré
-            return array('erreur'=>'Token non conforme', 'connexion'=>1);
+				//file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . "pb to" ."\r\n", FILE_APPEND);
+            return array('erreur'=>'Token non valide ou expire', 'connexion'=>1);
         }
-        if (!array_key_exists("id", $list)) {
+        if (!array_key_exists("id", $list) && !array_key_exists("idAgence", $list)) {
             //TODO erreur token non conforme
+			//file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . "pb tok" ."\r\n", FILE_APPEND);
             return array('erreur' => 'Token: liste des variables non conformes', 'connexion' => 1);
         }
         $id = $list['id'];
-        return array('id'=>$id);
+		$idAgence = $list['idAgence'];
+		
+		//file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . $id.":".$idAgence."\r\n", FILE_APPEND);
+        return array('id'=>$id, 'idAgence'=>$idAgence);
     }
 
 }

@@ -29,6 +29,8 @@ import { OptionFilter } from "../../../components/optionFilter";
 // IMPORT DES LAYOUTS NAVIGABLES
 import { AnnuaireDetail } from "../annuaireDetail";
 
+import configurationAppli from "../../../configuration/Configuration";
+
 class AnnuaireListe extends React.Component {
   constructor(props) {
     super(props);
@@ -39,6 +41,11 @@ class AnnuaireListe extends React.Component {
       isReady: false,
       idAgence: 1,
       searchName: "",
+      obj : {
+        method: 'GET',
+        headers: {
+          'Authorization': "Bearer " + configurationAppli.userToken
+		  }}
     };
   }
 
@@ -115,8 +122,8 @@ class AnnuaireListe extends React.Component {
 
   reloadAnnuaireByAgence(_idAgence) {
     this.state.idAgence = _idAgence;
-    requestURL = 'http://185.57.13.103/rest/web/app_dev.php/annuaire/' + _idAgence;
-    return fetch(requestURL)
+    requestURL = configurationAppli.apiURL + 'annuaire/' + _idAgence;
+    return fetch(requestURL, this.state.obj)
     .then((response) => response.json())
     .then((responseJson) => {
       this.setState({'annuaire': responseJson, isReady: true});
@@ -124,6 +131,11 @@ class AnnuaireListe extends React.Component {
     .catch((error) => {
       console.error(error);
     });
+  }
+
+  realoadAnnuaireByNameOnChange(_searchedName) {
+    this.state.searchName = _searchedName;
+    this.reloadAnnuaireByName(_searchedName);
   }
 
   reloadAnnuaireByName(_searchedName) {
@@ -136,7 +148,7 @@ class AnnuaireListe extends React.Component {
   }
 
   componentDidMount() {
-    this.reloadAnnuaireByAgence(1);
+    this.reloadAnnuaireByAgence(configurationAppli.idAgence);
   }
 
   render() {
@@ -200,7 +212,7 @@ class AnnuaireListe extends React.Component {
                   placeholder="Rechercher"
                   placeholderTextColor="#000000"
                   underlineColorAndroid={"transparent"}
-                  onChangeText={(searchName) => this.setState({searchName})}
+                  onChangeText={(searchName) => this.realoadAnnuaireByNameOnChange(searchName)}
                   onSubmitEditing={() => this.reloadAnnuaireByName(this.state.searchName)}
                 />
                 <TouchableHighlight style={styles.touchableSearchIcon} onPress={() => this.reloadAnnuaireByName(this.state.searchName)}>

@@ -21,13 +21,24 @@ import ContainerAccueil from "../../../components/containerAccueil/ContainerAccu
 import { ContainerFilters } from "../../../components/containerFilters";
 import { SearchFilter } from "../../../components/searchFilter";
 import { OptionFilter } from "../../../components/optionFilter";
+import { PickerRange } from "../../../components/PickerRange";
 import Accueil from "../../accueil/Accueil";
 import { Button } from "../../../components/Buttons";
 import ActivitesDetail from "../activitesDetail/ActivitesDetail";
 import AjoutCra from "../ajoutCRA/AjoutCra";
 import ActivitesConfirmation from "../activitesConfirmation/ActivitesConfirmation";
 
+import configurationAppli from "../../../configuration/Configuration";
+
 import moment from "moment";
+
+import {
+	showToast,
+	showNotification,
+	showLoading,
+	hideLoading,
+	hide
+} from 'react-native-notifyer';
 
 class ActivitesListe extends React.Component {
   constructor(props) {
@@ -38,14 +49,20 @@ class ActivitesListe extends React.Component {
       isReady: false,
       isData: false,
       annee: moment().format("YYYY"),
-      webServiceLien1: "http://185.57.13.103/rest/web/app_dev.php/CRA/124124251/",
+      webServiceLien: configurationAppli.apiURL + "CRA/" + configurationAppli.userID + "/",
+      obj : {
+        method: 'GET',
+        headers: {
+          'Authorization': "Bearer " + configurationAppli.userToken
+		  }}
     };
   }
 
   getDemandesByUserAndYear(_annee) {
+    showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
     this.state.annee = _annee;
-		fetch(this.state.webServiceLien1 + _annee)
+		fetch(this.state.webServiceLien + _annee, this.state.obj)
 		.then(function(response) {
 			if (response.status == 400) {
         that.setState({
@@ -57,14 +74,17 @@ class ActivitesListe extends React.Component {
         that.setState({
           data: [],
           isData: false,
-          isReady: true,});
+          isReady: true,
+        });
       }
+      hideLoading();
 			return response.json();
 		})
 		.then((cra) => this.setState({
       data: cra,
       isData: true,
-      isReady: true,})
+      isReady: true,
+    })
     );
 	}
 
@@ -137,6 +157,9 @@ class ActivitesListe extends React.Component {
 				</View>
 			);
 		} else {
+      let currentYear = moment().year();
+      let oldestYear = 2008;
+
       return (
         <View>
           <ContainerAccueil
@@ -154,13 +177,7 @@ class ActivitesListe extends React.Component {
                     onValueChange={(itemValue, itemIndex) =>
                       this.getDemandesByUserAndYear(itemValue)}
                   >
-                    <Picker.Item label="2017" value="2017" />
-                    <Picker.Item label="2016" value="2016" />
-                    <Picker.Item label="2015" value="2015" />
-                    <Picker.Item label="2014" value="2014" />
-                    <Picker.Item label="2013" value="2013" />
-                    <Picker.Item label="2012" value="2012" />
-                    <Picker.Item label="2011" value="2011" />
+                    {PickerRange(currentYear, oldestYear)}
                   </Picker>
                 </View>
                 <View style={style.containerButton}>
@@ -179,8 +196,8 @@ class ActivitesListe extends React.Component {
                 </Text>
               }
 
-              {this.state.isData && 
-              <FlatList 
+              {this.state.isData &&
+              <FlatList
                 data={this.state.data}
                 keyExtractor={(item, index) => index}
                 renderItem={({ item }) => (

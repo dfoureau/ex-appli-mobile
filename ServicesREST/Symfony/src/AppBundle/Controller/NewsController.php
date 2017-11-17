@@ -18,23 +18,21 @@ class NewsController extends Controller
 	 */
 	public function news(Request $request, $nombre)
 	{
-		// $log = new LoginController();
-		// $retourAuth = $log->checkAuthentification($this);
-		// if (array_key_exists("erreur", $retourAuth)) {
-		// 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
-		// }
+		 $log = new LoginController();
+		 $retourAuth = $log->checkAuthentification($this);
+		 if (array_key_exists("erreur", $retourAuth)) {
+		 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
+		 }
 
 		// Test valeur en entrée
 		if (UtilsController::isPositifInt($nombre)) {
 
 			$tNombre = (int) $nombre;
 
-// Récupérer l'id de l'utilisateur dans le token
-// $idUser = $retourAuth['id'];
-// Pour les tests on prend un id fixe
-$idUser = 124123958;
+			//Désormais l'idAgence est fourni lors de la vérification du token, donc on le récupère
+			$idAgence = $retourAuth['idAgence'];
+        
 
-//TODO mettre les paramètres dans un fichier de config
 			$chemin_photo = '/espacecollaborateur/upload/news/photo/';
 			$chemin_pdf = '/espacecollaborateur/upload/news/doc/';
 
@@ -46,14 +44,8 @@ $idUser = 124123958;
 						newstable.news_photo) AS news_photo, 
 						CONCAT("' . $chemin_pdf . '", newstable.news_file) AS news_file 
 					FROM 
-						newstable INNER JOIN users ON 
-							(
-								news_entite = users.idEntiteJuridique 
-								OR 
-								news_entite = 0
-							) 
-					WHERE news_publier = 1 
-					AND users.id = ' . $idUser . ' 
+						newstable
+					WHERE news_publier = 1  and (news_entite = 0 OR news_entite = ' . $idAgence . ')
 					ORDER BY news_date DESC Limit ' . $tNombre;
 
 			$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);

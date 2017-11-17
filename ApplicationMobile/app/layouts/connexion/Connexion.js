@@ -14,12 +14,15 @@ import {
   KeyboardAvoidingView,
   StatusBar,
   Linking,
+  Keyboard,
 } from "react-native";
 import CheckBox from "react-native-check-box";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "./Styles";
 import Accueil from "../accueil/Accueil";
 import service from "../../realm/service";
+
+import configurationAppli from "../../configuration/Configuration";
 
 import {
 	showToast,
@@ -52,6 +55,7 @@ class Connexion extends React.Component {
       mdp: connexionParams != null ? connexionParams.mdp : "",
       saveIdChecked: connexionParams != null ? true : false,
       token: "",
+      data: [],
       isReady: false,
       webServiceLien1: "http://185.57.13.103/rest/web/app_dev.php/login",
       obj : {
@@ -65,6 +69,7 @@ class Connexion extends React.Component {
   }
 
   async seConnecter() {
+    Keyboard.dismiss();
     showLoading("Connexion en cours. Veuillez patientier...");
 
     try {
@@ -73,11 +78,13 @@ class Connexion extends React.Component {
 
       // On se connecte
       let response = await fetch(this.state.webServiceLien1, this.state.obj);
-      let res = await response.text();
+      let res = await response.json();
       if (response.status >=200 && response.status < 300) {
-          this.setState({error : "", isReady : true});
-          let accessToken = res;
-          console.log("res token : " + accessToken);
+          this.setState({
+            error : "",
+            isReady : true,
+            data: res,
+          });
       }
       else {
         let error = res;
@@ -85,7 +92,6 @@ class Connexion extends React.Component {
       }	
     } catch(error){
       hideLoading();
-      console.log("error : " + error);
       var id = showToast("Erreur : Login et/ou mot de passe incorrecte");
     }
 
@@ -97,13 +103,16 @@ class Connexion extends React.Component {
         login: this.state.login != null ? this.state.login : "",
         mdp: this.state.mdp != null ? this.state.mdp : "",
         // TODO récupérer le token après appel au service REST
-        tokenREST: this.state.token,
+        tokenREST: "",
       };
       // on insére les nouveaux paramètres de connexion en cache
       service.insert(CONNEXION_PARAMS_SCHEMA, connexionParams);
     }
 
     if (this.state.isReady === true) {
+      configurationAppli.userID = this.state.data.id;
+      configurationAppli.userToken = this.state.data.token;
+      configurationAppli.idAgence = this.state.data.idAgence;
       hideLoading();
       this.props.navigation.navigate("Accueil");
     }
@@ -117,7 +126,7 @@ class Connexion extends React.Component {
   }
 
   render() {
-    let lienMdpOublie = "https://espacecollaborateur.cat-amania.com/espacecollaborateur/connexion.php"
+    let lienMdpOublie = configurationAppli.lienMdpOublie
 
     return (
       <KeyboardAvoidingView behavior="padding" style={Style.mainView}>

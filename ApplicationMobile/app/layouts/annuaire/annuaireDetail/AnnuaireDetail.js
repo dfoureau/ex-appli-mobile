@@ -23,6 +23,8 @@ import { ContainerHeader } from "../../../components/containerHeader";
 
 import Communications from "react-native-communications";
 
+import configurationAppli from "../../../configuration/Configuration";
+
 var { height, width } = Dimensions.get("window");
 
 class AnnuaireDetail extends React.Component {
@@ -34,6 +36,11 @@ class AnnuaireDetail extends React.Component {
       id: this.props.navigation.state.params.cle,
       idReady: false,
       list: [],
+      obj : {
+        method: 'GET',
+        headers: {
+          'Authorization': "Bearer " + configurationAppli.userToken
+		  }}
     };
   }
 
@@ -68,8 +75,8 @@ class AnnuaireDetail extends React.Component {
   }
 
   componentDidMount() {
-    requestURL = 'http://185.57.13.103/rest/web/app_dev.php/annuaire/user/' + this.state.id;
-    return fetch(requestURL)
+    requestURL = configurationAppli.apiURL + 'annuaire/user/' + this.state.id;
+    return fetch(requestURL, this.state.obj)
     .then((response) => response.json())
     .then((responseJson) => {
       this.setState({

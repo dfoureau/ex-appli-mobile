@@ -17,6 +17,8 @@ import { News } from "../news";
 import { APropos } from "../Configuration/aPropos";
 import { Reglages } from "../Configuration/reglages";
 
+import configurationAppli from "../../configuration/Configuration";
+
 class Accueil extends React.Component {
   constructor(props) {
     super(props);
@@ -55,15 +57,20 @@ class Accueil extends React.Component {
       isReadyw1: false,
       isReadyw2: false,
       isReadyw3: false,
-      webServiceLien1: "http://185.57.13.103/rest/web/app_dev.php/utilisateur/124124251",
-      webServiceLien2: "http://185.57.13.103/rest/web/app_dev.php/conges/solde/124124251",
-      webServiceLien3: "http://185.57.13.103/rest/web/app_dev.php/news/3"
-    };
+      webServiceLien1: configurationAppli.apiURL + "utilisateur/" + configurationAppli.userID,
+      webServiceLien2: configurationAppli.apiURL + "conges/solde/" + configurationAppli.userID,
+      webServiceLien3: configurationAppli.apiURL + "news/3",
+	  obj : {
+        method: 'GET',
+        headers: {
+          'Authorization': "Bearer " + configurationAppli.userToken
+		}}
+	  };
   }
 
   componentDidMount() {
     var that = this;
-      fetch(this.state.webServiceLien1)
+      fetch(this.state.webServiceLien1, this.state.obj)
       .then(function(response) {
         if (response.status >= 400) {
           throw new Error("GetUtilisateur : Bad response from server");
@@ -71,11 +78,16 @@ class Accueil extends React.Component {
         return response.json();
       })
       .then(function(foncuser) {
-        that.setState({user: foncuser, isReadyw1: true})
-    });
+        that.setState({
+          user: foncuser,
+          isReadyw1: true,
+        })
+    }).catch(function(error) {
+		return console.log(error);
+		});
     
     var that = this;
-      fetch(this.state.webServiceLien2)
+      fetch(this.state.webServiceLien2, this.state.obj)
       .then(function(response) {
         if (response.status >= 400) {
           throw new Error("GetConges : Bad response from server");
@@ -87,7 +99,7 @@ class Accueil extends React.Component {
     });
     
     var that = this;
-      fetch(this.state.webServiceLien3)
+      fetch(this.state.webServiceLien3, this.state.obj)
       .then(function(response) {
         if (response.status >= 400) {
           throw new Error("GetNews : Bad response from server");
