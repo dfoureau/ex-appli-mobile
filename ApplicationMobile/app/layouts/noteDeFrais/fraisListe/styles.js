@@ -37,11 +37,10 @@ export default StyleSheet.create({
   },
 
   containerList: {
-    margin : 5,
-    padding : 5,
-    borderWidth : 1,
-    backgroundColor : "#FFF",
-
+    margin: 5,
+    padding: 5,
+    borderWidth: 1,
+    backgroundColor: "#FFF",
   },
 
   containerPeriod: {
@@ -77,5 +76,4 @@ export default StyleSheet.create({
   texteMessage: {
     marginBottom: 20,
   },
-
 });

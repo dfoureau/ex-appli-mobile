@@ -13,7 +13,6 @@ export default StyleSheet.create({
     flex: 1,
     alignItems: "center",
     marginTop: 10,
-
   },
   containerCalendar: {
     margin: 10,

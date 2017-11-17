@@ -80,10 +80,17 @@ class FraisDetail extends React.Component {
       return [moment(this.props.navigation.state.params.idFrais, "DD-MM-YYYY")];
     var arr = [],
       month = this.props.navigation.state.params.month, //chaine de caractère du mois de la NDF
-      date = moment().month(month).date(1), //Date de depart : le 1er du mois
+      date = moment()
+        .month(month)
+        .date(1), //Date de depart : le 1er du mois
       monthOk = true; //verif que le mois est toujours le bon
     while (monthOk) {
-      if (date.month() == moment().month(month).month()) {
+      if (
+        date.month() ==
+        moment()
+          .month(month)
+          .month()
+      ) {
         if (business.isWeekDay(date)) {
           //Si weekend on ajoute pas
           arr.push(date.format("YYYY-MM-DD"));

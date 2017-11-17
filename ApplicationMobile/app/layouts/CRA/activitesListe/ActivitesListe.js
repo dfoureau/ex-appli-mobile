@@ -33,28 +33,30 @@ import configurationAppli from "../../../configuration/Configuration";
 import moment from "moment";
 
 import {
-	showToast,
-	showNotification,
-	showLoading,
-	hideLoading,
-	hide
-} from 'react-native-notifyer';
+  showToast,
+  showNotification,
+  showLoading,
+  hideLoading,
+  hide,
+} from "react-native-notifyer";
 
 class ActivitesListe extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       title: "Relevés d'Activités",
-      data : [],
+      data: [],
       isReady: false,
       isData: false,
       annee: moment().format("YYYY"),
-      webServiceLien: configurationAppli.apiURL + "CRA/" + configurationAppli.userID + "/",
-      obj : {
-        method: 'GET',
+      webServiceLien:
+        configurationAppli.apiURL + "CRA/" + configurationAppli.userID + "/",
+      obj: {
+        method: "GET",
         headers: {
-          'Authorization': "Bearer " + configurationAppli.userToken
-		  }}
+          Authorization: "Bearer " + configurationAppli.userToken,
+        },
+      },
     };
   }
 
@@ -62,31 +64,32 @@ class ActivitesListe extends React.Component {
     showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
     this.state.annee = _annee;
-		fetch(this.state.webServiceLien + _annee, this.state.obj)
-		.then(function(response) {
-			if (response.status == 400) {
-        that.setState({
-          data: [],
+    fetch(this.state.webServiceLien + _annee, this.state.obj)
+      .then(function(response) {
+        if (response.status == 400) {
+          that.setState({
+            data: [],
+            isReady: true,
+            isData: false,
+          });
+        } else if (response.status == 404) {
+          that.setState({
+            data: [],
+            isData: false,
+            isReady: true,
+          });
+        }
+        hideLoading();
+        return response.json();
+      })
+      .then(cra =>
+        this.setState({
+          data: cra,
+          isData: true,
           isReady: true,
-          isData: false,
-        });
-			} else if (response.status == 404) {
-        that.setState({
-          data: [],
-          isData: false,
-          isReady: true,
-        });
-      }
-      hideLoading();
-			return response.json();
-		})
-		.then((cra) => this.setState({
-      data: cra,
-      isData: true,
-      isReady: true,
-    })
-    );
-	}
+        })
+      );
+  }
 
   componentDidMount() {
     this.getDemandesByUserAndYear(this.state.annee);
@@ -139,24 +142,24 @@ class ActivitesListe extends React.Component {
 
   render() {
     if (!this.state.isReady) {
-			return (
-				<View>
-					<ContainerAccueil
-						title={this.state.title}
-						afficherEcran={this.afficherEcranParent.bind(this)}
-					>
-						<ActivityIndicator
-							color={"#8b008b"}
-							size={"large"}
-							style={StyleGeneral.loader}
-						/>
-						<Text style={StyleGeneral.texteLoader}>
-							Récupération des données. Veuillez patienter...
-						</Text>
-					</ContainerAccueil>
-				</View>
-			);
-		} else {
+      return (
+        <View>
+          <ContainerAccueil
+            title={this.state.title}
+            afficherEcran={this.afficherEcranParent.bind(this)}
+          >
+            <ActivityIndicator
+              color={"#8b008b"}
+              size={"large"}
+              style={StyleGeneral.loader}
+            />
+            <Text style={StyleGeneral.texteLoader}>
+              Récupération des données. Veuillez patienter...
+            </Text>
+          </ContainerAccueil>
+        </View>
+      );
+    } else {
       let currentYear = moment().year();
       let oldestYear = 2008;
 
@@ -189,64 +192,61 @@ class ActivitesListe extends React.Component {
               </View>
 
               <View style={style.container3}>
-
-              {(this.state.data.length <= 0) &&
-                <Text style={StyleGeneral.texte}>
-                  Aucunes données trouvées pour cette année.
-                </Text>
-              }
-
-              {this.state.isData &&
-              <FlatList
-                data={this.state.data}
-                keyExtractor={(item, index) => index}
-                renderItem={({ item }) => (
-                  !item.moreThanOne ? (
-                    <View>
-                    <Text style={style.periodTextTitre}>
-                    {!item.hideDate ? item.date : null}
-                    </Text>
-                    <TouchableOpacity
-                    key={item.numDemande}
-                    onPress={() => this.SendDataCRA(item.Id, item.date)}
-                    >
-                      <View style={style.containerList}>
-                        <CRAItem
-                          date={item.date}
-                          client={item.client}
-                          status={item.status}
-                          key={item.Id}
-                          manyElt={item.manyElt}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                    </View>
-                  ) : (
-                    <View>
-                    <Text style={style.periodTextTitre}>
-                    {!item.hideDate ? item.date : null}
-                    </Text>
-                    <TouchableOpacity
-                    key={item.numDemande}
-                    onPress={() => this.SendDataCRA(item.Id, item.date)}
-                    >
-                      <View style={style.containerList}>
-                        <CRAItem
-                          date={item.date}
-                          client={item.client}
-                          status={item.status}
-                          key={item.Id}
-                          hideDate={item.hideDate}
-                          manyElt={item.manyElt}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                    </View>
-                  )
-
+                {this.state.data.length <= 0 && (
+                  <Text style={StyleGeneral.texte}>
+                    Aucunes données trouvées pour cette année.
+                  </Text>
                 )}
-									/>
-              }
+
+                {this.state.isData && (
+                  <FlatList
+                    data={this.state.data}
+                    keyExtractor={(item, index) => index}
+                    renderItem={({ item }) =>
+                      !item.moreThanOne ? (
+                        <View>
+                          <Text style={style.periodTextTitre}>
+                            {!item.hideDate ? item.date : null}
+                          </Text>
+                          <TouchableOpacity
+                            key={item.numDemande}
+                            onPress={() => this.SendDataCRA(item.Id, item.date)}
+                          >
+                            <View style={style.containerList}>
+                              <CRAItem
+                                date={item.date}
+                                client={item.client}
+                                status={item.status}
+                                key={item.Id}
+                                manyElt={item.manyElt}
+                              />
+                            </View>
+                          </TouchableOpacity>
+                        </View>
+                      ) : (
+                        <View>
+                          <Text style={style.periodTextTitre}>
+                            {!item.hideDate ? item.date : null}
+                          </Text>
+                          <TouchableOpacity
+                            key={item.numDemande}
+                            onPress={() => this.SendDataCRA(item.Id, item.date)}
+                          >
+                            <View style={style.containerList}>
+                              <CRAItem
+                                date={item.date}
+                                client={item.client}
+                                status={item.status}
+                                key={item.Id}
+                                hideDate={item.hideDate}
+                                manyElt={item.manyElt}
+                              />
+                            </View>
+                          </TouchableOpacity>
+                        </View>
+                      )}
+                  />
+                )}
               </View>
             </View>
           </ContainerAccueil>

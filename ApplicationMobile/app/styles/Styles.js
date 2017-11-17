@@ -111,8 +111,7 @@ export default StyleSheet.create({
   },
 
   loader: {
-      marginTop : 20,
-      marginBottom : 20,
-  }
-
+    marginTop: 20,
+    marginBottom: 20,
+  },
 });

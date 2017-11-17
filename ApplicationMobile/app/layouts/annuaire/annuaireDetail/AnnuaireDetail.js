@@ -36,11 +36,12 @@ class AnnuaireDetail extends React.Component {
       id: this.props.navigation.state.params.cle,
       idReady: false,
       list: [],
-      obj : {
-        method: 'GET',
+      obj: {
+        method: "GET",
         headers: {
-          'Authorization': "Bearer " + configurationAppli.userToken
-		  }}
+          Authorization: "Bearer " + configurationAppli.userToken,
+        },
+      },
     };
   }
 
@@ -75,41 +76,40 @@ class AnnuaireDetail extends React.Component {
   }
 
   componentDidMount() {
-    requestURL = configurationAppli.apiURL + 'annuaire/user/' + this.state.id;
+    requestURL = configurationAppli.apiURL + "annuaire/user/" + this.state.id;
     return fetch(requestURL, this.state.obj)
-    .then((response) => response.json())
-    .then((responseJson) => {
-      this.setState({
-        'list': responseJson,
-        isReady: true,
-        titre: responseJson[0]['prenom'] + " " + responseJson[0]['nom'],
+      .then(response => response.json())
+      .then(responseJson => {
+        this.setState({
+          list: responseJson,
+          isReady: true,
+          titre: responseJson[0]["prenom"] + " " + responseJson[0]["nom"],
+        });
+      })
+      .catch(error => {
+        console.error(error);
       });
-    })
-    .catch((error) => {
-      console.error(error);
-    });
   }
 
   render() {
     if (!this.state.isReady) {
-      return (   
-      <View>
-      <ContainerTitre
-        title={this.state.title}
-        navigation={this.props.navigation}
-      >
-        <ActivityIndicator
-        color="#8b008b"
-        size="large"
-        style={Style.loader}
-         />
-        <Text style={Style.texteLoader}>
-          Récupération des données. Veuillez patienter.
-        </Text>
-
-        </ContainerTitre>
-      </View>
-      )
+      return (
+        <View>
+          <ContainerTitre
+            title={this.state.title}
+            navigation={this.props.navigation}
+          >
+            <ActivityIndicator
+              color="#8b008b"
+              size="large"
+              style={Style.loader}
+            />
+            <Text style={Style.texteLoader}>
+              Récupération des données. Veuillez patienter.
+            </Text>
+          </ContainerTitre>
+        </View>
+      );
     } else {
       return (
         <View>
@@ -124,13 +124,13 @@ class AnnuaireDetail extends React.Component {
                   <View style={styles.container}>
                     <View style={styles.containerRow}>
                       <Text style={styles.text}>
-                        Entité : {this.state.list[0]['nomEntite']}
+                        Entité : {this.state.list[0]["nomEntite"]}
                       </Text>
                       <Text style={styles.text}>
-                        Fonction : {this.state.list[0]['libelle']}
+                        Fonction : {this.state.list[0]["libelle"]}
                       </Text>
                       <Text style={styles.text}>
-                        Agence : {this.state.list[0]['agence']}
+                        Agence : {this.state.list[0]["agence"]}
                       </Text>
                     </View>
                   </View>
@@ -144,127 +144,140 @@ class AnnuaireDetail extends React.Component {
               </View>
 
               {/*TELEPHONE 1*/}
-              {this.state.list[0]['telmobile'] != "" && 
-              <View style={[Style.firstView, styles.firstSection]}>
-                <View style={Style.secondView}>
-                  <View style={styles.container}>
-                    <View style={styles.containerRow}>
-                      <Text style={styles.text}>{this.state.list[0]['telmobile']}</Text>
+              {this.state.list[0]["telmobile"] != "" && (
+                <View style={[Style.firstView, styles.firstSection]}>
+                  <View style={Style.secondView}>
+                    <View style={styles.container}>
+                      <View style={styles.containerRow}>
+                        <Text style={styles.text}>
+                          {this.state.list[0]["telmobile"]}
+                        </Text>
+                      </View>
                     </View>
                   </View>
+                  <View style={styles.containerIcon}>
+                    {this.handleSmsDisplay(this.state.list[0]["telmobile"])}
+                  </View>
+                  <View style={styles.containerIcon}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        Communications.phonecall(
+                          this.state.list[0]["telmobile"],
+                          true
+                        )}
+                    >
+                      <View>
+                        <Image
+                          style={styles.icon}
+                          source={require("../../../images/icons/tel.png")}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <View style={styles.containerIcon}>
-                  {this.handleSmsDisplay(this.state.list[0]['telmobile'])}
-                </View>
-                <View style={styles.containerIcon}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      Communications.phonecall(this.state.list[0]['telmobile'], true)}
-                  >
-                    <View>
-                      <Image
-                        style={styles.icon}
-                        source={require("../../../images/icons/tel.png")}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              }
+              )}
 
               {/*TELEPHONE 2*/}
-              {this.state.list[0]['telclient'] != "" && 
-              <View style={[Style.firstView, styles.secondSection]}>
-                <View style={Style.secondView}>
-                  <View style={styles.container}>
-                    <View style={styles.containerRow}>
-                      <Text style={styles.text}>{this.state.list[0]['telclient']}</Text>
+              {this.state.list[0]["telclient"] != "" && (
+                <View style={[Style.firstView, styles.secondSection]}>
+                  <View style={Style.secondView}>
+                    <View style={styles.container}>
+                      <View style={styles.containerRow}>
+                        <Text style={styles.text}>
+                          {this.state.list[0]["telclient"]}
+                        </Text>
+                      </View>
                     </View>
                   </View>
+                  <View style={styles.containerIcon}>
+                    {this.handleSmsDisplay(this.state.list[0]["telclient"])}
+                  </View>
+                  <View style={styles.containerIcon}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        Communications.phonecall(
+                          this.state.list[0]["telclient"],
+                          true
+                        )}
+                    >
+                      <View>
+                        <Image
+                          style={styles.icon}
+                          source={require("../../../images/icons/tel.png")}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <View style={styles.containerIcon}>
-                  {this.handleSmsDisplay(this.state.list[0]['telclient'])}
-                </View>
-                <View style={styles.containerIcon}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      Communications.phonecall(this.state.list[0]['telclient'], true)}
-                  >
-                    <View>
-                      <Image
-                        style={styles.icon}
-                        source={require("../../../images/icons/tel.png")}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              }
+              )}
 
               {/*EMAIL 1 */}
-              {this.state.list[0]['mail'] != "" && 
-              <View style={[Style.firstView, styles.firstSection]}>
-                <View style={Style.secondView}>
-                  <View style={styles.container}>
-                    <View style={styles.containerRow}>
-                      <Text style={styles.text}>{this.state.list[0]['mail']}</Text>
+              {this.state.list[0]["mail"] != "" && (
+                <View style={[Style.firstView, styles.firstSection]}>
+                  <View style={Style.secondView}>
+                    <View style={styles.container}>
+                      <View style={styles.containerRow}>
+                        <Text style={styles.text}>
+                          {this.state.list[0]["mail"]}
+                        </Text>
+                      </View>
                     </View>
                   </View>
+                  <View style={styles.containerIcon}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        Communications.email(
+                          [this.state.list[0]["mail"]],
+                          null,
+                          null,
+                          null,
+                          null
+                        )}
+                    >
+                      <View>
+                        <Image
+                          style={styles.icon}
+                          source={require("../../../images/icons/email.png")}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <View style={styles.containerIcon}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      Communications.email(
-                        [this.state.list[0]['mail']],
-                        null,
-                        null,
-                        null,
-                        null
-                      )}
-                  >
-                    <View>
-                      <Image
-                        style={styles.icon}
-                        source={require("../../../images/icons/email.png")}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              }
+              )}
 
               {/*EMAIL 2*/}
-              {this.state.list[0]['mailclient'] != "" && 
-              <View style={[Style.firstView, styles.secondSection]}>
-                <View style={Style.secondView}>
-                  <View style={styles.container}>
-                    <View style={styles.containerRow}>
-                      <Text style={styles.text}>{this.state.list[0]['mailclient']}</Text>
+              {this.state.list[0]["mailclient"] != "" && (
+                <View style={[Style.firstView, styles.secondSection]}>
+                  <View style={Style.secondView}>
+                    <View style={styles.container}>
+                      <View style={styles.containerRow}>
+                        <Text style={styles.text}>
+                          {this.state.list[0]["mailclient"]}
+                        </Text>
+                      </View>
                     </View>
                   </View>
+                  <View style={styles.containerIcon}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        Communications.email(
+                          [this.state.list[0]["mailclient"]],
+                          null,
+                          null,
+                          null,
+                          null
+                        )}
+                    >
+                      <View>
+                        <Image
+                          style={styles.icon}
+                          source={require("../../../images/icons/email.png")}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <View style={styles.containerIcon}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      Communications.email(
-                        [this.state.list[0]['mailclient']],
-                        null,
-                        null,
-                        null,
-                        null
-                      )}
-                  >
-                    <View>
-                      <Image
-                        style={styles.icon}
-                        source={require("../../../images/icons/email.png")}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              }
-
+              )}
             </View>
           </ContainerTitre>
         </View>

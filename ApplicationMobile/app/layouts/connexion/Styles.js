@@ -60,7 +60,7 @@ export default StyleSheet.create({
   },
 
   viewMdpOublie: {
-    alignItems: "center"
+    alignItems: "center",
   },
 
   touchMdpOublie: {
@@ -82,10 +82,10 @@ export default StyleSheet.create({
     paddingHorizontal: 10,
     textAlign: "center",
     color: "#8b008b",
-},
+  },
 
-loader: {
-    marginTop : 20,
-    marginBottom : 20,
-},
+  loader: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
 });

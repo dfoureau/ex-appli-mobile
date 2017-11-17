@@ -24,12 +24,12 @@ import moment from "moment";
 import "moment/locale/fr";
 
 import {
-	showToast,
-	showNotification,
-	showLoading,
-	hideLoading,
-	hide
-} from 'react-native-notifyer';
+  showToast,
+  showNotification,
+  showLoading,
+  hideLoading,
+  hide,
+} from "react-native-notifyer";
 
 // IMPORT DES COMPOSANTS EXOTIQUE
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
@@ -80,7 +80,7 @@ class FraisAjout extends React.Component {
         "Novembre",
         "Décembre",
       ],
-      monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1),//date actuelle
+      monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1), //date actuelle
       listFrais: [],
       totalMontant: 0,
       totalClient: 0,
@@ -88,41 +88,54 @@ class FraisAjout extends React.Component {
     };
   }
 
-  getNDF(year, month){
+  getNDF(year, month) {
     var that = this;
-    fetch('http://185.57.13.103/rest/web/app_dev.php/ndf/1000000/'+year+'/'+month)
-    .then(function(response) {
-      if (response.status >= 400) {
-        //Réinitialisation des valeurs
-        that.setState({ 
-          listFrais: [],
-          totalMontant: 0,
-          totalClient: 0,
-          status: "",
-        })
-        showToast("Aucune note de frais trouvée pour le mois " + month + " et l'année " + year);
-      }
-      return response.json();
-    })
-    .then(function(ndf) {
+    fetch(
+      "http://185.57.13.103/rest/web/app_dev.php/ndf/1000000/" +
+        year +
+        "/" +
+        month
+    )
+      .then(function(response) {
+        if (response.status >= 400) {
+          //Réinitialisation des valeurs
+          that.setState({
+            listFrais: [],
+            totalMontant: 0,
+            totalClient: 0,
+            status: "",
+          });
+          showToast(
+            "Aucune note de frais trouvée pour le mois " +
+              month +
+              " et l'année " +
+              year
+          );
+        }
+        return response.json();
+      })
+      .then(function(ndf) {
         //Construction du tableau de la note de frais
         var frais = ndf["notesDeFrais"];
         let tableauFrais = [];
         // intialisation des totaux globaux
         var totalAReglerAllFrais = 0;
         var totalClientAllFrais = 0;
-        
-        if(frais != null)
-        {
-          frais.forEach(function(item){
-            let jours = moment({ y: item["annee"], M: item["mois"], d: item["jour"] });
+
+        if (frais != null) {
+          frais.forEach(function(item) {
+            let jours = moment({
+              y: item["annee"],
+              M: item["mois"],
+              d: item["jour"],
+            });
             //Création de l'item "frais" dans le cache
-            that.mapperDonneesFrais(item,ndf["idUser"],jours);
+            that.mapperDonneesFrais(item, ndf["idUser"], jours);
             var frais = service.getByPrimaryKey(
               FRAIS_SCHEMA,
               jours.format("DD-MM-YYYY")
             );
-            
+
             totauxFrais = that.calculTotaux(frais);
 
             totalAReglerAllFrais += totauxFrais.totalAReglerFrais;
@@ -132,7 +145,7 @@ class FraisAjout extends React.Component {
               client: item["client"],
               montant: totauxFrais != null ? totauxFrais.totalAReglerFrais : "",
               id: jours.format("DD-MM-YYYY"),
-            })
+            });
           });
 
           that.setState({
@@ -143,11 +156,11 @@ class FraisAjout extends React.Component {
             statusLabel: "",
           });
         }
-    });
+      });
   }
 
   //Fonction permettant de créér dans le cache les frais récupérés de l'API
-  mapperDonneesFrais(item,idUser,jour){
+  mapperDonneesFrais(item, idUser, jour) {
     // on insère les données créées dans le cache
     let frais = {
       id: jour.format("DD-MM-YYYY"),
@@ -174,7 +187,7 @@ class FraisAjout extends React.Component {
       parking: parseFloat(item["montantParking"]),
       divers: parseFloat(item["montantDivers"]),
       libelle: item["libelleDivers"],
-    }; 
+    };
 
     // On test si le frais existe
     if (service.getByPrimaryKey(FRAIS_SCHEMA, frais.id) != null) {
@@ -186,30 +199,30 @@ class FraisAjout extends React.Component {
     }
   }
 
-  reloadNDFByYear(_month){
+  reloadNDFByYear(_month) {
     var that = this;
-    that.setState({monthSelected: _month});
+    that.setState({ monthSelected: _month });
 
     var today = new Date();
     var year = today.getFullYear();
-    this.getNDF(year,_month);
+    this.getNDF(year, _month);
   }
 
-  componentDidMount(){
+  componentDidMount() {
     var that = this;
     //Récupération des paramètres de navigation
     const { params } = this.props.navigation.state;
 
     //Test pour savoir si on ajoute ou si on consulte une NDF
-    if(params.month != null){
+    if (params.month != null) {
       this.getNDF(params.year, params.month);
-    }
-    else{
+    } else {
       var initListAndTotals = this.initListAndTotals();
       that.setState({
         listFrais: initListAndTotals.listFrais,
         totalMontant: initListAndTotals.totalAReglerAllFrais,
-        totalClient: initListAndTotals.totalClientAllFrais});
+        totalClient: initListAndTotals.totalClientAllFrais,
+      });
     }
   }
 
@@ -238,7 +251,6 @@ class FraisAjout extends React.Component {
 
   // Méthode permettant l'initialisation de la liste des frais et des totaux (montant à régler et client)
   initListAndTotals() {
-
     // intialisation des totaux globaux
     var totalAReglerAllFrais = 0;
     var totalClientAllFrais = 0;
@@ -344,10 +356,9 @@ class FraisAjout extends React.Component {
   }
 
   checketat(etat) {
-    if(etat == "Validé" || etat == "En attente de validation"){
+    if (etat == "Validé" || etat == "En attente de validation") {
       return false;
-    }
-    else{
+    } else {
       return true;
     }
   }

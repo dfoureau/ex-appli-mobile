@@ -42,11 +42,12 @@ class AnnuaireListe extends React.Component {
       idAgence: 1,
       searchName: "",
       annuaireComplet: [],
-      obj : {
-        method: 'GET',
+      obj: {
+        method: "GET",
         headers: {
-          'Authorization': "Bearer " + configurationAppli.userToken
-		  }}
+          Authorization: "Bearer " + configurationAppli.userToken,
+        },
+      },
     };
   }
 
@@ -92,26 +93,26 @@ class AnnuaireListe extends React.Component {
     // Il faut modifier la variable sectionList du state afin de mettre à jour la liste
   }
 
-  prepareSectionsData(annuaire){
+  prepareSectionsData(annuaire) {
     const result = [];
-    if(!annuaire) {
+    if (!annuaire) {
       return result;
     }
     let previousLetter = null;
-    annuaire.forEach((value) => {
-      if(!value || !value.nom){
+    annuaire.forEach(value => {
+      if (!value || !value.nom) {
         return;
       }
-      const contact = {...value, key: value.id};
+      const contact = { ...value, key: value.id };
       const currentLetter = contact.nom.charAt(0);
       let section = null;
-      if(previousLetter === currentLetter) {
-        section = result[result.length -1];
+      if (previousLetter === currentLetter) {
+        section = result[result.length - 1];
       } else {
         section = {
           key: result.length,
           title: currentLetter,
-          data: []
+          data: [],
         };
         result.push(section);
         previousLetter = currentLetter;
@@ -123,19 +124,19 @@ class AnnuaireListe extends React.Component {
 
   reloadAnnuaireByAgence(_idAgence) {
     this.state.idAgence = _idAgence;
-    requestURL = configurationAppli.apiURL + 'annuaire/' + _idAgence;
+    requestURL = configurationAppli.apiURL + "annuaire/" + _idAgence;
     return fetch(requestURL, this.state.obj)
-    .then((response) => response.json())
-    .then((responseJson) => {
-      this.setState({
-        annuaire: responseJson,
-        isReady: true,
-        annuaireComplet: responseJson,
+      .then(response => response.json())
+      .then(responseJson => {
+        this.setState({
+          annuaire: responseJson,
+          isReady: true,
+          annuaireComplet: responseJson,
+        });
+      })
+      .catch(error => {
+        console.error(error);
       });
-    })
-    .catch((error) => {
-      console.error(error);
-    });
   }
 
   realoadAnnuaireByNameOnChange(_searchedName) {
@@ -145,11 +146,13 @@ class AnnuaireListe extends React.Component {
 
   reloadAnnuaireByName(_searchedName) {
     var annuaire2 = this.state.annuaireComplet;
-    
-    annuaire2 = annuaire2.filter((item) => {
-      return (item.nom.toLowerCase().match(_searchedName)
-        || item.prenom.toLowerCase().match(_searchedName))
-    })
+
+    annuaire2 = annuaire2.filter(item => {
+      return (
+        item.nom.toLowerCase().match(_searchedName) ||
+        item.prenom.toLowerCase().match(_searchedName)
+      );
+    });
     this.setState({
       annuaire: annuaire2,
       isReady: true,
@@ -164,24 +167,23 @@ class AnnuaireListe extends React.Component {
     const sections = this.prepareSectionsData(this.state.annuaire);
 
     if (!this.state.isReady) {
-      return (   
-      <View>
-      <ContainerAccueil
-        title={this.state.title}
-        afficherEcran={this.afficherEcranParent.bind(this)}
-      >
-        <ActivityIndicator
-        color="#8b008b"
-        size="large"
-        style={StyleGeneral.loader}
-         />
-        <Text style={StyleGeneral.texteLoader}>
-          Récupération des données. Veuillez patienter.
-        </Text>
-
-        </ContainerAccueil>
-      </View>
-      )
+      return (
+        <View>
+          <ContainerAccueil
+            title={this.state.title}
+            afficherEcran={this.afficherEcranParent.bind(this)}
+          >
+            <ActivityIndicator
+              color="#8b008b"
+              size="large"
+              style={StyleGeneral.loader}
+            />
+            <Text style={StyleGeneral.texteLoader}>
+              Récupération des données. Veuillez patienter.
+            </Text>
+          </ContainerAccueil>
+        </View>
+      );
     } else {
       return (
         <View>
@@ -191,7 +193,10 @@ class AnnuaireListe extends React.Component {
           >
             <ContainerFilters>
               <View style={styles.ContainerOptionFilter}>
-                <Text style={styles.LabelOptionFilter} adjustsFontSizeToFitWidth="true">
+                <Text
+                  style={styles.LabelOptionFilter}
+                  adjustsFontSizeToFitWidth="true"
+                >
                   Agence
                 </Text>
                 <Picker
@@ -214,17 +219,23 @@ class AnnuaireListe extends React.Component {
                   <Picker.Item label="Rennes" value="17" />
                 </Picker>
               </View>
-              
+
               <View>
                 <TextInput
                   style={styles.SearchFilter}
                   placeholder="Rechercher"
                   placeholderTextColor="#000000"
                   underlineColorAndroid={"transparent"}
-                  onChangeText={(searchName) => this.realoadAnnuaireByNameOnChange(searchName)}
-                  onSubmitEditing={(searchName) => this.reloadAnnuaireByName(searchName)}
+                  onChangeText={searchName =>
+                    this.realoadAnnuaireByNameOnChange(searchName)}
+                  onSubmitEditing={searchName =>
+                    this.reloadAnnuaireByName(searchName)}
                 />
-                <TouchableHighlight style={styles.touchableSearchIcon} onPress={() => this.reloadAnnuaireByName(this.state.searchName)}>
+                <TouchableHighlight
+                  style={styles.touchableSearchIcon}
+                  onPress={() =>
+                    this.reloadAnnuaireByName(this.state.searchName)}
+                >
                   <Image
                     style={styles.SearchIcon}
                     source={require("../../../images/icons/SearchIcon.png")}
@@ -245,7 +256,7 @@ class AnnuaireListe extends React.Component {
           </ContainerAccueil>
         </View>
       );
-   }
+    }
   }
 }
 

@@ -58,9 +58,9 @@ class AjoutCra extends React.Component {
       status: "nouveau",
       statusLabel: "Nouveau CRA",
       header: ["Date", "Activité"],
-      monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1),//la premiere lettre du mois en majuscule
-      listItemsCRA:  this.getItemsCRA(),//liste des cra du mois, doit être ordonée
-      modifiedLines: [],//liste des lignes à modifier si validation
+      monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1), //la premiere lettre du mois en majuscule
+      listItemsCRA: this.getItemsCRA(), //liste des cra du mois, doit être ordonée
+      modifiedLines: [], //liste des lignes à modifier si validation
     };
 
     if (params.isServiceCalled) {
@@ -336,7 +336,7 @@ class AjoutCra extends React.Component {
           workingDays: 1,
         };
 
-        list.push(itemCRA);//need to replace, not to push
+        list.push(itemCRA); //need to replace, not to push
         service.insert(ITEMCRA_SCHEMA, itemCRA);
       });
 
@@ -372,14 +372,16 @@ class AjoutCra extends React.Component {
 
   modifyItemCRA(l) {
     this.props.navigation.navigate("ActivitesDetail", {
-      line : l,
-      parent: this});
+      line: l,
+      parent: this,
+    });
   }
 
   modifyPeriodeCRA() {
     this.props.navigation.navigate("ActivitesDetail", {
-      line : -1,
-      parent : this});
+      line: -1,
+      parent: this,
+    });
   }
 
   showDeleteButton() {
@@ -429,7 +431,7 @@ class AjoutCra extends React.Component {
           style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
           textStyle={style.rowText}
-          data={[row.startDate,row.actType]}
+          data={[row.startDate, row.actType]}
         />
       </TouchableOpacity>
     ));
@@ -437,7 +439,7 @@ class AjoutCra extends React.Component {
 
   handleValidate = () => {
     //TODO Retourne sur la page des CRA
-    this.props.navigation.navigate("ActivitesListe");//navigate back
+    this.props.navigation.navigate("ActivitesListe"); //navigate back
   };
 
   render() {
@@ -531,7 +533,13 @@ class AjoutCra extends React.Component {
               </View>
             </View>
 
-            <Button text="Editer une Periode" onPress = {() => this.modifyPeriodeCRA()}> Periode</Button>
+            <Button
+              text="Editer une Periode"
+              onPress={() => this.modifyPeriodeCRA()}
+            >
+              {" "}
+              Periode
+            </Button>
 
             <View style={style.container3}>
               <Table
