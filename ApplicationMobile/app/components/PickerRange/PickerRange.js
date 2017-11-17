@@ -25,8 +25,6 @@ const PickerRange = (start, end) => {
       }
     }
 
-    console.log("Range is : " + range);
-
     // On boucle sur chaque élément du range
     let pickerItems = range.map((i) => {
       return <Picker.Item key={i} label={i} value ={i} />
