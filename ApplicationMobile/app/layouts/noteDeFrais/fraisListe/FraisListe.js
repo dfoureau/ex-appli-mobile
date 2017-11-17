@@ -19,6 +19,7 @@ import { ContainerFilters } from "../../../components/containerFilters";
 import { SearchFilter } from "../../../components/searchFilter";
 import { OptionFilter } from "../../../components/optionFilter";
 import { Button } from "../../../components/Buttons";
+import { PickerRange } from "../../../components/PickerRange";
 import Accueil from "../../accueil/Accueil";
 import FraisAjout from "../fraisAjout/FraisAjout";
 import service from "../../../realm/service";
@@ -40,7 +41,7 @@ const FRAIS_SCHEMA = "Frais";
 class FraisListe extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
       title: "Note de frais",
       data: [],
       months: [
@@ -159,6 +160,11 @@ class FraisListe extends React.Component {
 				</View>
 			);
 		} else {
+
+      // Création d'un range décroissant de l'année courante jusqu'à 2008
+      let currentYear = moment().year();
+      let oldestYear = "2008";
+
       return (
         <View>
           <ContainerAccueil
@@ -175,16 +181,7 @@ class FraisListe extends React.Component {
                     onValueChange={(itemValue, itemIndex) =>
                       this.reloadNDFByYear(itemValue)}
                   >
-                    <Picker.Item label="2017" value="2017" />
-                    <Picker.Item label="2016" value="2016" />
-                    <Picker.Item label="2015" value="2015" />
-                    <Picker.Item label="2014" value="2014" />
-                    <Picker.Item label="2013" value="2013" />
-                    <Picker.Item label="2012" value="2012" />
-                    <Picker.Item label="2011" value="2011" />
-                    <Picker.Item label="2010" value="2010" />
-                    <Picker.Item label="2009" value="2009" />
-                    <Picker.Item label="2008" value="2008" />
+                    {PickerRange(currentYear, oldestYear)}
                   </Picker>
                 </View>
                 <View style={style.containerButton}>
@@ -195,8 +192,8 @@ class FraisListe extends React.Component {
             {/* Container liste des NDF */}
             <View style={style.container2}>
             {textePasDeDonnes}
-            
-            {this.state.isData && 
+
+            {this.state.isData &&
               <FlatList
                 data={this.state.data}
                 renderItem={({ item }) => (
