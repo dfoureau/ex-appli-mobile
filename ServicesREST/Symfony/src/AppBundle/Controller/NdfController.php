@@ -86,6 +86,13 @@ class NdfController extends Controller
           $listNdf[]=$rowNdf;
         }
         $retour=array('idUser'=>$id, 'mois'=>$mois,'annee'=>$annee,'etat'=>$etat, 'notesDeFrais'=>$listNdf);
+
+        array_walk_recursive(
+          $retour,
+          function (&$entry) {
+            $entry = mb_convert_encoding($entry, 'UTF-8', 'ISO-8859-1');
+          }
+        );
           
         return new JsonResponse($retour,Response::HTTP_OK);
        }
