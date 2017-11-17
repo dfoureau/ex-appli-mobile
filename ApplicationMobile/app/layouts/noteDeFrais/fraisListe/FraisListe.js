@@ -61,6 +61,11 @@ class FraisListe extends React.Component {
       isReady: false,
       isData: false,
       webServiceLien: configurationAppli.apiURL + "ndf/",
+      obj : {
+        method: 'GET',
+        headers: {
+          'Authorization': "Bearer " + configurationAppli.userToken
+		  }}
     };
     service.delete(FRAIS_SCHEMA);
   }
@@ -96,7 +101,7 @@ class FraisListe extends React.Component {
     showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
     this.state.year = _annee;
-    fetch(this.state.webServiceLien + _annee + '/' + configurationAppli.userID)
+    fetch(this.state.webServiceLien + _annee + '/' + configurationAppli.userID, this.state.obj)
     .then(function(response) {
       if (response.status >= 400) {
         that.setState({

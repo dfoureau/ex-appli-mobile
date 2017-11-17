@@ -111,7 +111,7 @@ class Connexion extends React.Component {
 
     if (this.state.isReady === true) {
       configurationAppli.userID = this.state.data.id;
-      configurationAppli.token = this.state.data.token;
+      configurationAppli.userToken = this.state.data.token;
       configurationAppli.idAgence = this.state.data.idAgence;
       hideLoading();
       this.props.navigation.navigate("Accueil");

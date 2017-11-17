@@ -51,6 +51,11 @@ class CongesListe extends React.Component {
 			dataLoaded: false,
 			noData: false,
 			isReady: false,
+			obj : {
+				method: 'GET',
+				headers: {
+				  'Authorization': "Bearer " + configurationAppli.userToken
+			}}
 		};
 	}
 
@@ -92,7 +97,7 @@ class CongesListe extends React.Component {
 	getDemandeCongesByUserId() {
 		try {
 			var that = this;
-			fetch(this.state.WSLinkSolde)
+			fetch(this.state.WSLinkSolde, this.state.obj)
 			.then(function(response) {
 				if (response.status >= 400) {
 					that.setState({
@@ -119,7 +124,7 @@ class CongesListe extends React.Component {
 		showLoading("Récupération des données. Veuillez patienter...");
 		try {
 			var that = this;
-			fetch(this.state.WSLinkList + year)
+			fetch(this.state.WSLinkList + year, this.state.obj)
 			.then(function(response) {
 				if (response.status == 400) {
 			that.setState({data: [], isReady: true});

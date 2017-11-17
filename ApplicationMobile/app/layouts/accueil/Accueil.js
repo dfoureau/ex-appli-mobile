@@ -87,7 +87,7 @@ class Accueil extends React.Component {
 		});
     
     var that = this;
-      fetch(this.state.webServiceLien2)
+      fetch(this.state.webServiceLien2, this.state.obj)
       .then(function(response) {
         if (response.status >= 400) {
           throw new Error("GetConges : Bad response from server");
@@ -99,7 +99,7 @@ class Accueil extends React.Component {
     });
     
     var that = this;
-      fetch(this.state.webServiceLien3)
+      fetch(this.state.webServiceLien3, this.state.obj)
       .then(function(response) {
         if (response.status >= 400) {
           throw new Error("GetNews : Bad response from server");

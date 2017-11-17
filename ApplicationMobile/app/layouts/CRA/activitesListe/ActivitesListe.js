@@ -49,6 +49,11 @@ class ActivitesListe extends React.Component {
       isData: false,
       annee: moment().format("YYYY"),
       webServiceLien: configurationAppli.apiURL + "CRA/" + configurationAppli.userID + "/",
+      obj : {
+        method: 'GET',
+        headers: {
+          'Authorization': "Bearer " + configurationAppli.userToken
+		  }}
     };
   }
 
@@ -56,7 +61,7 @@ class ActivitesListe extends React.Component {
     showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
     this.state.annee = _annee;
-		fetch(this.state.webServiceLien + _annee)
+		fetch(this.state.webServiceLien + _annee, this.state.obj)
 		.then(function(response) {
 			if (response.status == 400) {
         that.setState({

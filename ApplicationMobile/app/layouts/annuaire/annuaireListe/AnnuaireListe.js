@@ -41,6 +41,11 @@ class AnnuaireListe extends React.Component {
       isReady: false,
       idAgence: 1,
       searchName: "",
+      obj : {
+        method: 'GET',
+        headers: {
+          'Authorization': "Bearer " + configurationAppli.userToken
+		  }}
     };
   }
 
@@ -118,7 +123,7 @@ class AnnuaireListe extends React.Component {
   reloadAnnuaireByAgence(_idAgence) {
     this.state.idAgence = _idAgence;
     requestURL = configurationAppli.apiURL + 'annuaire/' + _idAgence;
-    return fetch(requestURL)
+    return fetch(requestURL, this.state.obj)
     .then((response) => response.json())
     .then((responseJson) => {
       this.setState({'annuaire': responseJson, isReady: true});
