@@ -55,8 +55,7 @@ class AjoutCra extends React.Component {
       TextResponsable: " ",
       TextProjet: " ",
       TextComment: " ",
-      status: "nouveau",
-      statusLabel: "Nouveau CRA",
+      status: "Nouveau",
       header: ["Date", "Activité"],
       monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1), //la premiere lettre du mois en majuscule
       listItemsCRA: this.getItemsCRA(), //liste des cra du mois, doit être ordonée
@@ -354,7 +353,6 @@ class AjoutCra extends React.Component {
     this.setState({
       statusId: 2,
       status: "brouillon",
-      statusLabel: "DC en brouillon",
     });
     this.props.navigation.navigate("CraConfirmation");
   }
@@ -365,7 +363,6 @@ class AjoutCra extends React.Component {
     this.setState({
       statusId: 3,
       status: "validé",
-      statusLabel: "Modifications interdites",
     });
     this.props.navigation.navigate("CraConfirmation");
   }
@@ -453,9 +450,6 @@ class AjoutCra extends React.Component {
             <View style={style.container1}>
               <View style={style.containerFirstLine}>
                 <Text style={style.text}>Etat : {this.state.status}</Text>
-              </View>
-              <View style={style.containerFirstLine}>
-                <Text style={style.textCRA}>{this.state.statusLabel}</Text>
               </View>
             </View>
 

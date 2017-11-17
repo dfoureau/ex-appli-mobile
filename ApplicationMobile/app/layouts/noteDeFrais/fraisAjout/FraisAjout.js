@@ -63,8 +63,7 @@ class FraisAjout extends React.Component {
     this.state = {
       title: "Note de frais",
       statusId: 1,
-      status: "nouveau",
-      statusLabel: "Nouvelle NDF",
+      status: "Nouveau",
       header: ["Jour", "Client", "Montant €"],
       months: [
         "Janvier",
@@ -153,7 +152,6 @@ class FraisAjout extends React.Component {
             totalMontant: totalAReglerAllFrais,
             totalClient: totalClientAllFrais,
             status: ndf["etat"],
-            statusLabel: "",
           });
         }
       });
@@ -342,7 +340,6 @@ class FraisAjout extends React.Component {
     this.setState({
       statusId: 2,
       status: "brouillon",
-      statusLabel: "NDF en brouillon",
     });
     this.props.navigation.navigate("FraisConfirmation");
   }
@@ -350,7 +347,6 @@ class FraisAjout extends React.Component {
     this.setState({
       statusId: 3,
       status: "validé",
-      statusLabel: "Modifications interdites",
     });
     this.props.navigation.navigate("FraisConfirmation");
   }
@@ -411,9 +407,6 @@ class FraisAjout extends React.Component {
             <View style={styles.container1}>
               <View style={styles.containerStatus}>
                 <Text style={styles.text}>Etat : {this.state.status}</Text>
-              </View>
-              <View style={styles.containerStatusLabel}>
-                <Text style={styles.statusLabel}>{this.state.statusLabel}</Text>
               </View>
             </View>
             <View style={styles.container2}>

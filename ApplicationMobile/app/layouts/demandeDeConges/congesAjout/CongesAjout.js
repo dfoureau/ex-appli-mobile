@@ -58,8 +58,7 @@ class CongesAjout extends React.Component {
     this.state = {
       title: "Demande de congés",
       statusId: 1,
-      status: "nouveau",
-      statusLabel: "Nouvelle DC",
+      status: "Nouveau",
       header: ["Date du", "Date au", "Type d'abs", "Nb. jours"],
       periods: [],
       WSLinkSolde:
@@ -96,13 +95,20 @@ class CongesAjout extends React.Component {
   }
 
   componentDidMount() {
-    console.log(this.props.navigation.state.params.numDemande);
+    var that = this;
+    //Récupération des paramètres de navigation
+    const { params } = this.props.navigation.state;
+
     this.getSoldeCongesByUserId();
-    if (this.props.navigation.state.params.numDemande !== null) {
+
+    if (params.numDemande != null) {
       // Récupere les périodes
-      this.getPeriodeCongesByUserIdNumDemande(
-        this.props.navigation.state.params.numDemande
-      );
+      this.getPeriodeCongesByUserIdNumDemande(params.numDemande);
+    } else {
+      that.setState({
+        periods: [],
+        isReady: true,
+      });
     }
   }
 
@@ -133,26 +139,6 @@ class CongesAjout extends React.Component {
     that.state.statusId = that.props.navigation.state.params.etat;
     that.state.status = that.props.navigation.state.params.libelleEtat;
     that.state.dateDemande = that.props.navigation.state.params.dateDemande;
-
-    switch (that.state.status) {
-      case 0:
-        that.state.statusLabel = "Demande en brouillon";
-        break;
-      case 1:
-        that.state.statusLabel = "En attente de validation";
-        break;
-      case 2:
-        that.state.statusLabel = "Validée. Modifications interdites";
-        break;
-      case 3:
-        that.state.statusLabel = "Demande à modifier";
-        break;
-      default:
-        that.state.statusLabel = "Nouvelle demande";
-        break;
-    }
-
-    that.state.statusLabel = "DC en brouillon";
   }
 
   // Retourne le dernier solde congés et le dernier solde RTT de l'utilisateur en paramère
@@ -210,7 +196,6 @@ class CongesAjout extends React.Component {
     this.setState({
       statusId: 2,
       status: "brouillon",
-      statusLabel: "DC en brouillon",
     });
     this.props.navigation.navigate("CongesConfirmation");
   }
@@ -275,7 +260,6 @@ class CongesAjout extends React.Component {
           dataSaved: true,
           statusId: 3,
           status: "validé",
-          statusLabel: "Modifications interdites",
         });
         // Après sauvegarde en bdd, on reset le cache
         service.delete(PERIOD_SCHEMA);
@@ -387,9 +371,6 @@ class CongesAjout extends React.Component {
             <View style={style.container1}>
               <View style={style.containerStatus}>
                 <Text style={style.text}>Etat : {this.state.status}</Text>
-              </View>
-              <View style={style.containerStatusLabel}>
-                <Text style={style.statusLabel}>{this.state.statusLabel}</Text>
               </View>
             </View>
             <View style={style.container2}>
