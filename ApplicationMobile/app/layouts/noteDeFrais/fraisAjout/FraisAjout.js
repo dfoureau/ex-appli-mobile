@@ -42,6 +42,8 @@ import FraisDetail from "../fraisDetail/FraisDetail";
 import FraisConfirmation from "../fraisConfirmation/FraisConfirmation";
 import service from "../../../realm/service";
 
+import configurationAppli from "../../../configuration/Configuration";
+
 const FRAIS_SCHEMA = "Frais";
 
 class FraisAjout extends React.Component {
@@ -85,16 +87,17 @@ class FraisAjout extends React.Component {
       totalMontant: 0,
       totalClient: 0,
       nbJours: 0,
+      webServiceLien: configurationAppli.apiURL + "ndf/",
     };
   }
 
   getNDF(year, month){
     var that = this;
-    fetch('http://185.57.13.103/rest/web/app_dev.php/ndf/1000000/'+year+'/'+month)
+    fetch(this.state.webServiceLien + configurationAppli.userID + '/' + year + '/' + month)
     .then(function(response) {
       if (response.status >= 400) {
         //Réinitialisation des valeurs
-        that.setState({ 
+        that.setState({
           listFrais: [],
           totalMontant: 0,
           totalClient: 0,
