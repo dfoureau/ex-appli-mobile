@@ -41,6 +41,7 @@ class AnnuaireListe extends React.Component {
       isReady: false,
       idAgence: 1,
       searchName: "",
+      annuaireComplet: [],
       obj : {
         method: 'GET',
         headers: {
@@ -126,7 +127,11 @@ class AnnuaireListe extends React.Component {
     return fetch(requestURL, this.state.obj)
     .then((response) => response.json())
     .then((responseJson) => {
-      this.setState({'annuaire': responseJson, isReady: true});
+      this.setState({
+        annuaire: responseJson,
+        isReady: true,
+        annuaireComplet: responseJson,
+      });
     })
     .catch((error) => {
       console.error(error);
@@ -139,12 +144,16 @@ class AnnuaireListe extends React.Component {
   }
 
   reloadAnnuaireByName(_searchedName) {
-    var annuaire2 = this.state.annuaire;
+    var annuaire2 = this.state.annuaireComplet;
+    
     annuaire2 = annuaire2.filter((item) => {
-      return (item.nom.toLowerCase().match(_searchedName) || item.prenom.toLowerCase().match(_searchedName))
+      return (item.nom.toLowerCase().match(_searchedName)
+        || item.prenom.toLowerCase().match(_searchedName))
     })
-
-    this.setState({'annuaire': annuaire2, isReady: true});
+    this.setState({
+      annuaire: annuaire2,
+      isReady: true,
+    });
   }
 
   componentDidMount() {
@@ -213,7 +222,7 @@ class AnnuaireListe extends React.Component {
                   placeholderTextColor="#000000"
                   underlineColorAndroid={"transparent"}
                   onChangeText={(searchName) => this.realoadAnnuaireByNameOnChange(searchName)}
-                  onSubmitEditing={() => this.reloadAnnuaireByName(this.state.searchName)}
+                  onSubmitEditing={(searchName) => this.reloadAnnuaireByName(searchName)}
                 />
                 <TouchableHighlight style={styles.touchableSearchIcon} onPress={() => this.reloadAnnuaireByName(this.state.searchName)}>
                   <Image
