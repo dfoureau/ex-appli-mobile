@@ -61,7 +61,7 @@ class FraisAjout extends React.Component {
 
   setInitialValues() {
     var initListAndTotals = this.initListAndTotals();
-    let dateStr = moment().format("MMMM YYYY");
+
     this.state = {
       title: "Note de frais",
       statusId: 1,
@@ -82,7 +82,6 @@ class FraisAjout extends React.Component {
         "Novembre",
         "Décembre",
       ],
-      monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1),//date actuelle
       listFrais: [],
       totalMontant: 0,
       totalClient: 0,
@@ -91,14 +90,38 @@ class FraisAjout extends React.Component {
     };
   }
 
+  // On initialise la liste des frais vide.
+  // On crée une ligne par jour du mois sélectionné
+  initFraisVides(year, month) {
+    //Initialisation de la date au 1er jour correspondant au mois et à l'année
+    // fournis en paramètre
+    let dateSelected = moment(year+'-'+month+'-01', 'YYYY-M,DD');
+    let nbJours = dateSelected.daysInMonth(); // Nombre de jours dans le mois
+
+    let tableauFrais = [];
+
+    for (i=1; i<= nbJours; i++) {
+      dateSelected.set('date', i);
+      tableauFrais.push({
+        dateShort: dateSelected.format('ddd DD'),
+        client: '',
+        montant: '',
+        id: dateSelected.format('DD-MM-YYYY')
+      });
+    }
+
+    return tableauFrais;
+  }
+
   getNDF(year, month){
     var that = this;
+    let listFrais = this.initFraisVides(year, month);
     fetch(this.state.webServiceLien + configurationAppli.userID + '/' + year + '/' + month)
     .then(function(response) {
       if (response.status >= 400) {
         //Réinitialisation des valeurs
         that.setState({
-          listFrais: [],
+          listFrais: listFrais,
           totalMontant: 0,
           totalClient: 0,
           status: "",
@@ -108,13 +131,17 @@ class FraisAjout extends React.Component {
       return response.json();
     })
     .then(function(ndf) {
+      console.log("FRAIS => \n");
+      console.log(listFrais);
+
         //Construction du tableau de la note de frais
         var frais = ndf["notesDeFrais"];
-        let tableauFrais = [];
+
+        let tableauFrais = listFrais;
         // intialisation des totaux globaux
         var totalAReglerAllFrais = 0;
         var totalClientAllFrais = 0;
-        
+
         if(frais != null)
         {
           frais.forEach(function(item){
@@ -125,19 +152,20 @@ class FraisAjout extends React.Component {
               FRAIS_SCHEMA,
               jours.format("DD-MM-YYYY")
             );
-            
+
             totauxFrais = that.calculTotaux(frais);
 
             totalAReglerAllFrais += totauxFrais.totalAReglerFrais;
             totalClientAllFrais += totauxFrais.totalClientFrais;
-            tableauFrais.push({
-              dateShort: item["jour"],
+            tableauFrais[item["jour"] -1] = {
+              dateShort: jours.format('ddd DD'),
               client: item["client"],
               montant: totauxFrais != null ? totauxFrais.totalAReglerFrais : "",
-              id: jours.format("DD-MM-YYYY"),
-            })
+              id: jours.format('DD-MM-YYYY'),
+            }
           });
 
+        }
           that.setState({
             listFrais: tableauFrais,
             totalMontant: totalAReglerAllFrais,
@@ -145,7 +173,6 @@ class FraisAjout extends React.Component {
             status: ndf["etat"],
             statusLabel: "",
           });
-        }
     });
   }
 
@@ -177,7 +204,7 @@ class FraisAjout extends React.Component {
       parking: parseFloat(item["montantParking"]),
       divers: parseFloat(item["montantDivers"]),
       libelle: item["libelleDivers"],
-    }; 
+    };
 
     // On test si le frais existe
     if (service.getByPrimaryKey(FRAIS_SCHEMA, frais.id) != null) {
@@ -190,12 +217,9 @@ class FraisAjout extends React.Component {
   }
 
   reloadNDFByYear(_month){
-    var that = this;
-    that.setState({monthSelected: _month});
-
-    var today = new Date();
-    var year = today.getFullYear();
-    this.getNDF(year,_month);
+    this.setState({monthSelected: _month}, () => {
+      this.getNDF(this.state.yearSelected, this.state.monthSelected);
+    });
   }
 
   componentDidMount(){
@@ -205,6 +229,10 @@ class FraisAjout extends React.Component {
 
     //Test pour savoir si on ajoute ou si on consulte une NDF
     if(params.month != null){
+      this.setState({
+        yearSelected: params.year,
+        monthSelected: params.month
+      });
       this.getNDF(params.year, params.month);
     }
     else{
@@ -300,16 +328,16 @@ class FraisAjout extends React.Component {
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
           textStyle={styles.rowText}
           data={[row.dateShort, row.client, row.montant ? row.montant : 0]}
+          flexArr= {[1, 2, 1]}
         />
       </TouchableOpacity>
     ));
-    return lignes;
   }
 
   //Affiche le contenu du menu des mois/années
   loadPickerItems() {
     return this.state.months.map((item, i) => (
-      <Picker.Item label={item} value={item} key={i} />
+      <Picker.Item label={item + ' ' + this.state.yearSelected} value={i+1} key={i} />
     ));
   }
 
@@ -452,6 +480,7 @@ class FraisAjout extends React.Component {
                     data={this.state.header}
                     style={styles.header}
                     textStyle={styles.headerText}
+                    flexArr={[1, 2, 1]}
                   />
                   {this.afficherRow()}
                 </Table>
