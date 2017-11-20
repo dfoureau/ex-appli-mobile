@@ -60,7 +60,22 @@ class FraisAjout extends React.Component {
   });
 
   setInitialValues() {
-    var initListAndTotals = this.initListAndTotals();
+    // var initListAndTotals = this.initListAndTotals();
+
+    // Initialisation du mois et de l'année sélectionnés.
+    // S'ils sont vides, on prend le mois et l'année courants
+    const { params } = this.props.navigation.state;
+    let now = moment();
+    monthSelected = now.month();
+    yearSelected = now.year();
+
+    if (params.month != null) {
+      monthSelected = params.month;
+    }
+
+    if (params.year != null) {
+      yearSelected = params.year;
+    }
 
     this.state = {
       title: "Note de frais",
@@ -81,6 +96,8 @@ class FraisAjout extends React.Component {
         "Novembre",
         "Décembre",
       ],
+      monthSelected: parseInt(monthSelected),
+      yearSelected: parseInt(yearSelected),
       listFrais: [],
       totalMontant: 0,
       totalClient: 0,
@@ -130,9 +147,6 @@ class FraisAjout extends React.Component {
       return response.json();
     })
     .then(function(ndf) {
-      console.log("FRAIS => \n");
-      console.log(listFrais);
-
         //Construction du tableau de la note de frais
         var frais = ndf["notesDeFrais"];
 
@@ -223,26 +237,21 @@ class FraisAjout extends React.Component {
     });
   }
 
-  componentDidMount() {
-    var that = this;
-    //Récupération des paramètres de navigation
-    const { params } = this.props.navigation.state;
 
-    //Test pour savoir si on ajoute ou si on consulte une NDF
-    if(params.month != null){
-      this.setState({
-        yearSelected: params.year,
-        monthSelected: params.month
-      });
-      this.getNDF(params.year, params.month);
-    } else {
-      var initListAndTotals = this.initListAndTotals();
-      that.setState({
-        listFrais: initListAndTotals.listFrais,
-        totalMontant: initListAndTotals.totalAReglerAllFrais,
-        totalClient: initListAndTotals.totalClientAllFrais,
-      });
-    }
+
+
+  componentWillMount() {
+    var that = this;
+
+    // var initListAndTotals = this.initListAndTotals();
+    this.getNDF(this.state.yearSelected, this.state.monthSelected);
+
+    // that.setState({
+    //     listFrais: initListAndTotals.listFrais,
+    //     totalMontant: initListAndTotals.totalAReglerAllFrais,
+    //     totalClient: initListAndTotals.totalClientAllFrais,
+    //   });
+
   }
 
   // Méthode permettant de calculer le total à régler d'un frais
@@ -435,8 +444,9 @@ class FraisAjout extends React.Component {
                 <Picker
                   style={{ width: 160 }}
                   selectedValue={this.state.monthSelected}
-                  onValueChange={(itemValue, itemIndex) =>
-                    this.reloadNDFByYear(itemValue)}
+                  onValueChange={(itemValue, itemIndex) => {
+                    this.setState({monthSelected: itemValue}, () => this.reloadNDFByYear(itemValue)
+                  )}}
                 >
                   {this.loadPickerItems()}
                 </Picker>
