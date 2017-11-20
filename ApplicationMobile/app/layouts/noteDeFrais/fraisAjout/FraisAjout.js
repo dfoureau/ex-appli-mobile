@@ -16,22 +16,23 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "../../../styles/Styles";
 import styles from "./styles";
+import StyleGeneral from "../../../styles/Styles";
 import moment from "moment";
 import "moment/locale/fr";
 
 import {
   showToast,
   showNotification,
-  showLoading,
-  hideLoading,
   hide,
 } from "react-native-notifyer";
 
 // IMPORT DES COMPOSANTS EXOTIQUE
+import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
 import { ContainerFilters } from "../../../components/containerFilters";
 import { SearchFilter } from "../../../components/searchFilter";
@@ -80,6 +81,7 @@ class FraisAjout extends React.Component {
     this.state = {
       title: "Note de frais",
       statusId: 1,
+      isReady: false,
       status: "Nouveau",
       header: ["Jour", "Client", "Montant €"],
       rowsFlexArr: [1, 2 ,1],
@@ -138,6 +140,7 @@ class FraisAjout extends React.Component {
       if (response.status >= 400) {
         //Réinitialisation des valeurs
         that.setState({
+          isReady: true,
           listFrais: listFrais,
           totalMontant: 0,
           totalClient: 0,
@@ -188,6 +191,7 @@ class FraisAjout extends React.Component {
             totalMontant: totalAReglerAllFrais,
             totalClient: totalClientAllFrais,
             status: ndf["etat"],
+            isReady: true
           });
     });
   }
@@ -233,13 +237,13 @@ class FraisAjout extends React.Component {
   }
 
   reloadNDFByYear(_month){
-    this.setState({monthSelected: _month}, () => {
+    this.setState({
+      monthSelected: _month,
+      isReady: false
+      }, () => {
       this.getNDF(this.state.yearSelected, this.state.monthSelected);
     });
   }
-
-
-
 
   componentWillMount() {
     var that = this;
@@ -428,78 +432,98 @@ class FraisAjout extends React.Component {
   render() {
     const { params } = this.props.navigation.state;
 
-    return (
-      <View style={styles.mainContainer}>
-        <ContainerTitre
-          title={this.state.title}
-          navigation={this.props.navigation}
-        >
-          <View style={styles.container}>
-            <View style={styles.container1}>
-              <View style={styles.containerStatus}>
-                <Text style={styles.text}>Etat : {this.state.status}</Text>
-              </View>
-            </View>
-            <View style={styles.container2}>
-              <View style={styles.containerPicker}>
-                <Picker
-                  style={{ width: 160 }}
-                  selectedValue={this.state.monthSelected}
-                  onValueChange={(itemValue, itemIndex) => {
-                    this.setState({monthSelected: itemValue}, () => this.reloadNDFByYear(itemValue)
-                  )}}
-                >
-                  {this.loadPickerItems()}
-                </Picker>
-              </View>
-              <View style={styles.containerColumn}>
-                <View style={styles.containerInfoElement}>
-                  <Text style={styles.text}>
-                    Total à régler : {this.state.totalMontant} €
-                  </Text>
-                  <Text style={styles.text}>
-                    Total client : {this.state.totalClient} €
-                  </Text>
-                  {/*<Text style={styles.text}>Nombre de jours : {this.state.nbJours}</Text>*/}
-                </View>
-                <View style={styles.containerButton}>
-                  {this.checketat(this.state.status) == true ? (
-                    <Button
-                      text="AJOUTER FORFAIT"
-                      onPress={() => this.addNDF(this.state.monthSelected)}
-                      buttonStyles={Style.addButton}
-                    />
-                  ) : null}
+    if (!this.state.isReady) {
+      return (
+        <View>
+          <ContainerAccueil
+            title={this.state.title}
+
+          >
+            <ActivityIndicator
+              color={"#8b008b"}
+              size={"large"}
+              style={StyleGeneral.loader}
+            />
+            <Text style={StyleGeneral.texteLoader}>
+              Récupération des données. Veuillez patienter...
+            </Text>
+          </ContainerAccueil>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.mainContainer}>
+          <ContainerTitre
+            title={this.state.title}
+            navigation={this.props.navigation}
+          >
+            <View style={styles.container}>
+              <View style={styles.container1}>
+                <View style={styles.containerStatus}>
+                  <Text style={styles.text}>Etat : {this.state.status}</Text>
                 </View>
               </View>
               <View style={styles.container2}>
-                <Text style={styles.textAide}>
-                  Saisir une ligne pour ajouter/modifier une NDF
-                </Text>
+                <View style={styles.containerPicker}>
+                  <Picker
+                    style={{ width: 160 }}
+                    selectedValue={this.state.monthSelected}
+                    onValueChange={(itemValue, itemIndex) => {
+                      this.setState({monthSelected: itemValue}, () => this.reloadNDFByYear(itemValue)
+                    )}}
+                  >
+                    {this.loadPickerItems()}
+                  </Picker>
+                </View>
+                <View style={styles.containerColumn}>
+                  <View style={styles.containerInfoElement}>
+                    <Text style={styles.text}>
+                      Total à régler : {this.state.totalMontant} €
+                    </Text>
+                    <Text style={styles.text}>
+                      Total client : {this.state.totalClient} €
+                    </Text>
+                    {/*<Text style={styles.text}>Nombre de jours : {this.state.nbJours}</Text>*/}
+                  </View>
+                  <View style={styles.containerButton}>
+                    {this.checketat(this.state.status) == true ? (
+                      <Button
+                        text="AJOUTER FORFAIT"
+                        onPress={() => this.addNDF(this.state.monthSelected)}
+                        buttonStyles={Style.addButton}
+                      />
+                    ) : null}
+                  </View>
+                </View>
+                <View style={styles.container2}>
+                  <Text style={styles.textAide}>
+                    Saisir une ligne pour ajouter/modifier une NDF
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.container3}>
+                <View style={styles.containerTable}>
+                  <Table borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}>
+                    <Row
+                      data={this.state.header}
+                      style={styles.header}
+                      textStyle={styles.headerText}
+                      flexArr={this.state.rowsFlexArr}
+                    />
+                    {this.afficherRow()}
+                  </Table>
+                </View>
+              </View>
+              <View style={styles.containerButtons}>
+                {this.showDeleteButton()}
+                {this.showDraftButton()}
+                {this.showValidateButton()}
               </View>
             </View>
-            <View style={styles.container3}>
-              <View style={styles.containerTable}>
-                <Table borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}>
-                  <Row
-                    data={this.state.header}
-                    style={styles.header}
-                    textStyle={styles.headerText}
-                    flexArr={this.state.rowsFlexArr}
-                  />
-                  {this.afficherRow()}
-                </Table>
-              </View>
-            </View>
-            <View style={styles.containerButtons}>
-              {this.showDeleteButton()}
-              {this.showDraftButton()}
-              {this.showValidateButton()}
-            </View>
-          </View>
-        </ContainerTitre>
-      </View>
-    );
+          </ContainerTitre>
+        </View>
+      );
+    }
   }
 }
 
