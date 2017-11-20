@@ -24,12 +24,12 @@ import moment from "moment";
 import "moment/locale/fr";
 
 import {
-	showToast,
-	showNotification,
-	showLoading,
-	hideLoading,
-	hide
-} from 'react-native-notifyer';
+  showToast,
+  showNotification,
+  showLoading,
+  hideLoading,
+  hide,
+} from "react-native-notifyer";
 
 // IMPORT DES COMPOSANTS EXOTIQUE
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
@@ -65,8 +65,7 @@ class FraisAjout extends React.Component {
     this.state = {
       title: "Note de frais",
       statusId: 1,
-      status: "nouveau",
-      statusLabel: "Nouvelle NDF",
+      status: "Nouveau",
       header: ["Jour", "Client", "Montant €"],
       months: [
         "Janvier",
@@ -82,6 +81,7 @@ class FraisAjout extends React.Component {
         "Novembre",
         "Décembre",
       ],
+      monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1), //date actuelle
       listFrais: [],
       totalMontant: 0,
       totalClient: 0,
@@ -142,12 +142,15 @@ class FraisAjout extends React.Component {
         var totalAReglerAllFrais = 0;
         var totalClientAllFrais = 0;
 
-        if(frais != null)
-        {
-          frais.forEach(function(item){
-            let jours = moment({ y: item["annee"], M: item["mois"], d: item["jour"] });
+        if (frais != null) {
+          frais.forEach(function(item) {
+            let jours = moment({
+              y: item["annee"],
+              M: item["mois"],
+              d: item["jour"],
+            });
             //Création de l'item "frais" dans le cache
-            that.mapperDonneesFrais(item,ndf["idUser"],jours);
+            that.mapperDonneesFrais(item, ndf["idUser"], jours);
             var frais = service.getByPrimaryKey(
               FRAIS_SCHEMA,
               jours.format("DD-MM-YYYY")
@@ -171,13 +174,12 @@ class FraisAjout extends React.Component {
             totalMontant: totalAReglerAllFrais,
             totalClient: totalClientAllFrais,
             status: ndf["etat"],
-            statusLabel: "",
           });
     });
   }
 
   //Fonction permettant de créér dans le cache les frais récupérés de l'API
-  mapperDonneesFrais(item,idUser,jour){
+  mapperDonneesFrais(item, idUser, jour) {
     // on insère les données créées dans le cache
     let frais = {
       id: jour.format("DD-MM-YYYY"),
@@ -222,7 +224,7 @@ class FraisAjout extends React.Component {
     });
   }
 
-  componentDidMount(){
+  componentDidMount() {
     var that = this;
     //Récupération des paramètres de navigation
     const { params } = this.props.navigation.state;
@@ -234,13 +236,13 @@ class FraisAjout extends React.Component {
         monthSelected: params.month
       });
       this.getNDF(params.year, params.month);
-    }
-    else{
+    } else {
       var initListAndTotals = this.initListAndTotals();
       that.setState({
         listFrais: initListAndTotals.listFrais,
         totalMontant: initListAndTotals.totalAReglerAllFrais,
-        totalClient: initListAndTotals.totalClientAllFrais});
+        totalClient: initListAndTotals.totalClientAllFrais,
+      });
     }
   }
 
@@ -269,7 +271,6 @@ class FraisAjout extends React.Component {
 
   // Méthode permettant l'initialisation de la liste des frais et des totaux (montant à régler et client)
   initListAndTotals() {
-
     // intialisation des totaux globaux
     var totalAReglerAllFrais = 0;
     var totalClientAllFrais = 0;
@@ -361,7 +362,6 @@ class FraisAjout extends React.Component {
     this.setState({
       statusId: 2,
       status: "brouillon",
-      statusLabel: "NDF en brouillon",
     });
     this.props.navigation.navigate("FraisConfirmation");
   }
@@ -369,16 +369,14 @@ class FraisAjout extends React.Component {
     this.setState({
       statusId: 3,
       status: "validé",
-      statusLabel: "Modifications interdites",
     });
     this.props.navigation.navigate("FraisConfirmation");
   }
 
   checketat(etat) {
-    if(etat == "Validé" || etat == "En attente de validation"){
+    if (etat == "Validé" || etat == "En attente de validation") {
       return false;
-    }
-    else{
+    } else {
       return true;
     }
   }
@@ -431,9 +429,6 @@ class FraisAjout extends React.Component {
             <View style={styles.container1}>
               <View style={styles.containerStatus}>
                 <Text style={styles.text}>Etat : {this.state.status}</Text>
-              </View>
-              <View style={styles.containerStatusLabel}>
-                <Text style={styles.statusLabel}>{this.state.statusLabel}</Text>
               </View>
             </View>
             <View style={styles.container2}>

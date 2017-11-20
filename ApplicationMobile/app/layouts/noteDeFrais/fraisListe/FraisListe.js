@@ -29,12 +29,12 @@ import configurationAppli from "../../../configuration/Configuration";
 import moment from "moment";
 
 import {
-	showToast,
-	showNotification,
-	showLoading,
-	hideLoading,
-	hide
-} from 'react-native-notifyer';
+  showToast,
+  showNotification,
+  showLoading,
+  hideLoading,
+  hide,
+} from "react-native-notifyer";
 
 const FRAIS_SCHEMA = "Frais";
 
@@ -62,11 +62,12 @@ class FraisListe extends React.Component {
       isReady: false,
       isData: false,
       webServiceLien: configurationAppli.apiURL + "ndf/",
-      obj : {
-        method: 'GET',
+      obj: {
+        method: "GET",
         headers: {
-          'Authorization': "Bearer " + configurationAppli.userToken
-		  }}
+          Authorization: "Bearer " + configurationAppli.userToken,
+        },
+      },
     };
     service.delete(FRAIS_SCHEMA);
   }
@@ -98,74 +99,81 @@ class FraisListe extends React.Component {
     this.getNDFByUser(year);
   }
 
-  getNDFByUser(_annee){
+  getNDFByUser(_annee) {
     showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
     this.state.year = _annee;
-    fetch(this.state.webServiceLien + _annee + '/' + configurationAppli.userID, this.state.obj)
-    .then(function(response) {
-      if (response.status >= 400) {
-        that.setState({
-          data: [],
-          isReady: true,
-          isData: false,
-        });
-      }
-      hideLoading();
-      return response.json();
-    })
-    .then(function(ndf) {
-      that.setState({
-        data: ndf,
-        isReady: true,
-        isData: true,
+    fetch(
+      this.state.webServiceLien + _annee + "/" + configurationAppli.userID,
+      this.state.obj
+    )
+      .then(function(response) {
+        if (response.status >= 400) {
+          that.setState({
+            data: [],
+            isReady: true,
+            isData: false,
+          });
+        }
+        hideLoading();
+        return response.json();
       })
-    });
+      .then(function(ndf) {
+        that.setState({
+          data: ndf,
+          isReady: true,
+          isData: true,
+        });
+      });
   }
 
-  reloadNDFByYear(_year){
-    this.setState({year: _year});
-		this.setState({isData: false, isReady: false});
+  reloadNDFByYear(_year) {
+    this.setState({ year: _year });
+    this.setState({ isData: false, isReady: false });
     this.getNDFByUser(_year);
   }
 
   //Fonction permettant de conditionner l'affichage du bloc valideur
-  checkItem(item){
-    if (item.statusId == 2 && item.valideur != null && item.dateactionetat != null) {
+  checkItem(item) {
+    if (
+      item.statusId == 2 &&
+      item.valideur != null &&
+      item.dateactionetat != null
+    ) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
 
   render() {
     if (this.state.data && this.state.data.length > 0) {
-      textePasDeDonnes = <Text></Text>;
+      textePasDeDonnes = <Text />;
     } else {
-      textePasDeDonnes = <Text style={style.texteMessage}>Aucune note de frais trouvée</Text>;
+      textePasDeDonnes = (
+        <Text style={style.texteMessage}>Aucune note de frais trouvée</Text>
+      );
     }
 
     if (!this.state.isReady) {
-			return (
-				<View>
-					<ContainerAccueil
-						title={this.state.title}
-						afficherEcran={this.afficherEcranParent.bind(this)}
-					>
-						<ActivityIndicator
-							color={"#8b008b"}
-							size={"large"}
-							style={StyleGeneral.loader}
-						/>
-						<Text style={StyleGeneral.texteLoader}>
-							Récupération des données. Veuillez patienter...
-						</Text>
-					</ContainerAccueil>
-				</View>
-			);
-		} else {
-
+      return (
+        <View>
+          <ContainerAccueil
+            title={this.state.title}
+            afficherEcran={this.afficherEcranParent.bind(this)}
+          >
+            <ActivityIndicator
+              color={"#8b008b"}
+              size={"large"}
+              style={StyleGeneral.loader}
+            />
+            <Text style={StyleGeneral.texteLoader}>
+              Récupération des données. Veuillez patienter...
+            </Text>
+          </ContainerAccueil>
+        </View>
+      );
+    } else {
       // Création d'un range décroissant de l'année courante jusqu'à 2008
       let currentYear = moment().year();
       let oldestYear = "2008";
@@ -196,52 +204,53 @@ class FraisListe extends React.Component {
             </View>
             {/* Container liste des NDF */}
             <View style={style.container2}>
-            {textePasDeDonnes}
+              {textePasDeDonnes}
 
-            {this.state.isData &&
-              <FlatList
-                data={this.state.data}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    key={item.idUser}
-                    onPress={() => this.getNDF(item.idUser, item.mois, item.annee)}
-                  >
-                  <View style={style.containerList}>
-                      <View style={style.containerPeriod}>
-                        <Text style={style.periodText}>
-                          {this.state.months[item.mois-1]} {item.annee}
-                        </Text>
-                        <View style={style.containerIcon}>
-                          <Image
-                            style={style.listIcon}
-                            source={
-                              item.statusId == 2
-                                ? require("../../../images/icons/check2.png")
-                                : null
-                            }
-                          />
+              {this.state.isData && (
+                <FlatList
+                  data={this.state.data}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      key={item.idUser}
+                      onPress={() =>
+                        this.getNDF(item.idUser, item.mois, item.annee)}
+                    >
+                      <View style={style.containerList}>
+                        <View style={style.containerPeriod}>
+                          <Text style={style.periodText}>
+                            {this.state.months[item.mois - 1]} {item.annee}
+                          </Text>
+                          <View style={style.containerIcon}>
+                            <Image
+                              style={style.listIcon}
+                              source={
+                                item.statusId == 2
+                                  ? require("../../../images/icons/check2.png")
+                                  : null
+                              }
+                            />
+                          </View>
+                        </View>
+                        <View>
+                          <Text style={style.amountText}>
+                            Montant : {item.montantTotal} €
+                          </Text>
+                          <Text style={style.statusText}>
+                            Etat : {item.etat}
+                            {this.checkItem(item) == true ? (
+                              <Text>
+                                {" "}
+                                par {item.valideur} le {item.dateactionetat}
+                              </Text>
+                            ) : null}
+                          </Text>
                         </View>
                       </View>
-                      <View>
-                        <Text style={style.amountText}>
-                          Montant : {item.montantTotal} €
-                        </Text>
-                        <Text style={style.statusText}>
-                          Etat : {item.etat}
-                          {this.checkItem(item) == true ? (
-                            <Text>
-                              {" "}
-                              par {item.valideur} le {item.dateactionetat}
-                            </Text>
-                          ) : null}
-                        </Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                )}
-                keyExtractor={(item, index) => index}
-              />
-              }
+                    </TouchableOpacity>
+                  )}
+                  keyExtractor={(item, index) => index}
+                />
+              )}
             </View>
           </ContainerAccueil>
         </View>

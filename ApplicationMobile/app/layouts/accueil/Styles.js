@@ -22,5 +22,4 @@ export default StyleSheet.create({
     fontWeight: "bold",
     paddingBottom: 5,
   },
-
 });

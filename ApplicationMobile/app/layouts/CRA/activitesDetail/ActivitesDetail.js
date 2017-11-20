@@ -22,7 +22,6 @@ import Accueil from "../../accueil/Accueil";
 import { Calendar } from "react-native-calendars";
 import styles from "./styles";
 
-
 //import service from "../../../realm/service";
 
 const ITEMCRA_SCHEMA = "ItemCRA";
@@ -33,17 +32,16 @@ class ActivitesDetail extends React.Component {
     this.setInitialValues();
   }
 
-
   setInitialValues() {
     const { params } = this.props.navigation.state;
 
     var parent = params.parent;
 
-    if(params.line == -1){
+    if (params.line == -1) {
       this.state = {
         title: "Détails jours",
         isPeriod: true,
-        month : parent.state.monthSelected,//for the calendar
+        month: parent.state.monthSelected, //for the calendar
         linesToChange: [],
         activitesListe: [
           { code: "1.0" },
@@ -57,13 +55,13 @@ class ActivitesDetail extends React.Component {
         ],
         activiteClicked: { code: "1.0" },
       };
-    }else {
-      let tmp =parent.state.listItemsCRA[params.line];
+    } else {
+      let tmp = parent.state.listItemsCRA[params.line];
       this.state = {
         title: "Détails jour",
         isPeriod: false,
         date: tmp.startDate,
-        linesToChange:[params.line],
+        linesToChange: [params.line],
         activitesListe: [
           { code: "1.0" },
           { code: "IC", label: "Intercontrat" },
@@ -77,7 +75,6 @@ class ActivitesDetail extends React.Component {
         activiteClicked: { code: tmp.actType },
       };
     }
-
   }
 
   choixActivite = activite => {
@@ -91,11 +88,13 @@ class ActivitesDetail extends React.Component {
     const { params } = this.props.navigation.state;
     var parentState = params.parent.state;
     for (var i = 0; i < this.state.linesToChange.length; i++) {
-      parentState.listItemsCRA[this.state.linesToChange[i]].actType=this.state.activiteClicked.code;
-      parentState.modifiedLines = [...new Set(parentState.modifiedLines)];//on ajoute la ligne modifié sans garder les doublons
+      parentState.listItemsCRA[
+        this.state.linesToChange[i]
+      ].actType = this.state.activiteClicked.code;
+      parentState.modifiedLines = [...new Set(parentState.modifiedLines)]; //on ajoute la ligne modifié sans garder les doublons
     }
-    params.parent.forceUpdate();//force l'appel de la fonction render sur la page précedente
-    this.props.navigation.dispatch(NavigationActions.back());//on retourne à la page précédente qui à été modifié
+    params.parent.forceUpdate(); //force l'appel de la fonction render sur la page précedente
+    this.props.navigation.dispatch(NavigationActions.back()); //on retourne à la page précédente qui à été modifié
   }
 
   // Gère le rendu des boutons sur plusieurs lignes, et gère le toggle
@@ -150,17 +149,16 @@ class ActivitesDetail extends React.Component {
   };
 
   onDateSelected(day) {
-
-    let index = day.day-1;
+    let index = day.day - 1;
     let set = new Set(this.state.linesToChange);
     if (!set.has(index)) {
       //Ajout d'une date dans le tableau
       set.add(index);
-    } else{
+    } else {
       //Suppression d'une date du tableau
       set.delete(index);
     }
-    this.state.linesToChange= [...set];
+    this.state.linesToChange = [...set];
     this.forceUpdate();
   }
 
@@ -168,7 +166,7 @@ class ActivitesDetail extends React.Component {
     //Converti les dates selectionnees stockees sous forme de tableau en objet
     let datesObject = {};
     this.state.linesToChange.forEach(date => {
-      datesObject[date+1] = [
+      datesObject[date + 1] = [
         { startingDay: true, color: "#355A86" },
         { endingDay: true, color: "#355A86", textColor: "#ffff" },
       ];
@@ -176,33 +174,28 @@ class ActivitesDetail extends React.Component {
     return datesObject;
   }
 
-
-  renderDate()
-  {
+  renderDate() {
     let ret = null;
-    if(this.state.isPeriod)
-    {
-      ret =
-      <View style={styles.containerCalendar}>
-        <Calendar
-
-          hideArrows={true}
-          markedDates={this.convertDates()}
-          markingType={"interactive"}
-          onDayPress={day => this.onDateSelected(day)}
-        />
-      </View>
-    ;
-    }else {
-      ret =<View style={styles.calendarContainer}>
-
+    if (this.state.isPeriod) {
+      ret = (
+        <View style={styles.containerCalendar}>
+          <Calendar
+            hideArrows={true}
+            markedDates={this.convertDates()}
+            markingType={"interactive"}
+            onDayPress={day => this.onDateSelected(day)}
+          />
+        </View>
+      );
+    } else {
+      ret = (
+        <View style={styles.calendarContainer}>
           <Text style={styles.calendarText}>{this.state.date} </Text>
-
-
-      </View>;
+        </View>
+      );
     }
     return ret;
-  };
+  }
   //Gère l'affichage du détail d'une activité quand sélectionnée
   renderDetailActivite() {
     let activite = this.state.activiteClicked;
@@ -223,9 +216,7 @@ class ActivitesDetail extends React.Component {
           title={this.state.title}
           navigation={this.props.navigation}
         >
-          <View style={Style.firstView}>
-            {this.renderDate()}
-          </View>
+          <View style={Style.firstView}>{this.renderDate()}</View>
           <View style={Style.firstView}>
             <View style={styles.detailActivite}>
               {this.renderDetailActivite()}

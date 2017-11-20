@@ -148,5 +148,4 @@ export default StyleSheet.create({
     top: 3,
     right: 2,
   },
-  
 });

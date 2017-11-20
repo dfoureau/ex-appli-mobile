@@ -20,11 +20,11 @@ class CraController extends Controller
     function getCra(Request $request,$idRA){
 
         //Vérification token
-        /*$log = new LoginController();
+        $log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth,400);
-        }*/
+        }
     
         // Requête SQL pour sélectionner les relevés activités en fonction de l'idRA
         $sql = 'SELECT r.idRA,r.mois,r.annee, e.libelle, r.nbJourTravailles, r.nbJourAbs, r.client, r.responsable, r.projet,r.commentaires, r.valeursSaisies FROM relevesactivites r INNER JOIN etatra e ON r.etat = e.id WHERE idRA = "'.$idRA.'";';
@@ -32,18 +32,33 @@ class CraController extends Controller
         $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
         $stmt->execute();
         $retour= $stmt->fetchAll();
+		
+		for ($i=0;$i<count($retour);$i++) {
+		
+			$row=$retour[$i];
+			
+			$idRA = $row['idRA'];
+			$mois = $row['mois'];
+			$annee = $row['annee'];
+			$libelle = $row['libelle'];
+			$NbJOuvres = strval(UtilsController::nbJoursOuvresParMois($mois,$annee));
+			$nbJourTravailles = $row['nbJourTravailles'];
+			$nbJourAbs = $row['nbJourAbs'];
+			$client = $row['client'];
+			$responsable = $row['projet'];
+			$commentaires = $row['commentaires'];
+			$valeursSaisies = $row['valeursSaisies'];
 
-        if(count($retour) == 0){
-            $message = array('message' => "Aucun CRA trouvé pour l'id: ".$idRA);
+		}
+		
+		$retour = array('idRA'=>$idRA,'mois'=>$mois, 'annee'=>$annee, 'libelle'=>$libelle, 'NbJOuvres'=>$NbJOuvres,'nbJourTravailles'=>$nbJourTravailles,'nbJourAbs'=>$nbJourAbs,'client'=>$client,'responsable'=>$responsable,'commentaires'=>$commentaires,'valeursSaisies' => $valeursSaisies);
+
+        if(empty($retour)){
+            $message = array('message' => "Aucun CRA trouvé pour le RA n°: ".$idRA);
             return new JsonResponse($message,400);
         }
 
-        //Récupération dans la réponse de la requête du mois et de l'année et suppression de ces valeurs non présentes dans le retour du service
-        $mois = $retour[0]["mois"];
-        unset($retour[0]["mois"]);
-        $annee = $retour[0]["annee"];
-        unset($retour[0]["annee"]);
-		
+
 		//on formate le mois pour qu'il soit plus joli
 		$moisf=substr(("0".$mois),-2,2);
 					
@@ -51,7 +66,7 @@ class CraController extends Controller
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ////////////// Algorithme pour transformer la chaine de caractères de la BDD en période de CRA //////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $valeursSaisies = $retour[0]["valeursSaisies"];
+        //$valeursSaisies = $retour[0]["valeursSaisies"];
         $tableauFinal = array();
 
         //Création d'un tableau à partir de le chaine récupérée en base
@@ -97,16 +112,14 @@ class CraController extends Controller
 			$tabNewPeriod["activité"] = $tabValeursSaisies[$j];
 			
 			
-				array_push($tableauFinal, $tabNewPeriod);
+			array_push($tableauFinal, $tabNewPeriod);
 		}
 		 
 		
-		$retour[0]["NbJOuvres"] = strval(UtilsController::nbJoursOuvresParMois($mois,$annee));
-        $retour[0]["valeursSaisies"] = $tableauFinal;
+	$retour["valeursSaisies"] = $tableauFinal;
 		 
         // Récupération du nombre de jours ouvrés dans le mois
-        
-         
+
         return new JsonResponse($retour);
     }
 
@@ -316,18 +329,18 @@ class CraController extends Controller
     function addCraAction(Request $request){
         
         //Vérification token
-        /*$log = new LoginController();
+        $log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth,400);
-        }*/
+        }
 
         $data = json_decode(file_get_contents('php://input'), true);
         try{
             $retourAdd = $this->addCra($data);
         }
         catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
-            return new JsonResponse("Problème de paramètres mon gars !".$e, Response::HTTP_BAD_REQUEST);
+            return new JsonResponse("Problème de paramètres".$e, Response::HTTP_BAD_REQUEST);
         }
         return new JsonResponse($retourAdd["message"], $retourAdd["code"]);
     }
@@ -335,21 +348,18 @@ class CraController extends Controller
     
     function addCra($data){
         
-        $idCollab = $data['idCollab'];
-        $libelleEtat = $data['libelleEtat'];
-        $nbJTravail = $data['nbJTravail'];
-        $nbJAbsence = $data['nbJAbsence'];
+        $idUser = $data['idUser'];
+        $libelle = $data['libelle'];
+		$mois = $data['mois'];
+		$annee = $data['annee'];
+        $nbJourTravailles = $data['nbJourTravailles'];
+        $nbJourAbs = $data['nbJourAbs'];
         $client = $data['client'];
         $responsable = $data['responsable'];
         $projet = $data['projet'];
-        $commentaire = $data['commentaire'];
-        $mois = $data['mois'];
-        $tableauCRA = $data['tableauCRA'];
+        $commentaires = $data['commentaires'];
+        $tableauCRA = $data['valeursSaisies'];
 
-        $annee = date('Y');
-        if(empty($mois)){
-            $mois = date('m');
-        }
 
         //Vérification des champs obligatoires
         /*if(empty($idCollab)){
@@ -391,7 +401,7 @@ class CraController extends Controller
             $etat = "0";
         }*/
 		
-		switch ($libelleEtat){
+		switch ($libelle){
             case "Brouillon" :
               $etat = 1;
               break;
@@ -432,10 +442,10 @@ class CraController extends Controller
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
         //Remplacement des "," par des "." pour l'insertion SQL
-        $nbJAbsence = str_replace(',', '.', $nbJAbsence);
-        $nbJTravail = str_replace(',', '.', $nbJTravail);
+        $nbJourAbs = str_replace(',', '.', $nbJourAbs);
+        $nbJourTravailles = str_replace(',', '.', $nbJourTravailles);
 
-        $sql = "INSERT INTO relevesactivites (idUser, mois, annee, responsable, client, projet, etat, commentaires, nbJourAbs, nbJourTravailles, valeursSaisies) VALUES ({$idCollab},{$mois},{$annee},'{$responsable}','{$client}','{$projet}',{$etat},'{$commentaire}',{$nbJAbsence},{$nbJTravail},'{$ChaineCRAFinal}');";
+        $sql = "INSERT INTO relevesactivites (idUser, mois, annee, responsable, client, projet, etat, commentaires, nbJourAbs, nbJourTravailles, valeursSaisies) VALUES ({$idUser},{$mois},{$annee},'{$responsable}','{$client}','{$projet}',{$etat},'{$commentaires}',{$nbJourAbs},{$nbJourTravailles},'{$ChaineCRAFinal}');";
 
         $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
         $stmt->execute();

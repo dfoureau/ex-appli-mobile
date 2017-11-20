@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, FlatList,ActivityIndicator } from "react-native";
+import { View, Text, FlatList, ActivityIndicator } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "./Styles";
 import StyleGeneral from "../../styles/Styles";
@@ -25,7 +25,7 @@ class Accueil extends React.Component {
     this.state = {
       //On définit les différentes variables
       title: "Cat-Amania",
-      user: [ 
+      user: [
         {
           id: null,
           nom: null,
@@ -33,16 +33,16 @@ class Accueil extends React.Component {
           profil: null,
           entite: null,
           agence: null,
-          responsable: null
-        }
+          responsable: null,
+        },
       ],
-      conges : [
+      conges: [
         {
-        id : null,
-        datesolde : null,
-        cp : null,
-        rtt : null
-        }
+          id: null,
+          datesolde: null,
+          cp: null,
+          rtt: null,
+        },
       ],
       news: [
         {
@@ -51,26 +51,29 @@ class Accueil extends React.Component {
           news_contenu: null,
           news_date: null,
           news_file: null,
-		      news_photo : null
-        }
+          news_photo: null,
+        },
       ],
       isReadyw1: false,
       isReadyw2: false,
       isReadyw3: false,
-      webServiceLien1: configurationAppli.apiURL + "utilisateur/" + configurationAppli.userID,
-      webServiceLien2: configurationAppli.apiURL + "conges/solde/" + configurationAppli.userID,
+      webServiceLien1:
+        configurationAppli.apiURL + "utilisateur/" + configurationAppli.userID,
+      webServiceLien2:
+        configurationAppli.apiURL + "conges/solde/" + configurationAppli.userID,
       webServiceLien3: configurationAppli.apiURL + "news/3",
-	  obj : {
-        method: 'GET',
+      obj: {
+        method: "GET",
         headers: {
-          'Authorization': "Bearer " + configurationAppli.userToken
-		}}
-	  };
+          Authorization: "Bearer " + configurationAppli.userToken,
+        },
+      },
+    };
   }
 
   componentDidMount() {
     var that = this;
-      fetch(this.state.webServiceLien1, this.state.obj)
+    fetch(this.state.webServiceLien1, this.state.obj)
       .then(function(response) {
         if (response.status >= 400) {
           throw new Error("GetUtilisateur : Bad response from server");
@@ -81,13 +84,14 @@ class Accueil extends React.Component {
         that.setState({
           user: foncuser,
           isReadyw1: true,
-        })
-    }).catch(function(error) {
-		return console.log(error);
-		});
-    
+        });
+      })
+      .catch(function(error) {
+        return console.log(error);
+      });
+
     var that = this;
-      fetch(this.state.webServiceLien2, this.state.obj)
+    fetch(this.state.webServiceLien2, this.state.obj)
       .then(function(response) {
         if (response.status >= 400) {
           throw new Error("GetConges : Bad response from server");
@@ -95,11 +99,11 @@ class Accueil extends React.Component {
         return response.json();
       })
       .then(function(fonconges) {
-        that.setState({conges: fonconges, isReadyw2: true})
-    });
-    
+        that.setState({ conges: fonconges, isReadyw2: true });
+      });
+
     var that = this;
-      fetch(this.state.webServiceLien3, this.state.obj)
+    fetch(this.state.webServiceLien3, this.state.obj)
       .then(function(response) {
         if (response.status >= 400) {
           throw new Error("GetNews : Bad response from server");
@@ -107,8 +111,8 @@ class Accueil extends React.Component {
         return response.json();
       })
       .then(function(foncnews) {
-        that.setState({news: foncnews, isReadyw3: true})
-    });
+        that.setState({ news: foncnews, isReadyw3: true });
+      });
   }
 
   //Permet d'afficher l'ecran choisi dans le menu
@@ -119,31 +123,34 @@ class Accueil extends React.Component {
   renderItemNews() {
     return this.state.news.map((item, index) => (
       <View key={index}>
-        <NewsItem {...item}/>
+        <NewsItem {...item} />
       </View>
     ));
   }
 
   render() {
-	  if (!this.state.isReadyw1 || !this.state.isReadyw2 || !this.state.isReadyw2) {
+    if (
+      !this.state.isReadyw1 ||
+      !this.state.isReadyw2 ||
+      !this.state.isReadyw2
+    ) {
       return (
         <View>
-        <ContainerAccueil
-          title={this.state.title}
-          afficherEcran={this.afficherEcranParent.bind(this)}
-        >
-          <ActivityIndicator
-        color="#8b008b"
-        size="large"
-        style={StyleGeneral.loader}
-         />
-        <Text style={StyleGeneral.texteLoader}>
-          Récupération des données. Veuillez patienter...
-        </Text>
-
-        </ContainerAccueil>
-      </View>
-      )
+          <ContainerAccueil
+            title={this.state.title}
+            afficherEcran={this.afficherEcranParent.bind(this)}
+          >
+            <ActivityIndicator
+              color="#8b008b"
+              size="large"
+              style={StyleGeneral.loader}
+            />
+            <Text style={StyleGeneral.texteLoader}>
+              Récupération des données. Veuillez patienter...
+            </Text>
+          </ContainerAccueil>
+        </View>
+      );
     } else {
       return (
         <ContainerAccueil
@@ -152,33 +159,39 @@ class Accueil extends React.Component {
         >
           <Panel title="INFORMATIONS PERSONNELLES">
             <Text style={Style.text}>
-              Bienvenue {this.state.user[0]['prenom']}{" "}
-              {this.state.user[0]['nom']}
+              Bienvenue {this.state.user[0]["prenom"]}{" "}
+              {this.state.user[0]["nom"]}
             </Text>
-            <Text style={Style.text}>Entité juridique : {this.state.user[0]['entite']}</Text>
-            <Text style={Style.text}>Profil : {this.state.user[0]['profil']}</Text>
-            <Text style={Style.text}>Agence : {this.state.user[0]['agence']}</Text>
             <Text style={Style.text}>
-              Manager : {this.state.user[0]['responsable']}
+              Entité juridique : {this.state.user[0]["entite"]}
+            </Text>
+            <Text style={Style.text}>
+              Profil : {this.state.user[0]["profil"]}
+            </Text>
+            <Text style={Style.text}>
+              Agence : {this.state.user[0]["agence"]}
+            </Text>
+            <Text style={Style.text}>
+              Manager : {this.state.user[0]["responsable"]}
             </Text>
           </Panel>
           <Panel title="SOLDES CONGES">
             <Text style={Style.text}>
               Sur votre bulletin de salaire du{" "}
-              {this.state.conges[0]['datesolde']}, votre solde de congés se
+              {this.state.conges[0]["datesolde"]}, votre solde de congés se
               compose de la manière suivante :
             </Text>
             <Text style={[Style.text, Style.text2]}>
-              - solde CP : {this.state.conges[0]['cp']}
+              - solde CP : {this.state.conges[0]["cp"]}
             </Text>
             <Text style={[Style.text, Style.text2]}>
-              - solde RTT : {this.state.conges[0]['rtt']}
+              - solde RTT : {this.state.conges[0]["rtt"]}
             </Text>
           </Panel>
           <Panel title="NEWS">{this.renderItemNews()}</Panel>
         </ContainerAccueil>
       );
-   }
+    }
   }
 }
 

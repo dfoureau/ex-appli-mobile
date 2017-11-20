@@ -12,6 +12,7 @@ import Accueil from "../../accueil/Accueil";
 import Calendar from "../../../components/calendar/Calendar";
 import service from "../../../realm/service";
 import styles from "./styles";
+import "whatwg-fetch";
 
 const PERIOD_SCHEMA = "Period";
 const feries2017 = [
@@ -34,26 +35,29 @@ class CongesPeriode extends React.Component {
   }
 
   static navigationOptions = ({ navigation }) => ({
-    idConge: navigation.state.params.idConge,
+    numDemande: navigation.state.params.numDemande,
     idPeriod: navigation.state.params.idPeriod,
     isNew: navigation.state.params.isNew,
   });
 
   setInitialValues() {
     const { params } = this.props.navigation.state;
+    var parentState = params.parent.state;
 
     if (params.idPeriod == null) {
+      var currentDate = new Date();
+      // console.warn();
       // Nouvelle période
       this.state = {
         title: "Détails période",
-        date1: "10/09/2017",
+        date1: currentDate.toLocaleDateString("fr-FR"),
         moment1: "1",
-        date2: "10/09/2017",
+        date2: currentDate.toLocaleDateString("fr-FR"),
         moment2: "2",
         absence: "",
         joursFeries: feries2017,
         workingDays: 0,
-        idConge: params.idConge == null ? 0 : params.idConge,
+        numDemande: params.numDemande == null ? 0 : params.numDemande,
       };
     } else {
       if (params.isNew) {
@@ -63,12 +67,12 @@ class CongesPeriode extends React.Component {
         // TODO : en attente
         // Déjà enregistrée en base
         var period = {
-          idConge: params.idConge,
-          startDate: "12/10/2017",
+          numDemande: parentState.numDemande,
+          startDate: parentState.periods[params.idPeriod - 1].dateDuFormated,
           startPeriod: "1",
-          endDate: "12/10/2017",
+          endDate: parentState.periods[params.idPeriod - 1].dateAuFormated,
           endPeriod: "2",
-          absTypeId: "AE",
+          absTypeId: parentState.periods[params.idPeriod - 1].codeTypeAbs,
         };
       }
 
@@ -81,15 +85,18 @@ class CongesPeriode extends React.Component {
         absence: period.absTypeId,
         joursFeries: feries2017,
         workingDays: 0,
-        idConge: params.idConge == null ? 0 : params.idConge,
+        numDemande: params.numDemande == null ? 0 : params.numDemande,
       };
     }
   }
 
   savePeriod(idPeriod) {
+    const { params } = this.props.navigation.state;
+    var parentState = params.parent.state;
+
     var period = {
       id: idPeriod == null ? service.getNextKey(PERIOD_SCHEMA) : idPeriod,
-      idConge: this.state.idConge,
+      numDemande: this.state.numDemande,
       startDate: this.state.date1,
       startPeriod: this.state.moment1,
       endDate: this.state.date2,
@@ -97,6 +104,23 @@ class CongesPeriode extends React.Component {
       absTypeId: this.state.absence,
       workingDays: this.state.workingDays,
     };
+
+    parentState.periods.push({
+      numLigne: parseInt(idPeriod++),
+      dateDuFormated: this.state.date1,
+      dateAuFormated: this.state.date2,
+      dateDu: this.state.date1,
+      dateAu: this.state.date2,
+      nbJour: parseInt(this.state.workingDays),
+      etat: 0,
+      typeabs: parseInt(this.state.absence),
+      codeTypeAbs: 0,
+      libelleTypeAbs: "",
+      libelleEtat: "",
+    });
+    console.warn(JSON.stringify(parentState.periods));
+    // Force l'appel de la fonction render sur la page précedente
+    params.parent.forceUpdate();
 
     if (idPeriod == null) {
       // Création d'une période
@@ -116,9 +140,11 @@ class CongesPeriode extends React.Component {
     const { params } = this.props.navigation.state;
     this.savePeriod(params.idPeriod);
     // Retour à la page d'ajout
-    this.props.navigation.navigate("CongesAjout", {
-      idConge: this.state.idConge,
-    });
+    // this.props.navigation.navigate("CongesAjout", {
+    // 	numDemande: this.state.numDemande,
+    // });
+    // On retourne à la page précédente
+    this.props.navigation.dispatch(NavigationActions.back());
   }
 
   handleSupprimer() {
@@ -126,7 +152,7 @@ class CongesPeriode extends React.Component {
     this.deletePeriod(params.idPeriod);
     // Retour à la page d'ajout
     this.props.navigation.navigate("CongesAjout", {
-      idConge: this.state.idConge,
+      numDemande: this.state.numDemande,
     });
   }
 
@@ -135,7 +161,8 @@ class CongesPeriode extends React.Component {
     let dateAu = moment(this.state.date2, "DD-MM-YYYY");
     let momentDu = this.state.moment1; //Matin (=1) ok, Midi (=2) -0.5j
     let momentAu = this.state.moment2; //Soir (=2) ok, Midi (=1) -0.5j
-
+    console.warn(this.state.date1);
+    console.warn(dateDu);
     //Calcule la difference entre les deux jours
     let currentDate = moment(dateDu);
     let total = 0;

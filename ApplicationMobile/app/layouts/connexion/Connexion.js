@@ -25,12 +25,12 @@ import service from "../../realm/service";
 import configurationAppli from "../../configuration/Configuration";
 
 import {
-	showToast,
-	showNotification,
-	showLoading,
-	hideLoading,
-	hide
-} from 'react-native-notifyer';
+  showToast,
+  showNotification,
+  showLoading,
+  hideLoading,
+  hide,
+} from "react-native-notifyer";
 
 const CONNEXION_PARAMS_SCHEMA = "ConnexionParams";
 
@@ -58,13 +58,13 @@ class Connexion extends React.Component {
       data: [],
       isReady: false,
       webServiceLien1: "http://185.57.13.103/rest/web/app_dev.php/login",
-      obj : {
-        method: 'POST',
+      obj: {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+          "Content-Type": "application/x-www-form-urlencoded",
         },
         body: "",
-      }
+      },
     };
   }
 
@@ -74,23 +74,23 @@ class Connexion extends React.Component {
 
     try {
       // Récupérer login/mdp
-      this.state.obj.body = "login=" + this.state.login + "&password=" + this.state.mdp;
+      this.state.obj.body =
+        "login=" + this.state.login + "&password=" + this.state.mdp;
 
       // On se connecte
       let response = await fetch(this.state.webServiceLien1, this.state.obj);
       let res = await response.json();
-      if (response.status >=200 && response.status < 300) {
-          this.setState({
-            error : "",
-            isReady : true,
-            data: res,
-          });
-      }
-      else {
+      if (response.status >= 200 && response.status < 300) {
+        this.setState({
+          error: "",
+          isReady: true,
+          data: res,
+        });
+      } else {
         let error = res;
         throw error;
-      }	
-    } catch(error){
+      }
+    } catch (error) {
       hideLoading();
       var id = showToast("Erreur : Login et/ou mot de passe incorrecte");
     }
@@ -126,17 +126,14 @@ class Connexion extends React.Component {
   }
 
   render() {
-    let lienMdpOublie = configurationAppli.lienMdpOublie
+    let lienMdpOublie = configurationAppli.lienMdpOublie;
 
     return (
       <KeyboardAvoidingView behavior="padding" style={Style.mainView}>
         <StatusBar backgroundColor="#355a86" barStyle="light-content" />
         <View style={Style.logoContainer}>
-          <Image
-            style={Style.logo}
-            source={require("../../images/logo.png")}
-            />
-       </View>
+          <Image style={Style.logo} source={require("../../images/logo.png")} />
+        </View>
 
         <View style={Style.formContainer}>
           <TextInput
@@ -146,20 +143,20 @@ class Connexion extends React.Component {
             returnKeyType="next"
             autoCorrect={false}
             autoCapitalize="none"
-            underlineColorAndroid='transparent'
+            underlineColorAndroid="transparent"
             onSubmitEditing={() => this.passwordInput.focus()}
             placeholderTextColor="rgba(255, 255, 255, 0.7)"
             onChangeText={text => this.setState({ login: text })}
-            />
+          />
           <TextInput
             placeholder="Mot de passe"
             value={this.state.mdp}
             secureTextEntry={true}
             style={Style.input}
             returnKeyType="go"
-            underlineColorAndroid='transparent'
+            underlineColorAndroid="transparent"
             placeholderTextColor="rgba(255, 255, 255, 0.7)"
-            ref={(input) => this.passwordInput = input}
+            ref={input => (this.passwordInput = input)}
             onChangeText={text => this.setState({ mdp: text })}
             onSubmitEditing={() => this.seConnecter()}
           />
@@ -170,21 +167,19 @@ class Connexion extends React.Component {
             rightTextStyle={{ color: "rgba(255, 255, 255, 0.7)", fontSize: 16 }}
             style={Style.checkbox}
             checkBoxColor="rgba(255, 255, 255, 0.7)"
-            />
+          />
           <Button
             title="Se connecter"
             onPress={() => this.seConnecter()}
             style={Style.btnSeconnecter}
-            />
+          />
           <View style={Style.viewMdpOublie}>
             <TouchableHighlight
-              underlayColor = "rgba(255, 255, 255, 0.2)"
+              underlayColor="rgba(255, 255, 255, 0.2)"
               onPress={() => Linking.openURL(lienMdpOublie)}
               style={Style.touchMdpOublie}
             >
-              <Text style={Style.txtMdpOublie}>
-                Mot de passe oublié
-              </Text>
+              <Text style={Style.txtMdpOublie}>Mot de passe oublié</Text>
             </TouchableHighlight>
           </View>
         </View>
