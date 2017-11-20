@@ -82,6 +82,7 @@ class FraisAjout extends React.Component {
       statusId: 1,
       status: "Nouveau",
       header: ["Jour", "Client", "Montant €"],
+      rowsFlexArr: [1, 2 ,1],
       months: [
         "Janvier",
         "Février",
@@ -337,7 +338,7 @@ class FraisAjout extends React.Component {
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
           textStyle={styles.rowText}
           data={[row.dateShort, row.client, row.montant ? row.montant : 0]}
-          flexArr= {[1, 2, 1]}
+          flexArr= {this.state.rowsFlexArr}
         />
       </TouchableOpacity>
     ));
@@ -484,7 +485,7 @@ class FraisAjout extends React.Component {
                     data={this.state.header}
                     style={styles.header}
                     textStyle={styles.headerText}
-                    flexArr={[1, 2, 1]}
+                    flexArr={this.state.rowsFlexArr}
                   />
                   {this.afficherRow()}
                 </Table>
