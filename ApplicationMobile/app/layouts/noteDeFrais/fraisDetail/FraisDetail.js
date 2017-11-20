@@ -291,6 +291,7 @@ class FraisDetail extends React.Component {
               <Panel
                 title="Forfait"
                 containerStyle={{ backgroundColor: "transparent", margin: 0 }}
+                expanded={false}
               >
                 <View style={styles.inputView}>
                   <View style={styles.inputGroup}>
@@ -322,6 +323,7 @@ class FraisDetail extends React.Component {
               <Panel
                 title="Transport"
                 containerStyle={{ backgroundColor: "transparent", margin: 0 }}
+                expanded={false}
               >
                 <View style={styles.inputView}>
                   <View style={styles.inputGroup}>
@@ -417,6 +419,7 @@ class FraisDetail extends React.Component {
               <Panel
                 title="Abonnements"
                 containerStyle={{ backgroundColor: "transparent", margin: 0 }}
+                expanded={false}
               >
                 <View style={styles.inputView}>
                   <View style={styles.inputGroup}>
@@ -449,6 +452,7 @@ class FraisDetail extends React.Component {
               <Panel
                 title="Frais de réception"
                 containerStyle={{ backgroundColor: "transparent", margin: 0 }}
+                expanded={false}
               >
                 <View style={styles.inputView}>
                   <View style={styles.inputGroup}>
@@ -492,6 +496,7 @@ class FraisDetail extends React.Component {
               <Panel
                 title="Divers"
                 containerStyle={{ backgroundColor: "transparent", margin: 0 }}
+                expanded={false}
               >
                 <View style={styles.inputView}>
                   <View style={styles.inputGroup}>
