@@ -188,8 +188,8 @@ class FraisAjout extends React.Component {
         }
           that.setState({
             listFrais: tableauFrais,
-            totalMontant: totalAReglerAllFrais,
-            totalClient: totalClientAllFrais,
+            totalMontant: totalAReglerAllFrais.toFixed(2),
+            totalClient: totalClientAllFrais.toFixed(2),
             status: ndf["etat"],
             isReady: true
           });
