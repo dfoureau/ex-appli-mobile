@@ -14,7 +14,7 @@ export class Panel extends Component {
 
     this.state = {
       title: props.title,
-      expanded: true,
+      expanded: this.props.expanded == false ? false : true,
       animation: new Animated.Value(),
     };
   }
@@ -26,9 +26,17 @@ export class Panel extends Component {
   }
 
   _setMinHeight(event) {
-    this.setState({
-      minHeight: event.nativeEvent.layout.height,
-    });
+    if (this.state.expanded) {
+      this.setState({
+        minHeight: event.nativeEvent.layout.height
+      });
+    }
+    else {
+      this.setState({
+        minHeight: event.nativeEvent.layout.height,
+        animation: new Animated.Value(event.nativeEvent.layout.height),
+      });
+    }
   }
 
   toggle() {
