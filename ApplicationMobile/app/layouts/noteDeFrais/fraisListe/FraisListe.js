@@ -58,6 +58,7 @@ class FraisListe extends React.Component {
         "Novembre",
         "Décembre",
       ],
+      monthsWithNDF: [],
       year: moment().format("YYYY"),
       isReady: false,
       isData: false,
@@ -77,19 +78,12 @@ class FraisListe extends React.Component {
     this.props.navigation.navigate(ecran);
   }
 
-  addNDF() {
-    this.props.navigation.navigate("FraisAjout", {
-      idUser: null,
-      month: null,
-      year: null,
-    });
-  }
-
   getNDF(id, month, year) {
     this.props.navigation.navigate("FraisAjout", {
       idUser: id,
       month: month,
       year: year,
+      monthsWithNDF: this.state.monthsWithNDF
     });
   }
 
@@ -102,28 +96,36 @@ class FraisListe extends React.Component {
   getNDFByUser(_annee) {
     showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
-    this.state.year = _annee;
-    fetch(
-      this.state.webServiceLien + _annee + "/" + configurationAppli.userID,
-      this.state.obj
-    )
-      .then(function(response) {
+    // this.state.year = _annee;
+    fetch(this.state.webServiceLien + _annee + "/" + configurationAppli.userID, this.state.obj)
+    .then(function(response) {
         if (response.status >= 400) {
           that.setState({
             data: [],
+            monthsWithNDF: [],
             isReady: true,
             isData: false,
+            year: _annee,
           });
+          return {isEmpty: true}
         }
-        hideLoading();
-        return response.json();
+        else {
+          return response.json();
+        }
       })
       .then(function(ndf) {
-        that.setState({
-          data: ndf,
-          isReady: true,
-          isData: true,
-        });
+        hideLoading();
+        if (ndf.isEmpty !== true) {
+          let monthsWithNDF = ndf.map(item => parseInt(item.mois));
+
+          that.setState({
+            data: ndf,
+            monthsWithNDF: monthsWithNDF,
+            isReady: true,
+            isData: true,
+            year: _annee
+          });
+        }
       });
   }
 
@@ -136,7 +138,7 @@ class FraisListe extends React.Component {
   //Fonction permettant de conditionner l'affichage du bloc valideur
   checkItem(item) {
     if (
-      item.statusId == 2 &&
+      item.etat == 2 &&
       item.valideur != null &&
       item.dateactionetat != null
     ) {
@@ -198,7 +200,8 @@ class FraisListe extends React.Component {
                   </Picker>
                 </View>
                 <View style={style.containerButton}>
-                  <Button text="AJOUTER" onPress={() => this.addNDF()} />
+                  {/* Le bouton AJOUTER renvoie en fait vers la fonction getNDF, qui pointe sur la date courante*/}
+                  <Button text="AJOUTER" onPress={() => this.getNDF(configurationAppli.userID, moment().month() +1, moment().year())} />
                 </View>
               </View>
             </View>
@@ -224,7 +227,7 @@ class FraisListe extends React.Component {
                             <Image
                               style={style.listIcon}
                               source={
-                                item.statusId == 2
+                                item.etat == 2
                                   ? require("../../../images/icons/check2.png")
                                   : null
                               }
@@ -236,11 +239,11 @@ class FraisListe extends React.Component {
                             Montant : {item.montantTotal} €
                           </Text>
                           <Text style={style.statusText}>
-                            Etat : {item.etat}
+                            Etat : {item.libelle}
                             {this.checkItem(item) == true ? (
                               <Text>
                                 {" "}
-                                par {item.valideur} le {item.dateactionetat}
+                                par {item.valideur} le {moment(item.dateactionetat).format("DD/MM/YYYY")}
                               </Text>
                             ) : null}
                           </Text>

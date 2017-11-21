@@ -1,5 +1,7 @@
 import React from "react";
 import { Calendar } from "react-native-calendars";
+import { CalendarConfig } from '../../../configuration/CalendarConfig';
+
 import { View, Text, TextInput, ScrollView, Alert } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import PropTypes from "prop-types";
@@ -7,7 +9,6 @@ import Style from "../../../styles/Styles";
 import styles from "./styles";
 import CheckBox from "react-native-check-box";
 import moment from "moment";
-import business from "moment-business";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
@@ -32,22 +33,36 @@ class FraisDetail extends React.Component {
   setInitialValues() {
     // indique si on se trouve dans le cas d'un création de frais
     let isNewFrais = true;
+    let calendarDateFormat = "YYYY-MM-DD";
+    let calendarDate = moment().format('YYYY-MM-DD');
 
-    if (this.props.navigation.state.params.idFrais != null) {
+    const params = this.props.navigation.state.params;
+
+    if (params.idFrais != null) {
       // on récupère le frais dans le cas d'une modification
+      calendarDate = moment(params.idFrais, 'DD-MM-YYYY');
       var frais = service.getByPrimaryKey(
         FRAIS_SCHEMA,
-        this.props.navigation.state.params.idFrais
+        params.idFrais
       );
       if (frais != null) {
         // il existe un frais déjà crée en cache
         isNewFrais = false;
       }
     }
+    else {
+      let month = params.month ? params.month : moment().month(),
+          year = params.year ? params.year : moment().year();
+          calendarDate = moment(year + '-' + month , 'YYYY-M');
+    }
+
+    calendarMinDate = calendarDate.clone().set('date', 1).format(calendarDateFormat);
+    calendarMaxDate = calendarDate.clone().set('date', calendarDate.daysInMonth()).format(calendarDateFormat);
 
     this.state = {
+      statusId: this.props.navigation.state.params.statusId,
       title: "Note de frais",
-      selectedDatesArray: this.setDatesArray(),
+      selectedDatesArray: [],
       isforfait: this.props.navigation.state.params.forfait,
       isNewFrais: isNewFrais,
       factureClientChecked: isNewFrais
@@ -70,36 +85,39 @@ class FraisDetail extends React.Component {
       parking: isNewFrais ? "" : frais.parking.toString(),
       divers: isNewFrais ? "" : frais.divers.toString(),
       libelleDivers: isNewFrais ? "" : frais.libelle,
+      calendarDateFormat: calendarDateFormat,
+      calendarDate: calendarDate.format(calendarDateFormat),
+      calendarMinDate: calendarMinDate,
+      calendarMaxDate: calendarMaxDate,
+      joursFeries: [/* PLACEHOLDER pour stocker des objets momentjs correspondants à des jours fériés */],
     };
   }
 
   /** Au chargement **/
   setDatesArray() {
+    let selectedDates = [];
+
     // dans le cas d'une modifcation d'un frais on alimente le tableau de date avec la date du frais (correspondant à son id)
-    if (this.props.navigation.state.params.idFrais != null)
-      return [moment(this.props.navigation.state.params.idFrais, "DD-MM-YYYY")];
-    var arr = [],
-      month = this.props.navigation.state.params.month, //chaine de caractère du mois de la NDF
-      date = moment()
-        .month(month)
-        .date(1), //Date de depart : le 1er du mois
-      monthOk = true; //verif que le mois est toujours le bon
-    while (monthOk) {
-      if (
-        date.month() ==
-        moment()
-          .month(month)
-          .month()
-      ) {
-        if (business.isWeekDay(date)) {
-          //Si weekend on ajoute pas
-          arr.push(date.format("YYYY-MM-DD"));
-        }
-        date.add(1, "days"); //Incremente le jour
-      } else monthOk = false; //Si on passe au moins suivant on arrete
+    if (this.props.navigation.state.params.idFrais != null) {
+      selectedDates.push(moment(this.props.navigation.state.params.idFrais, "DD-MM-YYYY"));
     }
-    return arr;
-  }
+    else {
+      let month = this.props.navigation.state.params.month, //chaine de caractère du mois de la NDF
+          year = this.props.navigation.state.params.year;
+
+          let currentDate = moment(year+'-'+month+'-01', 'YYYY-M-DD');
+          let nbJours = currentDate.daysInMonth(); // Nombre de jours dans le mois
+
+          for (i=1; i<= nbJours; i++) {
+            currentDate.set('date', i);
+
+            if (currentDate.day() > 0 && currentDate.day() < 6 && !this.state.joursFeries.includes(currentDate)) {
+              selectedDates.push(currentDate.clone());
+            }
+          }
+        }
+        return selectedDates.map(d => d.format('YYYY-MM-DD'));
+      }
 
   onDateSelected(day) {
     let date = day.dateString;
@@ -119,6 +137,7 @@ class FraisDetail extends React.Component {
       }));
     }
   }
+
   afficherDate() {
     let date = moment(this.props.navigation.state.params.idFrais, "DD-MM-YYYY");
     return date.format("dddd DD MMMM YYYY");
@@ -216,6 +235,43 @@ class FraisDetail extends React.Component {
     return datesObject;
   }
 
+  showValidateButton() {
+    if ((this.state.statusId == null || this.state.statusId == 0)) {
+      return (
+        /*Bouton validera affiché que si c'est une NDF en brouillon ou une nouvelle NDF*/
+        <Button onPress={() => this.handleValidate()} text="VALIDER" />
+      );
+    }
+  }
+
+  showDeleteButton() {
+    if ((this.state.statusId == null || this.state.statusId == 0) && (!this.state.isforfait)) {
+      return (
+        /*Bouton supprimer affiché que si ce n'est pas un forfait, et que si c'est une NDF en brouillon ou une nouvelle NDF*/
+        <Button
+          buttonStyles={styles.deleteButton}
+          text="SUPPRIMER"
+          onPress={() =>
+            Alert.alert(
+              "Suppression",
+              "Etes-vous sûr de vouloir supprimer la période ?",
+              [
+                { text: "Non", onPress: () => console.log("Cancel!") },
+                { text: "Oui", onPress: () => this.handleDelete() },
+              ]
+            )}
+        />
+      );
+    }
+  }
+
+  componentWillMount() {
+    this.setState({
+      selectedDatesArray: this.setDatesArray()
+    });
+  }
+
+
   render() {
     return (
       <View style={styles.mainContainer}>
@@ -235,6 +291,9 @@ class FraisDetail extends React.Component {
 
                 <View style={styles.containerCalendar}>
                   <Calendar
+                    current={this.state.calendarDate}
+                    minDate={this.state.calendarMinDate}
+                    maxDate={this.state.calendarMaxDate}
                     hideArrows={true}
                     markedDates={this.convertDates()}
                     markingType={"interactive"}
@@ -291,6 +350,7 @@ class FraisDetail extends React.Component {
               <Panel
                 title="Forfait"
                 containerStyle={{ backgroundColor: "transparent", margin: 0 }}
+                expanded={false}
               >
                 <View style={styles.inputView}>
                   <View style={styles.inputGroup}>
@@ -322,6 +382,7 @@ class FraisDetail extends React.Component {
               <Panel
                 title="Transport"
                 containerStyle={{ backgroundColor: "transparent", margin: 0 }}
+                expanded={false}
               >
                 <View style={styles.inputView}>
                   <View style={styles.inputGroup}>
@@ -417,6 +478,7 @@ class FraisDetail extends React.Component {
               <Panel
                 title="Abonnements"
                 containerStyle={{ backgroundColor: "transparent", margin: 0 }}
+                expanded={false}
               >
                 <View style={styles.inputView}>
                   <View style={styles.inputGroup}>
@@ -449,6 +511,7 @@ class FraisDetail extends React.Component {
               <Panel
                 title="Frais de réception"
                 containerStyle={{ backgroundColor: "transparent", margin: 0 }}
+                expanded={false}
               >
                 <View style={styles.inputView}>
                   <View style={styles.inputGroup}>
@@ -492,6 +555,7 @@ class FraisDetail extends React.Component {
               <Panel
                 title="Divers"
                 containerStyle={{ backgroundColor: "transparent", margin: 0 }}
+                expanded={false}
               >
                 <View style={styles.inputView}>
                   <View style={styles.inputGroup}>
@@ -536,23 +600,8 @@ class FraisDetail extends React.Component {
           </View>
 
           <View style={styles.containerButton}>
-            {/*Bouton supprimer affiché que si ce n'est pas un forfait*/}
-            {!this.state.isforfait && (
-              <Button
-                buttonStyles={styles.deleteButton}
-                text="SUPPRIMER"
-                onPress={() =>
-                  Alert.alert(
-                    "Suppression",
-                    "Etes-vous sûr de vouloir supprimer la période ?",
-                    [
-                      { text: "Non", onPress: () => console.log("Cancel!") },
-                      { text: "Oui", onPress: () => this.handleDelete() },
-                    ]
-                  )}
-              />
-            )}
-            <Button onPress={() => this.handleValidate()} text="VALIDER" />
+            {this.showDeleteButton()}
+            {this.showValidateButton()}
           </View>
         </ContainerTitre>
       </View>

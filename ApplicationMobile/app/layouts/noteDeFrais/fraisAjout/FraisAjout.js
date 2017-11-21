@@ -16,22 +16,23 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "../../../styles/Styles";
 import styles from "./styles";
+import StyleGeneral from "../../../styles/Styles";
 import moment from "moment";
 import "moment/locale/fr";
 
 import {
   showToast,
   showNotification,
-  showLoading,
-  hideLoading,
   hide,
 } from "react-native-notifyer";
 
 // IMPORT DES COMPOSANTS EXOTIQUE
+import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
 import { ContainerFilters } from "../../../components/containerFilters";
 import { SearchFilter } from "../../../components/searchFilter";
@@ -41,6 +42,8 @@ import Accueil from "../../accueil/Accueil";
 import FraisDetail from "../fraisDetail/FraisDetail";
 import FraisConfirmation from "../fraisConfirmation/FraisConfirmation";
 import service from "../../../realm/service";
+
+import configurationAppli from "../../../configuration/Configuration";
 
 const FRAIS_SCHEMA = "Frais";
 
@@ -58,13 +61,30 @@ class FraisAjout extends React.Component {
   });
 
   setInitialValues() {
-    var initListAndTotals = this.initListAndTotals();
-    let dateStr = moment().format("MMMM YYYY");
+    // var initListAndTotals = this.initListAndTotals();
+
+    // Initialisation du mois et de l'année sélectionnés.
+    // S'ils sont vides, on prend le mois et l'année courants
+    const { params } = this.props.navigation.state;
+    let now = moment();
+    monthSelected = now.month();
+    yearSelected = now.year();
+
+    if (params.month != null) {
+      monthSelected = params.month;
+    }
+
+    if (params.year != null) {
+      yearSelected = params.year;
+    }
+
     this.state = {
       title: "Note de frais",
-      statusId: 1,
+      isReady: false,
+      statusId: null,
       status: "Nouveau",
       header: ["Jour", "Client", "Montant €"],
+      rowsFlexArr: [1, 2 ,1],
       months: [
         "Janvier",
         "Février",
@@ -79,82 +99,126 @@ class FraisAjout extends React.Component {
         "Novembre",
         "Décembre",
       ],
-      monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1), //date actuelle
+      monthsWithNDF: params.monthsWithNDF,
+      monthSelected: parseInt(monthSelected),
+      yearSelected: parseInt(yearSelected),
       listFrais: [],
       totalMontant: 0,
       totalClient: 0,
       nbJours: 0,
+      webServiceLien: configurationAppli.apiURL + "ndf/",
+      fetchOptions: {
+        headers: {
+          Authorization: "Bearer " + configurationAppli.userToken,
+        }
+      }
     };
   }
 
-  getNDF(year, month) {
+  // On initialise la liste des frais vide.
+  // On crée une ligne par jour du mois sélectionné
+  initFraisVides(year, month) {
+    //Initialisation de la date au 1er jour correspondant au mois et à l'année
+    // fournis en paramètre
+    let dateSelected = moment(year+'-'+month+'-01', 'YYYY-M,DD');
+    let nbJours = dateSelected.daysInMonth(); // Nombre de jours dans le mois
+
+    let tableauFrais = [];
+
+    for (i=1; i<= nbJours; i++) {
+      dateSelected.set('date', i);
+      tableauFrais.push({
+        dateShort: dateSelected.format('ddd DD'),
+        client: '',
+        montant: '',
+        id: dateSelected.format('DD-MM-YYYY')
+      });
+    }
+
+    return tableauFrais;
+  }
+
+
+
+  getNDF(year, month){
     var that = this;
-    fetch(
-      "http://185.57.13.103/rest/web/app_dev.php/ndf/1000000/" +
-        year +
-        "/" +
-        month
-    )
+    let listFrais = this.initFraisVides(year, month);
+
+    let ndfEmptyState = {
+        isReady: true,
+        listFrais: listFrais,
+        totalMontant: 0,
+        totalClient: 0,
+        status: "Nouveau",
+        statusId: null
+    }
+
+    if (!this.state.monthsWithNDF.includes(month)) {
+      that.setState(ndfEmptyState)
+    }
+    else {
+      fetch(this.state.webServiceLien + configurationAppli.userID + '/' + year + '/' + month, {
+        method: 'GET',
+        headers: this.state.fetchOptions.headers
+      })
       .then(function(response) {
         if (response.status >= 400) {
           //Réinitialisation des valeurs
-          that.setState({
-            listFrais: [],
-            totalMontant: 0,
-            totalClient: 0,
-            status: "",
-          });
-          showToast(
-            "Aucune note de frais trouvée pour le mois " +
-              month +
-              " et l'année " +
-              year
-          );
+          that.setState(ndfEmptyState);
+          return {isEmpty: true};
         }
-        return response.json();
+        else {
+          return response.json();
+        }
       })
       .then(function(ndf) {
-        //Construction du tableau de la note de frais
-        var frais = ndf["notesDeFrais"];
-        let tableauFrais = [];
-        // intialisation des totaux globaux
-        var totalAReglerAllFrais = 0;
-        var totalClientAllFrais = 0;
+        if (ndf.isEmpty !== true) {
+          //Construction du tableau de la note de frais
+          var frais = ndf["notesDeFrais"];
 
-        if (frais != null) {
-          frais.forEach(function(item) {
-            let jours = moment({
-              y: item["annee"],
-              M: item["mois"],
-              d: item["jour"],
+          let tableauFrais = listFrais;
+          // intialisation des totaux globaux
+          var totalAReglerAllFrais = 0;
+          var totalClientAllFrais = 0;
+
+          if (frais != null) {
+            frais.forEach(function(item) {
+              let jours = moment({
+                y: item["annee"],
+                M: item["mois"] -1, // Décalage du mois dû au fait que les mois en JS sont indexés de 0 à 11
+                d: item["jour"],
+              });
+              //Création de l'item "frais" dans le cache
+              that.mapperDonneesFrais(item, ndf["idUser"], jours);
+              var frais = service.getByPrimaryKey(
+                FRAIS_SCHEMA,
+                jours.format("DD-MM-YYYY")
+              );
+
+              totauxFrais = that.calculTotaux(frais);
+
+              totalAReglerAllFrais += totauxFrais.totalAReglerFrais;
+              totalClientAllFrais += totauxFrais.totalClientFrais;
+              tableauFrais[item["jour"] -1] = {
+                dateShort: jours.format('ddd DD'),
+                client: item["client"],
+                montant: totauxFrais != null ? totauxFrais.totalAReglerFrais : "",
+                id: jours.format('DD-MM-YYYY'),
+              }
             });
-            //Création de l'item "frais" dans le cache
-            that.mapperDonneesFrais(item, ndf["idUser"], jours);
-            var frais = service.getByPrimaryKey(
-              FRAIS_SCHEMA,
-              jours.format("DD-MM-YYYY")
-            );
 
-            totauxFrais = that.calculTotaux(frais);
-
-            totalAReglerAllFrais += totauxFrais.totalAReglerFrais;
-            totalClientAllFrais += totauxFrais.totalClientFrais;
-            tableauFrais.push({
-              dateShort: item["jour"],
-              client: item["client"],
-              montant: totauxFrais != null ? totauxFrais.totalAReglerFrais : "",
-              id: jours.format("DD-MM-YYYY"),
-            });
-          });
-
+          }
           that.setState({
             listFrais: tableauFrais,
-            totalMontant: totalAReglerAllFrais,
-            totalClient: totalClientAllFrais,
-            status: ndf["etat"],
+            totalMontant: totalAReglerAllFrais.toFixed(2),
+            totalClient: totalClientAllFrais.toFixed(2),
+            status: ndf["libelleEtat"],
+            statusId: ndf["etat"],
+            isReady: true
           });
         }
       });
+    }
   }
 
   //Fonction permettant de créér dans le cache les frais récupérés de l'API
@@ -167,7 +231,7 @@ class FraisAjout extends React.Component {
       annee: parseInt(item["annee"]),
       // TODO remplacer par celui connecté
       idUser: parseInt(idUser),
-      indemKM: parseInt(item["indemKM"]),
+      indemKM: parseFloat(item["indemKM"]),
       client: item["client"],
       facturable: parseInt(item["facturable"]),
       lieu: item["lieu"],
@@ -197,37 +261,34 @@ class FraisAjout extends React.Component {
     }
   }
 
-  reloadNDFByYear(_month) {
-    var that = this;
-    that.setState({ monthSelected: _month });
-
-    var today = new Date();
-    var year = today.getFullYear();
-    this.getNDF(year, _month);
+  reloadNDFByYear(_month){
+    this.setState({
+      monthSelected: _month,
+      isReady: false
+      }, () => {
+      this.getNDF(this.state.yearSelected, this.state.monthSelected);
+    });
   }
 
-  componentDidMount() {
+  componentWillMount() {
     var that = this;
-    //Récupération des paramètres de navigation
-    const { params } = this.props.navigation.state;
 
-    //Test pour savoir si on ajoute ou si on consulte une NDF
-    if (params.month != null) {
-      this.getNDF(params.year, params.month);
-    } else {
-      var initListAndTotals = this.initListAndTotals();
-      that.setState({
-        listFrais: initListAndTotals.listFrais,
-        totalMontant: initListAndTotals.totalAReglerAllFrais,
-        totalClient: initListAndTotals.totalClientAllFrais,
-      });
-    }
+    // var initListAndTotals = this.initListAndTotals();
+    this.getNDF(this.state.yearSelected, this.state.monthSelected);
+
+    // that.setState({
+    //     listFrais: initListAndTotals.listFrais,
+    //     totalMontant: initListAndTotals.totalAReglerAllFrais,
+    //     totalClient: initListAndTotals.totalClientAllFrais,
+    //   });
+
   }
 
   // Méthode permettant de calculer le total à régler d'un frais
   calculTotaux(frais) {
     // on calcul le total avec un arrondi de 2 décimals
-    var total = (frais.indemKM * frais.nbKMS +
+    var total = (
+      frais.indemKM * frais.nbKMS +
       frais.forfait +
       frais.sncf +
       frais.pourcentage +
@@ -301,36 +362,47 @@ class FraisAjout extends React.Component {
   afficherRow() {
     moment.locale("fr");
     return this.state.listFrais.map((row, i) => (
-      <TouchableOpacity key={i} onPress={() => this.modifyNDF(row.id)}>
+      <TouchableOpacity key={i} onPress={() => this.modifyNDF(row.id, this.state.statusId)}>
         <Row
           style={[styles.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
           textStyle={styles.rowText}
           data={[row.dateShort, row.client, row.montant ? row.montant : 0]}
+          flexArr= {this.state.rowsFlexArr}
         />
       </TouchableOpacity>
     ));
-    return lignes;
   }
 
   //Affiche le contenu du menu des mois/années
   loadPickerItems() {
     return this.state.months.map((item, i) => (
-      <Picker.Item label={item} value={item} key={i} />
+      <Picker.Item label={item + ' ' + this.state.yearSelected} value={i+1} key={i} />
     ));
   }
 
-  modifyNDF(idFrais) {
+  /**
+   * Modification de la NDF pour un jour donné
+   */
+  modifyNDF(idFrais, statusId) {
     //Indique le numéro de la ligne a modifier
     this.props.navigation.navigate("FraisDetail", {
       forfait: false,
       idFrais: idFrais,
+      statusId: statusId,
     });
   }
-  addNDF(monthSelected) {
+
+  /**
+   * Création d'un forfait (template)
+   * Pour le mois sélectionné
+   */
+  addNDF(monthSelected, statusId) {
     this.props.navigation.navigate("FraisDetail", {
       forfait: true,
       month: monthSelected,
+      year: yearSelected,
+      statusId: statusId,
     });
   }
   deleteNDF() {
@@ -338,29 +410,28 @@ class FraisAjout extends React.Component {
   }
   saveDraft() {
     this.setState({
-      statusId: 2,
-      status: "brouillon",
+      statusId: 0,
+      status: "Brouillon",
     });
     this.props.navigation.navigate("FraisConfirmation");
   }
   validateNDF() {
     this.setState({
-      statusId: 3,
-      status: "validé",
+      statusId: 2,
+      status: "Validé",
     });
     this.props.navigation.navigate("FraisConfirmation");
   }
 
+  /*
   checketat(etat) {
-    if (etat == "Validé" || etat == "En attente de validation") {
-      return false;
-    } else {
-      return true;
-    }
+    // Renvoie true si l'id correspond à l'état validé ou en attente de validation
+    return (etat == 1 || etat == 2);
   }
+  */
 
   showDeleteButton() {
-    if (this.state.etat == "Brouillon" || this.state.etat == "Retourné")
+    if (this.state.statusId == 0)
       return (
         <Button
           buttonStyles={styles.deleteButton}
@@ -379,7 +450,7 @@ class FraisAjout extends React.Component {
   }
 
   showDraftButton() {
-    if (this.state.status == "nouveau" || this.state.status == "Brouillon")
+    if (this.state.statusId == null || this.state.statusId == 0)
       return (
         <Button
           buttonStyles={styles.draftButton}
@@ -390,83 +461,104 @@ class FraisAjout extends React.Component {
   }
 
   showValidateButton() {
-    if (this.state.status == "nouveau" || this.state.status == "Brouillon")
+    if (this.state.statusId == null || this.state.statusId == 0) {
       return <Button text="VALIDER" onPress={() => this.validateNDF()} />;
+    }
   }
 
   render() {
     const { params } = this.props.navigation.state;
 
-    return (
-      <View style={styles.mainContainer}>
-        <ContainerTitre
-          title={this.state.title}
-          navigation={this.props.navigation}
-        >
-          <View style={styles.container}>
-            <View style={styles.container1}>
-              <View style={styles.containerStatus}>
-                <Text style={styles.text}>Etat : {this.state.status}</Text>
-              </View>
-            </View>
-            <View style={styles.container2}>
-              <View style={styles.containerPicker}>
-                <Picker
-                  style={{ width: 160 }}
-                  selectedValue={this.state.monthSelected}
-                  onValueChange={(itemValue, itemIndex) =>
-                    this.reloadNDFByYear(itemValue)}
-                >
-                  {this.loadPickerItems()}
-                </Picker>
-              </View>
-              <View style={styles.containerColumn}>
-                <View style={styles.containerInfoElement}>
-                  <Text style={styles.text}>
-                    Total à régler : {this.state.totalMontant} €
-                  </Text>
-                  <Text style={styles.text}>
-                    Total client : {this.state.totalClient} €
-                  </Text>
-                  {/*<Text style={styles.text}>Nombre de jours : {this.state.nbJours}</Text>*/}
-                </View>
-                <View style={styles.containerButton}>
-                  {this.checketat(this.state.status) == true ? (
-                    <Button
-                      text="AJOUTER FORFAIT"
-                      onPress={() => this.addNDF(this.state.monthSelected)}
-                      buttonStyles={Style.addButton}
-                    />
-                  ) : null}
+    if (!this.state.isReady) {
+      return (
+        <View>
+          <ContainerAccueil
+            title={this.state.title}
+
+          >
+            <ActivityIndicator
+              color={"#8b008b"}
+              size={"large"}
+              style={StyleGeneral.loader}
+            />
+            <Text style={StyleGeneral.texteLoader}>
+              Récupération des données. Veuillez patienter...
+            </Text>
+          </ContainerAccueil>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.mainContainer}>
+          <ContainerTitre
+            title={this.state.title}
+            navigation={this.props.navigation}
+          >
+            <View style={styles.container}>
+              <View style={styles.container1}>
+                <View style={styles.containerStatus}>
+                  <Text style={styles.text}>Etat : {this.state.status}</Text>
                 </View>
               </View>
               <View style={styles.container2}>
-                <Text style={styles.textAide}>
-                  Saisir une ligne pour ajouter/modifier une NDF
-                </Text>
+                <View style={styles.containerPicker}>
+                  <Picker
+                    style={{ width: 160 }}
+                    selectedValue={this.state.monthSelected}
+                    onValueChange={(itemValue, itemIndex) => {
+                      this.setState({monthSelected: itemValue}, () => this.reloadNDFByYear(itemValue)
+                    )}}
+                  >
+                    {this.loadPickerItems()}
+                  </Picker>
+                </View>
+                <View style={styles.containerColumn}>
+                  <View style={styles.containerInfoElement}>
+                    <Text style={styles.text}>
+                      Total à régler : {this.state.totalMontant} €
+                    </Text>
+                    <Text style={styles.text}>
+                      Total client : {this.state.totalClient} €
+                    </Text>
+                    {/*<Text style={styles.text}>Nombre de jours : {this.state.nbJours}</Text>*/}
+                  </View>
+                  <View style={styles.containerButton}>
+                    <Button
+                      text="AJOUTER FORFAIT"
+                      onPress={() => this.addNDF(this.state.monthSelected, this.state.statusId)}
+                      buttonStyles={Style.addButton}
+                    />
+                  </View>
+                </View>
+                <View style={styles.container2}>
+                  <Text style={styles.textAide}>
+                    Saisir une ligne pour ajouter/modifier une NDF
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.container3}>
+                <View style={styles.containerTable}>
+                  <Table borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}>
+                    <Row
+                      data={this.state.header}
+                      style={styles.header}
+                      textStyle={styles.headerText}
+                      flexArr={this.state.rowsFlexArr}
+                    />
+                    {this.afficherRow()}
+                  </Table>
+                </View>
+              </View>
+              <View style={styles.containerButtons}>
+                {this.showDeleteButton()}
+                {this.showDraftButton()}
+                {this.showValidateButton()}
               </View>
             </View>
-            <View style={styles.container3}>
-              <View style={styles.containerTable}>
-                <Table borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}>
-                  <Row
-                    data={this.state.header}
-                    style={styles.header}
-                    textStyle={styles.headerText}
-                  />
-                  {this.afficherRow()}
-                </Table>
-              </View>
-            </View>
-            <View style={styles.containerButtons}>
-              {this.showDeleteButton()}
-              {this.showDraftButton()}
-              {this.showValidateButton()}
-            </View>
-          </View>
-        </ContainerTitre>
-      </View>
-    );
+          </ContainerTitre>
+        </View>
+      );
+    }
   }
 }
 
