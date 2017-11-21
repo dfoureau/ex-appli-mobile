@@ -54,7 +54,8 @@ class CraController extends Controller
 			$nbJourTravailles = $row['nbJourTravailles'];
 			$nbJourAbs = $row['nbJourAbs'];
 			$client = $row['client'];
-			$responsable = $row['projet'];
+			$responsable = $row['responsable'];
+            $projet = $row['projet'];
 			$commentaires = $row['commentaires'];
 			$valeursSaisies = $row['valeursSaisies'];
 
