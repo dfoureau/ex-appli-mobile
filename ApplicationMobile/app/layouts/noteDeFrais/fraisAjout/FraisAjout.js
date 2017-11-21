@@ -381,6 +381,9 @@ class FraisAjout extends React.Component {
     ));
   }
 
+  /**
+   * Modification de la NDF pour un jour donné
+   */
   modifyNDF(idFrais, statusId) {
     //Indique le numéro de la ligne a modifier
     this.props.navigation.navigate("FraisDetail", {
@@ -389,10 +392,16 @@ class FraisAjout extends React.Component {
       statusId: statusId,
     });
   }
+
+  /**
+   * Création d'un forfait (template)
+   * Pour le mois sélectionné
+   */
   addNDF(monthSelected, statusId) {
     this.props.navigation.navigate("FraisDetail", {
       forfait: true,
       month: monthSelected,
+      year: yearSelected,
       statusId: statusId,
     });
   }
