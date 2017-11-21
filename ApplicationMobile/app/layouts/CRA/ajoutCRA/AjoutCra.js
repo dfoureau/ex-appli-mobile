@@ -20,6 +20,7 @@ import {
 } from "react-native-table-component";
 
 import moment from "moment";
+import "whatwg-fetch";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
@@ -31,6 +32,8 @@ import Style from "../../../styles/Styles";
 import style from "./styles";
 import Panel from "../../../components/Panel/Panel";
 import service from "../../../realm/service";
+
+import configurationAppli from "../../../configuration/Configuration";
 
 const ITEMCRA_SCHEMA = "ItemCRA";
 
@@ -60,6 +63,18 @@ class AjoutCra extends React.Component {
       monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1), //la premiere lettre du mois en majuscule
       listItemsCRA: this.getItemsCRA(), //liste des cra du mois, doit être ordonée
       modifiedLines: [], //liste des lignes à modifier si validation
+
+      userId: configurationAppli.userID,
+      objGET: {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: "Bearer " + configurationAppli.userToken,
+        },
+      },
+      WSLinkCRA: "http://185.57.13.103/rest8/web/app_dev.php/CRA/RA/",
+      isReady: false,
+      data: [],
     };
 
     if (params.isServiceCalled) {
@@ -70,6 +85,44 @@ class AjoutCra extends React.Component {
   //Permet d'afficher l'ecran choisi dans le menu
   afficherEcranParent(ecran) {
     this.props.navigation.navigate(ecran);
+  }
+
+  componentDidMount() {
+    var that = this;
+    //Récupération des paramètres de navigation
+    const { params } = this.props.navigation.state;
+
+    if (params.idCRA != null) {
+      // Récupere les périodes
+      this.getCRAInfosByID(params.idCRA);
+    } else {
+      that.setState({
+        data: [],
+        isReady: true,
+      });
+    }
+  }
+
+  getCRAInfosByID(idCRA) {
+    var that = this;
+
+    fetch(this.state.WSLinkCRA + idCRA, this.state.objGET)
+    .then(function(response) {
+      if (response.status >= 400) {
+        that.setState({
+          data: [],
+          idReady: true,
+        });
+        throw new Error("Bad response from server");
+      }
+      return response.json();
+    })
+    .then(function(cra) {
+      that.setState({
+        isReady: true,
+        data: cra,
+      });
+    });
   }
 
   getItemsCRA() {
@@ -454,7 +507,9 @@ class AjoutCra extends React.Component {
             </View>
 
             <View style={style.containerSecondLine}>
-              <Text style={style.text}>Jours ouvrés : 21 j</Text>
+              <Text style={style.text}>Jours ouvrés : 21 j {/*this.state.data*/}
+              {this.state.data.idRA ? this.state.data.idRA : 'RIEN'}
+            </Text>
             </View>
 
             <View style={style.container1}>
