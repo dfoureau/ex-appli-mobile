@@ -106,6 +106,11 @@ class FraisAjout extends React.Component {
       totalClient: 0,
       nbJours: 0,
       webServiceLien: configurationAppli.apiURL + "ndf/",
+      fetchOptions: {
+        headers: {
+          Authorization: "Bearer " + configurationAppli.userToken,
+        }
+      }
     };
   }
 
@@ -135,7 +140,10 @@ class FraisAjout extends React.Component {
   getNDF(year, month){
     var that = this;
     let listFrais = this.initFraisVides(year, month);
-    fetch(this.state.webServiceLien + configurationAppli.userID + '/' + year + '/' + month)
+    fetch(this.state.webServiceLien + configurationAppli.userID + '/' + year + '/' + month, {
+      method: 'GET',
+      headers: this.state.fetchOptions.headers
+    })
     .then(function(response) {
       if (response.status >= 400) {
         //Réinitialisation des valeurs
@@ -148,10 +156,16 @@ class FraisAjout extends React.Component {
           statusId: null
         })
         showToast("Aucune note de frais trouvée pour le mois " + month + " et l'année " + year);
+        return {isEmpty: true};
       }
-      return response.json();
+      else {
+        return response.json();
+      }
     })
     .then(function(ndf) {
+      if (ndf.isEmpty !== true) {
+        console.log("NDF =>\n");
+        console.log(ndf);
         //Construction du tableau de la note de frais
         var frais = ndf["notesDeFrais"];
 
@@ -187,14 +201,16 @@ class FraisAjout extends React.Component {
           });
 
         }
-          that.setState({
-            listFrais: tableauFrais,
-            totalMontant: totalAReglerAllFrais.toFixed(2),
-            totalClient: totalClientAllFrais.toFixed(2),
-            status: ndf["libelle"],
-            statusId: ndf["etat"],
-            isReady: true
-          });
+        that.setState({
+          listFrais: tableauFrais,
+          totalMontant: totalAReglerAllFrais.toFixed(2),
+          totalClient: totalClientAllFrais.toFixed(2),
+          status: ndf["libelleEtat"],
+          statusId: ndf["etat"],
+          isReady: true
+        });
+      }
+
     });
   }
 
