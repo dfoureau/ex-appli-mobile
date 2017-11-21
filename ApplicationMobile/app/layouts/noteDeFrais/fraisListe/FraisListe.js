@@ -136,7 +136,7 @@ class FraisListe extends React.Component {
   //Fonction permettant de conditionner l'affichage du bloc valideur
   checkItem(item) {
     if (
-      item.statusId == 2 &&
+      item.etat == 2 &&
       item.valideur != null &&
       item.dateactionetat != null
     ) {
@@ -224,7 +224,7 @@ class FraisListe extends React.Component {
                             <Image
                               style={style.listIcon}
                               source={
-                                item.statusId == 2
+                                item.etat == 2
                                   ? require("../../../images/icons/check2.png")
                                   : null
                               }
@@ -236,11 +236,11 @@ class FraisListe extends React.Component {
                             Montant : {item.montantTotal} €
                           </Text>
                           <Text style={style.statusText}>
-                            Etat : {item.etat}
+                            Etat : {item.libelle}
                             {this.checkItem(item) == true ? (
                               <Text>
                                 {" "}
-                                par {item.valideur} le {item.dateactionetat}
+                                par {item.valideur} le {moment(item.dateactionetat).format("DD/MM/YYYY")}
                               </Text>
                             ) : null}
                           </Text>
