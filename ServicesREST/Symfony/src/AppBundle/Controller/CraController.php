@@ -70,7 +70,7 @@ class CraController extends Controller
         $tableauFinal = array();
 
         //Création d'un tableau à partir de le chaine récupérée en base
-        $tabValeursSaisies = split(";", $valeursSaisies);
+        $tabValeursSaisies = explode(";", $valeursSaisies);
 
         $premierJourDuMois = UtilsController::joursem($annee,$mois,1);
         //La fonction renvoie 0 si le premier jour est un dimanche
@@ -116,8 +116,8 @@ class CraController extends Controller
 		}
 		 
 		
-	$retour["valeursSaisies"] = $tableauFinal;
-		 
+	    $retour["valeursSaisies"] = $tableauFinal;
+		$retour = array($retour); 
         // Récupération du nombre de jours ouvrés dans le mois
 
         return new JsonResponse($retour);
