@@ -29,11 +29,23 @@ class CongesController extends Controller
 	 */
 	public function getDemandeCongesByUserId(Request $request, $userId)
 	{
-		// $log=new LoginController();
-		// $retourAuth = $log->checkAuthentification($this);
-		// if (array_key_exists("erreur", $retourAuth)) {
-		// 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
-		// }
+	//Vérification token
+        $log = new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+        }
+		
+		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+		$idUserToken = $retourAuth['id'];
+		
+		//On compare l'idUserToken et l'id fourni en paramètre
+		
+		if ($userId != $idUserToken) 
+		{
+			$message = array('message' => "Incohérence token/ID");
+		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
+		}
 
 		// Test valeur en entrée
 		if (UtilsController::isPositifInt($userId)) {
@@ -81,11 +93,11 @@ class CongesController extends Controller
 	 */
 	public function createDemandeCongesAction(Request $request)
 	{
-		// $log=new LoginController();
-		// $retourAuth = $log->checkAuthentification($this);
-		// if (array_key_exists("erreur", $retourAuth)) {
-		// 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
-		// }
+		 $log=new LoginController();
+		 $retourAuth = $log->checkAuthentification($this);
+		 if (array_key_exists("erreur", $retourAuth)) {
+		 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
+		 }
 
 		$data = json_decode(file_get_contents('php://input'), true);
 
@@ -215,11 +227,20 @@ class CongesController extends Controller
 	public function putDemandeCongesAction(Request $request, $userId, $numRequest)
 	{
 
-		// $log=new LoginController();
-		// $retourAuth = $log->checkAuthentification($this);
-		// if (array_key_exists("erreur", $retourAuth)) {
-		// 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
-		// }
+		$log = new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+        }
+		
+		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+		$idUserToken = $retourAuth['id'];
+		
+		if ($userId != $idUserToken) 
+		{
+			$message = array('message' => "Incohérence token/ID");
+		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
+		}
 
 		// Test les valeurs en entrée
 		if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numRequest)) {
@@ -260,11 +281,20 @@ class CongesController extends Controller
 	 */
 	public function deleteDemandeCongesAction(Request $request, $userId, $numRequest)
 	{
-		// $log=new LoginController();
-		// $retourAuth = $log->checkAuthentification($this);
-		// if (array_key_exists("erreur", $retourAuth)) {
-		// 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
-		// }
+		$log = new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+        }
+		
+		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+		$idUserToken = $retourAuth['id'];
+		
+		if ($userId != $idUserToken) 
+		{
+			$message = array('message' => "Incohérence token/ID");
+		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
+		}
 
 		// Test les valeurs en entrée
 		if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numRequest)) {
@@ -339,11 +369,21 @@ class CongesController extends Controller
 	 */
 	public function getFindDemandesByUserAndYear(Request $request, $userId, $year)
 	{
-		// $log=new LoginController();
-		// $retourAuth = $log->checkAuthentification($this);
-		// if (array_key_exists("erreur", $retourAuth)) {
-		// 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
-		// }
+		
+		$log = new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+        }
+		
+		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+		$idUserToken = $retourAuth['id'];
+		
+		if ($userId != $idUserToken) 
+		{
+			$message = array('message' => "Incohérence token/ID");
+		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
+		}
 
 		// Test les valeurs en entrée
 		if (UtilsController::isPositifInt($userId) && ctype_digit($year) && (int)$year > 1995 && (int)$year < 2050) {
@@ -400,11 +440,20 @@ class CongesController extends Controller
 	 */
 	public function getFindPeriodesByUserAndNumDemande(Request $request, $userId, $numDemande)
 	{
-		// $log=new LoginController();
-		// $retourAuth = $log->checkAuthentification($this);
-		// if (array_key_exists("erreur", $retourAuth)) {
-		// 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
-		// }
+		$log = new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+        }
+		
+		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+		$idUserToken = $retourAuth['id'];
+		
+		if ($userId != $idUserToken) 
+		{
+			$message = array('message' => "Incohérence token/ID");
+		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
+		}
 
 		// Test les valeurs en entrée
 		if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numDemande)) {
@@ -495,11 +544,20 @@ class CongesController extends Controller
 	 */
 	public function getInfosCongesDuMois(Request $request, $userId, $year, $month)
 	{
-		// $log=new LoginController();
-		// $retourAuth = $log->checkAuthentification($this);
-		// if (array_key_exists("erreur", $retourAuth)) {
-		// 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
-		// }
+		$log = new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+        }
+		
+		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+		$idUserToken = $retourAuth['id'];
+		
+		if ($userId != $idUserToken) 
+		{
+			$message = array('message' => "Incohérence token/ID");
+		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
+		}
 
 		// Test les valeurs en entrée
 		if (UtilsController::isPositifInt($userId) && ctype_digit($year) && ctype_digit($month)

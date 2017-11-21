@@ -23,12 +23,25 @@ class NdfController extends Controller
   */
   public function getNdf(Request $request,$id,$annee,$mois)
   {
-    /*$log=new LoginController();
-    $retourAuth = $log->checkAuthentification($this);
-    if (array_key_exists("erreur", $retourAuth)) {
-      return new JsonResponse($retourAuth,403);
-    }*/
+		//on vérifie que le token envoyé soit correct/présent
+		$log = new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+        }
 		
+		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+		$idUserToken = $retourAuth['id'];
+		
+		//On compare l'idUserToken et l'id fourni en paramètre
+		
+		if ($id != $idUserToken) 
+		{
+			$message = array('message' => "Incohérence token/ID");
+		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
+		}
+
+	
 		if (ctype_digit($id) && ctype_digit($annee) && ctype_digit($mois)) 
 		{
       $id = (int) $id;  
@@ -40,7 +53,7 @@ class NdfController extends Controller
       when etat="2" then "Validé" 
       when etat="1" then "En attente validation"
       when etat="0" then "Brouillon" 
-      end as etat,jour, mois, annee, facturable,client, lieu, coalesce(forfait,0.00) as forfait, nbkms,coalesce(sncf,0.00) as sncf, coalesce(peages,0.00) as peages,essence, coalesce(parking,0.00) as parking,coalesce(taxi,0.00) as taxi,indemKM,notedefrais.nbzones,pourcentage,coalesce(hotel,0.00) as hotel,coalesce(repas,0.00) as repas,coalesce(invit,0.00) as invit, divers, libelle FROM notedefrais WHERE idUser = "'.$id.'" AND mois = "'.$mois.'" AND annee = "'.$annee.'"';
+      end as libelleEtat,etat,jour, mois, annee, facturable,client, lieu, coalesce(forfait,0.00) as forfait, nbkms,coalesce(sncf,0.00) as sncf, coalesce(peages,0.00) as peages,essence, coalesce(parking,0.00) as parking,coalesce(taxi,0.00) as taxi,indemKM,notedefrais.nbzones,pourcentage,coalesce(hotel,0.00) as hotel,coalesce(repas,0.00) as repas,coalesce(invit,0.00) as invit, divers, libelle FROM notedefrais WHERE idUser = "'.$id.'" AND mois = "'.$mois.'" AND annee = "'.$annee.'"';
 
       $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
       $stmt->execute();
@@ -57,6 +70,7 @@ class NdfController extends Controller
         for($i=0; $i<count($list);$i++){
           $row=$list[$i];
           $etat=$row['etat'];
+		  $libelleEtat=$row['libelleEtat'];
           $annee=$row['annee'];
           $mois=$row['mois'];
           $id=$row['id'];
@@ -85,7 +99,7 @@ class NdfController extends Controller
           $rowNdf['libelleDivers']=$row['libelle'];
           $listNdf[]=$rowNdf;
         }
-        $retour=array('idUser'=>$id, 'mois'=>$mois,'annee'=>$annee,'etat'=>$etat, 'notesDeFrais'=>$listNdf);
+        $retour=array('idUser'=>$id, 'mois'=>$mois,'annee'=>$annee,'libelleEtat'=>$libelleEtat,'etat'=>$etat, 'notesDeFrais'=>$listNdf);
 
         array_walk_recursive(
           $retour,
@@ -113,23 +127,27 @@ class NdfController extends Controller
   */
   public function deleteNdfAction(request $delete,$id,$annee,$mois)
   {
-    /*$log=new LoginController();
-    $retourAuth = $log->checkAuthentification($this);
-    if (array_key_exists("erreur", $retourAuth)) {
-      return new JsonResponse($retourAuth,403);
-    }*/
+		//on vérifie que le token envoyé soit correct/présent
+		$log = new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+        }
+		
+		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+		$idUserToken = $retourAuth['id'];
+		
+		//On compare l'idUserToken et l'id fourni en paramètre
+		
+		if ($id != $idUserToken) 
+		{
+			$message = array('message' => "Incohérence token/ID");
+		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
+		}
 
-    if(ctype_digit($id) && ctype_digit($annee) && ctype_digit($mois)){
-        $id = (int) $id;
-        $annee = (int) $annee;
-        $mois = (int) $mois;
+
         $retourdelete=$this->deleteNdf($id,$annee,$mois);  
         return new JsonResponse($retourdelete['message'],$retourdelete['code']);
-    }
-    else{
-      $message = array('message' => 'Format parametres incorrect');
-      return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
-    }
     
   }
 
@@ -141,6 +159,8 @@ class NdfController extends Controller
 		
 		if (ctype_digit($id) && ctype_digit($annee) && ctype_digit($mois)) 
 		{
+			
+			
       $id = (int) $id;
       $annee = (int) $annee;
       $mois = (int) $mois;
@@ -188,7 +208,7 @@ class NdfController extends Controller
 			}
 		}
 		else {
-				$message = array('message' => 'Delete KO: Format parametres incorrect');
+				$message = array('message' => 'Delete KO: Format parametres incorrect mon gars');
 				return array('message'=>$message,'code'=>Response::HTTP_BAD_REQUEST);
 		}
   }
@@ -199,11 +219,23 @@ class NdfController extends Controller
   */
   public function putNdfAction(Request $request,$id,$annee,$mois)
   {
-    /*$log=new LoginController();
-    $retourAuth = $log->checkAuthentification($this);
-    if (array_key_exists("erreur", $retourAuth)) {
-      return new JsonResponse($retourAuth,400);
-    }*/  
+    //on vérifie que le token envoyé soit correct/présent
+		$log = new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+        }
+		
+		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+		$idUserToken = $retourAuth['id'];
+		
+		//On compare l'idUserToken et l'id fourni en paramètre
+		
+		if ($id != $idUserToken) 
+		{
+			$message = array('message' => "Incohérence token/ID");
+		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
+		}
 		  
 		/* Exemple de Jason
 		{
@@ -239,29 +271,35 @@ class NdfController extends Controller
 		*/		 
 		//on verifie que les données en entrée 
 		// Get the entity manager
-    if(ctype_digit($id) && ctype_digit($annee) && ctype_digit($mois)){
-      $id = (int) $id;
-      $annee = (int) $annee;
-      $mois = (int) $mois;
-      //on appelle la fonction deleteNDF
+     
+	  
+	  //on appelle la fonction deleteNDF
       $retourdelete=$this->deleteNdf($id,$annee,$mois);  
-      if($retourdelete['code']!=200){
+      if($retourdelete['code']!=Response::HTTP_OK){
         return new JsonResponse($retourdelete['message'],$retourdelete['code']);
       }
+	  
+	  $data = json_decode(file_get_contents('php://input'), true);
+          
+		  try {
+		  $retourpost = $this->postNdf($data,$idUserToken);
+		  }
+		   catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
+            return new JsonResponse("Modification échouée".$e, Response::HTTP_BAD_REQUEST);
+        }
+		
 
-      //on appelle la fonction postNDF
-      $retourpost = $this->postNdfAction($request);     
-      return $retourpost;
-
-      if($retourpost['code']!=200){
+      if($retourpost['code']!=Response::HTTP_OK){
         return new JsonResponse($retourpost['message'],$retourpost['code']);
       }
-    }
-    else{
-        $message = array('message' => 'Delete KO: Format parametres incorrect');
-        return array('message'=>$message,'code'=>Response::HTTP_BAD_REQUEST);
+	  
+	  if($retourdelete['code'] == Response::HTTP_OK && $retourpost["code"] == Response::HTTP_OK){
+        $message = array('message' => "Modification réussie");
+        return new JsonResponse($message, Response::HTTP_OK);
+		
+        }  
     } 	
-  }
+ 
 
   /**
 	* @Route("/ndf/{annee}/{idUser}", name="ndfByUser")
@@ -269,11 +307,23 @@ class NdfController extends Controller
   */
 	public function getNdfByUser(Request $request, $annee, $idUser)
   {
-		/*$log=new LoginController();
-    $retourAuth = $log->checkAuthentification($this);
-    if (array_key_exists("erreur", $retourAuth)) {
-      return new JsonResponse($retourAuth,400);
-    }*/
+		//on vérifie que le token envoyé soit correct/présent
+		$log = new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+        }
+		
+		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+		$idUserToken = $retourAuth['id'];
+		
+		//On compare l'idUserToken et l'id fourni en paramètre
+		
+		if ($idUser != $idUserToken) 
+		{
+			$message = array('message' => "Incohérence token/ID");
+		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
+		}
 		
     if(ctype_digit($annee) && ctype_digit($idUser)){
         $idUser = (int) $idUser;
@@ -284,7 +334,7 @@ class NdfController extends Controller
         return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
     }
         
-    $sql='SELECT idUser,  mois, annee, COALESCE(ROUND(SUM(nbkms)*MIN(notedefrais.indemKM),2),0) + COALESCE(SUM(peages),0) + COALESCE(SUM(notedefrais.forfait),0) + COALESCE(SUM(sncf),0) + COALESCE(SUM(pourcentage),0) + COALESCE(SUM(hotel),0) + COALESCE(SUM(repas),0) + COALESCE(SUM(invit),0) + COALESCE(SUM(essence),0) + COALESCE(SUM(parking),0) + COALESCE(SUM(taxi),0) + COALESCE(SUM(divers),0) AS montantTotal, CASE etat WHEN 0 THEN "Brouillon" WHEN 1 THEN "En attente validation" WHEN 2 THEN "Validé" WHEN 2 THEN "A modifier" ELSE "Autre" END as etat, dateactionetat, CONCAT(valid.prenom," ", valid.nom) as valideur FROM notedefrais  left join users as valid on notedefrais.validateur = valid.id WHERE idUser = "'.$idUser.'" and annee = '.$annee.' GROUP BY idUser, mois, annee,etat, dateactionetat;';
+    $sql='SELECT idUser,  mois, annee, COALESCE(ROUND(SUM(nbkms)*MIN(notedefrais.indemKM),2),0) + COALESCE(SUM(peages),0) + COALESCE(SUM(notedefrais.forfait),0) + COALESCE(SUM(sncf),0) + COALESCE(SUM(pourcentage),0) + COALESCE(SUM(hotel),0) + COALESCE(SUM(repas),0) + COALESCE(SUM(invit),0) + COALESCE(SUM(essence),0) + COALESCE(SUM(parking),0) + COALESCE(SUM(taxi),0) + COALESCE(SUM(divers),0) AS montantTotal, etat,CASE etat WHEN 0 THEN "Brouillon" WHEN 1 THEN "En attente validation" WHEN 2 THEN "Validé" WHEN 3 THEN "A modifier" ELSE "Autre" END as libelle, dateactionetat, CONCAT(valid.prenom," ", valid.nom) as valideur FROM notedefrais  left join users as valid on notedefrais.validateur = valid.id WHERE idUser = "'.$idUser.'" and annee = '.$annee.' GROUP BY idUser, mois, annee,etat, dateactionetat;';
 
     $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
     $stmt->execute();
@@ -303,11 +353,11 @@ class NdfController extends Controller
      */
     public function postNdfAction(Request $request)
     {
-      /*$log=new LoginController();
+      $log=new LoginController();
       $retourAuth = $log->checkAuthentification($this);
       if (array_key_exists("erreur", $retourAuth)) {
         return new JsonResponse($retourAuth,400);
-      }*/ 
+      } 
 		  
 			/* Exemple de Jason
 			{
@@ -354,12 +404,7 @@ class NdfController extends Controller
     
     public function postNdf($data)
     {
-      /*$log=new LoginController();
-      $retourAuth = $log->checkAuthentification($this);
-      if (array_key_exists("erreur", $retourAuth)) {
-        return new JsonResponse($retourAuth,400);
-      }*/
-		
+
       $idUser = $data['idUser'];
       $mois = $data['mois'];
       $annee = $data['annee'];
@@ -423,17 +468,12 @@ class NdfController extends Controller
       $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
       $stmt->execute();
 
-      $retour=array('message'=>"La note de frais a ete creee/mise a jour",'code'=>Response::HTTP_OK );
+      $retour=array('message'=>"La note de frais a ete creee",'code'=>Response::HTTP_OK );
       return $retour;
     }
 
     public function getUserIndemKM($idUser)
     {
-	   /*$log=new LoginController();
-      $retourAuth = $log->checkAuthentification($this);
-      if (array_key_exists("erreur", $retourAuth)) {
-        return new JsonResponse($retourAuth,400);
-      }*/
 
       $sql = 'SELECT indemKM FROM users WHERE id = '.$idUser;
 

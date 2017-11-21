@@ -18,11 +18,11 @@ class AnnuaireController extends Controller
 	 */
 	public function annuaire(Request $request, $idAgence)
 	{
-		// $log=new LoginController();
-		// $retourAuth = $log->checkAuthentification($this);
-		// if (array_key_exists("erreur", $retourAuth)) {
-		// 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
-		// }
+		$log=new LoginController();
+		$retourAuth = $log->checkAuthentification($this);
+		if (array_key_exists("erreur", $retourAuth)) {
+		return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
+		}
 
 		// Test valeur en entrée
 		if (UtilsController::isPositifInt($idAgence)) {
@@ -64,11 +64,11 @@ class AnnuaireController extends Controller
 	 */
 	public function infos_collab(Request $request, $userId)
 	{
-		// $log = new LoginController();
-		// $retourAuth = $log->checkAuthentification($this);
-		// if (array_key_exists("erreur", $retourAuth)) {
-		// 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
-		// }
+		$log = new LoginController();
+		$retourAuth = $log->checkAuthentification($this);
+		if (array_key_exists("erreur", $retourAuth)) {
+		return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
+		}
 
 		// Test valeur en entrée
 		if (UtilsController::isPositifInt($userId)) {

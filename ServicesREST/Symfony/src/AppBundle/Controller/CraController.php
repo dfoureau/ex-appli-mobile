@@ -23,15 +23,23 @@ class CraController extends Controller
         $log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
-            return new JsonResponse($retourAuth,400);
+            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
         }
+		
+		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+		$idUserToken = $retourAuth['id'];
     
         // Requête SQL pour sélectionner les relevés activités en fonction de l'idRA
-        $sql = 'SELECT r.idRA,r.mois,r.annee, e.libelle, r.nbJourTravailles, r.nbJourAbs, r.client, r.responsable, r.projet,r.commentaires, r.valeursSaisies FROM relevesactivites r INNER JOIN etatra e ON r.etat = e.id WHERE idRA = "'.$idRA.'";';
+        $sql = 'SELECT r.idRA,r.mois,r.annee, r.etat, e.libelle, r.nbJourTravailles, r.nbJourAbs, r.client, r.responsable, r.projet,r.commentaires, r.valeursSaisies FROM relevesactivites r INNER JOIN etatra e ON r.etat = e.id WHERE idRA = "'.$idRA.'" and idUser = "'.$idUserToken.'";';
 
         $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
         $stmt->execute();
         $retour= $stmt->fetchAll();
+		
+		if(empty($retour)){
+            $message = array('message' => "Pas de correspondance CRA");
+            return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
+        }
 		
 		for ($i=0;$i<count($retour);$i++) {
 		
@@ -41,6 +49,7 @@ class CraController extends Controller
 			$mois = $row['mois'];
 			$annee = $row['annee'];
 			$libelle = $row['libelle'];
+			$etat = $row['etat'];
 			$NbJOuvres = strval(UtilsController::nbJoursOuvresParMois($mois,$annee));
 			$nbJourTravailles = $row['nbJourTravailles'];
 			$nbJourAbs = $row['nbJourAbs'];
@@ -50,13 +59,7 @@ class CraController extends Controller
 			$valeursSaisies = $row['valeursSaisies'];
 
 		}
-		
-		$retour = array('idRA'=>$idRA,'mois'=>$mois, 'annee'=>$annee, 'libelle'=>$libelle, 'NbJOuvres'=>$NbJOuvres,'nbJourTravailles'=>$nbJourTravailles,'nbJourAbs'=>$nbJourAbs,'client'=>$client,'responsable'=>$responsable,'commentaires'=>$commentaires,'valeursSaisies' => $valeursSaisies);
-
-        if(empty($retour)){
-            $message = array('message' => "Aucun CRA trouvé pour le RA n°: ".$idRA);
-            return new JsonResponse($message,400);
-        }
+		$tab = array('idRA'=>$idRA,'mois'=>$mois, 'annee'=>$annee, 'libelle'=>$libelle, 'etat'=>$etat,'NbJOuvres'=>$NbJOuvres,'nbJourTravailles'=>$nbJourTravailles,'nbJourAbs'=>$nbJourAbs,'client'=>$client,'responsable'=>$responsable,'commentaires'=>$commentaires,'valeursSaisies' => $valeursSaisies);
 
 
 		//on formate le mois pour qu'il soit plus joli
@@ -78,7 +81,6 @@ class CraController extends Controller
             $premierJourDuMois = 7;
         }
 		
-		
         //L'index commence à 0
         //$indexPremierJourDuMois = $premierJourDuMois - 1;
         $dernierJourDuMois = UtilsController::dernierJourMois($mois,$annee);
@@ -87,8 +89,6 @@ class CraController extends Controller
             $dernierJourDuMois = 7;
         }
  		
-		
-
 		//on élague le tableau tabValeursSaisies, on enlève les jours du mois précédent qui viennent encombrer le tableau inutilement
 		// on fait une boucle qui consiste à enlever n fois le premier element du tableau jusqu'à arriver au premier jour du mois, avec n = premier jour du mois
 		for ($i = 0; $i < $premierJourDuMois-1; $i++) {
@@ -109,18 +109,18 @@ class CraController extends Controller
 			
 			  $tabNewPeriod = array();
 			  $tabNewPeriod["date"] = $date;
-			$tabNewPeriod["activité"] = $tabValeursSaisies[$j];
-			
+			  $tabNewPeriod["activité"] = $tabValeursSaisies[$j];
 			
 			array_push($tableauFinal, $tabNewPeriod);
 		}
 		 
 		
-	    $retour["valeursSaisies"] = $tableauFinal;
-		$retour = array($retour); 
-        // Récupération du nombre de jours ouvrés dans le mois
+		$tab["valeursSaisies"] = $tableauFinal;
+		 
+		//$tab=array($tab);//on le met dans un tableau
+		
 
-        return new JsonResponse($retour);
+        return new JsonResponse($tab,Response::HTTP_OK);
     }
 
     /**
@@ -131,20 +131,40 @@ class CraController extends Controller
 
         
         //Vérification token
-        /*$log = new LoginController();
+        $log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
-            return new JsonResponse($retourAuth,400);
-        }*/
+            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+        }
+		
+		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+		$idUserToken = $retourAuth['id'];
+		
+		//On compare l'idUserToken et l'id fourni en paramètre
+		
+		if ($id != $idUserToken) 
+		{
+			$message = array('message' => "Incohérence token/ID");
+		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
+		}	
+		
+		
 		//Test si le paramètre année est valorisé, si non on le valorise par l'année en cours
 
-        $sql = "SELECT r.idUser as idUser, r.idRA as Id, r.mois,r.annee as annee, r.client, r.etat as status FROM relevesactivites r INNER JOIN etatra e ON r.etat = e.id WHERE r.idUser = '$id' AND r.annee = '$annee'  ORDER BY r.mois asc;";
+        $sql = "SELECT r.idUser as idUser, r.idRA as Id, r.mois,r.annee as annee, r.client, e.libelle, r.etat as status FROM relevesactivites r INNER JOIN etatra e ON r.etat = e.id WHERE r.idUser = '$id' AND r.annee = '$annee'  ORDER BY r.mois asc;";
 
         $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
         $stmt->execute();
         //$retour= $stmt->fetchAll();
 
 		$retour= $stmt->fetchAll();
+		
+		if(empty($retour)){
+        //if(count($retour) == 0){
+        $message = array('message' => "Aucun CRA trouvé");
+        return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
+        }
+		
 		$liste=array();
 		for($i=0; $i<count($retour);$i++){
 		
@@ -160,35 +180,35 @@ class CraController extends Controller
 					$libelleMois = "Février";
 					break;
 				case "3" :
-				$libelleMois = "Mars";
-				break;
+					$libelleMois = "Mars";
+					break;
 				case "4" :
-				$libelleMois = "Avril";
-				break;
+					$libelleMois = "Avril";
+					break;
 				case "5" :
-				$libelleMois = "Mai";
-				break;
+					$libelleMois = "Mai";
+					break;
 				case "6" :
-				$libelleMois = "Juin";
-				break;
+					$libelleMois = "Juin";
+					break;
 				case "7" :
-				$libelleMois = "Juillet";
-				break;
+					$libelleMois = "Juillet";
+					break;
 				case "8" :
-				$libelleMois = "Août";
-				break;
+					$libelleMois = "Août";
+					break;
 				case "9" :
-				$libelleMois = "Septembre";
-				break;
+					$libelleMois = "Septembre";
+					break;
 				case "10" :
-				$libelleMois = "Octobre";
-				break;
+					$libelleMois = "Octobre";
+					break;
 				case "11" :
-				$libelleMois = "Novembre";
-				break;
+					$libelleMois = "Novembre";
+					break;
 				case "12" :
-				$libelleMois = "Décembre";
-				break;
+					$libelleMois = "Décembre";
+					break;
 					// Etats validés ou A modifier interdits, autres états inconnus
 			}
 			
@@ -198,6 +218,7 @@ class CraController extends Controller
 			
 			
 			$client = $row['client'];
+			$libelle = $row['libelle'];
 			$status = $row['status'];
 			
 			$moreThanOne = $this->getMoreThanOne($mois,$idUser);
@@ -214,22 +235,16 @@ class CraController extends Controller
 			$retour[$i]['manyElt'] = $manyElt;
 			
 			
-		$liste[] = array('key'=>$key,'Id'=>$id, 'date' => $date, 'client'=>$client, 'status'=>$status,'moreThanOne' => $moreThanOne,'hideDate' => $hideDate,'manyElt' => $manyElt);
+		$liste[] = array('key'=>$key,'Id'=>$id, 'date' => $date, 'client'=>$client, 'libelle'=>$libelle,'status'=>$status,'moreThanOne' => $moreThanOne,'hideDate' => $hideDate,'manyElt' => $manyElt);
 			
 		}
 		  
           return new JsonResponse($liste,Response::HTTP_OK);
 		 
-		
-        if(count($retour) == 0){
-                $message = array('message' => "Aucun CRA trouvé pour l'idUtilisateur: ".$id. " et l'année: ".$annee);
-                return new JsonResponse($message,400);
-        }
-        else{
 
-            return new JsonResponse($retour);
-        }        
-    }
+         
+		}
+
 
     
 	public function getMoreThanOne($mois,$idUser)
@@ -286,22 +301,25 @@ class CraController extends Controller
 	
 	
 	
-    function deleteCra($idRA){
+    function deleteCra($idRA,$idUserToken){
 
-        $sql = 'DELETE FROM relevesactivites WHERE idRA = '.$idRA.';';
+
+        $sql = 'DELETE FROM relevesactivites WHERE idRA = '.$idRA.' and idUser = '.$idUserToken.';';
 
         $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
         $stmt->execute();
 
         $retour= $stmt->rowCount();
 
-        if($retour == 0){
+		if(empty($retour)){
+        //if($retour == 0){
             $message = array('message' => "Erreur dans la suppression");
-            return array('message' =>$message, 'code'=>400);
+            return array('message' =>$message, 'code'=>Response::HTTP_BAD_REQUEST);
         }
         else{
             $message = array('message' => "Suppression reussie");
-            return array('message' =>$message, 'code'=>200);
+            return array('message' =>$message, 'code'=>Response::HTTP_OK);
+				
         }
     }
 
@@ -311,47 +329,38 @@ class CraController extends Controller
     */
     function deleteCraAction(Request $request, $idRA){
 
-        //Vérification token
-        /*$log = new LoginController();
-        $retourAuth = $log->checkAuthentification($this);
-        if (array_key_exists("erreur", $retourAuth)) {
-            return new JsonResponse($retourAuth,400);
-        }*/
-
-        $retourDelete = $this->deleteCra($idRA);
-        return new JsonResponse($retourDelete["message"], $retourDelete["code"]);
-    }
-
-    /**
-    *@Route("/CRA/RA", name="addCra")
-    *@Method("POST")
-    */
-    function addCraAction(Request $request){
-        
-        //Vérification token
+  	      //Vérification token
         $log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
-            return new JsonResponse($retourAuth,400);
+            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
         }
+		
+		$idUserToken = $retourAuth['id'];
+	
 
-        $data = json_decode(file_get_contents('php://input'), true);
-        try{
-            $retourAdd = $this->addCra($data);
-        }
-        catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
-            return new JsonResponse("Problème de paramètres".$e, Response::HTTP_BAD_REQUEST);
-        }
-        return new JsonResponse($retourAdd["message"], $retourAdd["code"]);
+        $retourDelete = $this->deleteCra($idRA,$idUserToken);
+        return new JsonResponse($retourDelete["message"], $retourDelete["code"]);
     }
 
+
+
     
-    function addCra($data){
+    function addCra($data,$idUserToken){
         
-        $idUser = $data['idUser'];
-        $libelle = $data['libelle'];
+		$idUser = $data['idUser'];
+		
+		if ($idUser != $idUserToken) 
+		{
+			$message = array('message' => "Incohérence token/ID");
+            return array('message' =>$message, 'code'=>Response::HTTP_BAD_REQUEST);
+
+		}
+		
+		
 		$mois = $data['mois'];
 		$annee = $data['annee'];
+		$libelle = $data['libelle'];
         $nbJourTravailles = $data['nbJourTravailles'];
         $nbJourAbs = $data['nbJourAbs'];
         $client = $data['client'];
@@ -361,45 +370,7 @@ class CraController extends Controller
         $tableauCRA = $data['valeursSaisies'];
 
 
-        //Vérification des champs obligatoires
-        /*if(empty($idCollab)){
-            $message = array('message' => "Le champ idCollab est obligatoire");
-            return array('message' =>$message, 'code'=>400);
-        }
-        if(empty($responsable)){
-            $message = array('message' => "Le champ responsable est obligatoire");
-            return array('message' =>$message, 'code'=>400);
-        }
-        if(empty($client)){
-            $message = array('message' => "Le champ client est obligatoire");
-            return array('message' =>$message, 'code'=>400);
-        }
-        if(empty($libelleEtat)){
-            $message = array('message' => "Le champ libelleEtat est obligatoire");
-            return array('message' =>$message, 'code'=>400);
-        }
-        if(empty($nbJAbsence)){
-            $message = array('message' => "Le champ nbJourAbs est obligatoire");
-            return array('message' =>$message, 'code'=>400);
-        }
-        if(empty($nbJTravail)){
-            $message = array('message' => "Le champ nbJourTravailles est obligatoire");
-            return array('message' =>$message, 'code'=>400);
-        }
-        if(empty($tableauCRA)){
-            $message = array('message' => "Le champ TableauPeriodeActivite est obligatoire");
-            return array('message' =>$message, 'code'=>400);
-        }*/
 
-        /*if($libelleEtat == 'Brouillon'){
-            $etat = '1';
-        }
-		else if($libelleEtat == 'En attente validation'){
-            $etat = '2';
-		 }
-        else{
-            $etat = "0";
-        }*/
 		
 		switch ($libelle){
             case "Brouillon" :
@@ -451,14 +422,38 @@ class CraController extends Controller
         $stmt->execute();
         $retour= $stmt->rowCount();
 
-        if($retour == 0){
+        //if($retour == 0){
+		if(empty($retour)){
             $message = array('message' => "Erreur dans la création");
-            return array('message' =>$message, 'code'=>400);
+            return array('message' =>$message, 'code'=>'400');
         }
         else{
             $message = array('message' => "Création réussie");
-            return array('message' =>$message, 'code'=>200);
+            return array('message' =>$message, 'code'=>'200');
+        }		
+    }
+	
+	    /**
+    *@Route("/CRA/RA", name="addCra")
+    *@Method("POST")
+    */
+    function addCraAction(Request $request){
+        
+            $log = new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
         }
+		
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        try{
+            $retourAdd = $this->addCra($data,$idUserToken);
+        }
+        catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
+            return new JsonResponse("Problème de paramètres mon gars".$e, Response::HTTP_BAD_REQUEST);
+        }
+        return new JsonResponse($retourAdd["message"], $retourAdd["code"]);
     }
 
     /**
@@ -468,31 +463,40 @@ class CraController extends Controller
     function updateCra(Request $request, $idRA){
 
         //Vérification token
-        /*$log = new LoginController();
+        $log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
-            return new JsonResponse($retourAuth,400);
-        }*/
+            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+        }
+		
+		$idUserToken = $retourAuth['id'];
 
         //Suppression du CRA
-        $retourDelete = $this->deleteCra($idRA);
-         if($retourDelete['code']!=200){
+        $retourDelete = $this->deleteCra($idRA,$idUserToken);
+        if($retourDelete["code"] != Response::HTTP_OK){
           return new JsonResponse($retourDelete['message'],$retourDelete['code']);
         }
-
 	
 		
         //Création du CRA
-        $retourAdd = $this->addCraAction($request);
-		return $retourAdd;
-        if($retourAdd["code"] != 200){
-            return new JsonResponse($retourAdd["message"], $retourAdd["code"]);
+		  $data = json_decode(file_get_contents('php://input'), true);
+          
+		  try {
+		  $retourAdd = $this->addCra($data,$idUserToken);
+		  }
+		   catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
+            return new JsonResponse("Modification échouée".$e, Response::HTTP_BAD_REQUEST);
+        }
+		//return $retourAdd;
+        if($retourAdd['code'] != Response::HTTP_OK){
+		 return new JsonResponse($retourAdd['message'], $retourAdd['code']);
         }
 
         //Si tout est ok on envoie un code HTTP 200
-        if($retourDelete["code"] == 200 && $retourAdd["code"] == 200){
-            $message = array('message' => "Modification réussie");
-            return new JsonResponse($message, 200);
+        if($retourDelete['code'] == Response::HTTP_OK && $retourAdd["code"] == Response::HTTP_OK){
+        $message = array('message' => "Modification réussie");
+        return new JsonResponse($message, Response::HTTP_OK);
+		
         }
     }
 }

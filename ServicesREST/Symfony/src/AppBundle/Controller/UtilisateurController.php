@@ -20,11 +20,23 @@ class UtilisateurController extends Controller
      */
     public function utilisateur(Request $request, $id)
     {
-	       /*$log=new LoginController();
+	 //Vérification token
+        $log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
-            return new JsonResponse($retourAuth,403);
-          }*/
+            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+        }
+		
+		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+		$idUserToken = $retourAuth['id'];
+		
+		//On compare l'idUserToken et l'id fourni en paramètre
+		
+		if ($id != $idUserToken) 
+		{
+			$message = array('message' => "Incohérence token/ID");
+		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
+		}
 	   
 	   if (UtilsController::isPositifInt($id)) {
 			$id = (int) $id;
@@ -64,11 +76,6 @@ class UtilisateurController extends Controller
 	
 public function getUserManager($id)
     {
-	   /*$log=new LoginController();
-      $retourAuth = $log->checkAuthentification($this);
-      if (array_key_exists("erreur", $retourAuth)) {
-        return new JsonResponse($retourAuth,400);
-      }*/
 
       $sql = 'SELECT idManager as manager FROM users WHERE id = '.$id;
 
