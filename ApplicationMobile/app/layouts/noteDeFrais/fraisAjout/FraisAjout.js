@@ -405,10 +405,12 @@ class FraisAjout extends React.Component {
     this.props.navigation.navigate("FraisConfirmation");
   }
 
+  /*
   checketat(etat) {
     // Renvoie true si l'id correspond à l'état validé ou en attente de validation
     return (etat == 1 || etat == 2);
   }
+  */
 
   showDeleteButton() {
     if (this.state.statusId == 0)
@@ -503,13 +505,11 @@ class FraisAjout extends React.Component {
                     {/*<Text style={styles.text}>Nombre de jours : {this.state.nbJours}</Text>*/}
                   </View>
                   <View style={styles.containerButton}>
-                    {this.checketat(this.state.statusId) == true ? (
-                      <Button
-                        text="AJOUTER FORFAIT"
-                        onPress={() => this.addNDF(this.state.monthSelected, this.state.statusId)}
-                        buttonStyles={Style.addButton}
-                      />
-                    ) : null}
+                    <Button
+                      text="AJOUTER FORFAIT"
+                      onPress={() => this.addNDF(this.state.monthSelected, this.state.statusId)}
+                      buttonStyles={Style.addButton}
+                    />
                   </View>
                 </View>
                 <View style={styles.container2}>
