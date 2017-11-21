@@ -80,8 +80,8 @@ class FraisAjout extends React.Component {
 
     this.state = {
       title: "Note de frais",
-      statusId: 1,
       isReady: false,
+      statusId: null,
       status: "Nouveau",
       header: ["Jour", "Client", "Montant €"],
       rowsFlexArr: [1, 2 ,1],
@@ -144,7 +144,8 @@ class FraisAjout extends React.Component {
           listFrais: listFrais,
           totalMontant: 0,
           totalClient: 0,
-          status: "",
+          status: "Nouveau",
+          statusId: null
         })
         showToast("Aucune note de frais trouvée pour le mois " + month + " et l'année " + year);
       }
@@ -190,7 +191,8 @@ class FraisAjout extends React.Component {
             listFrais: tableauFrais,
             totalMontant: totalAReglerAllFrais.toFixed(2),
             totalClient: totalClientAllFrais.toFixed(2),
-            status: ndf["etat"],
+            status: ndf["libelle"],
+            statusId: ndf["etat"],
             isReady: true
           });
     });
@@ -374,29 +376,26 @@ class FraisAjout extends React.Component {
   }
   saveDraft() {
     this.setState({
-      statusId: 2,
-      status: "brouillon",
+      statusId: 0,
+      status: "Brouillon",
     });
     this.props.navigation.navigate("FraisConfirmation");
   }
   validateNDF() {
     this.setState({
-      statusId: 3,
-      status: "validé",
+      statusId: 2,
+      status: "Validé",
     });
     this.props.navigation.navigate("FraisConfirmation");
   }
 
   checketat(etat) {
-    if (etat == "Validé" || etat == "En attente de validation") {
-      return false;
-    } else {
-      return true;
-    }
+    // Renvoie true si l'id correspond à l'état validé ou en attente de validation
+    return (etat == 1 || etat == 2);
   }
 
   showDeleteButton() {
-    if (this.state.etat == "Brouillon" || this.state.etat == "Retourné")
+    if (this.state.statusId == 0)
       return (
         <Button
           buttonStyles={styles.deleteButton}
@@ -415,7 +414,7 @@ class FraisAjout extends React.Component {
   }
 
   showDraftButton() {
-    if (this.state.status == "nouveau" || this.state.status == "Brouillon")
+    if (this.state.statusId == null || this.state.statusId == 0)
       return (
         <Button
           buttonStyles={styles.draftButton}
@@ -426,8 +425,9 @@ class FraisAjout extends React.Component {
   }
 
   showValidateButton() {
-    if (this.state.status == "nouveau" || this.state.status == "Brouillon")
+    if (this.state.statusId == null || this.state.statusId == 0) {
       return <Button text="VALIDER" onPress={() => this.validateNDF()} />;
+    }
   }
 
   render() {
