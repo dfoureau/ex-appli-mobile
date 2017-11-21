@@ -155,7 +155,6 @@ class FraisAjout extends React.Component {
           status: "Nouveau",
           statusId: null
         })
-        showToast("Aucune note de frais trouvée pour le mois " + month + " et l'année " + year);
         return {isEmpty: true};
       }
       else {
