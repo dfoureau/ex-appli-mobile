@@ -164,8 +164,6 @@ class FraisAjout extends React.Component {
     })
     .then(function(ndf) {
       if (ndf.isEmpty !== true) {
-        console.log("NDF =>\n");
-        console.log(ndf);
         //Construction du tableau de la note de frais
         var frais = ndf["notesDeFrais"];
 
