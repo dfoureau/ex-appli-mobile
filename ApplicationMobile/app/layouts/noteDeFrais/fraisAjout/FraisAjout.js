@@ -206,7 +206,7 @@ class FraisAjout extends React.Component {
       annee: parseInt(item["annee"]),
       // TODO remplacer par celui connecté
       idUser: parseInt(idUser),
-      indemKM: parseInt(item["indemKM"]),
+      indemKM: parseFloat(item["indemKM"]),
       client: item["client"],
       facturable: parseInt(item["facturable"]),
       lieu: item["lieu"],
@@ -262,7 +262,8 @@ class FraisAjout extends React.Component {
   // Méthode permettant de calculer le total à régler d'un frais
   calculTotaux(frais) {
     // on calcul le total avec un arrondi de 2 décimals
-    var total = (frais.indemKM * frais.nbKMS +
+    var total = (
+      frais.indemKM * frais.nbKMS +
       frais.forfait +
       frais.sncf +
       frais.pourcentage +
