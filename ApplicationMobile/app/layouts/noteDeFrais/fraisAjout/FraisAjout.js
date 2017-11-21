@@ -353,7 +353,7 @@ class FraisAjout extends React.Component {
   afficherRow() {
     moment.locale("fr");
     return this.state.listFrais.map((row, i) => (
-      <TouchableOpacity key={i} onPress={() => this.modifyNDF(row.id)}>
+      <TouchableOpacity key={i} onPress={() => this.modifyNDF(row.id, this.state.statusId)}>
         <Row
           style={[styles.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
@@ -372,17 +372,19 @@ class FraisAjout extends React.Component {
     ));
   }
 
-  modifyNDF(idFrais) {
+  modifyNDF(idFrais, statusId) {
     //Indique le numéro de la ligne a modifier
     this.props.navigation.navigate("FraisDetail", {
       forfait: false,
       idFrais: idFrais,
+      statusId: statusId,
     });
   }
-  addNDF(monthSelected) {
+  addNDF(monthSelected, statusId) {
     this.props.navigation.navigate("FraisDetail", {
       forfait: true,
       month: monthSelected,
+      statusId: statusId,
     });
   }
   deleteNDF() {
@@ -501,10 +503,10 @@ class FraisAjout extends React.Component {
                     {/*<Text style={styles.text}>Nombre de jours : {this.state.nbJours}</Text>*/}
                   </View>
                   <View style={styles.containerButton}>
-                    {this.checketat(this.state.status) == true ? (
+                    {this.checketat(this.state.statusId) == true ? (
                       <Button
                         text="AJOUTER FORFAIT"
-                        onPress={() => this.addNDF(this.state.monthSelected)}
+                        onPress={() => this.addNDF(this.state.monthSelected, this.state.statusId)}
                         buttonStyles={Style.addButton}
                       />
                     ) : null}

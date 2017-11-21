@@ -46,6 +46,7 @@ class FraisDetail extends React.Component {
     }
 
     this.state = {
+      statusId: this.props.navigation.state.params.statusId,
       title: "Note de frais",
       selectedDatesArray: this.setDatesArray(),
       isforfait: this.props.navigation.state.params.forfait,
@@ -214,6 +215,36 @@ class FraisDetail extends React.Component {
       ];
     });
     return datesObject;
+  }
+
+  showValidateButton() {
+    if ((this.state.statusId == null || this.state.statusId == 0)) {
+      return (
+        /*Bouton validera affiché que si c'est une NDF en brouillon ou une nouvelle NDF*/
+        <Button onPress={() => this.handleValidate()} text="VALIDER" />
+      );
+    }
+  }
+
+  showDeleteButton() {
+    if ((this.state.statusId == null || this.state.statusId == 0) && (!this.state.isforfait)) {
+      return (
+        /*Bouton supprimer affiché que si ce n'est pas un forfait, et que si c'est une NDF en brouillon ou une nouvelle NDF*/
+        <Button
+          buttonStyles={styles.deleteButton}
+          text="SUPPRIMER"
+          onPress={() =>
+            Alert.alert(
+              "Suppression",
+              "Etes-vous sûr de vouloir supprimer la période ?",
+              [
+                { text: "Non", onPress: () => console.log("Cancel!") },
+                { text: "Oui", onPress: () => this.handleDelete() },
+              ]
+            )}
+        />
+      );
+    }
   }
 
   render() {
@@ -541,23 +572,8 @@ class FraisDetail extends React.Component {
           </View>
 
           <View style={styles.containerButton}>
-            {/*Bouton supprimer affiché que si ce n'est pas un forfait*/}
-            {!this.state.isforfait && (
-              <Button
-                buttonStyles={styles.deleteButton}
-                text="SUPPRIMER"
-                onPress={() =>
-                  Alert.alert(
-                    "Suppression",
-                    "Etes-vous sûr de vouloir supprimer la période ?",
-                    [
-                      { text: "Non", onPress: () => console.log("Cancel!") },
-                      { text: "Oui", onPress: () => this.handleDelete() },
-                    ]
-                  )}
-              />
-            )}
-            <Button onPress={() => this.handleValidate()} text="VALIDER" />
+            {this.showDeleteButton()}
+            {this.showValidateButton()}
           </View>
         </ContainerTitre>
       </View>
