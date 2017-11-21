@@ -118,13 +118,9 @@ class AjoutCra extends React.Component {
       return response.json();
     })
     .then(function(cra) {
-      var craCorrect = JSON.stringify(cra);
-      console.log("cra: " + craCorrect);
-      var craArrayCorrect = JSON.parse(craCorrect);
-      console.log("craSSt: " + craArrayCorrect);
       that.setState({
         isReady: true,
-        data: craArrayCorrect,
+        data: cra,
       });
     });
   }
@@ -511,7 +507,9 @@ class AjoutCra extends React.Component {
             </View>
 
             <View style={style.containerSecondLine}>
-              <Text style={style.text}>Jours ouvrés : 21 j {this.state.data}</Text>
+              <Text style={style.text}>Jours ouvrés : 21 j {/*this.state.data*/}
+              {this.state.data.idRA ? this.state.data.idRA : 'RIEN'}
+            </Text>
             </View>
 
             <View style={style.container1}>
