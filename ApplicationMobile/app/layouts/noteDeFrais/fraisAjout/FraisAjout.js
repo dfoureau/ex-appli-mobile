@@ -163,7 +163,7 @@ class FraisAjout extends React.Component {
           frais.forEach(function(item) {
             let jours = moment({
               y: item["annee"],
-              M: item["mois"],
+              M: item["mois"] -1, // Décalage du mois dû au fait que les mois en JS sont indexés de 0 à 11
               d: item["jour"],
             });
             //Création de l'item "frais" dans le cache
