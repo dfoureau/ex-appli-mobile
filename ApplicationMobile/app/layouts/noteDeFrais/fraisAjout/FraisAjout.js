@@ -99,6 +99,7 @@ class FraisAjout extends React.Component {
         "Novembre",
         "Décembre",
       ],
+      monthsWithNDF: params.monthsWithNDF,
       monthSelected: parseInt(monthSelected),
       yearSelected: parseInt(yearSelected),
       listFrais: [],
@@ -137,78 +138,87 @@ class FraisAjout extends React.Component {
     return tableauFrais;
   }
 
+
+
   getNDF(year, month){
     var that = this;
     let listFrais = this.initFraisVides(year, month);
-    fetch(this.state.webServiceLien + configurationAppli.userID + '/' + year + '/' + month, {
-      method: 'GET',
-      headers: this.state.fetchOptions.headers
-    })
-    .then(function(response) {
-      if (response.status >= 400) {
-        //Réinitialisation des valeurs
-        that.setState({
-          isReady: true,
-          listFrais: listFrais,
-          totalMontant: 0,
-          totalClient: 0,
-          status: "Nouveau",
-          statusId: null
-        })
-        return {isEmpty: true};
-      }
-      else {
-        return response.json();
-      }
-    })
-    .then(function(ndf) {
-      if (ndf.isEmpty !== true) {
-        //Construction du tableau de la note de frais
-        var frais = ndf["notesDeFrais"];
 
-        let tableauFrais = listFrais;
-        // intialisation des totaux globaux
-        var totalAReglerAllFrais = 0;
-        var totalClientAllFrais = 0;
+    let ndfEmptyState = {
+        isReady: true,
+        listFrais: listFrais,
+        totalMontant: 0,
+        totalClient: 0,
+        status: "Nouveau",
+        statusId: null
+    }
 
-        if (frais != null) {
-          frais.forEach(function(item) {
-            let jours = moment({
-              y: item["annee"],
-              M: item["mois"] -1, // Décalage du mois dû au fait que les mois en JS sont indexés de 0 à 11
-              d: item["jour"],
-            });
-            //Création de l'item "frais" dans le cache
-            that.mapperDonneesFrais(item, ndf["idUser"], jours);
-            var frais = service.getByPrimaryKey(
-              FRAIS_SCHEMA,
-              jours.format("DD-MM-YYYY")
-            );
-
-            totauxFrais = that.calculTotaux(frais);
-
-            totalAReglerAllFrais += totauxFrais.totalAReglerFrais;
-            totalClientAllFrais += totauxFrais.totalClientFrais;
-            tableauFrais[item["jour"] -1] = {
-              dateShort: jours.format('ddd DD'),
-              client: item["client"],
-              montant: totauxFrais != null ? totauxFrais.totalAReglerFrais : "",
-              id: jours.format('DD-MM-YYYY'),
-            }
-          });
-
+    if (!this.state.monthsWithNDF.includes(month)) {
+      that.setState(ndfEmptyState)
+    }
+    else {
+      fetch(this.state.webServiceLien + configurationAppli.userID + '/' + year + '/' + month, {
+        method: 'GET',
+        headers: this.state.fetchOptions.headers
+      })
+      .then(function(response) {
+        if (response.status >= 400) {
+          //Réinitialisation des valeurs
+          that.setState(ndfEmptyState);
+          return {isEmpty: true};
         }
-        that.setState({
-          listFrais: tableauFrais,
-          totalMontant: totalAReglerAllFrais.toFixed(2),
-          totalClient: totalClientAllFrais.toFixed(2),
-          status: ndf["libelleEtat"],
-          statusId: ndf["etat"],
-          isReady: true
-        });
-      }
+        else {
+          return response.json();
+        }
+      })
+      .then(function(ndf) {
+        if (ndf.isEmpty !== true) {
+          //Construction du tableau de la note de frais
+          var frais = ndf["notesDeFrais"];
 
-    });
+          let tableauFrais = listFrais;
+          // intialisation des totaux globaux
+          var totalAReglerAllFrais = 0;
+          var totalClientAllFrais = 0;
+
+          if (frais != null) {
+            frais.forEach(function(item) {
+              let jours = moment({
+                y: item["annee"],
+                M: item["mois"] -1, // Décalage du mois dû au fait que les mois en JS sont indexés de 0 à 11
+                d: item["jour"],
+              });
+              //Création de l'item "frais" dans le cache
+              that.mapperDonneesFrais(item, ndf["idUser"], jours);
+              var frais = service.getByPrimaryKey(
+                FRAIS_SCHEMA,
+                jours.format("DD-MM-YYYY")
+              );
+
+              totauxFrais = that.calculTotaux(frais);
+
+              totalAReglerAllFrais += totauxFrais.totalAReglerFrais;
+              totalClientAllFrais += totauxFrais.totalClientFrais;
+              tableauFrais[item["jour"] -1] = {
+                dateShort: jours.format('ddd DD'),
+                client: item["client"],
+                montant: totauxFrais != null ? totauxFrais.totalAReglerFrais : "",
+                id: jours.format('DD-MM-YYYY'),
+              }
+            });
+
+          }
+          that.setState({
+            listFrais: tableauFrais,
+            totalMontant: totalAReglerAllFrais.toFixed(2),
+            totalClient: totalClientAllFrais.toFixed(2),
+            status: ndf["libelleEtat"],
+            statusId: ndf["etat"],
+            isReady: true
+          });
+        }
+      });
+    }
   }
 
   //Fonction permettant de créér dans le cache les frais récupérés de l'API
