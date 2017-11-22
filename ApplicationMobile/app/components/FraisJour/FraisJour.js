@@ -1,5 +1,10 @@
 class FraisJour {
 
+  /**
+   * Initialise une note de frais pour un jour donné
+   * @param  {String} date date au format YYYY-MM-DD
+   * @return {[type]}      [description]
+   */
   constructor(date) {
       this.date = date;
       this.totalAReglerFrais = 0;
@@ -30,6 +35,12 @@ class FraisJour {
     return this.synthese.id === id;
   }
 
+  /**
+   * Renseigne le détail de l'objet à partir du résultat d'une requête GET
+   * On met à jour les montants totaux une fois l'opération effectuée
+   * @param  {Object} data Objet data à mapper dans le this.detail
+   * @return {[type]}      [description]
+   */
   mapperDonnees(data) {
     this.detail = {
       facturable: parseInt(data["facturable"]),
@@ -55,7 +66,12 @@ class FraisJour {
     this.updateMontants();
   }
 
-
+  /**
+   * Met à jour le détail à partir d'un objet donné.
+   * On met à jour les montants totaux une fois l'opération effectuée
+   * @param  {Object} fraisData L'objet à utiliser pour mettre à jour le détail. Tous les champs du détail sont optionnels.
+   * @return {[type]}            [description]
+   */
   updateDetail(fraisData) {
     if (fraisData.facturable !== undefined ) {
       this.detail.facturable = parseInt(fraisData.facturable)
@@ -132,7 +148,10 @@ class FraisJour {
     this.updateMontants();
   }
 
-
+  /**
+   * Met à jour les montants de la note de Frais
+   * @return {[type]} [description]
+   */
   updateMontants() {
     let total = (
           this.detail.indemKM * this.detail.nbKMS +
