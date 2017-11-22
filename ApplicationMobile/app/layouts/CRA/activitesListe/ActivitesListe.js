@@ -84,11 +84,32 @@ class ActivitesListe extends React.Component {
       })
       .then(cra =>
         this.setState({
-          data: cra,
+          data: this.parseCra(cra),
           isData: true,
           isReady: true,
         })
       );
+  }
+
+  parseCra(cra) {
+    let currentDate = "";
+    let hideDate = false;
+    let rows = [];
+
+    cra.forEach((item) => {
+      if (item.date !== currentDate)  {
+        currentDate = item.date;
+        hideDate = false;
+      }
+      else {
+        hideDate = true;
+      }
+
+      item.hideDate = hideDate;
+      rows.push(item);
+    })
+
+    return rows;
   }
 
   componentDidMount() {
@@ -98,29 +119,6 @@ class ActivitesListe extends React.Component {
   //Permet d'afficher l'ecran choisi dans le menu
   afficherEcranParent(ecran) {
     this.props.navigation.navigate(ecran);
-  }
-
-  // afficher plusieures CRA
-
-  afficherCRAs(item) {
-    var rows = [];
-    var manyElt = true;
-    var hideDate = false;
-    for (var i = 0; i < item.content.length; i++) {
-      rows.push(
-        <CRAItem
-          status={item.content[i].status}
-          client={item.content[i].client}
-          date={item.date}
-          manyElt={manyElt}
-          hideDate={hideDate}
-          key={item.content[i].Id}
-        />
-      );
-      manyElt = false;
-      hideDate = true;
-    }
-    return rows;
   }
 
   //Transfert du paramétre vers la page AjoutCRa
@@ -138,6 +136,32 @@ class ActivitesListe extends React.Component {
       date: "Octobre 2017",
       isServiceCalled: true,
     });
+  }
+
+  afficherCra(item) {
+    return (
+      <View>
+        <Text style={style.periodTextTitre}>
+          {!item.hideDate ? item.date : null}
+        </Text>
+        <TouchableOpacity
+          key={item.key}
+          onPress={() => this.SendDataCRA(item.Id, item.date)}
+        >
+          <View style={style.containerList}>
+            <CRAItem
+              date={item.date}
+              libelle={item.libelle}
+              client={item.client}
+              status={item.status}
+              key={item.key}
+              hideDate={item.hideDate}
+              Id={item.Id}
+            />
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
   }
 
   render() {
@@ -202,49 +226,7 @@ class ActivitesListe extends React.Component {
                   <FlatList
                     data={this.state.data}
                     keyExtractor={(item, index) => index}
-                    renderItem={({ item }) =>
-                      !item.moreThanOne ? (
-                        <View>
-                          <Text style={style.periodTextTitre}>
-                            {!item.hideDate ? item.date : null}
-                          </Text>
-                          <TouchableOpacity
-                            key={item.numDemande}
-                            onPress={() => this.SendDataCRA(item.Id, item.date)}
-                          >
-                            <View style={style.containerList}>
-                              <CRAItem
-                                date={item.date}
-                                client={item.client}
-                                status={item.status}
-                                key={item.Id}
-                                manyElt={item.manyElt}
-                              />
-                            </View>
-                          </TouchableOpacity>
-                        </View>
-                      ) : (
-                        <View>
-                          <Text style={style.periodTextTitre}>
-                            {!item.hideDate ? item.date : null}
-                          </Text>
-                          <TouchableOpacity
-                            key={item.numDemande}
-                            onPress={() => this.SendDataCRA(item.Id, item.date)}
-                          >
-                            <View style={style.containerList}>
-                              <CRAItem
-                                date={item.date}
-                                client={item.client}
-                                status={item.status}
-                                key={item.Id}
-                                hideDate={item.hideDate}
-                                manyElt={item.manyElt}
-                              />
-                            </View>
-                          </TouchableOpacity>
-                        </View>
-                      )}
+                    renderItem={({ item }) => this.afficherCra(item) }
                   />
                 )}
               </View>
