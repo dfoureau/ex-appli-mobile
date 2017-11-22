@@ -15,9 +15,6 @@ import { momentConfig } from '../../../configuration/MomentConfig';
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
 import { Button } from "../../../components/Buttons";
 import Panel from "../../../components/Panel/Panel";
-import service from "../../../realm/service";
-
-const FRAIS_SCHEMA = "Frais";
 
 class FraisDetail extends React.Component {
   static propTypes = {
@@ -31,6 +28,10 @@ class FraisDetail extends React.Component {
     this.setInitialValues();
   }
 
+  findFraisJour(jour) {
+      return ((element) => {return element.date == jour; });
+  }
+
   setInitialValues() {
     // indique si on se trouve dans le cas d'un création de frais
     let isNewFrais = true;
@@ -42,14 +43,16 @@ class FraisDetail extends React.Component {
     if (params.idFrais != null) {
       // on récupère le frais dans le cas d'une modification
       calendarDate = moment(params.idFrais, 'DD-MM-YYYY');
-      var frais = service.getByPrimaryKey(
-        FRAIS_SCHEMA,
-        params.idFrais
-      );
-      if (frais != null) {
-        // il existe un frais déjà crée en cache
-        isNewFrais = false;
-      }
+
+      // Recherche du fraisJour dans la listFrais du parent
+        var frais = params.parent.state.listFrais.find(this.findFraisJour(params.idFrais));
+
+        if (frais != null && frais != undefined) {
+          // il existe un frais déjà crée en cache
+          isNewFrais = false;
+          // console.log("FRAIS JOUR ==> ");
+          // console.log(frais);
+        }
     }
     else {
       let month = params.month ? params.month : moment().month(),
@@ -68,24 +71,24 @@ class FraisDetail extends React.Component {
       isNewFrais: isNewFrais,
       factureClientChecked: isNewFrais
         ? false
-        : frais.facturable == 1 ? true : false,
-      nomClient: isNewFrais ? "" : frais.client,
-      lieuDeplacement: isNewFrais ? "" : frais.lieu,
-      nbKm: isNewFrais ? "" : frais.nbKMS.toString(),
-      indemKm: 0.333,
-      forfait: isNewFrais ? "" : frais.forfait.toString(),
-      sncf: isNewFrais ? "" : frais.sncf.toString(),
-      peages: isNewFrais ? "" : frais.peages.toString(),
-      essence: isNewFrais ? "" : frais.essence.toString(),
-      taxi: isNewFrais ? "" : frais.taxi.toString(),
-      nbZones: isNewFrais ? "" : frais.nbZones.toString(),
-      pourcent: isNewFrais ? "" : frais.pourcentage.toString(),
-      hotel: isNewFrais ? "" : frais.hotel.toString(),
-      repas: isNewFrais ? "" : frais.repas.toString(),
-      invitation: isNewFrais ? "" : frais.invit.toString(),
-      parking: isNewFrais ? "" : frais.parking.toString(),
-      divers: isNewFrais ? "" : frais.divers.toString(),
-      libelleDivers: isNewFrais ? "" : frais.libelle,
+        : frais.detail.facturable == 1 ? true : false,
+      client: isNewFrais ? "" : frais.detail.client,
+      lieu: isNewFrais ? "" : frais.detail.lieu,
+      nbKMS: isNewFrais ? "" : frais.detail.nbKMS.toString(),
+      indemKm: isNewFrais ? "" : frais.detail.indemKm,
+      forfait: isNewFrais ? "" : frais.detail.forfait.toString(),
+      sncf: isNewFrais ? "" : frais.detail.sncf.toString(),
+      peages: isNewFrais ? "" : frais.detail.peages.toString(),
+      essence: isNewFrais ? "" : frais.detail.essence.toString(),
+      taxi: isNewFrais ? "" : frais.detail.taxi.toString(),
+      nbZones: isNewFrais ? "" : frais.detail.nbZones.toString(),
+      pourcentage: isNewFrais ? "" : frais.detail.pourcentage.toString(),
+      hotel: isNewFrais ? "" : frais.detail.hotel.toString(),
+      repas: isNewFrais ? "" : frais.detail.repas.toString(),
+      invit: isNewFrais ? "" : frais.detail.invit.toString(),
+      parking: isNewFrais ? "" : frais.detail.parking.toString(),
+      divers: isNewFrais ? "" : frais.detail.divers.toString(),
+      libelle: isNewFrais ? "" : frais.detail.libelle,
       calendarDateFormat: calendarDateFormat,
       calendarDate: calendarDate.format(calendarDateFormat),
       calendarMinDate: calendarMinDate,
@@ -100,7 +103,7 @@ class FraisDetail extends React.Component {
 
     // dans le cas d'une modifcation d'un frais on alimente le tableau de date avec la date du frais (correspondant à son id)
     if (this.props.navigation.state.params.idFrais != null) {
-      selectedDates.push(moment(this.props.navigation.state.params.idFrais, "DD-MM-YYYY"));
+      selectedDates.push(this.props.navigation.state.params.idFrais);
     }
     else {
       let month = this.props.navigation.state.params.month, //chaine de caractère du mois de la NDF
@@ -117,7 +120,7 @@ class FraisDetail extends React.Component {
             }
           }
         }
-        return selectedDates.map(d => d.format('YYYY-MM-DD'));
+        return selectedDates;
       }
 
   onDateSelected(day) {
@@ -140,7 +143,7 @@ class FraisDetail extends React.Component {
   }
 
   afficherDate() {
-    let date = moment(this.props.navigation.state.params.idFrais, "DD-MM-YYYY");
+    let date = moment(this.props.navigation.state.params.idFrais);
     return date.format("dddd DD MMMM YYYY");
   }
 
@@ -151,67 +154,74 @@ class FraisDetail extends React.Component {
     }));
   }
 
+  /**
+   * Fonction de validation de la note de frais
+   * @return {[type]} [description]
+   */
   handleValidate() {
-    // on insère les données créées dans le cache
-    let frais = {
-      id: "", // primary key
-      jour: 0,
-      mois: 0,
-      annee: 0,
-      // TODO remplacer par celui connecté
-      idUser: 999,
+    let fraisJourData = {
+      facturable: this.state.facturable,
       indemKM: this.state.indemKm,
-      client: this.state.nomClient,
-      facturable: this.state.factureClientChecked ? 1 : 0,
-      lieu: this.state.lieuDeplacement,
-      nbKMS: this.state.nbKm != "" ? parseInt(this.state.nbKm) : 0,
-      peages: this.state.peages != "" ? parseFloat(this.state.peages) : 0,
-      forfait: this.state.forfait != "" ? parseFloat(this.state.forfait) : 0,
-      sncf: this.state.sncf != "" ? parseFloat(this.state.sncf) : 0,
-      nbZones: this.state.nbZones != "" ? parseInt(this.state.nbZones) : 0,
-      pourcentage:
-        this.state.pourcent != "" ? parseFloat(this.state.pourcent) : 0,
-      hotel: this.state.hotel != "" ? parseFloat(this.state.hotel) : 0,
-      repas: this.state.repas != "" ? parseFloat(this.state.repas) : 0,
-      invit:
-        this.state.invitation != "" ? parseFloat(this.state.invitation) : 0,
-      essence: this.state.essence != "" ? parseFloat(this.state.essence) : 0,
-      taxi: this.state.taxi != "" ? parseFloat(this.state.taxi) : 0,
-      parking: this.state.parking != "" ? parseFloat(this.state.parking) : 0,
-      divers: this.state.divers != "" ? parseFloat(this.state.divers) : 0,
-      libelle: this.state.libelleDivers,
-    };
+      client: this.state.client,
+      lieu: this.state.lieu,
+      nbKMS: this.state.nbKMS,
+      peages: this.state.peages,
+      forfait: this.state.forfait,
+      sncf: this.state.sncf,
+      nbZones: this.state.nbZones,
+      pourcentage: this.state.pourcentage,
+      hotel: this.state.hotel,
+      repas: this.state.repas,
+      invit: this.state.invit,
+      essence: this.state.essence,
+      taxi: this.state.taxi,
+      parking: this.state.parking,
+      divers: this.state.divers,
+      libelle: this.state.libelle
+    }
 
-    // pour chaque date sélectionnée on crée un frais en cache (realms)
-    this.state.selectedDatesArray.forEach(date => {
-      // la clée primaire insérée correspondant à la date du frais
-      frais.id = moment(date).format("DD-MM-YYYY");
-      frais.jour = moment(date).get("day");
-      frais.mois = moment(date).get("month");
-      frais.annee = moment(date).get("year");
+    var parent = this.props.navigation.state.params.parent;
+    var listFrais = Array.from(parent.state.listFrais);
 
-      // On test si le frais existe
-      if (service.getByPrimaryKey(FRAIS_SCHEMA, frais.id) != null) {
-        // mise à jour du frais
-        service.update(FRAIS_SCHEMA, frais);
-      } else {
-        // Création d'un frais
-        service.insert(FRAIS_SCHEMA, frais);
+
+    // Pour chaque date sélectionnée, on récupère le fraisJour correspondant
+    // dans la listeFrais du parent, et on lui mappe les données de notre state
+    this.state.selectedDatesArray.forEach( date => {
+
+      //recherche du jour dans le tableau parent
+      let fraisJour = listFrais.find(this.findFraisJour(date));
+      if (fraisJour !== null && fraisJour !== undefined) {
+        fraisJour.updateDetail(fraisJourData);
+        console.log("NEW FRAIS JOUR : ");
+        console.log(fraisJour);
+
+
       }
+      else {
+        console.log("JOUR " + date + " : not found");
+      }
+
     });
 
-    //Si forfait: params = liste des dates modifiees et des valeurs
-    //Si non: params = id de la ligne, valeurs
-    if (!this.state.isforfait) {
-      this.props.navigation.navigate("FraisAjout", {
-        idFrais: this.props.navigation.state.params.idFrais,
+    // On recalcule les montants totaux
+      let totalMontant = 0,
+          totalClient = 0;
+
+      listFrais.forEach((fraisJour) => {
+        totalMontant += fraisJour.totalAReglerFrais;
+        totalClient +=  fraisJour.totalClientFrais;
       });
-    } else {
-      this.props.navigation.navigate("FraisAjout", {
-        idFrais: this.props.navigation.state.params.idFrais,
-      });
-    }
+
+    parent.setState({
+      totalMontant: totalMontant,
+      totalClient: totalClient,
+      listFrais: listFrais
+    }, () => {
+      this.props.navigation.dispatch(NavigationActions.back());
+    });
   }
+
+
   handleDelete() {
     // dans le cas d'une suppression d'un frais on le supprime du cache (realms)
     if (!this.state.isNewFrais) {
@@ -327,8 +337,8 @@ class FraisDetail extends React.Component {
                     <Text style={styles.text}>Client/Object* :</Text>
                     <TextInput
                       style={styles.inputComponent}
-                      value={this.state.nomClient}
-                      onChangeText={text => this.setState({ nomClient: text })}
+                      value={this.state.client}
+                      onChangeText={text => this.setState({ client: text })}
                       editable={true}
                       underlineColorAndroid="transparent"
                     />
@@ -337,10 +347,10 @@ class FraisDetail extends React.Component {
                     <Text style={styles.text}>Lieu de déplacement* :</Text>
                     <TextInput
                       style={styles.inputComponent}
-                      value={this.state.lieuDeplacement}
+                      value={this.state.lieu}
                       placeholderTextColor="#000000"
                       onChangeText={text =>
-                        this.setState({ lieuDeplacement: text })}
+                        this.setState({ lieu: text })}
                       editable={true}
                       underlineColorAndroid="transparent"
                     />
@@ -392,8 +402,8 @@ class FraisDetail extends React.Component {
                     </Text>
                     <TextInput
                       style={[styles.inputComponent, styles.inputComponentRow]}
-                      value={this.state.nbKm}
-                      onChangeText={text => this.setState({ nbKm: text })}
+                      value={this.state.nbKMS}
+                      onChangeText={text => this.setState({ nbKMS: text })}
                       editable={true}
                       underlineColorAndroid="transparent"
                       keyboardType="numeric"
@@ -499,8 +509,8 @@ class FraisDetail extends React.Component {
                     <Text style={[styles.text, styles.inputText]}>50% :</Text>
                     <TextInput
                       style={[styles.inputComponent, styles.inputComponentRow]}
-                      value={this.state.pourcent}
-                      onChangeText={text => this.setState({ pourcent: text })}
+                      value={this.state.pourcentage}
+                      onChangeText={text => this.setState({ pourcentage: text })}
                       editable={true}
                       underlineColorAndroid="transparent"
                       keyboardType="numeric"
@@ -543,8 +553,8 @@ class FraisDetail extends React.Component {
                     </Text>
                     <TextInput
                       style={[styles.inputComponent, styles.inputComponentRow]}
-                      value={this.state.invitation}
-                      onChangeText={text => this.setState({ invitation: text })}
+                      value={this.state.invit}
+                      onChangeText={text => this.setState({ invit: text })}
                       editable={true}
                       underlineColorAndroid="transparent"
                       keyboardType="numeric"
@@ -588,9 +598,9 @@ class FraisDetail extends React.Component {
                         styles.inputComponentRow,
                         styles.inputComponentSmall,
                       ]}
-                      value={this.state.libelleDivers}
+                      value={this.state.libelle}
                       onChangeText={text =>
-                        this.setState({ libelleDivers: text })}
+                        this.setState({ libelle: text })}
                       editable={true}
                       underlineColorAndroid="transparent"
                     />

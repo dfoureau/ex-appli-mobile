@@ -117,7 +117,7 @@ class FraisAjout extends React.Component {
 
     for (i=1; i<= nbJours; i++) {
       dateSelected.set('date', i);
-      tableauFrais.push(new FraisJour(dateSelected));
+      tableauFrais.push(new FraisJour(dateSelected.format('YYYY-MM-DD')));
     }
 
     return tableauFrais;
@@ -184,7 +184,7 @@ class FraisAjout extends React.Component {
                 d: item["jour"],
               });
 
-              let fraisJour = new FraisJour(jour);
+              let fraisJour = new FraisJour(jour.format('YYYY-MM-DD'));
               fraisJour.mapperDonnees(item); // Mapping des donnees et update du montant
 
               totalAReglerAllFrais += fraisJour.totalAReglerFrais;
@@ -233,12 +233,12 @@ class FraisAjout extends React.Component {
   //Affiche les lignes du tableau à partir de listFrais
   afficherRow() {
     return this.state.listFrais.map((fraisJour, i) => (
-      <TouchableOpacity key={i} onPress={() => this.modifyNDF(fraisJour.id, this.state.statusId)}>
+      <TouchableOpacity key={i} onPress={() => this.modifyNDF(fraisJour.date, this.state.statusId)}>
         <Row
           style={[styles.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
           textStyle={styles.rowText}
-          data={[fraisJour.date.format('ddd DD'), fraisJour.detail.client, fraisJour.totalAReglerFrais]}
+          data={[moment(fraisJour.date).format('ddd DD'), fraisJour.detail.client, fraisJour.totalAReglerFrais]}
           flexArr= {this.state.rowsFlexArr}
         />
       </TouchableOpacity>

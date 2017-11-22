@@ -2,7 +2,6 @@ class FraisJour {
 
   constructor(date) {
       this.date = date;
-      this.id = date.format('DD-MM-YYYY');
       this.totalAReglerFrais = 0;
       this.totalClientFrais = 0;
       this.detail = {
@@ -24,7 +23,6 @@ class FraisJour {
         parking: 0,
         divers: 0,
         libelle: ""
-
       };
     }
 
@@ -57,7 +55,82 @@ class FraisJour {
     this.updateMontants();
   }
 
-  updateData()
+
+  updateDetail(fraisData) {
+    if (fraisData.facturable !== undefined ) {
+      this.detail.facturable = parseInt(fraisData.facturable)
+    }
+
+    if (fraisData.indemKM !== undefined ) {
+      this.detail.indemKM = parseFloat(fraisData.indemKM)
+    }
+
+    if (fraisData.client !== undefined ) {
+      this.detail.client = fraisData.client
+    }
+
+    if (fraisData.lieu !== undefined ) {
+      this.detail.lieu = fraisData.lieu
+    }
+
+    if (fraisData.nbKMS !== undefined ) {
+      this.detail.nbKMS = parseInt(fraisData.nbKMS)
+    }
+
+    if (fraisData.peages !== undefined ) {
+      this.detail.peages = parseFloat(fraisData.peages)
+    }
+
+    if (fraisData.forfait !== undefined ) {
+      this.detail.forfait = parseFloat(fraisData.forfait)
+    }
+
+    if (fraisData.sncf !== undefined ) {
+      this.detail.sncf = parseFloat(fraisData.sncf)
+    }
+
+    if (fraisData.nbZones !== undefined ) {
+      this.detail.nbZones = parseInt(fraisData.nbZones)
+    }
+
+    if (fraisData.pourcentage !== undefined ) {
+      this.detail.pourcentage = parseFloat(fraisData.pourcentage)
+    }
+
+    if (fraisData.hotel !== undefined ) {
+      this.detail.hotel = parseFloat(fraisData.hotel)
+    }
+
+    if (fraisData.repas !== undefined ) {
+      this.detail.repas = parseFloat(fraisData.repas)
+    }
+
+    if (fraisData.invit !== undefined ) {
+      this.detail.invit = parseFloat(fraisData.invit)
+    }
+
+    if (fraisData.essence !== undefined ) {
+      this.detail.essence = parseFloat(fraisData.essence)
+    }
+
+    if (fraisData.taxi !== undefined ) {
+      this.detail.taxi = parseFloat(fraisData.taxi)
+    }
+
+    if (fraisData.parking !== undefined ) {
+      this.detail.parking = parseFloat(fraisData.parking)
+    }
+
+    if (fraisData.divers !== undefined ) {
+      this.detail.divers = parseFloat(fraisData.divers)
+    }
+
+    if (fraisData.libelle !== undefined ) {
+      this.detail.libelle = fraisData.libelle
+    }
+
+    this.updateMontants();
+  }
 
 
   updateMontants() {
