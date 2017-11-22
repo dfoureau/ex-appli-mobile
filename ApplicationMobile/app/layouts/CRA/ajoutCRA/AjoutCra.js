@@ -61,8 +61,9 @@ class AjoutCra extends React.Component {
       status: "Nouveau",
       header: ["Date", "Activité"],
       monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1), //la premiere lettre du mois en majuscule
-      listItemsCRA: this.getItemsCRA(), //liste des cra du mois, doit être ordonée
-      modifiedLines: [], //liste des lignes à modifier si validation
+      //listItemsCRA: this.getItemsCRA(), //liste des cra du mois, doit être ordonée
+      listItemsCRA : [],
+	  modifiedLines: [], //liste des lignes à modifier si validation
 
       userId: configurationAppli.userID,
       objGET: {
@@ -86,8 +87,8 @@ class AjoutCra extends React.Component {
   afficherEcranParent(ecran) {
     this.props.navigation.navigate(ecran);
   }
-
-  componentDidMount() {
+ 
+  componentWillMount() {
     var that = this;
     //Récupération des paramètres de navigation
     const { params } = this.props.navigation.state;
@@ -95,6 +96,7 @@ class AjoutCra extends React.Component {
     if (params.idCRA != null) {
       // Récupere les périodes
       this.getCRAInfosByID(params.idCRA);
+	  
     } else {
       that.setState({
         data: [],
@@ -111,7 +113,7 @@ class AjoutCra extends React.Component {
       if (response.status >= 400) {
         that.setState({
           data: [],
-          idReady: true,
+          idReady: true, 
         });
         throw new Error("Bad response from server");
       }
@@ -121,17 +123,40 @@ class AjoutCra extends React.Component {
       that.setState({
         isReady: true,
         data: cra,
-      });
+		listItemsCRA : that.getItemsCRA(cra.valeursSaisies),
+      });  
+	//console.log(that.state.data.valeursSaisies.length);
     });
   }
 
-  getItemsCRA() {
-    // Appel au service
-    var listItemsCRA = [
+getItemsCRA(valeursSaisies) {
+	
+	   var rows = [];
+	   for (var i = 0; i < valeursSaisies.length; i++) {
+		   rows.push(
+		  <Row
+		  startDate={valeursSaisies[i]['date']}
+		  actType={valeursSaisies[i]['activité']}
+        />
+		);
+		    }
+    return rows;
+  }
+  /*
+  getItemsCRA(valeursSaisies) { 
+    return valeursSaisies.map((row, i) => (
+      <row data = {[row.props.date, row.props.activité]} /> 
+    ))
+  }*/
+  
+    
+		
+	/*getItemsCRA() {
+	var listItemsCRA = [
       {
         id: 1,
         idCRA: 0,
-        startDate: "01/10/2017",
+        startDate: "01/01/2017",
         endDate: "13/10/2017",
         actType: "1.0",
         workingDays: 9,
@@ -143,235 +168,12 @@ class AjoutCra extends React.Component {
         endDate: "14/10/2017",
         actType: "0.5+AM",
         workingDays: 1,
-      },
-      {
-        id: 3,
-        idCRA: 0,
-        startDate: "15/10/2017",
-        endDate: "31/10/2017",
-        actType: "1.0",
-        workingDays: 11,
-      },
-      {
-        id: 1,
-        idCRA: 0,
-        startDate: "01/10/2017",
-        endDate: "13/10/2017",
-        actType: "1.0",
-        workingDays: 9,
-      },
-      {
-        id: 2,
-        idCRA: 0,
-        startDate: "14/10/2017",
-        endDate: "14/10/2017",
-        actType: "0.5+AM",
-        workingDays: 1,
-      },
-      {
-        id: 3,
-        idCRA: 0,
-        startDate: "15/10/2017",
-        endDate: "31/10/2017",
-        actType: "1.0",
-        workingDays: 11,
-      },
-      {
-        id: 1,
-        idCRA: 0,
-        startDate: "01/10/2017",
-        endDate: "13/10/2017",
-        actType: "1.0",
-        workingDays: 9,
-      },
-      {
-        id: 2,
-        idCRA: 0,
-        startDate: "14/10/2017",
-        endDate: "14/10/2017",
-        actType: "0.5+AM",
-        workingDays: 1,
-      },
-      {
-        id: 3,
-        idCRA: 0,
-        startDate: "15/10/2017",
-        endDate: "31/10/2017",
-        actType: "1.0",
-        workingDays: 11,
-      },
-      {
-        id: 1,
-        idCRA: 0,
-        startDate: "01/10/2017",
-        endDate: "13/10/2017",
-        actType: "1.0",
-        workingDays: 9,
-      },
-      {
-        id: 2,
-        idCRA: 0,
-        startDate: "14/10/2017",
-        endDate: "14/10/2017",
-        actType: "0.5+AM",
-        workingDays: 1,
-      },
-      {
-        id: 3,
-        idCRA: 0,
-        startDate: "15/10/2017",
-        endDate: "31/10/2017",
-        actType: "1.0",
-        workingDays: 11,
-      },
-      {
-        id: 1,
-        idCRA: 0,
-        startDate: "01/10/2017",
-        endDate: "13/10/2017",
-        actType: "1.0",
-        workingDays: 9,
-      },
-      {
-        id: 2,
-        idCRA: 0,
-        startDate: "14/10/2017",
-        endDate: "14/10/2017",
-        actType: "0.5+AM",
-        workingDays: 1,
-      },
-      {
-        id: 3,
-        idCRA: 0,
-        startDate: "15/10/2017",
-        endDate: "31/10/2017",
-        actType: "1.0",
-        workingDays: 11,
-      },
-      {
-        id: 1,
-        idCRA: 0,
-        startDate: "01/10/2017",
-        endDate: "13/10/2017",
-        actType: "1.0",
-        workingDays: 9,
-      },
-      {
-        id: 2,
-        idCRA: 0,
-        startDate: "14/10/2017",
-        endDate: "14/10/2017",
-        actType: "0.5+AM",
-        workingDays: 1,
-      },
-      {
-        id: 3,
-        idCRA: 0,
-        startDate: "15/10/2017",
-        endDate: "31/10/2017",
-        actType: "1.0",
-        workingDays: 11,
-      },
-      {
-        id: 1,
-        idCRA: 0,
-        startDate: "01/10/2017",
-        endDate: "13/10/2017",
-        actType: "1.0",
-        workingDays: 9,
-      },
-      {
-        id: 2,
-        idCRA: 0,
-        startDate: "14/10/2017",
-        endDate: "14/10/2017",
-        actType: "0.5+AM",
-        workingDays: 1,
-      },
-      {
-        id: 3,
-        idCRA: 0,
-        startDate: "15/10/2017",
-        endDate: "31/10/2017",
-        actType: "1.0",
-        workingDays: 11,
-      },
-      {
-        id: 1,
-        idCRA: 0,
-        startDate: "01/10/2017",
-        endDate: "13/10/2017",
-        actType: "1.0",
-        workingDays: 9,
-      },
-      {
-        id: 2,
-        idCRA: 0,
-        startDate: "14/10/2017",
-        endDate: "14/10/2017",
-        actType: "0.5+AM",
-        workingDays: 1,
-      },
-      {
-        id: 3,
-        idCRA: 0,
-        startDate: "15/10/2017",
-        endDate: "31/10/2017",
-        actType: "1.0",
-        workingDays: 11,
-      },
-      {
-        id: 1,
-        idCRA: 0,
-        startDate: "01/10/2017",
-        endDate: "13/10/2017",
-        actType: "1.0",
-        workingDays: 9,
-      },
-      {
-        id: 2,
-        idCRA: 0,
-        startDate: "14/10/2017",
-        endDate: "14/10/2017",
-        actType: "0.5+AM",
-        workingDays: 1,
-      },
-      {
-        id: 3,
-        idCRA: 0,
-        startDate: "15/10/2017",
-        endDate: "31/10/2017",
-        actType: "1.0",
-        workingDays: 11,
-      },
-      {
-        id: 1,
-        idCRA: 0,
-        startDate: "01/10/2017",
-        endDate: "13/10/2017",
-        actType: "1.0",
-        workingDays: 9,
-      },
-      {
-        id: 2,
-        idCRA: 0,
-        startDate: "14/10/2017",
-        endDate: "14/10/2017",
-        actType: "0.5+AM",
-        workingDays: 1,
-      },
-      {
-        id: 3,
-        idCRA: 0,
-        startDate: "15/10/2017",
-        endDate: "31/10/2017",
-        actType: "1.0",
-        workingDays: 11,
       },
     ];
-
+		  
     return listItemsCRA;
-  }
+	}*/
+  
 
   saveItemsCRA() {
     let list = [];
@@ -392,7 +194,7 @@ class AjoutCra extends React.Component {
         service.insert(ITEMCRA_SCHEMA, itemCRA);
       });
 
-      this.state.listItemsCRA = list;
+      this.state.listItemsCRA = list; 
     }
   }
 
@@ -432,8 +234,8 @@ class AjoutCra extends React.Component {
       line: -1,
       parent: this,
     });
-  }
-
+  }   
+ 
   showDeleteButton() {
     //if(this.state.statusId == 1 || this.state.statusId == 2)
     return (
@@ -470,10 +272,27 @@ class AjoutCra extends React.Component {
   }
 
   afficherRows() {
-    let items = this.state.listItemsCRA;
-    return this.getRows(items);
+       return this.state.listItemsCRA.map((row, i) => (
+      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(i)}>
+        <Row
+          style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
+          borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
+          textStyle={style.rowText}
+          data={[row.props.startDate, row.props.actType]}
+        />
+      </TouchableOpacity>
+    ));
+/*
+   let items = this.state.listItemsCRA;
+	//console.log(this.state.listItemsCRA);
+    return this.getRows(items); 
+  */
   }
 
+  
+ 
+  
+  /*
   getRows(tab) {
     return tab.map((row, i) => (
       <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(i)}>
@@ -481,11 +300,12 @@ class AjoutCra extends React.Component {
           style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
           textStyle={style.rowText}
-          data={[row.startDate, row.actType]}
+          data={[row.props.startDate, row.props.actType]}
         />
       </TouchableOpacity>
     ));
-  }
+  }*/
+
 
   handleValidate = () => {
     //TODO Retourne sur la page des CRA
@@ -495,29 +315,27 @@ class AjoutCra extends React.Component {
   render() {
     //Décralation du params transmis à l'écran courante.
     const { params } = this.props.navigation.state;
-
+ 
     return (
       <View>
         <ContainerTitre title={params.date} navigation={this.props.navigation}>
           <View style={style.container}>
             <View style={style.container1}>
               <View style={style.containerFirstLine}>
-                <Text style={style.text}>Etat : {this.state.status}</Text>
+                <Text style={style.text}>Etat : {this.state.data.libelle}</Text>
               </View>
             </View>
 
             <View style={style.containerSecondLine}>
-              <Text style={style.text}>Jours ouvrés : 21 j {/*this.state.data*/}
-              {this.state.data.idRA ? this.state.data.idRA : 'RIEN'}
-            </Text>
+              <Text style={style.text}>Jours ouvrés : {this.state.data.NbJOuvres ? this.state.data.NbJOuvres : '0'} j</Text>
             </View>
 
             <View style={style.container1}>
               <View style={style.containerThirdLine}>
-                <Text style={style.text}>Travaillés : 20 j</Text>
+                <Text style={style.text}>Travaillés : {this.state.data.nbJourTravailles ? this.state.data.nbJourTravailles : '0'} j</Text>
               </View>
               <View style={style.containerThirdLine}>
-                <Text style={style.textAbsences}>Absences : 0 j</Text>
+                <Text style={style.textAbsences}>Absences : {this.state.data.nbJourAbs ? this.state.data.nbJourAbs : '0'} j</Text>
               </View>
               <View style={style.containerThirdLine}>
                 <View style={style.containerPicker}>
@@ -577,7 +395,7 @@ class AjoutCra extends React.Component {
                       value="Décembre 2017"
                       key="12"
                     />
-                  </Picker>
+                  </Picker> 
                 </View>
               </View>
             </View>
@@ -615,7 +433,7 @@ class AjoutCra extends React.Component {
                 <View style={style.containerInfoClt}>
                   <TextInput
                     style={style.textInputInfos}
-                    value={this.state.TextClient}
+                    value={this.state.data.client ? this.state.data.client : ''}
                     editable={true}
                     placeholderTextColor="#000000"
                     onChangeText={TextClient => this.setState({ TextClient })}
@@ -630,7 +448,7 @@ class AjoutCra extends React.Component {
                 <View style={style.containerInfoResp}>
                   <TextInput
                     style={style.textInputInfos}
-                    value={this.state.TextResponsable}
+                    value={this.state.data.responsable ? this.state.data.responsable : ''}
                     editable={true}
                     placeholderTextColor="#000000"
                     onChangeText={TextResponsable =>
@@ -646,7 +464,7 @@ class AjoutCra extends React.Component {
                 <View style={style.containerInfoPrj}>
                   <TextInput
                     style={style.textInputInfos}
-                    value={this.state.TextProjet}
+                    value={this.state.data.projet ? this.state.data.projet : ''}
                     placeholderTextColor="#000000"
                     onChangeText={TextProjet => this.setState({ TextProjet })}
                     editable={true}
@@ -668,7 +486,7 @@ class AjoutCra extends React.Component {
                   numberOfLines={4}
                   onChangeText={textComment => this.setState({ textComment })}
                   placeholderTextColor="#000000"
-                  value={this.state.textComment}
+                  value={this.state.data.commentaires ? this.state.data.commentaires : ''}
                   underlineColorAndroid="transparent"
                 />
               </View>

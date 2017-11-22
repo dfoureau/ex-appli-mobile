@@ -55,12 +55,12 @@ class CraController extends Controller
 			$nbJourAbs = $row['nbJourAbs'];
 			$client = $row['client'];
 			$responsable = $row['responsable'];
-            $projet = $row['projet'];
+			$projet = $row['projet'];
 			$commentaires = $row['commentaires'];
 			$valeursSaisies = $row['valeursSaisies'];
 
 		}
-		$tab = array('idRA'=>$idRA,'mois'=>$mois, 'annee'=>$annee, 'libelle'=>$libelle, 'etat'=>$etat,'NbJOuvres'=>$NbJOuvres,'nbJourTravailles'=>$nbJourTravailles,'nbJourAbs'=>$nbJourAbs,'client'=>$client,'responsable'=>$responsable,'commentaires'=>$commentaires,'valeursSaisies' => $valeursSaisies);
+		$tab = array('idRA'=>$idRA,'mois'=>$mois, 'annee'=>$annee, 'libelle'=>$libelle, 'etat'=>$etat,'NbJOuvres'=>$NbJOuvres,'nbJourTravailles'=>$nbJourTravailles,'nbJourAbs'=>$nbJourAbs,'client'=>$client,'responsable'=>$responsable,'projet'=>$projet,'commentaires'=>$commentaires,'valeursSaisies' => $valeursSaisies);
 
 
 		//on formate le mois pour qu'il soit plus joli
@@ -118,7 +118,7 @@ class CraController extends Controller
 		
 		$tab["valeursSaisies"] = $tableauFinal;
 		 
-		//$tab=array($tab);//on le met dans un tableau
+		$tab=array($tab);//on le met dans un tableau
 		
 
         return new JsonResponse($tab,Response::HTTP_OK);
@@ -166,10 +166,35 @@ class CraController extends Controller
         return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
         }
 		
-		$liste=array();
+		
+		// pour simplifier le front, on envoie un champ date qui est la concatenation du mois formaté et de l'année
+		$listeMois = array(
+							1 => "Janvier",
+							2 => "Février",
+							3 => "Mars",
+							4 => "Avril",
+							5 => "Mai",
+							6 => "Juin",
+							7 => "Juillet",
+							8 => "Août",
+							9 => "Septembre",
+							10 => "Octobre",
+							11 => "Novembre",
+							12 => "Décembre");
+							
+
+			
+		
+		//$liste=array();
 		for($i=0; $i<count($retour);$i++){
 		
+		$row=$retour[$i];
+		$mois = $row['mois'];
+		$annee = $row['annee'];
 		
+		$libellemois = $listeMois[$row['mois']];
+		
+		/*
 			$row=$retour[$i];
 			$mois = $row['mois'];
 			
@@ -222,25 +247,28 @@ class CraController extends Controller
 			$libelle = $row['libelle'];
 			$status = $row['status'];
 			
-			$moreThanOne = $this->getMoreThanOne($mois,$idUser);
-			$hideDate =$this->getHideDate($id,$mois,$idUser);
-			$manyElt =$moreThanOne;
+			//$moreThanOne = $this->getMoreThanOne($mois,$idUser);
+			//$hideDate =$this->getHideDate($id,$mois,$idUser);
+			//$manyElt =$moreThanOne;
 			
 			
 			// on rajoute les éléments manquants
-			$key = strval($i);
+			//$key = strval($i);
 			
-			$retour[$i]['key'] = $key;
-			$retour[$i]['hideDate'] =$hideDate;
-			$retour[$i]['moreThanOne'] = $moreThanOne;
-			$retour[$i]['manyElt'] = $manyElt;
+			//$retour[$i]['key'] = $key;
+			//$retour[$i]['hideDate'] =$hideDate;
+			//$retour[$i]['moreThanOne'] = $moreThanOne;
+			//$retour[$i]['manyElt'] = $manyElt;
 			
 			
-		$liste[] = array('key'=>$key,'Id'=>$id, 'date' => $date, 'client'=>$client, 'libelle'=>$libelle,'status'=>$status,'moreThanOne' => $moreThanOne,'hideDate' => $hideDate,'manyElt' => $manyElt);
-			
+		//$liste[] = array('key'=>$key,'Id'=>$id, 'date' => $date, 'client'=>$client, 'libelle'=>$libelle,'status'=>$status,'moreThanOne' => $moreThanOne,'hideDate' => $hideDate,'manyElt' => $manyElt);
+		//$liste[] = array('Id'=>$id, 'date' => $date, 'client'=>$client, 'libelle'=>$libelle,'status'=>$status);
+			*/	
+		$retour[$i]['date']=$libellemois." ".$annee;
+		
 		}
 		  
-          return new JsonResponse($liste,Response::HTTP_OK);
+          return new JsonResponse($retour,Response::HTTP_OK);
 		 
 
          

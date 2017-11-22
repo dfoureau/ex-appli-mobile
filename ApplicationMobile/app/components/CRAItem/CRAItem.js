@@ -20,11 +20,12 @@ export default class CRAItem extends Component {
     super(props);
     this.state = {
       //On définit les différentes variables
-      date: props.date,
+	  date: props.date,
       client: props.client,
       status: props.status,
-      manyElt: props.manyElt,
+	  libelle: props.libelle,
       hideDate: props.hideDate,
+	  Id: props.Id, 
     };
   }
   render() {
@@ -41,19 +42,14 @@ export default class CRAItem extends Component {
               <Image
                 style={Style.craIcon}
                 source={
-                  this.state.status == 1
+                  this.state.status == 3
                     ? require("../../images/icons/check2.png")
                     : null
                 }
               />
             </View>
           </View>
-          <Text>
-            Etat :{" "}
-            {this.state.status == 1
-              ? "Validé"
-              : this.state.status == 2 ? "Brouillon" : "En cours de validation"}
-          </Text>
+          <Text>Etat : {this.state.libelle}</Text>
         </View>
       </View>
     );
