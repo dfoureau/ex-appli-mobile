@@ -9,6 +9,7 @@ import Style from "../../../styles/Styles";
 import styles from "./styles";
 import CheckBox from "react-native-check-box";
 import moment from "moment";
+import { momentConfig } from '../../../configuration/MomentConfig';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";

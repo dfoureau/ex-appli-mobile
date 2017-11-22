@@ -23,7 +23,8 @@ import Style from "../../../styles/Styles";
 import styles from "./styles";
 import StyleGeneral from "../../../styles/Styles";
 import moment from "moment";
-import "moment/locale/fr";
+import { momentConfig } from '../../../configuration/MomentConfig';
+
 
 import {
   showToast,
@@ -85,20 +86,6 @@ class FraisAjout extends React.Component {
       status: "Nouveau",
       header: ["Jour", "Client", "Montant €"],
       rowsFlexArr: [1, 2 ,1],
-      months: [
-        "Janvier",
-        "Février",
-        "Mars",
-        "Avril",
-        "Mai",
-        "Juin",
-        "Juillet",
-        "Août",
-        "Septembre",
-        "Octobre",
-        "Novembre",
-        "Décembre",
-      ],
       monthsWithNDF: params.monthsWithNDF,
       monthSelected: parseInt(monthSelected),
       yearSelected: parseInt(yearSelected),
@@ -139,7 +126,15 @@ class FraisAjout extends React.Component {
   }
 
 
-
+  /**
+   * Récupère les informations d'une NDF pour une année et un mois donnés
+   * Une fois les données récupérées, la fonction met également à jour
+   * le state de la page pour reconstruire le tableau des jours
+   *
+   * @param  {int} year  année
+   * @param  {int} month mois
+   * @return {[type]}       [description]
+   */
   getNDF(year, month){
     var that = this;
     let listFrais = this.initFraisVides(year, month);
@@ -153,6 +148,8 @@ class FraisAjout extends React.Component {
         statusId: null
     }
 
+    // On vérifie que le mois à chercher est bien dans le tableau des mois contenant une NDF
+    // Sinon, on affiche directement une table vide
     if (!this.state.monthsWithNDF.includes(month)) {
       that.setState(ndfEmptyState)
     }
@@ -276,12 +273,6 @@ class FraisAjout extends React.Component {
     // var initListAndTotals = this.initListAndTotals();
     this.getNDF(this.state.yearSelected, this.state.monthSelected);
 
-    // that.setState({
-    //     listFrais: initListAndTotals.listFrais,
-    //     totalMontant: initListAndTotals.totalAReglerAllFrais,
-    //     totalClient: initListAndTotals.totalClientAllFrais,
-    //   });
-
   }
 
   // Méthode permettant de calculer le total à régler d'un frais
@@ -308,59 +299,9 @@ class FraisAjout extends React.Component {
     };
   }
 
-  // Méthode permettant l'initialisation de la liste des frais et des totaux (montant à régler et client)
-  initListAndTotals() {
-    // intialisation des totaux globaux
-    var totalAReglerAllFrais = 0;
-    var totalClientAllFrais = 0;
-
-    //Nouvelle NDF -> Tableau vide initié
-    let currentDate = new Date();
-    let initList = [],
-      jours = moment({ y: "2017", M: currentDate.getMonth(), d: 1 }), //Date de depart : le 1er du mois
-      month = jours.month(), //numero du mois choisi
-      monthOk = true; //verif que le mois est toujours le bon
-    while (monthOk) {
-      if (jours.month() == month) {
-        // on récupère le frais pour la date
-        var frais = service.getByPrimaryKey(
-          FRAIS_SCHEMA,
-          jours.format("DD-MM-YYYY")
-        );
-        var totauxFrais = null;
-
-        // le frais existe en cache
-        if (frais != null) {
-          // on calcul les totaux
-          totauxFrais = this.calculTotaux(frais);
-          // on incrémentes les totaux globaux
-          totalAReglerAllFrais += totauxFrais.totalAReglerFrais;
-          totalClientAllFrais += totauxFrais.totalClientFrais;
-        }
-
-        initList.push({
-          // l'id du frais correspond à sa date au format DD-MM-YYYY
-          id: jours.format("DD-MM-YYYY"),
-          date: jours.format("DD-MM-YYYY"),
-          dateShort: jours.format("dd DD"),
-          client: frais != null ? frais.client : "",
-          // affichage des totaux spécifiques à un frais
-          montant: totauxFrais != null ? totauxFrais.totalAReglerFrais : "",
-        });
-
-        jours.add(1, "days"); //passe au jour suivant
-      } else monthOk = false; //Si on passe au moins suivant on arrete
-    }
-    return {
-      listFrais: initList,
-      totalAReglerAllFrais: totalAReglerAllFrais,
-      totalClientAllFrais: totalClientAllFrais,
-    };
-  }
 
   //Affiche les lignes du tableau à partir de listFrais
   afficherRow() {
-    moment.locale("fr");
     return this.state.listFrais.map((row, i) => (
       <TouchableOpacity key={i} onPress={() => this.modifyNDF(row.id, this.state.statusId)}>
         <Row
@@ -376,7 +317,7 @@ class FraisAjout extends React.Component {
 
   //Affiche le contenu du menu des mois/années
   loadPickerItems() {
-    return this.state.months.map((item, i) => (
+    return moment.months().map((item, i) => (
       <Picker.Item label={item + ' ' + this.state.yearSelected} value={i+1} key={i} />
     ));
   }
