@@ -117,9 +117,6 @@ class CraController extends Controller
 		 
 		
 		$tab["valeursSaisies"] = $tableauFinal;
-		 
-		$tab=array($tab);//on le met dans un tableau
-		
 
         return new JsonResponse($tab,Response::HTTP_OK);
     }
