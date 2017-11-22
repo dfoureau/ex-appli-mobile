@@ -92,7 +92,6 @@ class FraisAjout extends React.Component {
       listFrais: [],
       totalMontant: 0,
       totalClient: 0,
-      nbJours: 0,
       webServiceLien: configurationAppli.apiURL + "ndf/",
       fetchOptions: {
         headers: {
@@ -102,8 +101,13 @@ class FraisAjout extends React.Component {
     };
   }
 
-  // On initialise la liste des frais vide.
-  // On crée une ligne par jour du mois sélectionné
+  /**
+   * Renvoie un tableau contenant des frais vides
+   * pour chaque jour du mois/année donnés
+   * @param  {int}  year  Année
+   * @param  {month}  month mois
+   * @return {Array}       Le tableau de tous les frais initialisés à 0
+   */
   initFraisVides(year, month) {
     //Initialisation de la date au 1er jour correspondant au mois et à l'année
     // fournis en paramètre
@@ -461,7 +465,6 @@ class FraisAjout extends React.Component {
                     <Text style={styles.text}>
                       Total client : {this.state.totalClient} €
                     </Text>
-                    {/*<Text style={styles.text}>Nombre de jours : {this.state.nbJours}</Text>*/}
                   </View>
                   <View style={styles.containerButton}>
                     <Button
