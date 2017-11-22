@@ -58,8 +58,7 @@ class AnnuaireDetail extends React.Component {
 
   handleSmsDisplay(tel) {
     if (null != tel) {
-      let arr = tel.split(".");
-      console.log(arr[0]);
+      let arr = tel.split(" ");
       if (arr[0] == "06" || arr[0] == "07") {
         return (
           <TouchableOpacity onPress={() => Communications.text(tel)}>
