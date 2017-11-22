@@ -36,7 +36,6 @@ import { Button } from "../../../components/Buttons";
 import Accueil from "../../accueil/Accueil";
 import CongesPeriode from "../congesPeriode/CongesPeriode";
 import CongesConfirmation from "../congesConfirmation/CongesConfirmation";
-import service from "../../../realm/service";
 
 import configurationAppli from "../../../configuration/Configuration";
 
@@ -91,6 +90,7 @@ class CongesAjout extends React.Component {
       dataSaved: false,
       numDemande: this.props.navigation.state.params.numDemande,
       isReady: false,
+      nbPeriode: 0,
     };
   }
 
@@ -131,6 +131,7 @@ class CongesAjout extends React.Component {
         that.setState({
           isReady: true,
           periods: p,
+          nbPeriode: p.lenghth,
         });
       });
 
@@ -208,7 +209,7 @@ class CongesAjout extends React.Component {
     }
   }
 
-  // TODO finir le post
+// TODO : Voir pourquoi le post ne fonctionne pas
   sendDemandeConges(method) {
     showLoading("Enregistrement en cours. Veuillez patientier...");
 
@@ -261,8 +262,6 @@ class CongesAjout extends React.Component {
           statusId: 3,
           status: "validé",
         });
-        // Après sauvegarde en bdd, on reset le cache
-        service.delete(PERIOD_SCHEMA);
         this.props.navigation.navigate("CongesConfirmation");
       })
       .catch(function(error) {
@@ -299,12 +298,6 @@ class CongesAjout extends React.Component {
     // Périodes existants en base
     let periods = this.state.periods;
     return this.getRows(periods, false);
-  }
-
-  afficherNewRows() {
-    // Périodes non encore enregistrées en base
-    let newPeriods = service.get(PERIOD_SCHEMA);
-    return this.getRows(newPeriods, true);
   }
 
   showDeleteButton() {
@@ -411,7 +404,6 @@ class CongesAjout extends React.Component {
                     textStyle={style.headerText}
                   />
                   {this.afficherRows()}
-                  {this.afficherNewRows()}
                 </Table>
               </View>
               <View>
