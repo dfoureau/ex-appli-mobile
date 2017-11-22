@@ -69,11 +69,10 @@ class AjoutCra extends React.Component {
       objGET: {
         method: "GET",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
           Authorization: "Bearer " + configurationAppli.userToken,
         },
       },
-      WSLinkCRA: "http://185.57.13.103/rest8/web/app_dev.php/CRA/RA/",
+      WSLinkCRA: configurationAppli.apiURL + "CRA/RA/",
       isReady: false,
       data: [],
     };
@@ -96,7 +95,6 @@ class AjoutCra extends React.Component {
     if (params.idCRA != null) {
       // Récupere les périodes
       this.getCRAInfosByID(params.idCRA);
-	  
     } else {
       that.setState({
         data: [],
@@ -120,17 +118,17 @@ class AjoutCra extends React.Component {
       return response.json();
     })
     .then(function(cra) {
+      console.log(cra.valeursSaisies);
       that.setState({
         isReady: true,
         data: cra,
-		listItemsCRA : that.getItemsCRA(cra.valeursSaisies),
+		    listItemsCRA : that.getItemsCRA(cra.valeursSaisies),
       });  
-	//console.log(that.state.data.valeursSaisies.length);
+	  console.log("statevs : "  + that.state.data.valeursSaisies.length);
     });
   }
 
 getItemsCRA(valeursSaisies) {
-	
 	   var rows = [];
 	   for (var i = 0; i < valeursSaisies.length; i++) {
 		   rows.push(

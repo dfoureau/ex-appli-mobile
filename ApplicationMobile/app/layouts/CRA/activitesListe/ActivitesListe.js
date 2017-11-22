@@ -144,21 +144,19 @@ class ActivitesListe extends React.Component {
         <Text style={style.periodTextTitre}>
           {!item.hideDate ? item.date : null}
         </Text>
-        <TouchableOpacity
-          key={item.key}
-          onPress={() => this.SendDataCRA(item.Id, item.date)}
-        >
-          <View style={style.containerList}>
-            <CRAItem
-              date={item.date}
-              libelle={item.libelle}
-              client={item.client}
-              status={item.status}
-              key={item.key}
-              hideDate={item.hideDate}
-              Id={item.Id}
-            />
-          </View>
+          <TouchableOpacity
+            key={item.key}
+            onPress={() => this.SendDataCRA(item.Id, item.date)}
+          >
+          <CRAItem
+            date={item.date}
+            libelle={item.libelle}
+            client={item.client}
+            status={item.status}
+            key={item.key}
+            hideDate={item.hideDate}
+            Id={item.Id}
+          />
         </TouchableOpacity>
       </View>
     );
@@ -194,7 +192,7 @@ class ActivitesListe extends React.Component {
             afficherEcran={this.afficherEcranParent.bind(this)}
           >
             <View style={style.container}>
-              <View style={style.container2}>
+              <View style={style.container1}>
                 <View style={style.containerPicker}>
                   <Picker
                     style={{
@@ -215,7 +213,7 @@ class ActivitesListe extends React.Component {
                 </View>
               </View>
 
-              <View style={style.container3}>
+              <View style={style.container2}>
                 {this.state.data.length <= 0 && (
                   <Text style={StyleGeneral.texte}>
                     Aucunes données trouvées pour cette année.

@@ -113,10 +113,7 @@ export default StyleSheet.create({
   container1: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
-    marginLeft: 10,
-    marginRight: 10,
+    margin: 10,
   },
 
   containerInfoElement: {
@@ -124,11 +121,9 @@ export default StyleSheet.create({
   },
 
   container2: {
-    display: "flex",
-    flexDirection: "row",
-    marginTop: 10,
-    marginLeft: 10,
-    marginRight: 10,
+    flex: 1,
+    margin: 0,
+    padding: 5,
   },
 
   containerPicker: {
