@@ -50,8 +50,6 @@ class FraisDetail extends React.Component {
         if (frais != null && frais != undefined) {
           // il existe un frais déjà crée en cache
           isNewFrais = false;
-          // console.log("FRAIS JOUR ==> ");
-          // console.log(frais);
         }
     }
     else {
@@ -159,6 +157,9 @@ class FraisDetail extends React.Component {
    * @return {[type]} [description]
    */
   handleValidate() {
+
+    // On initialise l'objet fraisData à utiliser pour updater les fraisJours
+    // à partir du state
     let fraisJourData = {
       facturable: this.state.facturable,
       indemKM: this.state.indemKm,
@@ -182,8 +183,6 @@ class FraisDetail extends React.Component {
 
     var parent = this.props.navigation.state.params.parent;
     var listFrais = Array.from(parent.state.listFrais);
-
-
     // Pour chaque date sélectionnée, on récupère le fraisJour correspondant
     // dans la listeFrais du parent, et on lui mappe les données de notre state
     this.state.selectedDatesArray.forEach( date => {
@@ -192,13 +191,9 @@ class FraisDetail extends React.Component {
       let fraisJour = listFrais.find(this.findFraisJour(date));
       if (fraisJour !== null && fraisJour !== undefined) {
         fraisJour.updateDetail(fraisJourData);
-        console.log("NEW FRAIS JOUR : ");
-        console.log(fraisJour);
-
-
       }
       else {
-        console.log("JOUR " + date + " : not found");
+        console.log("JOUR " + date + " : non trouvé");
       }
 
     });
