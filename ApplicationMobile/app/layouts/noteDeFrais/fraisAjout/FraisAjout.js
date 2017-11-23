@@ -271,9 +271,7 @@ class FraisAjout extends React.Component {
   addNDF(monthSelected, statusId) {
     this.props.navigation.navigate("FraisDetail", {
       forfait: true,
-      month: monthSelected,
-      year: yearSelected,
-      statusId: statusId,
+      parent: this
     });
   }
   deleteNDF() {

@@ -36,11 +36,11 @@ class FraisDetail extends React.Component {
     // indique si on se trouve dans le cas d'un création de frais
     let isNewFrais = true;
     let calendarDateFormat = "YYYY-MM-DD";
-    let calendarDate = moment().format('YYYY-MM-DD');
+    let calendarDate = moment().format(calendarDateFormat);
 
     const params = this.props.navigation.state.params;
 
-    if (params.idFrais != null) {
+    if (params.idFrais != null && params.idFrais != undefined) {
       // on récupère le frais dans le cas d'une modification
       calendarDate = moment(params.idFrais, 'DD-MM-YYYY');
 
@@ -53,8 +53,9 @@ class FraisDetail extends React.Component {
         }
     }
     else {
-      let month = params.month ? params.month : moment().month(),
-          year = params.year ? params.year : moment().year();
+      let month = params.parent.state.monthSelected
+          year = params.parent.state.yearSelected;
+
           calendarDate = moment(year + '-' + month , 'YYYY-M');
     }
 
@@ -104,17 +105,14 @@ class FraisDetail extends React.Component {
       selectedDates.push(this.props.navigation.state.params.idFrais);
     }
     else {
-      let month = this.props.navigation.state.params.month, //chaine de caractère du mois de la NDF
-          year = this.props.navigation.state.params.year;
-
-          let currentDate = moment(year+'-'+month+'-01', 'YYYY-M-DD');
+          let currentDate = moment(this.state.calendarMinDate, this.state.calendarDateFormat);
           let nbJours = currentDate.daysInMonth(); // Nombre de jours dans le mois
 
           for (i=1; i<= nbJours; i++) {
             currentDate.set('date', i);
 
             if (currentDate.day() > 0 && currentDate.day() < 6 && !this.state.joursFeries.includes(currentDate)) {
-              selectedDates.push(currentDate.clone());
+              selectedDates.push(currentDate.clone().format('YYYY-MM-DD'));
             }
           }
         }
