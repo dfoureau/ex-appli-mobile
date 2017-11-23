@@ -77,9 +77,9 @@ class FraisJour {
       this.detail.facturable = parseInt(fraisData.facturable)
     }
 
-    if (fraisData.indemKM !== undefined ) {
-      this.detail.indemKM = parseFloat(fraisData.indemKM)
-    }
+    // if (fraisData.indemKM !== undefined ) {
+    //   this.detail.indemKM = parseFloat(fraisData.indemKM)
+    // }
 
     if (fraisData.client !== undefined ) {
       this.detail.client = fraisData.client

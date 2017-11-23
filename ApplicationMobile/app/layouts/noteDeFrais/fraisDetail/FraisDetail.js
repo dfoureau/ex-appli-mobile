@@ -73,21 +73,21 @@ class FraisDetail extends React.Component {
         : frais.detail.facturable == 1 ? true : false,
       client: isNewFrais ? "" : frais.detail.client,
       lieu: isNewFrais ? "" : frais.detail.lieu,
-      nbKMS: isNewFrais ? "" : frais.detail.nbKMS.toString(),
-      indemKm: isNewFrais ? "" : frais.detail.indemKm,
-      forfait: isNewFrais ? "" : frais.detail.forfait.toString(),
-      sncf: isNewFrais ? "" : frais.detail.sncf.toString(),
-      peages: isNewFrais ? "" : frais.detail.peages.toString(),
-      essence: isNewFrais ? "" : frais.detail.essence.toString(),
-      taxi: isNewFrais ? "" : frais.detail.taxi.toString(),
-      nbZones: isNewFrais ? "" : frais.detail.nbZones.toString(),
-      pourcentage: isNewFrais ? "" : frais.detail.pourcentage.toString(),
-      hotel: isNewFrais ? "" : frais.detail.hotel.toString(),
-      repas: isNewFrais ? "" : frais.detail.repas.toString(),
-      invit: isNewFrais ? "" : frais.detail.invit.toString(),
-      parking: isNewFrais ? "" : frais.detail.parking.toString(),
-      divers: isNewFrais ? "" : frais.detail.divers.toString(),
-      libelle: isNewFrais ? "" : frais.detail.libelle,
+      nbKMS: isNewFrais ? "0" : frais.detail.nbKMS.toString(),
+      indemKm: isNewFrais ? "0" : frais.detail.indemKm,
+      forfait: isNewFrais ? "0" : frais.detail.forfait.toString(),
+      sncf: isNewFrais ? "0" : frais.detail.sncf.toString(),
+      peages: isNewFrais ? "0" : frais.detail.peages.toString(),
+      essence: isNewFrais ? "0" : frais.detail.essence.toString(),
+      taxi: isNewFrais ? "0" : frais.detail.taxi.toString(),
+      nbZones: isNewFrais ? "0" : frais.detail.nbZones.toString(),
+      pourcentage: isNewFrais ? "0" : frais.detail.pourcentage.toString(),
+      hotel: isNewFrais ? "0" : frais.detail.hotel.toString(),
+      repas: isNewFrais ? "0" : frais.detail.repas.toString(),
+      invit: isNewFrais ? "0" : frais.detail.invit.toString(),
+      parking: isNewFrais ? "0" : frais.detail.parking.toString(),
+      divers: isNewFrais ? "0" : frais.detail.divers.toString(),
+      libelle: isNewFrais ? "0" : frais.detail.libelle,
       calendarDateFormat: calendarDateFormat,
       calendarDate: calendarDate.format(calendarDateFormat),
       calendarMinDate: calendarMinDate,
@@ -178,6 +178,9 @@ class FraisDetail extends React.Component {
       divers: this.state.divers,
       libelle: this.state.libelle
     }
+
+    console.log("FRAISJOURDATA : ");
+    console.log(fraisJourData);
 
     var parent = this.props.navigation.state.params.parent;
     var listFrais = Array.from(parent.state.listFrais);
