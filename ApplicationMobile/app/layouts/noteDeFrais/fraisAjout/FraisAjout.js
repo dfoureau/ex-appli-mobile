@@ -43,7 +43,7 @@ import Accueil from "../../accueil/Accueil";
 import FraisDetail from "../fraisDetail/FraisDetail";
 import FraisConfirmation from "../fraisConfirmation/FraisConfirmation";
 
-import FraisJour from "../../../components/FraisJour/FraisJour";
+import FraisJour from "../utils/FraisJour";
 
 import configurationAppli from "../../../configuration/Configuration";
 

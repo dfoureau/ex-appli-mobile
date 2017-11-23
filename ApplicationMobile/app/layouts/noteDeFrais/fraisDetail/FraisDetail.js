@@ -16,7 +16,7 @@ import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
 import { Button } from "../../../components/Buttons";
 import Panel from "../../../components/Panel/Panel";
 
-import FraisJour from "../../../components/FraisJour/FraisJour";
+import FraisJour from "../utils/FraisJour";
 
 class FraisDetail extends React.Component {
   static propTypes = {
