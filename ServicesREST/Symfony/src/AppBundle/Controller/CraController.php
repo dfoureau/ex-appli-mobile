@@ -534,11 +534,11 @@ class CraController extends Controller
      */
     public function getTypesActivites(Request $request)
     {
-        // $log=new LoginController();
-        // $retourAuth = $log->checkAuthentification($this);
-        // if (array_key_exists("erreur", $retourAuth)) {
-        //  return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
-        // }
+         $log=new LoginController();
+         $retourAuth = $log->checkAuthentification($this);
+         if (array_key_exists("erreur", $retourAuth)) {
+          return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
+         }
 
         //On définit un tableau de correspondances entre codes et libellés
         $tablabel = array(
