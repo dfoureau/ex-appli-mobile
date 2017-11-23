@@ -42,32 +42,12 @@ class ActivitesDetail extends React.Component {
 
     var parent = params.parent;
 
-    if (params.line == -1) {
-      this.state = {
-        title: "Détails jours",
-        isPeriod: true,
-        month: parent.state.monthSelected, //for the calendar
-        linesToChange: [],
-        activitesListe: [
-          { code: "1.0" },
-          { code: "IC", label: "Intercontrat" },
-          { code: "FO", label: "Formation" },
-          { code: "AM", label: "Arrêt maladie" },
-          { code: "AB", label: "Absence diverse" },
-          { code: "0.5+FO", label: "0.5 + Formation" },
-          { code: "0.5+AM", label: "0.5 + Arrêt maladie" },
-          { code: "0.5+AB", label: "0.5 + Absence diverse" },
-        ],
-        activiteClicked: { code: "1.0" },
-      };
-    } else {
       let tmp = parent.state.listItemsCRA[params.line];
       this.state = {
         title: "Détails jour",
-        isPeriod: false,
         date: params.date,
         linesToChange: [params.line],
-        activitesListe: [
+          activitesListe: [
           { code: "1.0" },
           { code: "IC", label: "Intercontrat" },
           { code: "FO", label: "Formation" },
@@ -77,11 +57,40 @@ class ActivitesDetail extends React.Component {
           { code: "0.5+AM", label: "0.5 + Arrêt maladie" },
           { code: "0.5+AB", label: "0.5 + Absence diverse" },
         ],
+		activitesListeJourOuvre: [],
         activiteClicked: { code: params.activite },
+		webServiceLien1: "http://172.16.177.163/Symfony/web/app_dev.php/CRA/typesactivites",
+        //configurationAppli.apiURL + "utilisateur/" + configurationAppli.userID,
       };
-    }
+    
   }
 
+  
+  
+
+  
+  
+  
+  componentWillMount() {
+    var that = this;
+    fetch(this.state.webServiceLien1,)
+      .then(function(response) {
+        if (response.status >= 400) {
+          throw new Error("GetUtilisateur : Bad response from server");
+        }
+        return response.json();
+      })
+      .then(function(typesactivites) {
+        that.setState({
+          activitesListe: typesactivites,
+		  activitesListeJourOuvre : typesactivites['jourouvre'],
+        });
+      })
+      .catch(function(error) {
+        return console.log(error);
+      });
+  }
+  
   choixActivite = activite => {
     // Change le bouton sélectionné
     var tmp = this.state;
@@ -104,19 +113,19 @@ class ActivitesDetail extends React.Component {
 
   // Gère le rendu des boutons sur plusieurs lignes, et gère le toggle
   renderActiviteButtons = () => {
-    console.log(this.state.activitesListe);
+    console.log(this.state.activitesListeJourOuvre);
     let button,
       buttons = [];
     const maxItems = 4;
-    let tempLength = this.state.activitesListe.length / 4;
+    let tempLength = this.state.activitesListeJourOuvre.length / 4;
     //Boucle sur les 2 Lignes
     for (let j = 0; j < tempLength; j++) {
       //Boucle sur les Boutons
       let button = [];
       for (let i = 0; i < maxItems; i++) {
         let nb = i + maxItems * j;
-        if (this.state.activitesListe[nb] != undefined) {
-          let activite = this.state.activitesListe[nb];
+        if (this.state.activitesListeJourOuvre[nb] != undefined) {
+          let activite = this.state.activitesListeJourOuvre[nb];
           let code = activite.code;
           let styleButton = styles.btnChoixDetail;
 

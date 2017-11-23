@@ -527,5 +527,92 @@ class CraController extends Controller
 		
         }
     }
+	
+/**
+	 * Retourne les types activités CRA
+	 *
+	 * @param Request 	$request 		Requete en entrée
+	 *
+	 * @return JsonResponse
+	 *
+	 * @Route("/CRA/typesactivites", name="typesactivites")
+	 * @Method("GET")
+	 */
+	public function getTypesActivites(Request $request)
+	{
+		// $log=new LoginController();
+		// $retourAuth = $log->checkAuthentification($this);
+		// if (array_key_exists("erreur", $retourAuth)) {
+		// 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
+		// }
+
+		//On définit un tableau de correspondances entre codes et libellés
+		$tablabel = array(
+							'CP' => "Congé Payé",
+							'RT' => "RTT",
+							'AM' => "Arrêt maladie",
+							'FO' => "Formation",
+							'AB' => "Absence diverse",
+							'0,5+CP' => "0,5 + Congé Payé",
+							'0,5+RT' => "0,5 + RTT",
+							'0,5+AM' => "0,5 + Arrêt maladie",
+							'0,5+FO' => "0,5 + Formation",
+							'0,5+AB' => "0,5 + Absence diverse",
+							'CS' => "Congé sans solde",
+							'0,5+CS' => "0,5 + Congé sans solde",
+							'IC' => "Intercontrat",
+							'0,5RT+0,5CP' => "0,5 RTT+ 0,5 Congé Payé",
+							'0,5RT+0,5IC' => "0,5 RTT+ 0,5 Intercontrat",
+							'CPA' => "Congé de paternité",
+							'CMA' => "Congé de maternité"
+							);
+		
+		//On va rechercher les codes disponibles dans la table valeurjourouvre
+		$sql = "SELECT DISTINCT id FROM valeurjourouvre";
+
+		$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+		$stmt->execute();
+		$retour = $stmt->fetchAll();
+		
+		//On va mettre le résultat dans un tableau afin de pouvoir associer les libellés aux codes
+		$tabjo=array();
+		for ($i=0;$i<count($retour);$i++) {
+		
+			$row=$retour[$i];
+			$type = $row['id'];
+			$label = $tablabel[$type];
+			
+		$tabjo[]=array('code'=>$type, 'label'=>$label);
+		}
+		// Et on rajoute les codes et labels n'existant pas dans la table valeurjourouvre
+		$tabjo[]=array('code'=>'0.0','label'=>'Jour non travaillé');
+		$tabjo[]=array('code'=>'1.0','label'=>'Jour travaillé');
+		
+		
+		//On va ensuite rechercher les codes disponibles dans la table valeurjourouvrewe
+		$sql2 = "SELECT DISTINCT id FROM valeurjourouvrewe";
+
+		$stmt2 = $this->getDoctrine()->getManager()->getConnection()->prepare($sql2);
+		$stmt2->execute();
+		$retour2 = $stmt2->fetchAll();
+		
+		//On va mettre le résultat dans un tableau afin de pouvoir associer les libellés aux codes
+		$tabwe=array();
+		for ($i=0;$i<count($retour2);$i++) {
+		
+			$row=$retour[$i];
+			$type = $row['id'];
+			$label = $tablabel[$type];
+			
+		$tabwe[]=array('code'=>$type, 'label'=>$label);
+		}
+		// Et on rajoute les codes et labels n'existant pas dans la table valeurjourouvrewe
+		$tabwe[]=array('code'=>'0.0','label'=>'Jour non travaillé');
+		$tabwe[]=array('code'=>'1.0','label'=>'Jour travaillé');
+		
+		//Et on crée un tableau qui contient les deux tableaux précédents
+		$tab = array('jourouvre'=>$tabjo,'jourwe'=>$tabwe);
+		return new JsonResponse($tab, Response::HTTP_OK);
+	}
 }
 ?>
