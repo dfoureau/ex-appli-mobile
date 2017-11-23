@@ -64,7 +64,8 @@ class AjoutCra extends React.Component {
       //listItemsCRA: this.getItemsCRA(), //liste des cra du mois, doit être ordonée
       listItemsCRA : [],
 	  modifiedLines: [], //liste des lignes à modifier si validation
-
+	  activitesListeJourOuvre: [],
+	  activitesListe: [],
       userId: configurationAppli.userID,
       objGET: {
         method: "GET",
@@ -73,6 +74,7 @@ class AjoutCra extends React.Component {
         },
       },
       WSLinkCRA: configurationAppli.apiURL + "CRA/RA/",
+	  webServiceLien1: configurationAppli.apiURL + "CRA/typesactivites",
       isReady: false,
       data: [],
     };
@@ -91,7 +93,8 @@ class AjoutCra extends React.Component {
     var that = this;
     //Récupération des paramètres de navigation
     const { params } = this.props.navigation.state;
-
+	this.getTypeActivite();
+		
     if (params.idCRA != null) {
       // Récupere les périodes
       this.getCRAInfosByID(params.idCRA);
@@ -101,7 +104,27 @@ class AjoutCra extends React.Component {
         isReady: true,
       });
     }
+
   }
+  
+   getTypeActivite() {
+    var that = this; 
+  fetch(this.state.webServiceLien1,)
+      .then(function(response) {
+        if (response.status >= 400) {
+          throw new Error("GetUtilisateur : Bad response from server");
+        }
+        return response.json();
+      })
+      .then(function(typesactivites) {
+        that.setState({
+          activitesListe: typesactivites,
+		  activitesListeJourOuvre : typesactivites['jourouvre'],
+        }
+		//, () => { console.log( that.state.activitesListe )} 
+		);
+      }) 
+   }
 
   getCRAInfosByID(idCRA) {
     var that = this;
@@ -126,6 +149,8 @@ class AjoutCra extends React.Component {
       });  
 	  //console.log("statevs : "  + that.state.data.valeursSaisies.length);
     });
+	
+
   }
 
 getItemsCRA(valeursSaisies) {
@@ -198,7 +223,7 @@ getItemsCRA(valeursSaisies) {
 	  activite : actType,
 	  parent: this,
     });
-	console.log("texto : "  + startDate);
+	//console.log("texto : "  + startDate);
   }
  
   

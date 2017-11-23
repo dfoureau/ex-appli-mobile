@@ -8,6 +8,11 @@ import {
   TouchableHighlight,
   TouchableOpacity,
 } from "react-native";
+
+import {
+  Row,
+} from "react-native-table-component";
+
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "../../../styles/Styles";
 import moment from "moment";
@@ -35,6 +40,7 @@ class ActivitesDetail extends React.Component {
     static navigationOptions = ({ navigation }) => ({
     date: navigation.state.params.date,
 	activite: navigation.state.params.activite,
+	
   });
   
   setInitialValues() {
@@ -42,46 +48,46 @@ class ActivitesDetail extends React.Component {
 
     var parent = params.parent;
 
-    if (params.line == -1) {
-      this.state = {
-        title: "Détails jours",
-        isPeriod: true,
-        month: parent.state.monthSelected, //for the calendar
-        linesToChange: [],
-        activitesListe: [
-          { code: "1.0" },
-          { code: "IC", label: "Intercontrat" },
-          { code: "FO", label: "Formation" },
-          { code: "AM", label: "Arrêt maladie" },
-          { code: "AB", label: "Absence diverse" },
-          { code: "0.5+FO", label: "0.5 + Formation" },
-          { code: "0.5+AM", label: "0.5 + Arrêt maladie" },
-          { code: "0.5+AB", label: "0.5 + Absence diverse" },
-        ],
-        activiteClicked: { code: "1.0" },
-      };
-    } else {
       let tmp = parent.state.listItemsCRA[params.line];
       this.state = {
         title: "Détails jour",
-        isPeriod: false,
         date: params.date,
         linesToChange: [params.line],
-        activitesListe: [
-          { code: "1.0" },
-          { code: "IC", label: "Intercontrat" },
-          { code: "FO", label: "Formation" },
-          { code: "AM", label: "Arrêt maladie" },
-          { code: "AB", label: "Absence diverse" },
-          { code: "0.5+FO", label: "0.5 + Formation" },
-          { code: "0.5+AM", label: "0.5 + Arrêt maladie" },
-          { code: "0.5+AB", label: "0.5 + Absence diverse" },
-        ],
+        activitesListe: parent.state.activitesListe,
+		activitesListeJourOuvre: parent.state.activitesListeJourOuvre,
         activiteClicked: { code: params.activite },
+		//webServiceLien1: "http://172.16.177.163/Symfony/web/app_dev.php/CRA/typesactivites",
+        //configurationAppli.apiURL + "utilisateur/" + configurationAppli.userID,
       };
-    }
+    
   }
 
+  
+  
+
+  
+  
+  
+  /*componentWillMount() {
+    var that = this;
+    fetch(this.state.webServiceLien1,)
+      .then(function(response) {
+        if (response.status >= 400) {
+          throw new Error("GetUtilisateur : Bad response from server");
+        }
+        return response.json();
+      })
+      .then(function(typesactivites) {
+        that.setState({
+          activitesListe: typesactivites,
+		  activitesListeJourOuvre : typesactivites['jourouvre'],
+        });
+      })
+      .catch(function(error) {
+        return console.log(error);
+      });
+  }*/
+  
   choixActivite = activite => {
     // Change le bouton sélectionné
     var tmp = this.state;
@@ -91,32 +97,45 @@ class ActivitesDetail extends React.Component {
 
   handleValidate() {
     const { params } = this.props.navigation.state;
-    var parentState = params.parent.state;
-    for (var i = 0; i < this.state.linesToChange.length; i++) {
+    var parent = params.parent;
+	
+	let listItemsCRA = Array.from(parent.state.listItemsCRA);
+	
+	listItemsCRA[this.state.linesToChange] = 
+	
+	(<Row
+		  startDate={this.state.date}
+		  actType={this.state.activiteClicked.code}
+        />)
+	
+	/*
+    //for (var i = 0; i < this.state.linesToChange.length; i++) {
       parentState.listItemsCRA[
         this.state.linesToChange[i]
-      ].actType = this.state.activiteClicked.code;
+      ].activite = this.state.activiteClicked.code;
+	  console.log(this.state.activiteClicked.code);
       parentState.modifiedLines = [...new Set(parentState.modifiedLines)]; //on ajoute la ligne modifié sans garder les doublons
     }
     params.parent.forceUpdate(); //force l'appel de la fonction render sur la page précedente
-    this.props.navigation.dispatch(NavigationActions.back()); //on retourne à la page précédente qui à été modifié
+    */
+	parent.setState({listItemsCRA: listItemsCRA},()=>{this.props.navigation.dispatch(NavigationActions.back())}); //on retourne à la page précédente qui à été modifié
   }
 
   // Gère le rendu des boutons sur plusieurs lignes, et gère le toggle
   renderActiviteButtons = () => {
-    console.log(this.state.activitesListe);
+    //console.log(this.state.activitesListeJourOuvre);
     let button,
       buttons = [];
     const maxItems = 4;
-    let tempLength = this.state.activitesListe.length / 4;
+    let tempLength = this.state.activitesListeJourOuvre.length / 4;
     //Boucle sur les 2 Lignes
     for (let j = 0; j < tempLength; j++) {
       //Boucle sur les Boutons
       let button = [];
       for (let i = 0; i < maxItems; i++) {
         let nb = i + maxItems * j;
-        if (this.state.activitesListe[nb] != undefined) {
-          let activite = this.state.activitesListe[nb];
+        if (this.state.activitesListeJourOuvre[nb] != undefined) {
+          let activite = this.state.activitesListeJourOuvre[nb];
           let code = activite.code;
           let styleButton = styles.btnChoixDetail;
 
