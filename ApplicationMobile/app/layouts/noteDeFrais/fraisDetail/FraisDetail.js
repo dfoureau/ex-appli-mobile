@@ -179,9 +179,6 @@ class FraisDetail extends React.Component {
       libelle: this.state.libelle
     }
 
-    console.log("FRAISJOURDATA : ");
-    console.log(fraisJourData);
-
     var parent = this.props.navigation.state.params.parent;
     var listFrais = Array.from(parent.state.listFrais);
     // Pour chaque date sélectionnée, on récupère le fraisJour correspondant
