@@ -15,6 +15,7 @@ import { CongesListe } from "../demandeDeConges/congesListe";
 import { AnnuaireListe } from "../annuaire/annuaireListe";
 import { News } from "../news";
 import { APropos } from "../Configuration/aPropos";
+import { BugReport } from "../Configuration/bugReport";
 import { Reglages } from "../Configuration/reglages";
 
 import configurationAppli from "../../configuration/Configuration";
@@ -219,6 +220,10 @@ const navigation = StackNavigator({
   },
   News: {
     screen: News,
+    navigationOptions: { header: null },
+  },
+  BugReport: {
+    screen: BugReport,
     navigationOptions: { header: null },
   },
   APropos: {

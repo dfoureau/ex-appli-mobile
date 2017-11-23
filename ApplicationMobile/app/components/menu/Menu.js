@@ -157,6 +157,20 @@ class ContainerHeader extends Component {
               <Text style={styles.TextItemMenu}>News</Text>
             </View>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.ItemMenu}
+            onPress={() => this.afficherEcran("BugReport")}
+          >
+            <View style={styles.ItemMenuView}>
+              <Image
+                style={styles.IconItemMenu}
+                source={require("../../images/icons/CogIcon.png")}
+              />
+              <Text style={styles.TextItemMenu}>Rapporter une anomalie</Text>
+            </View>
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={[styles.ItemMenu, styles.LastItemMenuLeft]}
             onPress={() => this.afficherEcran("APropos")}
