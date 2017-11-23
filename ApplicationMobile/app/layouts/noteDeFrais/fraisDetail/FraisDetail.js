@@ -224,16 +224,44 @@ class FraisDetail extends React.Component {
     });
   }
 
-
+/**
+ * Suppression : On crée un nouveau frais vide
+ * pour chaque jour sélectionné
+ * @return {[type]} [description]
+ */
   handleDelete() {
-    // dans le cas d'une suppression d'un frais on le supprime du cache (realms)
-    if (!this.state.isNewFrais) {
-      service.deleteById(
-        FRAIS_SCHEMA,
-        this.props.navigation.state.params.idFrais
-      );
-    }
-    this.props.navigation.navigate("FraisAjout");
+    var parent = this.props.navigation.state.params.parent;
+    var listFrais = Array.from(parent.state.listFrais);
+
+    this.state.selectedDatesArray.forEach( date => {
+
+      //recherche du jour dans le tableau parent
+      let fraisJourIndex = listFrais.findIndex(this.findFraisJour(date));
+      if (fraisJourIndex !== null && fraisJourIndex !== undefined) {
+        listFrais[fraisJourIndex] = new FraisJour(date);
+      }
+      else {
+        console.log("JOUR " + date + " : non trouvé");
+      }
+    });
+
+    // On recalcule les montants totaux
+      let totalMontant = 0,
+          totalClient = 0;
+
+      listFrais.forEach((fraisJour) => {
+        totalMontant += fraisJour.totalAReglerFrais;
+        totalClient +=  fraisJour.totalClientFrais;
+      });
+
+    parent.setState({
+      totalMontant: totalMontant,
+      totalClient: totalClient,
+      listFrais: listFrais
+    }, () => {
+      this.props.navigation.dispatch(NavigationActions.back());
+    });
+
   }
 
   /**

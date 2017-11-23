@@ -10,7 +10,7 @@ class FraisJour {
       this.totalAReglerFrais = 0;
       this.totalClientFrais = 0;
       this.detail = {
-        facturable: 0,
+        facturable: false,
         indemKM: 0,
         client: "",
         lieu: "",
@@ -147,7 +147,7 @@ class FraisJour {
     }
 
     if (fraisData.libelle !== undefined ) {
-      this.detail.libelle = fraisData.libelle 
+      this.detail.libelle = fraisData.libelle
     }
 
     this.updateMontants();
