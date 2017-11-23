@@ -74,7 +74,7 @@ class AjoutCra extends React.Component {
         },
       },
       WSLinkCRA: configurationAppli.apiURL + "CRA/RA/",
-	  webServiceLien1: "http://172.16.177.163/Symfony/web/app_dev.php/CRA/typesactivites",
+	  webServiceLien1: configurationAppli.apiURL + "CRA/typesactivites",
       isReady: false,
       data: [],
     };

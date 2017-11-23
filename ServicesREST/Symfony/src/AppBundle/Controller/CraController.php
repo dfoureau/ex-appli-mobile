@@ -569,7 +569,7 @@ class CraController extends Controller
 							);
 		
 		//On va rechercher les codes disponibles dans la table valeurjourouvre
-		$sql = "SELECT DISTINCT id FROM valeurjourouvre";
+		$sql = "SELECT DISTINCT id,valeur FROM valeurjourouvre";
 
 		$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
 		$stmt->execute();
@@ -581,6 +581,7 @@ class CraController extends Controller
 		
 			$row=$retour[$i];
 			$type = $row['id'];
+			$valeur = $row['valeur'];
 			
 			if (in_array($type, array_keys($tablabel))) {
 			$label = $tablabel[$type];
@@ -589,15 +590,15 @@ class CraController extends Controller
 				$label = 'non défini'; 
 				}
 			
-		$tabjo[]=array('code'=>$type, 'label'=>$label);
+		$tabjo[]=array('code'=>$type, 'label'=>$label,'valeur'=>$valeur);
 		}
 		// Et on rajoute les codes et labels n'existant pas dans la table valeurjourouvre
-		$tabjo[]=array('code'=>'0.0','label'=>'Jour non travaillé');
-		$tabjo[]=array('code'=>'1.0','label'=>'Jour travaillé');
+		$tabjo[]=array('code'=>'0.0','label'=>'Jour non travaillé','valeur'=>'0.0');
+		$tabjo[]=array('code'=>'1.0','label'=>'Jour travaillé','valeur'=>'1.0');
 		
 		
 		//On va ensuite rechercher les codes disponibles dans la table valeurjourouvrewe
-		$sql2 = "SELECT DISTINCT id FROM valeurjourouvrewe";
+		$sql2 = "SELECT DISTINCT id,valeur FROM valeurjourouvrewe";
 
 		$stmt2 = $this->getDoctrine()->getManager()->getConnection()->prepare($sql2);
 		$stmt2->execute();
@@ -609,6 +610,7 @@ class CraController extends Controller
 		
 			$row=$retour[$i];
 			$type = $row['id'];
+			$valeur = $row['valeur'];
  			
 			if (in_array($type, array_keys($tablabel))) {
 			$label = $tablabel[$type];
@@ -617,11 +619,11 @@ class CraController extends Controller
 				$label = 'non défini'; 
 				}
 			
-		$tabwe[]=array('code'=>$type, 'label'=>$label);
+		$tabwe[]=array('code'=>$type, 'label'=>$label, 'valeur'=>$valeur);
 		}
 		// Et on rajoute les codes et labels n'existant pas dans la table valeurjourouvrewe
-		$tabwe[]=array('code'=>'0.0','label'=>'Jour non travaillé');
-		$tabwe[]=array('code'=>'1.0','label'=>'Jour travaillé');
+		$tabwe[]=array('code'=>'0.0','label'=>'Jour non travaillé', 'valeur'=>'0.0');
+		$tabwe[]=array('code'=>'1.0','label'=>'Jour travaillé','valeur'=>'1.0');
 		
 		//Et on crée un tableau qui contient les deux tableaux précédents
 		$tab = array('jourouvre'=>$tabjo,'jourwe'=>$tabwe);
