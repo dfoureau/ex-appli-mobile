@@ -23,7 +23,8 @@ import Style from "../../../styles/Styles";
 import styles from "./styles";
 import StyleGeneral from "../../../styles/Styles";
 import moment from "moment";
-import "moment/locale/fr";
+import { momentConfig } from '../../../configuration/MomentConfig';
+
 
 import {
   showToast,
@@ -41,11 +42,10 @@ import { Button } from "../../../components/Buttons";
 import Accueil from "../../accueil/Accueil";
 import FraisDetail from "../fraisDetail/FraisDetail";
 import FraisConfirmation from "../fraisConfirmation/FraisConfirmation";
-import service from "../../../realm/service";
+
+import FraisJour from "../utils/FraisJour";
 
 import configurationAppli from "../../../configuration/Configuration";
-
-const FRAIS_SCHEMA = "Frais";
 
 class FraisAjout extends React.Component {
   constructor(props) {
@@ -85,27 +85,12 @@ class FraisAjout extends React.Component {
       status: "Nouveau",
       header: ["Jour", "Client", "Montant €"],
       rowsFlexArr: [1, 2 ,1],
-      months: [
-        "Janvier",
-        "Février",
-        "Mars",
-        "Avril",
-        "Mai",
-        "Juin",
-        "Juillet",
-        "Août",
-        "Septembre",
-        "Octobre",
-        "Novembre",
-        "Décembre",
-      ],
       monthsWithNDF: params.monthsWithNDF,
       monthSelected: parseInt(monthSelected),
       yearSelected: parseInt(yearSelected),
       listFrais: [],
       totalMontant: 0,
       totalClient: 0,
-      nbJours: 0,
       webServiceLien: configurationAppli.apiURL + "ndf/",
       fetchOptions: {
         headers: {
@@ -115,8 +100,13 @@ class FraisAjout extends React.Component {
     };
   }
 
-  // On initialise la liste des frais vide.
-  // On crée une ligne par jour du mois sélectionné
+  /**
+   * Renvoie un tableau contenant des frais vides
+   * pour chaque jour du mois/année donnés
+   * @param  {int}  year  Année
+   * @param  {month}  month mois
+   * @return {Array}       Le tableau de tous les frais initialisés à 0
+   */
   initFraisVides(year, month) {
     //Initialisation de la date au 1er jour correspondant au mois et à l'année
     // fournis en paramètre
@@ -127,23 +117,27 @@ class FraisAjout extends React.Component {
 
     for (i=1; i<= nbJours; i++) {
       dateSelected.set('date', i);
-      tableauFrais.push({
-        dateShort: dateSelected.format('ddd DD'),
-        client: '',
-        montant: '',
-        id: dateSelected.format('DD-MM-YYYY')
-      });
+      tableauFrais.push(new FraisJour(dateSelected.format('YYYY-MM-DD')));
     }
 
     return tableauFrais;
   }
 
 
-
+  /**
+   * Récupère les informations d'une NDF pour une année et un mois donnés
+   * Une fois les données récupérées, la fonction met également à jour
+   * le state de la page pour reconstruire le tableau des jours
+   *
+   * @param  {int} year  année
+   * @param  {int} month mois
+   * @return {[type]}       [description]
+   */
   getNDF(year, month){
     var that = this;
     let listFrais = this.initFraisVides(year, month);
 
+    // éléments du state représentant un mois vide
     let ndfEmptyState = {
         isReady: true,
         listFrais: listFrais,
@@ -153,6 +147,8 @@ class FraisAjout extends React.Component {
         statusId: null
     }
 
+    // On vérifie que le mois à chercher est bien dans le tableau des mois contenant une NDF
+    // Sinon, on affiche directement une table vide
     if (!this.state.monthsWithNDF.includes(month)) {
       that.setState(ndfEmptyState)
     }
@@ -176,90 +172,40 @@ class FraisAjout extends React.Component {
           //Construction du tableau de la note de frais
           var frais = ndf["notesDeFrais"];
 
-          let tableauFrais = listFrais;
           // intialisation des totaux globaux
           var totalAReglerAllFrais = 0;
           var totalClientAllFrais = 0;
 
           if (frais != null) {
             frais.forEach(function(item) {
-              let jours = moment({
+              let jour = moment({
                 y: item["annee"],
                 M: item["mois"] -1, // Décalage du mois dû au fait que les mois en JS sont indexés de 0 à 11
                 d: item["jour"],
               });
-              //Création de l'item "frais" dans le cache
-              that.mapperDonneesFrais(item, ndf["idUser"], jours);
-              var frais = service.getByPrimaryKey(
-                FRAIS_SCHEMA,
-                jours.format("DD-MM-YYYY")
-              );
 
-              totauxFrais = that.calculTotaux(frais);
+              let fraisJour = new FraisJour(jour.format('YYYY-MM-DD'));
+              fraisJour.mapperDonnees(item); // Mapping des donnees et update du montant
 
-              totalAReglerAllFrais += totauxFrais.totalAReglerFrais;
-              totalClientAllFrais += totauxFrais.totalClientFrais;
-              tableauFrais[item["jour"] -1] = {
-                dateShort: jours.format('ddd DD'),
-                client: item["client"],
-                montant: totauxFrais != null ? totauxFrais.totalAReglerFrais : "",
-                id: jours.format('DD-MM-YYYY'),
-              }
+              totalAReglerAllFrais += fraisJour.totalAReglerFrais;
+              totalClientAllFrais  += fraisJour.totalClientFrais;
+
+              listFrais[item["jour"] -1] = fraisJour;
             });
 
-          }
-          that.setState({
-            listFrais: tableauFrais,
-            totalMontant: totalAReglerAllFrais.toFixed(2),
-            totalClient: totalClientAllFrais.toFixed(2),
-            status: ndf["libelleEtat"],
-            statusId: ndf["etat"],
-            isReady: true
-          });
+           that.setState({
+              listFrais: listFrais,
+              totalMontant: totalAReglerAllFrais,
+              totalClient: totalClientAllFrais,
+              status: ndf["libelleEtat"],
+              statusId: ndf["etat"],
+              isReady: true
+            });
         }
-      });
-    }
+      }
+    });
   }
-
-  //Fonction permettant de créér dans le cache les frais récupérés de l'API
-  mapperDonneesFrais(item, idUser, jour) {
-    // on insère les données créées dans le cache
-    let frais = {
-      id: jour.format("DD-MM-YYYY"),
-      jour: parseInt(item["jour"]),
-      mois: parseInt(item["mois"]),
-      annee: parseInt(item["annee"]),
-      // TODO remplacer par celui connecté
-      idUser: parseInt(idUser),
-      indemKM: parseFloat(item["indemKM"]),
-      client: item["client"],
-      facturable: parseInt(item["facturable"]),
-      lieu: item["lieu"],
-      nbKMS: parseInt(item["nbKM"]),
-      peages: parseFloat(item["montantPeages"]),
-      forfait: parseFloat(item["montantForfait"]),
-      sncf: parseFloat(item["montantFraisSNCF"]),
-      nbZones: parseInt(item["montantNbZone"]),
-      pourcentage: parseFloat(item["montantPourcentage"]),
-      hotel: parseFloat(item["montantHotel"]),
-      repas: parseFloat(item["montantRepas"]),
-      invit: parseFloat(item["montantInvitation"]),
-      essence: parseFloat(item["montantEssence"]),
-      taxi: parseFloat(item["montantTaxi"]),
-      parking: parseFloat(item["montantParking"]),
-      divers: parseFloat(item["montantDivers"]),
-      libelle: item["libelleDivers"],
-    };
-
-    // On test si le frais existe
-    if (service.getByPrimaryKey(FRAIS_SCHEMA, frais.id) != null) {
-      // mise à jour du frais
-      service.update(FRAIS_SCHEMA, frais);
-    } else {
-      // Création d'un frais
-      service.insert(FRAIS_SCHEMA, frais);
-    }
-  }
+}
 
   reloadNDFByYear(_month){
     this.setState({
@@ -276,98 +222,23 @@ class FraisAjout extends React.Component {
     // var initListAndTotals = this.initListAndTotals();
     this.getNDF(this.state.yearSelected, this.state.monthSelected);
 
-    // that.setState({
-    //     listFrais: initListAndTotals.listFrais,
-    //     totalMontant: initListAndTotals.totalAReglerAllFrais,
-    //     totalClient: initListAndTotals.totalClientAllFrais,
-    //   });
-
   }
 
   // Méthode permettant de calculer le total à régler d'un frais
   calculTotaux(frais) {
-    // on calcul le total avec un arrondi de 2 décimals
-    var total = (
-      frais.indemKM * frais.nbKMS +
-      frais.forfait +
-      frais.sncf +
-      frais.pourcentage +
-      frais.hotel +
-      frais.repas +
-      frais.invit +
-      frais.peages +
-      frais.essence +
-      frais.taxi +
-      frais.parking +
-      frais.divers
-    ).toFixed(2);
 
-    return {
-      totalAReglerFrais: parseFloat(total),
-      totalClientFrais: frais.facturable == 1 ? parseFloat(total) : 0,
-    };
   }
 
-  // Méthode permettant l'initialisation de la liste des frais et des totaux (montant à régler et client)
-  initListAndTotals() {
-    // intialisation des totaux globaux
-    var totalAReglerAllFrais = 0;
-    var totalClientAllFrais = 0;
-
-    //Nouvelle NDF -> Tableau vide initié
-    let currentDate = new Date();
-    let initList = [],
-      jours = moment({ y: "2017", M: currentDate.getMonth(), d: 1 }), //Date de depart : le 1er du mois
-      month = jours.month(), //numero du mois choisi
-      monthOk = true; //verif que le mois est toujours le bon
-    while (monthOk) {
-      if (jours.month() == month) {
-        // on récupère le frais pour la date
-        var frais = service.getByPrimaryKey(
-          FRAIS_SCHEMA,
-          jours.format("DD-MM-YYYY")
-        );
-        var totauxFrais = null;
-
-        // le frais existe en cache
-        if (frais != null) {
-          // on calcul les totaux
-          totauxFrais = this.calculTotaux(frais);
-          // on incrémentes les totaux globaux
-          totalAReglerAllFrais += totauxFrais.totalAReglerFrais;
-          totalClientAllFrais += totauxFrais.totalClientFrais;
-        }
-
-        initList.push({
-          // l'id du frais correspond à sa date au format DD-MM-YYYY
-          id: jours.format("DD-MM-YYYY"),
-          date: jours.format("DD-MM-YYYY"),
-          dateShort: jours.format("dd DD"),
-          client: frais != null ? frais.client : "",
-          // affichage des totaux spécifiques à un frais
-          montant: totauxFrais != null ? totauxFrais.totalAReglerFrais : "",
-        });
-
-        jours.add(1, "days"); //passe au jour suivant
-      } else monthOk = false; //Si on passe au moins suivant on arrete
-    }
-    return {
-      listFrais: initList,
-      totalAReglerAllFrais: totalAReglerAllFrais,
-      totalClientAllFrais: totalClientAllFrais,
-    };
-  }
 
   //Affiche les lignes du tableau à partir de listFrais
   afficherRow() {
-    moment.locale("fr");
-    return this.state.listFrais.map((row, i) => (
-      <TouchableOpacity key={i} onPress={() => this.modifyNDF(row.id, this.state.statusId)}>
+    return this.state.listFrais.map((fraisJour, i) => (
+      <TouchableOpacity key={i} onPress={() => this.modifyNDF(fraisJour.date, this.state.statusId)}>
         <Row
           style={[styles.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
           textStyle={styles.rowText}
-          data={[row.dateShort, row.client, row.montant ? row.montant : 0]}
+          data={[moment(fraisJour.date).format('ddd DD'), fraisJour.detail.client, fraisJour.totalAReglerFrais.toFixed(2)]}
           flexArr= {this.state.rowsFlexArr}
         />
       </TouchableOpacity>
@@ -376,7 +247,7 @@ class FraisAjout extends React.Component {
 
   //Affiche le contenu du menu des mois/années
   loadPickerItems() {
-    return this.state.months.map((item, i) => (
+    return moment.months().map((item, i) => (
       <Picker.Item label={item + ' ' + this.state.yearSelected} value={i+1} key={i} />
     ));
   }
@@ -389,7 +260,7 @@ class FraisAjout extends React.Component {
     this.props.navigation.navigate("FraisDetail", {
       forfait: false,
       idFrais: idFrais,
-      statusId: statusId,
+      parent: this
     });
   }
 
@@ -400,9 +271,7 @@ class FraisAjout extends React.Component {
   addNDF(monthSelected, statusId) {
     this.props.navigation.navigate("FraisDetail", {
       forfait: true,
-      month: monthSelected,
-      year: yearSelected,
-      statusId: statusId,
+      parent: this
     });
   }
   deleteNDF() {
@@ -515,12 +384,11 @@ class FraisAjout extends React.Component {
                 <View style={styles.containerColumn}>
                   <View style={styles.containerInfoElement}>
                     <Text style={styles.text}>
-                      Total à régler : {this.state.totalMontant} €
+                      Total à régler : {this.state.totalMontant.toFixed(2)} €
                     </Text>
                     <Text style={styles.text}>
-                      Total client : {this.state.totalClient} €
+                      Total client : {this.state.totalClient.toFixed(2)} €
                     </Text>
-                    {/*<Text style={styles.text}>Nombre de jours : {this.state.nbJours}</Text>*/}
                   </View>
                   <View style={styles.containerButton}>
                     <Button

@@ -9,14 +9,14 @@ import Style from "../../../styles/Styles";
 import styles from "./styles";
 import CheckBox from "react-native-check-box";
 import moment from "moment";
+import { momentConfig } from '../../../configuration/MomentConfig';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
 import { Button } from "../../../components/Buttons";
 import Panel from "../../../components/Panel/Panel";
-import service from "../../../realm/service";
 
-const FRAIS_SCHEMA = "Frais";
+import FraisJour from "../utils/FraisJour";
 
 class FraisDetail extends React.Component {
   static propTypes = {
@@ -30,29 +30,34 @@ class FraisDetail extends React.Component {
     this.setInitialValues();
   }
 
+  findFraisJour(jour) {
+      return ((element) => {return element.date == jour; });
+  }
+
   setInitialValues() {
     // indique si on se trouve dans le cas d'un création de frais
     let isNewFrais = true;
     let calendarDateFormat = "YYYY-MM-DD";
-    let calendarDate = moment().format('YYYY-MM-DD');
+    let calendarDate = moment().format(calendarDateFormat);
 
     const params = this.props.navigation.state.params;
 
-    if (params.idFrais != null) {
+    if (params.idFrais != null && params.idFrais != undefined) {
       // on récupère le frais dans le cas d'une modification
       calendarDate = moment(params.idFrais, 'DD-MM-YYYY');
-      var frais = service.getByPrimaryKey(
-        FRAIS_SCHEMA,
-        params.idFrais
-      );
-      if (frais != null) {
-        // il existe un frais déjà crée en cache
-        isNewFrais = false;
-      }
+
+      // Recherche du fraisJour dans la listFrais du parent
+        var frais = params.parent.state.listFrais.find(this.findFraisJour(params.idFrais));
+
+        if (frais != null && frais != undefined) {
+          // il existe un frais déjà crée en cache
+          isNewFrais = false;
+        }
     }
     else {
-      let month = params.month ? params.month : moment().month(),
-          year = params.year ? params.year : moment().year();
+      let month = params.parent.state.monthSelected
+          year = params.parent.state.yearSelected;
+
           calendarDate = moment(year + '-' + month , 'YYYY-M');
     }
 
@@ -65,26 +70,24 @@ class FraisDetail extends React.Component {
       selectedDatesArray: [],
       isforfait: this.props.navigation.state.params.forfait,
       isNewFrais: isNewFrais,
-      factureClientChecked: isNewFrais
-        ? false
-        : frais.facturable == 1 ? true : false,
-      nomClient: isNewFrais ? "" : frais.client,
-      lieuDeplacement: isNewFrais ? "" : frais.lieu,
-      nbKm: isNewFrais ? "" : frais.nbKMS.toString(),
-      indemKm: 0.333,
-      forfait: isNewFrais ? "" : frais.forfait.toString(),
-      sncf: isNewFrais ? "" : frais.sncf.toString(),
-      peages: isNewFrais ? "" : frais.peages.toString(),
-      essence: isNewFrais ? "" : frais.essence.toString(),
-      taxi: isNewFrais ? "" : frais.taxi.toString(),
-      nbZones: isNewFrais ? "" : frais.nbZones.toString(),
-      pourcent: isNewFrais ? "" : frais.pourcentage.toString(),
-      hotel: isNewFrais ? "" : frais.hotel.toString(),
-      repas: isNewFrais ? "" : frais.repas.toString(),
-      invitation: isNewFrais ? "" : frais.invit.toString(),
-      parking: isNewFrais ? "" : frais.parking.toString(),
-      divers: isNewFrais ? "" : frais.divers.toString(),
-      libelleDivers: isNewFrais ? "" : frais.libelle,
+      facturable: !isNewFrais && frais.detail.facturable,
+      client: isNewFrais ? "" : frais.detail.client,
+      lieu: isNewFrais ? "" : frais.detail.lieu,
+      nbKMS: isNewFrais ? "0" : frais.detail.nbKMS.toString(),
+      indemKM: isNewFrais ? "0.00" : frais.detail.indemKM.toString(),
+      forfait: isNewFrais ? "0.00" : frais.detail.forfait.toFixed(2),
+      sncf: isNewFrais ? "0.00" : frais.detail.sncf.toFixed(2),
+      peages: isNewFrais ? "0.00" : frais.detail.peages.toFixed(2),
+      essence: isNewFrais ? "0.00" : frais.detail.essence.toFixed(2),
+      taxi: isNewFrais ? "0.00" : frais.detail.taxi.toFixed(2),
+      nbZones: isNewFrais ? "0" : frais.detail.nbZones.toFixed(0),
+      pourcentage: isNewFrais ? "0.00" : frais.detail.pourcentage.toFixed(2),
+      hotel: isNewFrais ? "0.00" : frais.detail.hotel.toFixed(2),
+      repas: isNewFrais ? "0.00" : frais.detail.repas.toFixed(2),
+      invit: isNewFrais ? "0.00" : frais.detail.invit.toFixed(2),
+      parking: isNewFrais ? "0.00" : frais.detail.parking.toFixed(2),
+      divers: isNewFrais ? "0.00" : frais.detail.divers.toFixed(2),
+      libelle: isNewFrais ? "" : frais.detail.libelle,
       calendarDateFormat: calendarDateFormat,
       calendarDate: calendarDate.format(calendarDateFormat),
       calendarMinDate: calendarMinDate,
@@ -99,24 +102,21 @@ class FraisDetail extends React.Component {
 
     // dans le cas d'une modifcation d'un frais on alimente le tableau de date avec la date du frais (correspondant à son id)
     if (this.props.navigation.state.params.idFrais != null) {
-      selectedDates.push(moment(this.props.navigation.state.params.idFrais, "DD-MM-YYYY"));
+      selectedDates.push(this.props.navigation.state.params.idFrais);
     }
     else {
-      let month = this.props.navigation.state.params.month, //chaine de caractère du mois de la NDF
-          year = this.props.navigation.state.params.year;
-
-          let currentDate = moment(year+'-'+month+'-01', 'YYYY-M-DD');
+          let currentDate = moment(this.state.calendarMinDate, this.state.calendarDateFormat);
           let nbJours = currentDate.daysInMonth(); // Nombre de jours dans le mois
 
           for (i=1; i<= nbJours; i++) {
             currentDate.set('date', i);
 
             if (currentDate.day() > 0 && currentDate.day() < 6 && !this.state.joursFeries.includes(currentDate)) {
-              selectedDates.push(currentDate.clone());
+              selectedDates.push(currentDate.clone().format('YYYY-MM-DD'));
             }
           }
         }
-        return selectedDates.map(d => d.format('YYYY-MM-DD'));
+        return selectedDates;
       }
 
   onDateSelected(day) {
@@ -139,90 +139,138 @@ class FraisDetail extends React.Component {
   }
 
   afficherDate() {
-    let date = moment(this.props.navigation.state.params.idFrais, "DD-MM-YYYY");
+    let date = moment(this.props.navigation.state.params.idFrais);
     return date.format("dddd DD MMMM YYYY");
   }
 
   //Inputs handle
   handleChecked() {
     this.setState(prevState => ({
-      factureClientChecked: !prevState.factureClientChecked,
+      facturable: !prevState.facturable,
     }));
   }
 
-  handleValidate() {
-    // on insère les données créées dans le cache
-    let frais = {
-      id: "", // primary key
-      jour: 0,
-      mois: 0,
-      annee: 0,
-      // TODO remplacer par celui connecté
-      idUser: 999,
-      indemKM: this.state.indemKm,
-      client: this.state.nomClient,
-      facturable: this.state.factureClientChecked ? 1 : 0,
-      lieu: this.state.lieuDeplacement,
-      nbKMS: this.state.nbKm != "" ? parseInt(this.state.nbKm) : 0,
-      peages: this.state.peages != "" ? parseFloat(this.state.peages) : 0,
-      forfait: this.state.forfait != "" ? parseFloat(this.state.forfait) : 0,
-      sncf: this.state.sncf != "" ? parseFloat(this.state.sncf) : 0,
-      nbZones: this.state.nbZones != "" ? parseInt(this.state.nbZones) : 0,
-      pourcentage:
-        this.state.pourcent != "" ? parseFloat(this.state.pourcent) : 0,
-      hotel: this.state.hotel != "" ? parseFloat(this.state.hotel) : 0,
-      repas: this.state.repas != "" ? parseFloat(this.state.repas) : 0,
-      invit:
-        this.state.invitation != "" ? parseFloat(this.state.invitation) : 0,
-      essence: this.state.essence != "" ? parseFloat(this.state.essence) : 0,
-      taxi: this.state.taxi != "" ? parseFloat(this.state.taxi) : 0,
-      parking: this.state.parking != "" ? parseFloat(this.state.parking) : 0,
-      divers: this.state.divers != "" ? parseFloat(this.state.divers) : 0,
-      libelle: this.state.libelleDivers,
+  /**
+   * Rassemble toutes les informations de détail relatives à un FraisJour
+   * depuis le state, et renvoie un objet contenant toutes les
+   * clés: valeurs correspondantes
+   * @return {Boolean} [description]
+   */
+  getFraisJourData() {
+    return {
+      facturable: this.state.facturable,
+      indemKM: this.state.indemKM,
+      client: this.state.client,
+      lieu: this.state.lieu,
+      nbKMS: this.state.nbKMS,
+      peages: this.state.peages,
+      forfait: this.state.forfait,
+      sncf: this.state.sncf,
+      nbZones: this.state.nbZones,
+      pourcentage: this.state.pourcentage,
+      hotel: this.state.hotel,
+      repas: this.state.repas,
+      invit: this.state.invit,
+      essence: this.state.essence,
+      taxi: this.state.taxi,
+      parking: this.state.parking,
+      divers: this.state.divers,
+      libelle: this.state.libelle
     };
+  }
 
-    // pour chaque date sélectionnée on crée un frais en cache (realms)
-    this.state.selectedDatesArray.forEach(date => {
-      // la clée primaire insérée correspondant à la date du frais
-      frais.id = moment(date).format("DD-MM-YYYY");
-      frais.jour = moment(date).get("day");
-      frais.mois = moment(date).get("month");
-      frais.annee = moment(date).get("year");
+  /**
+   * Fonction de validation de la note de frais
+   * @return {[type]} [description]
+   */
+  handleValidate() {
 
-      // On test si le frais existe
-      if (service.getByPrimaryKey(FRAIS_SCHEMA, frais.id) != null) {
-        // mise à jour du frais
-        service.update(FRAIS_SCHEMA, frais);
-      } else {
-        // Création d'un frais
-        service.insert(FRAIS_SCHEMA, frais);
+    // On initialise l'objet fraisData à utiliser pour updater les fraisJours
+    // à partir du state
+    let fraisJourData = this.getFraisJourData();
+
+    var parent = this.props.navigation.state.params.parent;
+    var listFrais = Array.from(parent.state.listFrais);
+    // Pour chaque date sélectionnée, on récupère le fraisJour correspondant
+    // dans la listeFrais du parent, et on lui mappe les données de notre state
+    this.state.selectedDatesArray.forEach( date => {
+
+      //recherche du jour dans le tableau parent
+      let fraisJour = listFrais.find(this.findFraisJour(date));
+      if (fraisJour !== null && fraisJour !== undefined) {
+        fraisJour.updateDetail(fraisJourData);
+      }
+      else {
+        console.log("JOUR " + date + " : non trouvé");
+      }
+
+    });
+
+    // On recalcule les montants totaux
+      let totalMontant = 0,
+          totalClient = 0;
+
+      listFrais.forEach((fraisJour) => {
+        totalMontant += fraisJour.totalAReglerFrais;
+        totalClient +=  fraisJour.totalClientFrais;
+      });
+
+    parent.setState({
+      totalMontant: totalMontant,
+      totalClient: totalClient,
+      listFrais: listFrais
+    }, () => {
+      this.props.navigation.dispatch(NavigationActions.back());
+    });
+  }
+
+/**
+ * Suppression : On crée un nouveau frais vide
+ * pour chaque jour sélectionné
+ * @return {[type]} [description]
+ */
+  handleDelete() {
+    var parent = this.props.navigation.state.params.parent;
+    var listFrais = Array.from(parent.state.listFrais);
+
+    this.state.selectedDatesArray.forEach( date => {
+
+      //recherche du jour dans le tableau parent
+      let fraisJourIndex = listFrais.findIndex(this.findFraisJour(date));
+      if (fraisJourIndex !== null && fraisJourIndex !== undefined) {
+        listFrais[fraisJourIndex] = new FraisJour(date);
+      }
+      else {
+        console.log("JOUR " + date + " : non trouvé");
       }
     });
 
-    //Si forfait: params = liste des dates modifiees et des valeurs
-    //Si non: params = id de la ligne, valeurs
-    if (!this.state.isforfait) {
-      this.props.navigation.navigate("FraisAjout", {
-        idFrais: this.props.navigation.state.params.idFrais,
+    // On recalcule les montants totaux
+      let totalMontant = 0,
+          totalClient = 0;
+
+      listFrais.forEach((fraisJour) => {
+        totalMontant += fraisJour.totalAReglerFrais;
+        totalClient +=  fraisJour.totalClientFrais;
       });
-    } else {
-      this.props.navigation.navigate("FraisAjout", {
-        idFrais: this.props.navigation.state.params.idFrais,
-      });
-    }
-  }
-  handleDelete() {
-    // dans le cas d'une suppression d'un frais on le supprime du cache (realms)
-    if (!this.state.isNewFrais) {
-      service.deleteById(
-        FRAIS_SCHEMA,
-        this.props.navigation.state.params.idFrais
-      );
-    }
-    this.props.navigation.navigate("FraisAjout");
+
+    parent.setState({
+      totalMontant: totalMontant,
+      totalClient: totalClient,
+      listFrais: listFrais
+    }, () => {
+      this.props.navigation.dispatch(NavigationActions.back());
+    });
+
   }
 
-  /** Au chargement **/
+  /**
+   * Fonction de conversions des dates pour l'affichage
+   * dans le composant Caldendar
+   * On renvoie un objet en mode clé: valeur,
+   * où chaque clé est une chaine de caractère représentant une date
+   * @return {[type]} [description]
+   */
   convertDates() {
     //Converti les dates selectionnees stockees sous forme de tableau en objet
     let datesObject = {};
@@ -317,7 +365,7 @@ class FraisDetail extends React.Component {
                 <View style={styles.inputView}>
                   <CheckBox
                     onClick={() => this.handleChecked()}
-                    isChecked={this.state.factureClientChecked}
+                    isChecked={this.state.facturable}
                     rightText="Facture client ?"
                     rightTextStyle={{ color: "black", fontSize: 16 }}
                     style={styles.checkbox}
@@ -326,8 +374,8 @@ class FraisDetail extends React.Component {
                     <Text style={styles.text}>Client/Object* :</Text>
                     <TextInput
                       style={styles.inputComponent}
-                      value={this.state.nomClient}
-                      onChangeText={text => this.setState({ nomClient: text })}
+                      value={this.state.client}
+                      onChangeText={text => this.setState({ client: text })}
                       editable={true}
                       underlineColorAndroid="transparent"
                     />
@@ -336,10 +384,10 @@ class FraisDetail extends React.Component {
                     <Text style={styles.text}>Lieu de déplacement* :</Text>
                     <TextInput
                       style={styles.inputComponent}
-                      value={this.state.lieuDeplacement}
+                      value={this.state.lieu}
                       placeholderTextColor="#000000"
                       onChangeText={text =>
-                        this.setState({ lieuDeplacement: text })}
+                        this.setState({ lieu: text })}
                       editable={true}
                       underlineColorAndroid="transparent"
                     />
@@ -350,7 +398,7 @@ class FraisDetail extends React.Component {
               <Panel
                 title="Forfait"
                 containerStyle={{ backgroundColor: "transparent", margin: 0 }}
-                expanded={false}
+                expanded={true}
               >
                 <View style={styles.inputView}>
                   <View style={styles.inputGroup}>
@@ -391,8 +439,8 @@ class FraisDetail extends React.Component {
                     </Text>
                     <TextInput
                       style={[styles.inputComponent, styles.inputComponentRow]}
-                      value={this.state.nbKm}
-                      onChangeText={text => this.setState({ nbKm: text })}
+                      value={this.state.nbKMS}
+                      onChangeText={text => this.setState({ nbKMS: text })}
                       editable={true}
                       underlineColorAndroid="transparent"
                       keyboardType="numeric"
@@ -469,7 +517,7 @@ class FraisDetail extends React.Component {
                     <Text
                       style={[styles.text, { width: 130, textAlign: "right" }]}
                     >
-                      {this.state.indemKm}
+                      {this.state.indemKM}
                     </Text>
                   </View>
                 </View>
@@ -498,8 +546,8 @@ class FraisDetail extends React.Component {
                     <Text style={[styles.text, styles.inputText]}>50% :</Text>
                     <TextInput
                       style={[styles.inputComponent, styles.inputComponentRow]}
-                      value={this.state.pourcent}
-                      onChangeText={text => this.setState({ pourcent: text })}
+                      value={this.state.pourcentage}
+                      onChangeText={text => this.setState({ pourcentage: text })}
                       editable={true}
                       underlineColorAndroid="transparent"
                       keyboardType="numeric"
@@ -542,8 +590,8 @@ class FraisDetail extends React.Component {
                     </Text>
                     <TextInput
                       style={[styles.inputComponent, styles.inputComponentRow]}
-                      value={this.state.invitation}
-                      onChangeText={text => this.setState({ invitation: text })}
+                      value={this.state.invit}
+                      onChangeText={text => this.setState({ invit: text })}
                       editable={true}
                       underlineColorAndroid="transparent"
                       keyboardType="numeric"
@@ -587,9 +635,9 @@ class FraisDetail extends React.Component {
                         styles.inputComponentRow,
                         styles.inputComponentSmall,
                       ]}
-                      value={this.state.libelleDivers}
+                      value={this.state.libelle}
                       onChangeText={text =>
-                        this.setState({ libelleDivers: text })}
+                        this.setState({ libelle: text })}
                       editable={true}
                       underlineColorAndroid="transparent"
                     />
@@ -598,6 +646,11 @@ class FraisDetail extends React.Component {
               </Panel>
             </View>
           </View>
+
+          <View style={styles.container}>
+            <Text style={styles.text}> Total : {(FraisJour.calculerTotal(this.state)).toFixed(2)} </Text>
+          </View>
+
 
           <View style={styles.containerButton}>
             {this.showDeleteButton()}
