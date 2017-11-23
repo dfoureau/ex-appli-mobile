@@ -16,6 +16,8 @@ import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
 import { Button } from "../../../components/Buttons";
 import Panel from "../../../components/Panel/Panel";
 
+import FraisJour from "../../../components/FraisJour/FraisJour";
+
 class FraisDetail extends React.Component {
   static propTypes = {
     forfait: PropTypes.bool,
@@ -68,26 +70,24 @@ class FraisDetail extends React.Component {
       selectedDatesArray: [],
       isforfait: this.props.navigation.state.params.forfait,
       isNewFrais: isNewFrais,
-      factureClientChecked: isNewFrais
-        ? false
-        : frais.detail.facturable == 1 ? true : false,
+      facturable: !isNewFrais && frais.detail.facturable,
       client: isNewFrais ? "" : frais.detail.client,
       lieu: isNewFrais ? "" : frais.detail.lieu,
       nbKMS: isNewFrais ? "0" : frais.detail.nbKMS.toString(),
-      indemKm: isNewFrais ? "0" : frais.detail.indemKm,
-      forfait: isNewFrais ? "0" : frais.detail.forfait.toString(),
-      sncf: isNewFrais ? "0" : frais.detail.sncf.toString(),
-      peages: isNewFrais ? "0" : frais.detail.peages.toString(),
-      essence: isNewFrais ? "0" : frais.detail.essence.toString(),
-      taxi: isNewFrais ? "0" : frais.detail.taxi.toString(),
-      nbZones: isNewFrais ? "0" : frais.detail.nbZones.toString(),
-      pourcentage: isNewFrais ? "0" : frais.detail.pourcentage.toString(),
-      hotel: isNewFrais ? "0" : frais.detail.hotel.toString(),
-      repas: isNewFrais ? "0" : frais.detail.repas.toString(),
-      invit: isNewFrais ? "0" : frais.detail.invit.toString(),
-      parking: isNewFrais ? "0" : frais.detail.parking.toString(),
-      divers: isNewFrais ? "0" : frais.detail.divers.toString(),
-      libelle: isNewFrais ? "0" : frais.detail.libelle,
+      indemKM: isNewFrais ? "0.00" : frais.detail.indemKM.toString(),
+      forfait: isNewFrais ? "0.00" : frais.detail.forfait.toFixed(2),
+      sncf: isNewFrais ? "0.00" : frais.detail.sncf.toFixed(2),
+      peages: isNewFrais ? "0.00" : frais.detail.peages.toFixed(2),
+      essence: isNewFrais ? "0.00" : frais.detail.essence.toFixed(2),
+      taxi: isNewFrais ? "0.00" : frais.detail.taxi.toFixed(2),
+      nbZones: isNewFrais ? "0" : frais.detail.nbZones.toFixed(0),
+      pourcentage: isNewFrais ? "0.00" : frais.detail.pourcentage.toFixed(2),
+      hotel: isNewFrais ? "0.00" : frais.detail.hotel.toFixed(2),
+      repas: isNewFrais ? "0.00" : frais.detail.repas.toFixed(2),
+      invit: isNewFrais ? "0.00" : frais.detail.invit.toFixed(2),
+      parking: isNewFrais ? "0.00" : frais.detail.parking.toFixed(2),
+      divers: isNewFrais ? "0.00" : frais.detail.divers.toFixed(2),
+      libelle: isNewFrais ? "" : frais.detail.libelle,
       calendarDateFormat: calendarDateFormat,
       calendarDate: calendarDate.format(calendarDateFormat),
       calendarMinDate: calendarMinDate,
@@ -146,21 +146,20 @@ class FraisDetail extends React.Component {
   //Inputs handle
   handleChecked() {
     this.setState(prevState => ({
-      factureClientChecked: !prevState.factureClientChecked,
+      facturable: !prevState.facturable,
     }));
   }
 
   /**
-   * Fonction de validation de la note de frais
-   * @return {[type]} [description]
+   * Rassemble toutes les informations de détail relatives à un FraisJour
+   * depuis le state, et renvoie un objet contenant toutes les
+   * clés: valeurs correspondantes
+   * @return {Boolean} [description]
    */
-  handleValidate() {
-
-    // On initialise l'objet fraisData à utiliser pour updater les fraisJours
-    // à partir du state
-    let fraisJourData = {
+  getFraisJourData() {
+    return {
       facturable: this.state.facturable,
-      indemKM: this.state.indemKm,
+      indemKM: this.state.indemKM,
       client: this.state.client,
       lieu: this.state.lieu,
       nbKMS: this.state.nbKMS,
@@ -177,7 +176,18 @@ class FraisDetail extends React.Component {
       parking: this.state.parking,
       divers: this.state.divers,
       libelle: this.state.libelle
-    }
+    };
+  }
+
+  /**
+   * Fonction de validation de la note de frais
+   * @return {[type]} [description]
+   */
+  handleValidate() {
+
+    // On initialise l'objet fraisData à utiliser pour updater les fraisJours
+    // à partir du state
+    let fraisJourData = this.getFraisJourData();
 
     var parent = this.props.navigation.state.params.parent;
     var listFrais = Array.from(parent.state.listFrais);
@@ -226,7 +236,13 @@ class FraisDetail extends React.Component {
     this.props.navigation.navigate("FraisAjout");
   }
 
-  /** Au chargement **/
+  /**
+   * Fonction de conversions des dates pour l'affichage
+   * dans le composant Caldendar
+   * On renvoie un objet en mode clé: valeur,
+   * où chaque clé est une chaine de caractère représentant une date
+   * @return {[type]} [description]
+   */
   convertDates() {
     //Converti les dates selectionnees stockees sous forme de tableau en objet
     let datesObject = {};
@@ -321,7 +337,7 @@ class FraisDetail extends React.Component {
                 <View style={styles.inputView}>
                   <CheckBox
                     onClick={() => this.handleChecked()}
-                    isChecked={this.state.factureClientChecked}
+                    isChecked={this.state.facturable}
                     rightText="Facture client ?"
                     rightTextStyle={{ color: "black", fontSize: 16 }}
                     style={styles.checkbox}
@@ -354,7 +370,7 @@ class FraisDetail extends React.Component {
               <Panel
                 title="Forfait"
                 containerStyle={{ backgroundColor: "transparent", margin: 0 }}
-                expanded={false}
+                expanded={true}
               >
                 <View style={styles.inputView}>
                   <View style={styles.inputGroup}>
@@ -473,7 +489,7 @@ class FraisDetail extends React.Component {
                     <Text
                       style={[styles.text, { width: 130, textAlign: "right" }]}
                     >
-                      {this.state.indemKm}
+                      {this.state.indemKM}
                     </Text>
                   </View>
                 </View>

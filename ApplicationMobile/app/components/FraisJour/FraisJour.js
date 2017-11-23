@@ -29,11 +29,14 @@ class FraisJour {
         divers: 0,
         libelle: ""
       };
+      this.montants = {
+        forfait: 0,
+        transport: 0,
+        abonnements: 0,
+        reception: 0,
+        divers: 0
+      }
     }
-
-  hasId(id) {
-    return this.synthese.id === id;
-  }
 
   /**
    * Renseigne le détail de l'objet à partir du résultat d'une requête GET
@@ -43,27 +46,28 @@ class FraisJour {
    */
   mapperDonnees(data) {
     this.detail = {
-      facturable: parseInt(data["facturable"]),
-      indemKM: parseFloat(data["indemKM"]),
+      facturable: Boolean(parseInt(data["facturable"])),
+      indemKM: parseFloat(data["indemKM"]) || 0,
       client: data["client"],
       lieu: data["lieu"],
-      nbKMS: parseInt(data["nbKM"]),
-      peages: parseFloat(data["montantPeages"]),
-      forfait: parseFloat(data["montantForfait"]),
-      sncf: parseFloat(data["montantFraisSNCF"]),
-      nbZones: parseInt(data["montantNbZone"]),
-      pourcentage: parseFloat(data["montantPourcentage"]),
-      hotel: parseFloat(data["montantHotel"]),
-      repas: parseFloat(data["montantRepas"]),
-      invit: parseFloat(data["montantInvitation"]),
-      essence: parseFloat(data["montantEssence"]),
-      taxi: parseFloat(data["montantTaxi"]),
-      parking: parseFloat(data["montantParking"]),
-      divers: parseFloat(data["montantDivers"]),
+      nbKMS: parseInt(data["nbKM"]) || 0,
+      peages: parseFloat(data["montantPeages"]) || 0,
+      forfait: parseFloat(data["montantForfait"]) || 0,
+      sncf: parseFloat(data["montantFraisSNCF"]) || 0,
+      nbZones: parseInt(data["montantNbZone"]) || 0,
+      pourcentage: parseFloat(data["montantPourcentage"]) || 0,
+      hotel: parseFloat(data["montantHotel"]) || 0,
+      repas: parseFloat(data["montantRepas"]) || 0,
+      invit: parseFloat(data["montantInvitation"]) || 0,
+      essence: parseFloat(data["montantEssence"]) || 0,
+      taxi: parseFloat(data["montantTaxi"]) || 0,
+      parking: parseFloat(data["montantParking"]) || 0,
+      divers: parseFloat(data["montantDivers"]) || 0,
       libelle: data["libelleDivers"]
     }
 
     this.updateMontants();
+
   }
 
   /**
@@ -73,8 +77,9 @@ class FraisJour {
    * @return {[type]}            [description]
    */
   updateDetail(fraisData) {
+
     if (fraisData.facturable !== undefined ) {
-      this.detail.facturable = parseInt(fraisData.facturable)
+      this.detail.facturable = Boolean(fraisData.facturable);
     }
 
     // if (fraisData.indemKM !== undefined ) {
@@ -90,59 +95,59 @@ class FraisJour {
     }
 
     if (fraisData.nbKMS !== undefined ) {
-      this.detail.nbKMS = parseInt(fraisData.nbKMS)
+      this.detail.nbKMS = parseInt(fraisData.nbKMS) || 0
     }
 
     if (fraisData.peages !== undefined ) {
-      this.detail.peages = parseFloat(fraisData.peages)
+      this.detail.peages = parseFloat(fraisData.peages) || 0
     }
 
     if (fraisData.forfait !== undefined ) {
-      this.detail.forfait = parseFloat(fraisData.forfait)
+      this.detail.forfait = parseFloat(fraisData.forfait) || 0
     }
 
     if (fraisData.sncf !== undefined ) {
-      this.detail.sncf = parseFloat(fraisData.sncf)
+      this.detail.sncf = parseFloat(fraisData.sncf) || 0
     }
 
     if (fraisData.nbZones !== undefined ) {
-      this.detail.nbZones = parseInt(fraisData.nbZones)
+      this.detail.nbZones = parseInt(fraisData.nbZones) || 0
     }
 
     if (fraisData.pourcentage !== undefined ) {
-      this.detail.pourcentage = parseFloat(fraisData.pourcentage)
+      this.detail.pourcentage = parseFloat(fraisData.pourcentage) || 0
     }
 
     if (fraisData.hotel !== undefined ) {
-      this.detail.hotel = parseFloat(fraisData.hotel)
+      this.detail.hotel = parseFloat(fraisData.hotel) || 0
     }
 
     if (fraisData.repas !== undefined ) {
-      this.detail.repas = parseFloat(fraisData.repas)
+      this.detail.repas = parseFloat(fraisData.repas) || 0
     }
 
     if (fraisData.invit !== undefined ) {
-      this.detail.invit = parseFloat(fraisData.invit)
+      this.detail.invit = parseFloat(fraisData.invit) || 0
     }
 
     if (fraisData.essence !== undefined ) {
-      this.detail.essence = parseFloat(fraisData.essence)
+      this.detail.essence = parseFloat(fraisData.essence) || 0
     }
 
     if (fraisData.taxi !== undefined ) {
-      this.detail.taxi = parseFloat(fraisData.taxi)
+      this.detail.taxi = parseFloat(fraisData.taxi) || 0
     }
 
     if (fraisData.parking !== undefined ) {
-      this.detail.parking = parseFloat(fraisData.parking)
+      this.detail.parking = parseFloat(fraisData.parking) || 0
     }
 
     if (fraisData.divers !== undefined ) {
-      this.detail.divers = parseFloat(fraisData.divers)
+      this.detail.divers = parseFloat(fraisData.divers) || 0
     }
 
     if (fraisData.libelle !== undefined ) {
-      this.detail.libelle = fraisData.libelle
+      this.detail.libelle = fraisData.libelle 
     }
 
     this.updateMontants();
@@ -166,10 +171,10 @@ class FraisJour {
           this.detail.taxi +
           this.detail.parking +
           this.detail.divers
-        ).toFixed(2);
+        );
 
       this.totalAReglerFrais = parseFloat(total);
-      this.totalClientFrais = this.detail.facturable == 1 ? parseFloat(total) : 0;
+      this.totalClientFrais = this.detail.facturable ? parseFloat(total) : 0;
   }
 
 

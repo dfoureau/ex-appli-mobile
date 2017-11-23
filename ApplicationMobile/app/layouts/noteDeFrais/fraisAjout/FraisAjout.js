@@ -195,8 +195,8 @@ class FraisAjout extends React.Component {
 
            that.setState({
               listFrais: listFrais,
-              totalMontant: totalAReglerAllFrais.toFixed(2),
-              totalClient: totalClientAllFrais.toFixed(2),
+              totalMontant: totalAReglerAllFrais,
+              totalClient: totalClientAllFrais,
               status: ndf["libelleEtat"],
               statusId: ndf["etat"],
               isReady: true
@@ -238,7 +238,7 @@ class FraisAjout extends React.Component {
           style={[styles.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
           textStyle={styles.rowText}
-          data={[moment(fraisJour.date).format('ddd DD'), fraisJour.detail.client, fraisJour.totalAReglerFrais]}
+          data={[moment(fraisJour.date).format('ddd DD'), fraisJour.detail.client, fraisJour.totalAReglerFrais.toFixed(2)]}
           flexArr= {this.state.rowsFlexArr}
         />
       </TouchableOpacity>
@@ -384,10 +384,10 @@ class FraisAjout extends React.Component {
                 <View style={styles.containerColumn}>
                   <View style={styles.containerInfoElement}>
                     <Text style={styles.text}>
-                      Total à régler : {this.state.totalMontant} €
+                      Total à régler : {this.state.totalMontant.toFixed(2)} €
                     </Text>
                     <Text style={styles.text}>
-                      Total client : {this.state.totalClient} €
+                      Total client : {this.state.totalClient.toFixed(2)} €
                     </Text>
                   </View>
                   <View style={styles.containerButton}>
