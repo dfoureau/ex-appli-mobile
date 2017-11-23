@@ -8,6 +8,11 @@ import {
   TouchableHighlight,
   TouchableOpacity,
 } from "react-native";
+
+import {
+  Row,
+} from "react-native-table-component";
+
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "../../../styles/Styles";
 import moment from "moment";
@@ -92,20 +97,33 @@ class ActivitesDetail extends React.Component {
 
   handleValidate() {
     const { params } = this.props.navigation.state;
-    var parentState = params.parent.state;
-    for (var i = 0; i < this.state.linesToChange.length; i++) {
+    var parent = params.parent;
+	
+	let listItemsCRA = Array.from(parent.state.listItemsCRA);
+	
+	listItemsCRA[this.state.linesToChange] = 
+	
+	(<Row
+		  startDate={this.state.date}
+		  actType={this.state.activiteClicked.code}
+        />)
+	
+	/*
+    //for (var i = 0; i < this.state.linesToChange.length; i++) {
       parentState.listItemsCRA[
         this.state.linesToChange[i]
-      ].actType = this.state.activiteClicked.code;
+      ].activite = this.state.activiteClicked.code;
+	  console.log(this.state.activiteClicked.code);
       parentState.modifiedLines = [...new Set(parentState.modifiedLines)]; //on ajoute la ligne modifié sans garder les doublons
     }
     params.parent.forceUpdate(); //force l'appel de la fonction render sur la page précedente
-    this.props.navigation.dispatch(NavigationActions.back()); //on retourne à la page précédente qui à été modifié
+    */
+	parent.setState({listItemsCRA: listItemsCRA},()=>{this.props.navigation.dispatch(NavigationActions.back())}); //on retourne à la page précédente qui à été modifié
   }
 
   // Gère le rendu des boutons sur plusieurs lignes, et gère le toggle
   renderActiviteButtons = () => {
-    console.log(this.state.activitesListeJourOuvre);
+    //console.log(this.state.activitesListeJourOuvre);
     let button,
       buttons = [];
     const maxItems = 4;

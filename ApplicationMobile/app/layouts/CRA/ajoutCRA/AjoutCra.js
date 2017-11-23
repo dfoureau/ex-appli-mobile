@@ -120,7 +120,8 @@ class AjoutCra extends React.Component {
         that.setState({
           activitesListe: typesactivites,
 		  activitesListeJourOuvre : typesactivites['jourouvre'],
-        }, () => { console.log( that.state.activitesListe )} 
+        }
+		//, () => { console.log( that.state.activitesListe )} 
 		);
       }) 
    }
@@ -222,7 +223,7 @@ getItemsCRA(valeursSaisies) {
 	  activite : actType,
 	  parent: this,
     });
-	console.log("texto : "  + startDate);
+	//console.log("texto : "  + startDate);
   }
  
   
