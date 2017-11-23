@@ -272,7 +272,7 @@ class CraController extends Controller
         }
 
 
-    
+    /*
     public function getMoreThanOne($mois,$idUser)
     {
 
@@ -321,7 +321,7 @@ class CraController extends Controller
 		}
 	  }
 	}
-	  	 
+	 */ 	 
     
     function deleteCra($idRA,$idUserToken){
 
