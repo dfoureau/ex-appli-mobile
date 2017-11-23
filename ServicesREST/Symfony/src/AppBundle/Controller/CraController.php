@@ -117,6 +117,9 @@ class CraController extends Controller
 		 
 		
 		$tab["valeursSaisies"] = $tableauFinal;
+		 
+		//$tab=array($tab);//on le met dans un tableau
+		
 
         return new JsonResponse($tab,Response::HTTP_OK);
     }
@@ -272,7 +275,6 @@ class CraController extends Controller
 		}
 
 
-        /*
     
 	public function getMoreThanOne($mois,$idUser)
     {
@@ -321,8 +323,7 @@ class CraController extends Controller
 			return $retour;
 		}
 	  }
-    }
-    */
+	}
 	  	 
     
 	
@@ -528,7 +529,7 @@ class CraController extends Controller
         }
     }
 	
-/**
+	/**
 	 * Retourne les types activités CRA
 	 *
 	 * @param Request 	$request 		Requete en entrée
@@ -580,7 +581,13 @@ class CraController extends Controller
 		
 			$row=$retour[$i];
 			$type = $row['id'];
+			
+			if (in_array($type, array_keys($tablabel))) {
 			$label = $tablabel[$type];
+			}
+			else {
+				$label = 'non défini'; 
+				}
 			
 		$tabjo[]=array('code'=>$type, 'label'=>$label);
 		}
@@ -602,7 +609,13 @@ class CraController extends Controller
 		
 			$row=$retour[$i];
 			$type = $row['id'];
+ 			
+			if (in_array($type, array_keys($tablabel))) {
 			$label = $tablabel[$type];
+			}
+			else {
+				$label = 'non défini'; 
+				}
 			
 		$tabwe[]=array('code'=>$type, 'label'=>$label);
 		}

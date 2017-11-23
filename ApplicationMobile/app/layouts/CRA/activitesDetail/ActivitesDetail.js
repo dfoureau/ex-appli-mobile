@@ -35,6 +35,7 @@ class ActivitesDetail extends React.Component {
     static navigationOptions = ({ navigation }) => ({
     date: navigation.state.params.date,
 	activite: navigation.state.params.activite,
+	
   });
   
   setInitialValues() {
@@ -47,19 +48,10 @@ class ActivitesDetail extends React.Component {
         title: "Détails jour",
         date: params.date,
         linesToChange: [params.line],
-          activitesListe: [
-          { code: "1.0" },
-          { code: "IC", label: "Intercontrat" },
-          { code: "FO", label: "Formation" },
-          { code: "AM", label: "Arrêt maladie" },
-          { code: "AB", label: "Absence diverse" },
-          { code: "0.5+FO", label: "0.5 + Formation" },
-          { code: "0.5+AM", label: "0.5 + Arrêt maladie" },
-          { code: "0.5+AB", label: "0.5 + Absence diverse" },
-        ],
-		activitesListeJourOuvre: [],
+        activitesListe: parent.state.activitesListe,
+		activitesListeJourOuvre: parent.state.activitesListeJourOuvre,
         activiteClicked: { code: params.activite },
-		webServiceLien1: "http://172.16.177.163/Symfony/web/app_dev.php/CRA/typesactivites",
+		//webServiceLien1: "http://172.16.177.163/Symfony/web/app_dev.php/CRA/typesactivites",
         //configurationAppli.apiURL + "utilisateur/" + configurationAppli.userID,
       };
     
@@ -71,7 +63,7 @@ class ActivitesDetail extends React.Component {
   
   
   
-  componentWillMount() {
+  /*componentWillMount() {
     var that = this;
     fetch(this.state.webServiceLien1,)
       .then(function(response) {
@@ -89,7 +81,7 @@ class ActivitesDetail extends React.Component {
       .catch(function(error) {
         return console.log(error);
       });
-  }
+  }*/
   
   choixActivite = activite => {
     // Change le bouton sélectionné
