@@ -67,7 +67,6 @@ class FraisJour {
     }
 
     this.updateMontants();
-
   }
 
   /**
@@ -153,25 +152,35 @@ class FraisJour {
     this.updateMontants();
   }
 
+
+  /**
+   * Calcule le montant total d'un FraisJour à partir d'un objet de détail donné
+   * @param  {[type]} detail [description]
+   * @return {[type]}        [description]
+   */
+  static calculerTotal(detail) {
+    return total = (
+          (parseFloat(detail.indemKM) || 0) * (parseFloat(detail.nbKMS) || 0) +
+          (parseFloat(detail.forfait) || 0) +
+          (parseFloat(detail.sncf) || 0) +
+          (parseFloat(detail.pourcentage) || 0) +
+          (parseFloat(detail.hotel) || 0) +
+          (parseFloat(detail.repas) || 0) +
+          (parseFloat(detail.invit) || 0) +
+          (parseFloat(detail.peages) || 0) +
+          (parseFloat(detail.essence) || 0) +
+          (parseFloat(detail.taxi) || 0) +
+          (parseFloat(detail.parking) || 0) +
+          (parseFloat(detail.divers) || 0)
+        );
+  }
+
   /**
    * Met à jour les montants de la note de Frais
    * @return {[type]} [description]
    */
   updateMontants() {
-    let total = (
-          this.detail.indemKM * this.detail.nbKMS +
-          this.detail.forfait +
-          this.detail.sncf +
-          this.detail.pourcentage +
-          this.detail.hotel +
-          this.detail.repas +
-          this.detail.invit +
-          this.detail.peages +
-          this.detail.essence +
-          this.detail.taxi +
-          this.detail.parking +
-          this.detail.divers
-        );
+    let total = FraisJour.calculerTotal(this.detail);
 
       this.totalAReglerFrais = parseFloat(total);
       this.totalClientFrais = this.detail.facturable ? parseFloat(total) : 0;

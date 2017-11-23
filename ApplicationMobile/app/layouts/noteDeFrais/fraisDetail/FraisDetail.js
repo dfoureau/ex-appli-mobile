@@ -647,6 +647,11 @@ class FraisDetail extends React.Component {
             </View>
           </View>
 
+          <View style={styles.container}>
+            <Text style={styles.text}> Total : {(FraisJour.calculerTotal(this.state)).toFixed(2)} </Text>
+          </View>
+
+
           <View style={styles.containerButton}>
             {this.showDeleteButton()}
             {this.showValidateButton()}
