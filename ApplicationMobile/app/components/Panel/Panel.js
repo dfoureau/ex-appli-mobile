@@ -14,7 +14,8 @@ export class Panel extends Component {
 
     this.state = {
       title: props.title,
-      expanded: this.props.expanded == false ? false : true,
+      // expanded: (this.props.expanded == false ? false : true),
+      expanded: true, //Bug au niveau des Input dans le panel quand celui-ci est replié par défaut. On force la valeur à true pour l'instant
       animation: new Animated.Value(),
     };
   }
