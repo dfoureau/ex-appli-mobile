@@ -32,6 +32,11 @@ class ActivitesDetail extends React.Component {
     this.setInitialValues();
   }
 
+    static navigationOptions = ({ navigation }) => ({
+    date: navigation.state.params.date,
+	activite: navigation.state.params.activite,
+  });
+  
   setInitialValues() {
     const { params } = this.props.navigation.state;
 
@@ -60,7 +65,7 @@ class ActivitesDetail extends React.Component {
       this.state = {
         title: "Détails jour",
         isPeriod: false,
-        date: tmp.startDate,
+        date: params.date,
         linesToChange: [params.line],
         activitesListe: [
           { code: "1.0" },
@@ -72,7 +77,7 @@ class ActivitesDetail extends React.Component {
           { code: "0.5+AM", label: "0.5 + Arrêt maladie" },
           { code: "0.5+AB", label: "0.5 + Absence diverse" },
         ],
-        activiteClicked: { code: tmp.actType },
+        activiteClicked: { code: params.activite },
       };
     }
   }
