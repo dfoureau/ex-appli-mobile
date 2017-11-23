@@ -44,20 +44,6 @@ class FraisListe extends React.Component {
     this.state = {
       title: "Note de frais",
       data: [],
-      months: [
-        "Janvier",
-        "Février",
-        "Mars",
-        "Avril",
-        "Mai",
-        "Juin",
-        "Juillet",
-        "Août",
-        "Septembre",
-        "Octobre",
-        "Novembre",
-        "Décembre",
-      ],
       monthsWithNDF: [],
       year: moment().format("YYYY"),
       isReady: false,
@@ -221,7 +207,7 @@ class FraisListe extends React.Component {
                       <View style={style.containerList}>
                         <View style={style.containerPeriod}>
                           <Text style={style.periodText}>
-                            {this.state.months[item.mois - 1]} {item.annee}
+                            {moment({month: item.mois -1, year: item.annee}).format("MMMM YYYY")}
                           </Text>
                           <View style={style.containerIcon}>
                             <Image

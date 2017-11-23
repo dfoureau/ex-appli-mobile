@@ -364,7 +364,8 @@ class NdfController extends Controller
 				"idUser": "124124251",
 				"mois": "9",
 				"annee": "2017",
-				"etat": "Brouillon",
+        "etat": "Brouillon",
+        "etatID": "0",
 				"notesDeFrais": [
 					{
 						"jour": "3",
@@ -391,8 +392,10 @@ class NdfController extends Controller
 				]
 			}
 			*/  
-		  
-      $data = json_decode(file_get_contents('php://input'), true);
+      
+      //$data = json_decode(file_get_contents('php://input'), true);
+      $data = json_decode($request->request->get('data'), true);
+
       try{
         $retour = $this->postNdf($data);
       }
@@ -408,8 +411,10 @@ class NdfController extends Controller
       $idUser = $data['idUser'];
       $mois = $data['mois'];
       $annee = $data['annee'];
-      $etat = $data['etat']; //Revoir format
+      $etat = $data['etatID'];
 
+      /*
+      $etat = $data['etat']; //Revoir format
       switch ($data['etat']){
         case "Brouillon" :
           $etat = 0;
@@ -423,6 +428,7 @@ class NdfController extends Controller
           return $retour;
           break;       
       }
+      */
         
       //récupérer indemKM depuis table users
       $indemKM = number_format($this->getUserIndemKM($idUser), 3, '.','');
