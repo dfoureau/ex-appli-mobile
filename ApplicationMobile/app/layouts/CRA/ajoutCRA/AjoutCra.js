@@ -118,13 +118,13 @@ class AjoutCra extends React.Component {
       return response.json();
     })
     .then(function(cra) {
-      console.log(cra.valeursSaisies);
+      //console.log(cra.valeursSaisies);
       that.setState({
         isReady: true,
         data: cra,
 		    listItemsCRA : that.getItemsCRA(cra.valeursSaisies),
       });  
-	  console.log("statevs : "  + that.state.data.valeursSaisies.length);
+	  //console.log("statevs : "  + that.state.data.valeursSaisies.length);
     });
   }
 
@@ -140,38 +140,7 @@ getItemsCRA(valeursSaisies) {
 		    }
     return rows;
   }
-  /*
-  getItemsCRA(valeursSaisies) { 
-    return valeursSaisies.map((row, i) => (
-      <row data = {[row.props.date, row.props.activité]} /> 
-    ))
-  }*/
-  
-    
-		
-	/*getItemsCRA() {
-	var listItemsCRA = [
-      {
-        id: 1,
-        idCRA: 0,
-        startDate: "01/01/2017",
-        endDate: "13/10/2017",
-        actType: "1.0",
-        workingDays: 9,
-      },
-      {
-        id: 2,
-        idCRA: 0,
-        startDate: "14/10/2017",
-        endDate: "14/10/2017",
-        actType: "0.5+AM",
-        workingDays: 1,
-      },
-    ];
-		  
-    return listItemsCRA;
-	}*/
-  
+
 
   saveItemsCRA() {
     let list = [];
@@ -220,13 +189,20 @@ getItemsCRA(valeursSaisies) {
     this.props.navigation.navigate("CraConfirmation");
   }
 
-  modifyItemCRA(l) {
+  modifyItemCRA(l,startDate,actType) {
     this.props.navigation.navigate("ActivitesDetail", {
       line: l,
-      parent: this,
+      //date: '01/02/2017',
+      //activite: 'IC',
+      date : startDate,
+	  activite : actType,
+	  parent: this,
     });
+	console.log("texto : "  + startDate);
   }
-
+ 
+  
+  
   modifyPeriodeCRA() {
     this.props.navigation.navigate("ActivitesDetail", {
       line: -1,
@@ -271,7 +247,7 @@ getItemsCRA(valeursSaisies) {
 
   afficherRows() {
        return this.state.listItemsCRA.map((row, i) => (
-      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(i)}>
+      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(i,row.props.startDate,row.props.actType)}>
         <Row
           style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
