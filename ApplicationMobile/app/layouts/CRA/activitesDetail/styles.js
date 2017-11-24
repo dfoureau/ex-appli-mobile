@@ -40,6 +40,7 @@ export default StyleSheet.create({
   marginBottom20: {
     marginBottom: 20,
   },
+
   btnChoixDetail: {
     alignItems: "center",
     width: 65,
@@ -52,9 +53,11 @@ export default StyleSheet.create({
     backgroundColor: "#f9f9f9",
     marginLeft: 10,
   },
+
   btnChoixClicked: {
     backgroundColor: "#99C6E7",
   },
+  
   activitesText: {
     fontWeight: "400",
     fontSize: 15.5,
@@ -67,11 +70,81 @@ export default StyleSheet.create({
   },
   //Bouton Valider
   containerButton: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-end",
     alignItems: "center",
+    flexDirection: "row",
+    alignSelf: "flex-end",
     marginRight: 30,
-    marginTop: 40,
+    marginBottom: 5,
+    marginTop: 5,
+  },
+
+  stickyFooter: {
+    flex: 0.1,
+    alignItems: "center",
+    borderColor: "#355A86",
+    borderWidth: 1,
+    alignItems:'center',
+    justifyContent:'center'
+  },
+
+  scrollViewBody: {
+    flex: 0.9,
+  },
+
+  ContainerHeader: {
+    backgroundColor: "#355a86",
+    height: 56,
+    width: width,
+  },
+
+  MenuIcon: {
+    height: 40,
+    width: 40,
+  },
+
+  MenuIconLink: {
+    height: 40,
+    width: 40,
+    position: "absolute",
+    top: 8,
+    left: 10,
+  },
+
+  LogoTitreCat: {
+    backgroundColor: "transparent",
+    alignSelf: "flex-end",
+    height: 51,
+    width: 173,
+    position: "absolute",
+    right: 10,
+    opacity: 0.3,
+  },
+
+  TextHeader: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    position: "absolute",
+    left: 60,
+    top: 11,
+  },
+
+  textFooter: {
+    color: "black",
+    fontSize: 16,
+    paddingRight: 30,
+  },
+
+  mainContainer: {
+    flex: 1,
+  },
+
+  texteLabel: {
+    color: "black",
+    fontSize: 16,
+  },
+
+  texteDate: {
+    color: "black",
+    fontSize: 22,
   },
 });
