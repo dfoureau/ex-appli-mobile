@@ -86,4 +86,61 @@ export default StyleSheet.create({
   deleteButton: {
     backgroundColor: "#FF0000",
   },
+
+  stickyFooter: {
+    flex: 0.1,
+    alignItems: "center",
+    borderColor: "#355A86",
+    borderWidth: 1,
+    alignItems:'center',
+    justifyContent:'center'
+  },
+
+  scrollViewBody: {
+    flex: 0.9,
+  },
+
+  ContainerHeader: {
+    backgroundColor: "#355a86",
+    height: 56,
+    width: width,
+  },
+
+  MenuIcon: {
+    height: 40,
+    width: 40,
+  },
+
+  MenuIconLink: {
+    height: 40,
+    width: 40,
+    position: "absolute",
+    top: 8,
+    left: 10,
+  },
+
+  LogoTitreCat: {
+    backgroundColor: "transparent",
+    alignSelf: "flex-end",
+    height: 51,
+    width: 173,
+    position: "absolute",
+    right: 10,
+    opacity: 0.3,
+  },
+
+  TextHeader: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    position: "absolute",
+    left: 60,
+    top: 11,
+  },
+
+  textFooter: {
+    color: "black",
+    fontSize: 16,
+    paddingRight: 30,
+  },
+
 });
