@@ -225,81 +225,79 @@ class NdfController extends Controller
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
         }
-		
+
 		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
 		$idUserToken = $retourAuth['id'];
-		
+
 		//On compare l'idUserToken et l'id fourni en paramètre
-		
-		if ($id != $idUserToken) 
+
+		if ($id != $idUserToken)
 		{
 			$message = array('message' => "Incohérence token/ID");
 		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
 		}
-		  
+
 		/* Exemple de Jason
-		{
-			"idUser": "124124251",
-			"mois": "9",
-			"annee": "2017",
-			"etat": "Brouillon",
-			"notesDeFrais": [
-				{
-					"jour": "3",
-					"mois": "9",
-					"annee": "2017",
-					"facturable": "0",
-					"client": "CIMUT",
-					"lieu": "Paris",
-					"montantForfait": "00.00",
-					"nbKM": "585",
-					"montantFraisSNCF": "0.00",
-					"montantPeages": "0.00",
-					"montantParking": "0.00",
-					"montantEssence": "0.00",
-					"montantTaxi": "0.00",
-					"montantNbZone": "0",
-					"montantPourcentage": "0.00",
-					"montantHotel": "0.00",
-					"montantRepas": "18.40",
-					"montantInvitation": "0.00",
-					"montantDivers": "0.00",
-					"libelleDivers": ""
-				}	
-			]
-		}
-		*/		 
-		//on verifie que les données en entrée 
+    {
+        "idUser": "124124251",
+        "mois": "1",
+        "annee": "2017",
+        "etatID": "0",
+        "notesDeFrais": [
+            {
+                "jour": "1",
+                "client": "",
+                "facturable": "0",
+                "lieu": "",
+                "nbKM": "0",
+                "montantPeages": "0",
+                "montantForfait": "0",
+                "montantFraisSNCF": "0",
+                "montantNbZone": "0",
+                "montantPourcentage": "0",
+                "montantHotel": "0",
+                "montantRepas": "0",
+                "montantInvitation": "0",
+                "montantTaxi": "0",
+                "montantEssence": "0",
+                "montantParking": "0",
+                "montantDivers": "0",
+                "libelleDivers": ""
+            }
+        ]
+    }
+		*/
+		//on verifie que les données en entrée
 		// Get the entity manager
-     
-	  
+
+
 	  //on appelle la fonction deleteNDF
-      $retourdelete=$this->deleteNdf($id,$annee,$mois);  
+      $retourdelete=$this->deleteNdf($id,$annee,$mois);
       if($retourdelete['code']!=Response::HTTP_OK){
         return new JsonResponse($retourdelete['message'],$retourdelete['code']);
       }
-	  
+
 	  $data = json_decode(file_get_contents('php://input'), true);
-          
+
 		  try {
 		  $retourpost = $this->postNdf($data,$idUserToken);
 		  }
 		   catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
             return new JsonResponse("Modification échouée".$e, Response::HTTP_BAD_REQUEST);
         }
-		
+
 
       if($retourpost['code']!=Response::HTTP_OK){
         return new JsonResponse($retourpost['message'],$retourpost['code']);
       }
-	  
+
 	  if($retourdelete['code'] == Response::HTTP_OK && $retourpost["code"] == Response::HTTP_OK){
         $message = array('message' => "Modification réussie");
         return new JsonResponse($message, Response::HTTP_OK);
-		
-        }  
-    } 	
- 
+
+        }
+    }
+
 
   /**
 	* @Route("/ndf/{annee}/{idUser}", name="ndfByUser")
@@ -391,12 +389,14 @@ class NdfController extends Controller
 					}
 				]
 			}
-			*/  
-      
+			*/
+
       //$data = json_decode(file_get_contents('php://input'), true);
-      $data = json_decode($request->request->get('data'), true);
 
       try{
+        $content = $request->getContent();
+        $data = json_decode($content, true);
+
         $retour = $this->postNdf($data);
       }
       catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
