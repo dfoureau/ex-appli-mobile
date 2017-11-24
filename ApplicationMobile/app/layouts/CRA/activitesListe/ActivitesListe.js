@@ -123,11 +123,13 @@ class ActivitesListe extends React.Component {
 
   //Transfert du paramétre vers la page AjoutCRa
   //Params : date
-  SendDataCRA(id, ItemDate) {
+  SendDataCRA(id, ItemDate, month, year) {
     this.props.navigation.navigate("AjoutCra", {
       idCRA: id,
       date: ItemDate,
       isServiceCalled: true,
+      month: month,
+      year: year,
     });
   }
 
@@ -139,6 +141,7 @@ class ActivitesListe extends React.Component {
   }
 
   afficherCra(item) {
+    console.log(item.date);
     return (
       <View>
         <Text style={style.periodTextTitre}>
