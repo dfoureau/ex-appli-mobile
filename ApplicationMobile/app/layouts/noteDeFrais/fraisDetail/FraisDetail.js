@@ -293,7 +293,6 @@ class FraisDetail extends React.Component {
   }
 
   showDeleteButton() {
-    console.log("statid: " + this.state.statusId);
     if ((this.state.statusId == null || this.state.statusId == 0) && (!this.state.isforfait)) {
       return (
         /*Bouton supprimer affiché que si ce n'est pas un forfait, et que si c'est une NDF en brouillon ou une nouvelle NDF*/

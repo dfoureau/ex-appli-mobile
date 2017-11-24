@@ -16,6 +16,7 @@ import {
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "../../../styles/Styles";
 import moment from "moment";
+
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
@@ -26,6 +27,8 @@ import { Button } from "../../../components/Buttons";
 import Accueil from "../../accueil/Accueil";
 import { Calendar } from "react-native-calendars";
 import styles from "./styles";
+
+import configurationAppli from "../../../configuration/Configuration";
 
 //import service from "../../../realm/service";
 
@@ -54,23 +57,23 @@ class ActivitesDetail extends React.Component {
         date: params.date,
         linesToChange: [params.line],
         activitesListe: parent.state.activitesListe,
-		activitesListeJourOuvre: parent.state.activitesListeJourOuvre,
-        activiteClicked: { code: params.activite },
-		//webServiceLien1: "http://172.16.177.163/Symfony/web/app_dev.php/CRA/typesactivites",
-        //configurationAppli.apiURL + "utilisateur/" + configurationAppli.userID,
+		    activitesListeJourOuvre: parent.state.activitesListeJourOuvre,
+        activiteClicked: { code: params.activite, label: params.activite },
+        webServiceLien1: configurationAppli.apiURL + "CRA/typesactivites",
+        obj: {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + configurationAppli.userToken,
+          },
+        },
       };
     
   }
 
-  
-  
-
-  
-  
-  
-  /*componentWillMount() {
+  /*
+  componentWillMount() {
     var that = this;
-    fetch(this.state.webServiceLien1,)
+    fetch(this.state.webServiceLien1, this.state.obj)
       .then(function(response) {
         if (response.status >= 400) {
           throw new Error("GetUtilisateur : Bad response from server");
@@ -80,7 +83,7 @@ class ActivitesDetail extends React.Component {
       .then(function(typesactivites) {
         that.setState({
           activitesListe: typesactivites,
-		  activitesListeJourOuvre : typesactivites['jourouvre'],
+		      activitesListeJourOuvre : typesactivites['jourouvre'],
         });
       })
       .catch(function(error) {
@@ -107,18 +110,7 @@ class ActivitesDetail extends React.Component {
 		  startDate={this.state.date}
 		  actType={this.state.activiteClicked.code}
         />)
-	
-	/*
-    //for (var i = 0; i < this.state.linesToChange.length; i++) {
-      parentState.listItemsCRA[
-        this.state.linesToChange[i]
-      ].activite = this.state.activiteClicked.code;
-	  console.log(this.state.activiteClicked.code);
-      parentState.modifiedLines = [...new Set(parentState.modifiedLines)]; //on ajoute la ligne modifié sans garder les doublons
-    }
-    params.parent.forceUpdate(); //force l'appel de la fonction render sur la page précedente
-    */
-	parent.setState({listItemsCRA: listItemsCRA},()=>{this.props.navigation.dispatch(NavigationActions.back())}); //on retourne à la page précédente qui à été modifié
+	  parent.setState({listItemsCRA: listItemsCRA},()=>{this.props.navigation.dispatch(NavigationActions.back())}); //on retourne à la page précédente qui à été modifié
   }
 
   // Gère le rendu des boutons sur plusieurs lignes, et gère le toggle

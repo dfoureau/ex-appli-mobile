@@ -51,7 +51,22 @@ class AjoutCra extends React.Component {
   setInitialValues() {
     const { params } = this.props.navigation.state;
     let dateStr = moment().format("MMMM YYYY");
+
+    let now = moment();
+    monthSelected = now.month();
+    yearSelected = now.year();
+
+    if (params.month != null) {
+      monthSelected = params.month;
+    }
+
+    if (params.year != null) {
+      yearSelected = params.year;
+    }
+
     this.state = {
+      yearSelected: parseInt(yearSelected),
+      monthSelected: parseInt(monthSelected),
       title: "",
       statusId: 1,
       TextClient: " ",
@@ -60,12 +75,12 @@ class AjoutCra extends React.Component {
       TextComment: " ",
       status: "Nouveau",
       header: ["Date", "Activité"],
-      monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1), //la premiere lettre du mois en majuscule
+      //monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1), //la premiere lettre du mois en majuscule
       //listItemsCRA: this.getItemsCRA(), //liste des cra du mois, doit être ordonée
       listItemsCRA : [],
-	  modifiedLines: [], //liste des lignes à modifier si validation
-	  activitesListeJourOuvre: [],
-	  activitesListe: [],
+      modifiedLines: [], //liste des lignes à modifier si validation
+      activitesListeJourOuvre: [],
+      activitesListe: [],
       userId: configurationAppli.userID,
       objGET: {
         method: "GET",
@@ -74,7 +89,7 @@ class AjoutCra extends React.Component {
         },
       },
       WSLinkCRA: configurationAppli.apiURL + "CRA/RA/",
-	  webServiceLien1: configurationAppli.apiURL + "CRA/typesactivites",
+	    webServiceLien1: configurationAppli.apiURL + "CRA/typesactivites",
       isReady: false,
       data: [],
     };
@@ -93,7 +108,8 @@ class AjoutCra extends React.Component {
     var that = this;
     //Récupération des paramètres de navigation
     const { params } = this.props.navigation.state;
-	this.getTypeActivite();
+
+	  this.getTypeActivite();
 		
     if (params.idCRA != null) {
       // Récupere les périodes
@@ -104,12 +120,11 @@ class AjoutCra extends React.Component {
         isReady: true,
       });
     }
-
   }
   
    getTypeActivite() {
     var that = this; 
-  fetch(this.state.webServiceLien1,)
+    fetch(this.state.webServiceLien1, this.state.objGET)
       .then(function(response) {
         if (response.status >= 400) {
           throw new Error("GetUtilisateur : Bad response from server");
@@ -119,16 +134,13 @@ class AjoutCra extends React.Component {
       .then(function(typesactivites) {
         that.setState({
           activitesListe: typesactivites,
-		  activitesListeJourOuvre : typesactivites['jourouvre'],
-        }
-		//, () => { console.log( that.state.activitesListe )} 
-		);
+		      activitesListeJourOuvre : typesactivites['jourouvre'],
+        });
       }) 
    }
 
   getCRAInfosByID(idCRA) {
     var that = this;
-
     fetch(this.state.WSLinkCRA + idCRA, this.state.objGET)
     .then(function(response) {
       if (response.status >= 400) {
@@ -141,28 +153,24 @@ class AjoutCra extends React.Component {
       return response.json();
     })
     .then(function(cra) {
-      //console.log(cra.valeursSaisies);
       that.setState({
         isReady: true,
         data: cra,
 		    listItemsCRA : that.getItemsCRA(cra.valeursSaisies),
       });  
-	  //console.log("statevs : "  + that.state.data.valeursSaisies.length);
     });
-	
-
   }
 
-getItemsCRA(valeursSaisies) {
-	   var rows = [];
-	   for (var i = 0; i < valeursSaisies.length; i++) {
-		   rows.push(
-		  <Row
-		  startDate={valeursSaisies[i]['date']}
-		  actType={valeursSaisies[i]['activité']}
+  getItemsCRA(valeursSaisies) {
+    var rows = [];
+    for (var i = 0; i < valeursSaisies.length; i++) {
+      rows.push(
+        <Row
+          startDate={valeursSaisies[i]['date']}
+          actType={valeursSaisies[i]['activité']}
         />
-		);
-		    }
+      );
+    }
     return rows;
   }
 
@@ -214,19 +222,15 @@ getItemsCRA(valeursSaisies) {
     this.props.navigation.navigate("CraConfirmation");
   }
 
-  modifyItemCRA(l,startDate,actType) {
+  modifyItemCRA(l, startDate, actType, labelAct) {
     this.props.navigation.navigate("ActivitesDetail", {
       line: l,
-      //date: '01/02/2017',
-      //activite: 'IC',
-      date : startDate,
-	  activite : actType,
-	  parent: this,
+      date: startDate,
+      activite: actType,
+      activiteLabel: labelAct,
+      parent: this,
     });
-	//console.log("texto : "  + startDate);
   }
- 
-  
   
   modifyPeriodeCRA() {
     this.props.navigation.navigate("ActivitesDetail", {
@@ -236,7 +240,7 @@ getItemsCRA(valeursSaisies) {
   }   
  
   showDeleteButton() {
-    //if(this.state.statusId == 1 || this.state.statusId == 2)
+    if(this.state.statusId == 1 || this.state.statusId == 2)
     return (
       <Button
         text="SUPPRIMER"
@@ -255,7 +259,7 @@ getItemsCRA(valeursSaisies) {
   }
 
   showDraftButton() {
-    // if(this.state.statusId == 1 || this.state.statusId == 2)
+    if(this.state.statusId == 1 || this.state.statusId == 2)
     return (
       <Button
         buttonStyles={style.draftButton}
@@ -266,13 +270,13 @@ getItemsCRA(valeursSaisies) {
   }
 
   showValidateButton() {
-    //if(this.state.statusId == 1 || this.state.statusId == 2)
-    return <Button text="VALIDER" onPress={() => this.validate()} />;
+    if(this.state.statusId == 1 || this.state.statusId == 2)
+      return <Button text="VALIDER" onPress={() => this.validate()} />;
   }
 
   afficherRows() {
-       return this.state.listItemsCRA.map((row, i) => (
-      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(i,row.props.startDate,row.props.actType)}>
+    return this.state.listItemsCRA.map((row, i) => (
+      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(i, row.props.startDate, row.props.actType)}>
         <Row
           style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
@@ -281,35 +285,19 @@ getItemsCRA(valeursSaisies) {
         />
       </TouchableOpacity>
     ));
-/*
-   let items = this.state.listItemsCRA;
-	//console.log(this.state.listItemsCRA);
-    return this.getRows(items); 
-  */
   }
-
-  
- 
-  
-  /*
-  getRows(tab) {
-    return tab.map((row, i) => (
-      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(i)}>
-        <Row
-          style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
-          borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
-          textStyle={style.rowText}
-          data={[row.props.startDate, row.props.actType]}
-        />
-      </TouchableOpacity>
-    ));
-  }*/
-
 
   handleValidate = () => {
     //TODO Retourne sur la page des CRA
     this.props.navigation.navigate("ActivitesListe"); //navigate back
   };
+
+  //Affiche le contenu du menu des mois/années
+  loadPickerItems() {
+    return moment.months().map((item, i) => (
+      <Picker.Item label={item + ' ' + this.state.yearSelected} value={i+1} key={i} />
+    ));
+  }
 
   render() {
     //Décralation du params transmis à l'écran courante.
@@ -323,10 +311,9 @@ getItemsCRA(valeursSaisies) {
               <View style={style.containerFirstLine}>
                 <Text style={style.text}>Etat : {this.state.data.libelle}</Text>
               </View>
-            </View>
-
-            <View style={style.containerSecondLine}>
+              <View style={style.containerFirstLine}>
               <Text style={style.text}>Jours ouvrés : {this.state.data.NbJOuvres ? this.state.data.NbJOuvres : '0'} j</Text>
+              </View>
             </View>
 
             <View style={style.container1}>
@@ -334,78 +321,19 @@ getItemsCRA(valeursSaisies) {
                 <Text style={style.text}>Travaillés : {this.state.data.nbJourTravailles ? this.state.data.nbJourTravailles : '0'} j</Text>
               </View>
               <View style={style.containerThirdLine}>
-                <Text style={style.textAbsences}>Absences : {this.state.data.nbJourAbs ? this.state.data.nbJourAbs : '0'} j</Text>
-              </View>
-              <View style={style.containerThirdLine}>
-                <View style={style.containerPicker}>
-                  <Picker
-                    style={{
-                      width: 162,
-                    }}
-                    selectedValue={
-                      params.idCRA == null
-                        ? this.state.monthSelected
-                        : params.Idate
-                    }
-                    onValueChange={(itemValue, itemIndex) =>
-                      this.setState({ monthSelected: itemIndex })}
-                  >
-                    <Picker.Item
-                      label="Janvier 2017"
-                      value="Janvier 2017"
-                      key="1"
-                    />
-                    <Picker.Item
-                      label="Février 2017"
-                      value="Février 2017"
-                      key="2"
-                    />
-                    <Picker.Item label="Mars 2017" value="Mars 2017" key="3" />
-                    <Picker.Item
-                      label="Avril 2017"
-                      value="Avril 2017"
-                      key="4"
-                    />
-                    <Picker.Item label="Mai 2017" value="Mai 2017" key="5" />
-                    <Picker.Item label="Juin 2017" value="Juin 2017" key="6" />
-                    <Picker.Item
-                      label="Juillet 2017"
-                      value="Juillet 2017"
-                      key="7"
-                    />
-                    <Picker.Item label="Août 2017" value="Août 2017" key="8" />
-                    <Picker.Item
-                      label="Septembre 2017"
-                      value="Septembre 2017"
-                      key="9"
-                    />
-                    <Picker.Item
-                      label="Octobre 2017"
-                      value="Octobre 2017"
-                      key="10"
-                    />
-                    <Picker.Item
-                      label="Novembre 2017"
-                      value="Novembre 2017"
-                      key="11"
-                    />
-                    <Picker.Item
-                      label="Décembre 2017"
-                      value="Décembre 2017"
-                      key="12"
-                    />
-                  </Picker> 
-                </View>
+                <Text style={style.text}>Absences : {this.state.data.nbJourAbs ? this.state.data.nbJourAbs : '0'} j</Text>
               </View>
             </View>
 
-            <Button
-              text="Editer une Periode"
-              onPress={() => this.modifyPeriodeCRA()}
-            >
-              {" "}
-              Periode
-            </Button>
+            <View style={style.containerButtonPeriod}>
+              <Button
+                text="Editer une Periode"
+                onPress={() => this.modifyPeriodeCRA()}
+              >
+                {" "}
+                Periode
+              </Button>
+            </View>
 
             <View style={style.container3}>
               <Table

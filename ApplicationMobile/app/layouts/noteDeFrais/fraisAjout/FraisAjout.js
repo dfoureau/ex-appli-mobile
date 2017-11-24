@@ -224,12 +224,6 @@ class FraisAjout extends React.Component {
 
   }
 
-  // Méthode permettant de calculer le total à régler d'un frais
-  calculTotaux(frais) {
-
-  }
-
-
   //Affiche les lignes du tableau à partir de listFrais
   afficherRow() {
     return this.state.listFrais.map((fraisJour, i) => (
@@ -370,17 +364,6 @@ class FraisAjout extends React.Component {
                 </View>
               </View>
               <View style={styles.container2}>
-                <View style={styles.containerPicker}>
-                  <Picker
-                    style={{ width: 160 }}
-                    selectedValue={this.state.monthSelected}
-                    onValueChange={(itemValue, itemIndex) => {
-                      this.setState({monthSelected: itemValue}, () => this.reloadNDFByYear(itemValue)
-                    )}}
-                  >
-                    {this.loadPickerItems()}
-                  </Picker>
-                </View>
                 <View style={styles.containerColumn}>
                   <View style={styles.containerInfoElement}>
                     <Text style={styles.text}>
@@ -397,11 +380,6 @@ class FraisAjout extends React.Component {
                       buttonStyles={Style.addButton}
                     />
                   </View>
-                </View>
-                <View style={styles.container2}>
-                  <Text style={styles.textAide}>
-                    Saisir une ligne pour ajouter/modifier une NDF
-                  </Text>
                 </View>
               </View>
               <View style={styles.container3}>

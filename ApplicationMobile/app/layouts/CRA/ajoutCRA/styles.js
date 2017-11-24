@@ -64,7 +64,6 @@ export default StyleSheet.create({
 
   container3: {
     flex: 0.75,
-    marginTop: 10,
     marginHorizontal: 10,
     flexDirection: "column",
   },
@@ -244,6 +243,11 @@ export default StyleSheet.create({
     justifyContent: "flex-end",
     marginHorizontal: 10,
     marginTop: 35,
+  },
+
+  containerButtonPeriod: {
+    alignItems: "center",
+    margin: 5,
   },
 
   deleteButton: {
