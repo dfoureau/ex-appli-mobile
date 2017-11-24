@@ -22,7 +22,6 @@ import { Button } from "../../../components/Buttons";
 import { PickerRange } from "../../../components/PickerRange";
 import Accueil from "../../accueil/Accueil";
 import FraisAjout from "../fraisAjout/FraisAjout";
-import service from "../../../realm/service";
 
 import configurationAppli from "../../../configuration/Configuration";
 
@@ -35,8 +34,6 @@ import {
   hideLoading,
   hide,
 } from "react-native-notifyer";
-
-const FRAIS_SCHEMA = "Frais";
 
 class FraisListe extends React.Component {
   constructor(props) {
@@ -56,7 +53,6 @@ class FraisListe extends React.Component {
         },
       },
     };
-    service.delete(FRAIS_SCHEMA);
   }
 
   //Permet d'afficher l'ecran choisi dans le menu
@@ -69,7 +65,7 @@ class FraisListe extends React.Component {
       idUser: id,
       month: month,
       year: year,
-      monthsWithNDF: this.state.monthsWithNDF
+      parent: this
     });
   }
 

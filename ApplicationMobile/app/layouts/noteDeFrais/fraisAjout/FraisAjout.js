@@ -85,7 +85,7 @@ class FraisAjout extends React.Component {
       status: "Nouveau",
       header: ["Jour", "Client", "Montant €"],
       rowsFlexArr: [1, 2 ,1],
-      monthsWithNDF: params.monthsWithNDF,
+      monthsWithNDF: params.parent.state.monthsWithNDF,
       monthSelected: parseInt(monthSelected),
       yearSelected: parseInt(yearSelected),
       listFrais: [],
@@ -149,7 +149,8 @@ class FraisAjout extends React.Component {
 
     // On vérifie que le mois à chercher est bien dans le tableau des mois contenant une NDF
     // Sinon, on affiche directement une table vide
-    if (!this.state.monthsWithNDF.includes(month)) {
+    var parent = that.props.navigation.state.params.parent;
+    if (!parent.state.monthsWithNDF.includes(month)) {
       that.setState(ndfEmptyState)
     }
     else {
@@ -280,22 +281,30 @@ class FraisAjout extends React.Component {
    * @return {[type]} [description]
    */
   deleteNDF() {
+    var that = this;
+    var parent = this.props.navigation.state.params.parent;
     let userId = configurationAppli.userID,
         year = this.state.yearSelected,
         month = this.state.monthSelected;
 
-    fetch(this.state.webServiceLien + userId + '/' + year + '/' + month, {
+    fetch(that.state.webServiceLien + userId + '/' + year + '/' + month, {
       method: 'DELETE',
-      headers: this.state.fetchOptions.headers
+      headers: that.state.fetchOptions.headers
     })
     .then((response) => {
       return Promise.all([response.status, response.json()]);
     })
     .then((res) => {
       let [status, body] = res;
-      showToast( (status == 200 ? "Succès" : "Erreur") + "\n" +  body.message );
+      let success = status == 200;
+      showToast( (success ? "Succès" : "Erreur") + "\n" +  body.message );
+
+      // On redirige vers la page précédente uniquement en cas de succès
+      if (success) {
+        parent.reloadNDFByYear(year);
+        that.props.navigation.dispatch(NavigationActions.back());
+      }
     })
-    .then(() => this.props.navigation.dispatch(NavigationActions.back()))
   }
 
   saveDraft() {
