@@ -141,7 +141,6 @@ class ActivitesListe extends React.Component {
   }
 
   afficherCra(item) {
-    console.log(item.date);
     return (
       <View>
         <Text style={style.periodTextTitre}>
