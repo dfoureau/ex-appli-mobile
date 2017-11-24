@@ -65,7 +65,7 @@ class FraisDetail extends React.Component {
     calendarMaxDate = calendarDate.clone().set('date', calendarDate.daysInMonth()).format(calendarDateFormat);
 
     this.state = {
-      statusId: this.props.navigation.state.params.statusId,
+      statusId: params.parent.state.statusId,
       title: "Note de frais",
       selectedDatesArray: [],
       isforfait: this.props.navigation.state.params.forfait,
@@ -329,7 +329,7 @@ class FraisDetail extends React.Component {
           <View style={styles.ContainerHeader}>
             <TouchableHighlight
               style={styles.MenuIconLink}
-              onPress={() => this.retour()}
+              onPress={() => this.props.navigation.dispatch(NavigationActions.back()) }
             >
               <Image
                 style={styles.MenuIcon}
