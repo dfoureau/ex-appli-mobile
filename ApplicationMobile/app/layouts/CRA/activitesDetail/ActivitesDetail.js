@@ -7,6 +7,7 @@ import {
   Text,
   TouchableHighlight,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 
 import {
@@ -40,57 +41,48 @@ class ActivitesDetail extends React.Component {
     this.setInitialValues();
   }
 
-    static navigationOptions = ({ navigation }) => ({
+  static navigationOptions = ({ navigation }) => ({
     date: navigation.state.params.date,
-	activite: navigation.state.params.activite,
-	
+    activite: navigation.state.params.activite,
   });
   
   setInitialValues() {
     const { params } = this.props.navigation.state;
-
+    
     var parent = params.parent;
 
-      let tmp = parent.state.listItemsCRA[params.line];
-      this.state = {
-        title: "Détails jour",
-        date: params.date,
-        linesToChange: [params.line],
-        activitesListe: parent.state.activitesListe,
-		    activitesListeJourOuvre: parent.state.activitesListeJourOuvre,
-        activiteClicked: { code: params.activite, label: params.activite },
-        webServiceLien1: configurationAppli.apiURL + "CRA/typesactivites",
-        obj: {
-          method: "GET",
-          headers: {
-            Authorization: "Bearer " + configurationAppli.userToken,
-          },
+    let dayDate = moment(params.date, "DD/MM/YYYY");
+    let dayNumber = dayDate.day();
+    let activitesListe = [];
+
+    if (dayNumber == 0 || dayNumber == 6) {
+      // Jours en weekend, Dimanche ou Samedi
+      activitesListe = parent.state.activitesListeJourWE;
+    } else {
+      // Jours en semaine
+      activitesListe = parent.state.activitesListeJourOuvre;
+    }
+
+    let tmp = parent.state.listItemsCRA[params.line];
+
+    this.state = {
+      title: "Détails jour",
+      date: params.date,
+      linesToChange: [params.line],
+      activitesListeJourOuvre: parent.state.activitesListeJourOuvre,
+      activitesListeJourWE: parent.state.activitesListeJourWE,
+      activitesListe: activitesListe,
+      activiteClicked: { code: params.activite, label: params.activite },
+      webServiceLien1: configurationAppli.apiURL + "CRA/typesactivites",
+      obj: {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + configurationAppli.userToken,
         },
-      };
-    
+      },
+    };
   }
 
-  /*
-  componentWillMount() {
-    var that = this;
-    fetch(this.state.webServiceLien1, this.state.obj)
-      .then(function(response) {
-        if (response.status >= 400) {
-          throw new Error("GetUtilisateur : Bad response from server");
-        }
-        return response.json();
-      })
-      .then(function(typesactivites) {
-        that.setState({
-          activitesListe: typesactivites,
-		      activitesListeJourOuvre : typesactivites['jourouvre'],
-        });
-      })
-      .catch(function(error) {
-        return console.log(error);
-      });
-  }*/
-  
   choixActivite = activite => {
     // Change le bouton sélectionné
     var tmp = this.state;
@@ -115,19 +107,19 @@ class ActivitesDetail extends React.Component {
 
   // Gère le rendu des boutons sur plusieurs lignes, et gère le toggle
   renderActiviteButtons = () => {
-    //console.log(this.state.activitesListeJourOuvre);
     let button,
-      buttons = [];
+    buttons = [];
     const maxItems = 4;
-    let tempLength = this.state.activitesListeJourOuvre.length / 4;
+    let tempLength = this.state.activitesListe.length / 4;
+    
     //Boucle sur les 2 Lignes
     for (let j = 0; j < tempLength; j++) {
       //Boucle sur les Boutons
       let button = [];
       for (let i = 0; i < maxItems; i++) {
         let nb = i + maxItems * j;
-        if (this.state.activitesListeJourOuvre[nb] != undefined) {
-          let activite = this.state.activitesListeJourOuvre[nb];
+        if (this.state.activitesListe[nb] != undefined) {
+          let activite = this.state.activitesListe[nb];
           let code = activite.code;
           let styleButton = styles.btnChoixDetail;
 
@@ -157,7 +149,7 @@ class ActivitesDetail extends React.Component {
           key={j + 100}
           style={[styles.calendarFlexContainer, styles.marginBottom20]}
         >
-          {button}
+        {button}
         </View>
       );
     }
@@ -227,11 +219,27 @@ class ActivitesDetail extends React.Component {
 
   render() {
     return (
-      <View>
-        <ContainerTitre
-          title={this.state.title}
-          navigation={this.props.navigation}
-        >
+      <View style={styles.mainContainer}>
+        <ScrollView style={styles.scrollViewBody}>
+
+          {/*Le containerTitre est remplacé par ce code spécifique pour pouvoir mettre un footer persistent*/}
+          <View style={styles.ContainerHeader}>
+            <TouchableHighlight
+              style={styles.MenuIconLink}
+              onPress={() => this.props.navigation.dispatch(NavigationActions.back()) }
+            >
+              <Image
+                style={styles.MenuIcon}
+                source={require("../../../images/icons/retour.png")}
+              />
+            </TouchableHighlight>
+            <Image
+              style={styles.LogoTitreCat}
+              source={require("../../../images/logo.png")}
+            />
+            <Text style={styles.TextHeader}>{this.state.title}</Text>
+          </View>
+
           <View style={Style.firstView}>{this.renderDate()}</View>
           <View style={Style.firstView}>
             <View style={styles.detailActivite}>
@@ -243,16 +251,19 @@ class ActivitesDetail extends React.Component {
               {this.renderActiviteButtons()}
             </View>
           </View>
-          <View style={Style.firstView}>
+
+          </ScrollView>
+
+          <View style={styles.stickyFooter}>
             <View style={styles.containerButton}>
               <Button
                 styleButton={styles.validateButton}
-                text="Valider"
+                text="VALIDER"
                 onPress={() => this.handleValidate()}
               />
             </View>
           </View>
-        </ContainerTitre>
+
       </View>
     );
   }

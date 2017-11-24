@@ -47,12 +47,12 @@ class FraisDetail extends React.Component {
       calendarDate = moment(params.idFrais, 'DD-MM-YYYY');
 
       // Recherche du fraisJour dans la listFrais du parent
-        var frais = params.parent.state.listFrais.find(this.findFraisJour(params.idFrais));
+      var frais = params.parent.state.listFrais.find(this.findFraisJour(params.idFrais));
 
-        if (frais != null && frais != undefined) {
-          // il existe un frais déjà crée en cache
-          isNewFrais = false;
-        }
+      if (frais != null && frais != undefined) {
+        // il existe un frais déjà crée en cache
+        isNewFrais = false;
+      }
     }
     else {
       let month = params.parent.state.monthSelected
@@ -184,7 +184,6 @@ class FraisDetail extends React.Component {
    * @return {[type]} [description]
    */
   handleValidate() {
-
     // On initialise l'objet fraisData à utiliser pour updater les fraisJours
     // à partir du state
     let fraisJourData = this.getFraisJourData();
@@ -203,7 +202,6 @@ class FraisDetail extends React.Component {
       else {
         console.log("JOUR " + date + " : non trouvé");
       }
-
     });
 
     // On recalcule les montants totaux

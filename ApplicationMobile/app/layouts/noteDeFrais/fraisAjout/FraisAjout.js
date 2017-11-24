@@ -335,7 +335,7 @@ class FraisAjout extends React.Component {
     if (!this.state.isReady) {
       return (
         <View>
-          <ContainerAccueil
+          <ContainerTitre
             title={this.state.title}
 
           >
@@ -347,7 +347,7 @@ class FraisAjout extends React.Component {
             <Text style={StyleGeneral.texteLoader}>
               Récupération des données. Veuillez patienter...
             </Text>
-          </ContainerAccueil>
+          </ContainerTitre>
         </View>
       );
     } else {

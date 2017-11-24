@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import {
@@ -28,7 +29,7 @@ import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
 import { Button } from "../../../components/Buttons";
 import ActivitesDetail from "../activitesDetail/ActivitesDetail";
 import CraConfirmation from "../craConfirmation/CraConfirmation";
-import Style from "../../../styles/Styles";
+import StyleGeneral from "../../../styles/Styles";
 import style from "./styles";
 import Panel from "../../../components/Panel/Panel";
 import service from "../../../realm/service";
@@ -80,6 +81,7 @@ class AjoutCra extends React.Component {
       listItemsCRA : [],
       modifiedLines: [], //liste des lignes à modifier si validation
       activitesListeJourOuvre: [],
+      activitesListeJourWE: [],
       activitesListe: [],
       userId: configurationAppli.userID,
       objGET: {
@@ -134,7 +136,8 @@ class AjoutCra extends React.Component {
       .then(function(typesactivites) {
         that.setState({
           activitesListe: typesactivites,
-		      activitesListeJourOuvre : typesactivites['jourouvre'],
+          activitesListeJourOuvre : typesactivites['jourouvre'],
+          activitesListeJourWE : typesactivites['jourwe'],
         });
       }) 
    }
@@ -303,130 +306,150 @@ class AjoutCra extends React.Component {
     //Décralation du params transmis à l'écran courante.
     const { params } = this.props.navigation.state;
  
-    return (
-      <View>
-        <ContainerTitre title={params.date} navigation={this.props.navigation}>
-          <View style={style.container}>
-            <View style={style.container1}>
-              <View style={style.containerFirstLine}>
-                <Text style={style.text}>Etat : {this.state.data.libelle}</Text>
-              </View>
-              <View style={style.containerFirstLine}>
-              <Text style={style.text}>Jours ouvrés : {this.state.data.NbJOuvres ? this.state.data.NbJOuvres : '0'} j</Text>
-              </View>
-            </View>
+    if (!this.state.isReady) {
+      return (
+        <View>
+          <ContainerTitre
+            title={params.date}
 
-            <View style={style.container1}>
-              <View style={style.containerThirdLine}>
-                <Text style={style.text}>Travaillés : {this.state.data.nbJourTravailles ? this.state.data.nbJourTravailles : '0'} j</Text>
+          >
+            <ActivityIndicator
+              color={"#8b008b"}
+              size={"large"}
+              style={StyleGeneral.loader}
+            />
+            <Text style={StyleGeneral.texteLoader}>
+              Récupération des données. Veuillez patienter...
+            </Text>
+          </ContainerTitre>
+        </View>
+      );
+    } else {
+      return (
+        <View>
+          <ContainerTitre title={params.date} navigation={this.props.navigation}>
+            <View style={style.container}>
+              <View style={style.container1}>
+                <View style={style.containerFirstLine}>
+                  <Text style={style.text}>Etat : {this.state.data.libelle}</Text>
+                </View>
+                <View style={style.containerFirstLine}>
+                <Text style={style.text}>Jours ouvrés : {this.state.data.NbJOuvres ? this.state.data.NbJOuvres : '0'} j</Text>
+                </View>
               </View>
-              <View style={style.containerThirdLine}>
-                <Text style={style.text}>Absences : {this.state.data.nbJourAbs ? this.state.data.nbJourAbs : '0'} j</Text>
-              </View>
-            </View>
 
-            <View style={style.containerButtonPeriod}>
-              <Button
-                text="Editer une Periode"
-                onPress={() => this.modifyPeriodeCRA()}
+              <View style={style.container1}>
+                <View style={style.containerThirdLine}>
+                  <Text style={style.text}>Travaillés : {this.state.data.nbJourTravailles ? this.state.data.nbJourTravailles : '0'} j</Text>
+                </View>
+                <View style={style.containerThirdLine}>
+                  <Text style={style.text}>Absences : {this.state.data.nbJourAbs ? this.state.data.nbJourAbs : '0'} j</Text>
+                </View>
+              </View>
+
+              <View style={style.containerButtonPeriod}>
+                <Button
+                  text="ÉDITER UNE PÉRIODE"
+                  onPress={() => this.modifyPeriodeCRA()}
+                >
+                  {" "}
+                  Periode
+                </Button>
+              </View>
+
+              <View style={style.container3}>
+                <Table
+                  style={style.table}
+                  borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
+                >
+                  <Row
+                    data={this.state.header}
+                    style={style.header}
+                    textStyle={style.headerText}
+                  />
+                  {this.afficherRows()}
+                </Table>
+              </View>
+
+              <Panel
+                title="Information mission *"
+                containerStyle={{ backgroundColor: "transparent", margin: 0 }}
               >
-                {" "}
-                Periode
-              </Button>
-            </View>
+                <View style={style.containerInformation}>
+                  <View style={style.containerFirstLine}>
+                    <Text style={style.text}>Client * : </Text>
+                  </View>
+                  <View style={style.containerInfoClt}>
+                    <TextInput
+                      style={style.textInputInfos}
+                      value={this.state.data.client ? this.state.data.client : ''}
+                      editable={true}
+                      placeholderTextColor="#000000"
+                      onChangeText={TextClient => this.setState({ TextClient })}
+                      underlineColorAndroid="transparent"
+                    />
+                  </View>
 
-            <View style={style.container3}>
-              <Table
-                style={style.table}
-                borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
+                  <View style={style.containerFirstLine}>
+                    <Text style={style.textResponsable}> Responsable * : </Text>
+                  </View>
+
+                  <View style={style.containerInfoResp}>
+                    <TextInput
+                      style={style.textInputInfos}
+                      value={this.state.data.responsable ? this.state.data.responsable : ''}
+                      editable={true}
+                      placeholderTextColor="#000000"
+                      onChangeText={TextResponsable =>
+                        this.setState({ TextResponsable })}
+                      underlineColorAndroid="transparent"
+                    />
+                  </View>
+
+                  <View style={style.containerFirstLine}>
+                    <Text style={style.textProjet}> Projet : </Text>
+                  </View>
+
+                  <View style={style.containerInfoPrj}>
+                    <TextInput
+                      style={style.textInputInfos}
+                      value={this.state.data.projet ? this.state.data.projet : ''}
+                      placeholderTextColor="#000000"
+                      onChangeText={TextProjet => this.setState({ TextProjet })}
+                      editable={true}
+                      underlineColorAndroid="transparent"
+                    />
+                  </View>
+                </View>
+              </Panel>
+
+              <Panel
+                title="Commentaire"
+                containerStyle={{ backgroundColor: "transparent", margin: 0 }}
               >
-                <Row
-                  data={this.state.header}
-                  style={style.header}
-                  textStyle={style.headerText}
-                />
-                {this.afficherRows()}
-              </Table>
-            </View>
-
-            <Panel
-              title="Information mission *"
-              containerStyle={{ backgroundColor: "transparent", margin: 0 }}
-            >
-              <View style={style.containerInformation}>
-                <View style={style.containerFirstLine}>
-                  <Text style={style.text}>Client * : </Text>
-                </View>
-                <View style={style.containerInfoClt}>
+                <View style={style.containerCommentaire}>
                   <TextInput
-                    style={style.textInputInfos}
-                    value={this.state.data.client ? this.state.data.client : ''}
+                    style={style.textInputComment}
+                    multiline={true}
                     editable={true}
+                    numberOfLines={4}
+                    onChangeText={textComment => this.setState({ textComment })}
                     placeholderTextColor="#000000"
-                    onChangeText={TextClient => this.setState({ TextClient })}
+                    value={this.state.data.commentaires ? this.state.data.commentaires : ''}
                     underlineColorAndroid="transparent"
                   />
                 </View>
-
-                <View style={style.containerFirstLine}>
-                  <Text style={style.textResponsable}> Responsable * : </Text>
-                </View>
-
-                <View style={style.containerInfoResp}>
-                  <TextInput
-                    style={style.textInputInfos}
-                    value={this.state.data.responsable ? this.state.data.responsable : ''}
-                    editable={true}
-                    placeholderTextColor="#000000"
-                    onChangeText={TextResponsable =>
-                      this.setState({ TextResponsable })}
-                    underlineColorAndroid="transparent"
-                  />
-                </View>
-
-                <View style={style.containerFirstLine}>
-                  <Text style={style.textProjet}> Projet : </Text>
-                </View>
-
-                <View style={style.containerInfoPrj}>
-                  <TextInput
-                    style={style.textInputInfos}
-                    value={this.state.data.projet ? this.state.data.projet : ''}
-                    placeholderTextColor="#000000"
-                    onChangeText={TextProjet => this.setState({ TextProjet })}
-                    editable={true}
-                    underlineColorAndroid="transparent"
-                  />
-                </View>
+              </Panel>
+              <View style={style.containerButton}>
+                {this.showDeleteButton()}
+                {this.showDraftButton()}
+                {this.showValidateButton()}
               </View>
-            </Panel>
-
-            <Panel
-              title="Commentaire"
-              containerStyle={{ backgroundColor: "transparent", margin: 0 }}
-            >
-              <View style={style.containerCommentaire}>
-                <TextInput
-                  style={style.textInputComment}
-                  multiline={true}
-                  editable={true}
-                  numberOfLines={4}
-                  onChangeText={textComment => this.setState({ textComment })}
-                  placeholderTextColor="#000000"
-                  value={this.state.data.commentaires ? this.state.data.commentaires : ''}
-                  underlineColorAndroid="transparent"
-                />
-              </View>
-            </Panel>
-            <View style={style.containerButton}>
-              {this.showDeleteButton()}
-              {this.showDraftButton()}
-              {this.showValidateButton()}
             </View>
-          </View>
-        </ContainerTitre>
-      </View>
-    );
+          </ContainerTitre>
+        </View>
+      );
+    }
   }
 }
 
