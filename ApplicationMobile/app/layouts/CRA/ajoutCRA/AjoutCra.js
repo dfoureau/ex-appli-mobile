@@ -159,8 +159,12 @@ class AjoutCra extends React.Component {
       that.setState({
         isReady: true,
         data: cra,
-		    listItemsCRA : that.getItemsCRA(cra.valeursSaisies),
-      });  
+        listItemsCRA : that.getItemsCRA(cra.valeursSaisies),
+        TextClient : cra.client,
+        TextResponsable : cra.responsable,
+        TextProjet : cra.projet,
+        TextComment : cra.commentaires,
+      });
     });
   }
 
@@ -171,6 +175,7 @@ class AjoutCra extends React.Component {
         <Row
           startDate={valeursSaisies[i]['date']}
           actType={valeursSaisies[i]['activité']}
+          valeur={valeursSaisies[i]['valeur']}
         />
       );
     }
@@ -225,12 +230,13 @@ class AjoutCra extends React.Component {
     this.props.navigation.navigate("CraConfirmation");
   }
 
-  modifyItemCRA(l, startDate, actType, labelAct) {
+  modifyItemCRA(l, startDate, actType, labelAct, valeur) {
     this.props.navigation.navigate("ActivitesDetail", {
       line: l,
       date: startDate,
       activite: actType,
       activiteLabel: labelAct,
+      activiteValeur : valeur,
       parent: this,
     });
   }
@@ -279,9 +285,9 @@ class AjoutCra extends React.Component {
 
   afficherRows() {
     return this.state.listItemsCRA.map((row, i) => (
-      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(i, row.props.startDate, row.props.actType)}>
+      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(i, row.props.startDate, row.props.actType, row.props.valeur)}>
         <Row
-          style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
+          style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }, (moment(row.props.startDate, "DD/MM/YYYY").day() == 0 || moment(row.props.startDate, "DD/MM/YYYY").day() == 6) && { backgroundColor: "#b4deea" } ]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
           textStyle={style.rowText}
           data={[row.props.startDate, row.props.actType]}
@@ -382,7 +388,7 @@ class AjoutCra extends React.Component {
                   <View style={style.containerInfoClt}>
                     <TextInput
                       style={style.textInputInfos}
-                      value={this.state.data.client ? this.state.data.client : ''}
+                      value={this.state.TextClient}
                       editable={true}
                       placeholderTextColor="#000000"
                       onChangeText={TextClient => this.setState({ TextClient })}
@@ -397,7 +403,7 @@ class AjoutCra extends React.Component {
                   <View style={style.containerInfoResp}>
                     <TextInput
                       style={style.textInputInfos}
-                      value={this.state.data.responsable ? this.state.data.responsable : ''}
+                      value={this.state.TextResponsable}
                       editable={true}
                       placeholderTextColor="#000000"
                       onChangeText={TextResponsable =>
@@ -413,7 +419,7 @@ class AjoutCra extends React.Component {
                   <View style={style.containerInfoPrj}>
                     <TextInput
                       style={style.textInputInfos}
-                      value={this.state.data.projet ? this.state.data.projet : ''}
+                      value={this.state.TextProjet}
                       placeholderTextColor="#000000"
                       onChangeText={TextProjet => this.setState({ TextProjet })}
                       editable={true}
@@ -433,9 +439,9 @@ class AjoutCra extends React.Component {
                     multiline={true}
                     editable={true}
                     numberOfLines={4}
-                    onChangeText={textComment => this.setState({ textComment })}
+                    onChangeText={TextComment => this.setState({ TextComment })}
                     placeholderTextColor="#000000"
-                    value={this.state.data.commentaires ? this.state.data.commentaires : ''}
+                    value={this.state.TextComment}
                     underlineColorAndroid="transparent"
                   />
                 </View>
