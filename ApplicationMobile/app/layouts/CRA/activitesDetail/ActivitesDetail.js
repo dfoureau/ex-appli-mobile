@@ -198,7 +198,7 @@ class ActivitesDetail extends React.Component {
     } else {
       ret = (
         <View style={styles.calendarContainer}>
-          <Text style={styles.calendarText}>{this.state.date} </Text>
+          <Text style={styles.texteDate}>{this.state.date} </Text>
         </View>
       );
     }
@@ -210,11 +210,11 @@ class ActivitesDetail extends React.Component {
     if (activite.code != undefined)
       if (activite.label != undefined)
         return (
-          <Text style={styles.text}>
+          <Text style={styles.texteLabel}>
             {activite.code} = {activite.label}
           </Text>
         );
-      else return <Text style={styles.text}>{activite.code}</Text>;
+      else return <Text style={styles.texteLabel}>{activite.code}</Text>;
   }
 
   render() {
@@ -240,6 +240,7 @@ class ActivitesDetail extends React.Component {
             <Text style={styles.TextHeader}>{this.state.title}</Text>
           </View>
 
+          {/*Contenu*/}
           <View style={Style.firstView}>{this.renderDate()}</View>
           <View style={Style.firstView}>
             <View style={styles.detailActivite}>

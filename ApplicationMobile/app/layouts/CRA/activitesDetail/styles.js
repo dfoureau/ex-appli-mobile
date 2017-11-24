@@ -137,4 +137,14 @@ export default StyleSheet.create({
   mainContainer: {
     flex: 1,
   },
+
+  texteLabel: {
+    color: "black",
+    fontSize: 16,
+  },
+
+  texteDate: {
+    color: "black",
+    fontSize: 22,
+  },
 });
