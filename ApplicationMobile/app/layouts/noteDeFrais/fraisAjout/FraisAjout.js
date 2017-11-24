@@ -274,9 +274,30 @@ class FraisAjout extends React.Component {
       parent: this
     });
   }
+
+  /**
+   * Suppression d'une NDF
+   * @return {[type]} [description]
+   */
   deleteNDF() {
-    this.props.navigation.navigate("FraisConfirmation");
+    let userId = configurationAppli.userID,
+        year = this.state.yearSelected,
+        month = this.state.monthSelected;
+
+    fetch(this.state.webServiceLien + userId + '/' + year + '/' + month, {
+      method: 'DELETE',
+      headers: this.state.fetchOptions.headers
+    })
+    .then((response) => {
+      return Promise.all([response.status, response.json()]);
+    })
+    .then((res) => {
+      let [status, body] = res;
+      showToast( (status == 200 ? "Succès" : "Erreur") + "\n" +  body.message );
+    })
+    .then(() => this.props.navigation.dispatch(NavigationActions.back()))
   }
+
   saveDraft() {
     this.setState({
       statusId: 0,
