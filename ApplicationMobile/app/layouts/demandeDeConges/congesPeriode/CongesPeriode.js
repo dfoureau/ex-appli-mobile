@@ -58,8 +58,6 @@ class CongesPeriode extends React.Component {
 				joursFeries: feries2017,
 				workingDays: 0,
 				numDemande: params.numDemande == null ? 0 : params.numDemande,
-				WSLinkTypeAbs: "http://localhost:8000/conges/typesabsences",
-				arrTypeAbs: [],
 			};
 		} else {
 			// Récupéré depuis le state du parent
@@ -82,31 +80,8 @@ class CongesPeriode extends React.Component {
 				joursFeries: feries2017,
 				workingDays: 0,
 				numDemande: params.numDemande == null ? 0 : params.numDemande,
-				WSLinkTypeAbs: "http://localhost:8000/conges/typesabsences",
-				arrTypeAbs: [],
 			};
 		}
-	}
-
-	componentDidMount() {
-		this.getTypesAbsences();
-	}
-
-	// Retourne les types absences congés
-	getTypesAbsences() {
-		var that = this;
-
-		fetch(this.state.WSLinkTypeAbs)
-		.then(function(response) {
-			if (response.status >= 400) {
-				that.setState(arrTypeAbs: []);
-				throw new Error("Bad response from server");
-			}
-			return response.json();
-		})
-		.then(function(typeAbs) {
-			that.setState(arrTypeAbs: typeAbs);
-		});
 	}
 
 	savePeriod(idPeriod) {
@@ -160,7 +135,7 @@ class CongesPeriode extends React.Component {
 			parentState.periods[params.idPeriod - 1].libelleTypeAbs = '';
 			parentState.periods[params.idPeriod - 1].libelleTypeAbs = '';
 		}
-console.warn(JSON.stringify(parentState.periods));
+
 		// Force l'appel de la fonction render sur la page précedente
 		params.parent.forceUpdate();
 	}
@@ -228,6 +203,17 @@ console.warn(JSON.stringify(parentState.periods));
 		}
 		return false;
 	}
+
+// 	renderTypesAbsences() {
+// 		const { params } = this.props.navigation.state;
+// 		var parentState = params.parent.state;
+// // console.warn("2" + JSON.stringify(parentState.arrTypeAbs));
+// 		return parentState.arrTypeAbs.map((row) => (
+// 			// <Picker.Item key={row.idTypeAbs} label={row.libelle} value={row.code} />
+// // console.warn(row.libelle)
+// 		));
+// 	}
+	
 // TODO : probleme d'affichage dur ios
 	render() {
 		return (
