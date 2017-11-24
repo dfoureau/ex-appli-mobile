@@ -2,7 +2,7 @@ import React from "react";
 import { Calendar } from "react-native-calendars";
 import { CalendarConfig } from '../../../configuration/CalendarConfig';
 
-import { View, Text, TextInput, ScrollView, Alert } from "react-native";
+import { View, Text, TextInput, ScrollView, Alert, TouchableHighlight, Image, } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import PropTypes from "prop-types";
 import Style from "../../../styles/Styles";
@@ -12,7 +12,7 @@ import moment from "moment";
 import { momentConfig } from '../../../configuration/MomentConfig';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
-import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
+//import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
 import { Button } from "../../../components/Buttons";
 import Panel from "../../../components/Panel/Panel";
 
@@ -319,14 +319,29 @@ class FraisDetail extends React.Component {
     });
   }
 
-
   render() {
     return (
       <View style={styles.mainContainer}>
-        <ContainerTitre
-          title={this.state.title}
-          navigation={this.props.navigation}
-        >
+        <ScrollView style={styles.scrollViewBody}>
+
+          {/*Le containerTitre est remplacé par ce code spécifique pour pouvoir mettre un footer persistent*/}
+          <View style={styles.ContainerHeader}>
+            <TouchableHighlight
+              style={styles.MenuIconLink}
+              onPress={() => this.retour()}
+            >
+              <Image
+                style={styles.MenuIcon}
+                source={require("../../../images/icons/retour.png")}
+              />
+            </TouchableHighlight>
+            <Image
+              style={styles.LogoTitreCat}
+              source={require("../../../images/logo.png")}
+            />
+            <Text style={styles.TextHeader}>{this.state.title}</Text>
+          </View>
+
           <View style={styles.container}>
             {/*Affiche soit le calendrier pour un forfait, soit la date selectionnée*/}
             {this.state.isforfait ? (
@@ -647,16 +662,19 @@ class FraisDetail extends React.Component {
             </View>
           </View>
 
-          <View style={styles.container}>
-            <Text style={styles.text}> Total : {(FraisJour.calculerTotal(this.state)).toFixed(2)} </Text>
+          </ScrollView>
+
+          <View style={styles.stickyFooter}>
+            <View style={styles.containerButton}>
+              <Text style={styles.textFooter}> Total : {(
+                  FraisJour.calculerTotal(this.state).toFixed(2)
+                )}
+              </Text>
+              {this.showDeleteButton()}
+              {this.showValidateButton()}
+            </View>
           </View>
 
-
-          <View style={styles.containerButton}>
-            {this.showDeleteButton()}
-            {this.showValidateButton()}
-          </View>
-        </ContainerTitre>
       </View>
     );
   }
