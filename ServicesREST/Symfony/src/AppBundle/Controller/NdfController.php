@@ -397,11 +397,11 @@ class NdfController extends Controller
         $retour = $this->postNdf($data);
       }
       catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
-        return new JsonResponse("Problème de paramètres ", Response::HTTP_BAD_REQUEST);
+        return new JsonResponse(array('message' => "Problème de paramètres"), Response::HTTP_BAD_REQUEST);
       }
       return new JsonResponse($retour['message'],$retour['code']);
     }
-    
+
     public function postNdf($data)
     {
 
