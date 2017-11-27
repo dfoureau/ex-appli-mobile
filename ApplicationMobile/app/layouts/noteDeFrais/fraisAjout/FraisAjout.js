@@ -133,7 +133,7 @@ class FraisAjout extends React.Component {
    * @param  {int} month mois
    * @return {[type]}       [description]
    */
-  getNDF(year, month){
+  getNDF(year, month, forceReload = false){
     var that = this;
     let listFrais = this.initFraisVides(year, month);
 
@@ -150,7 +150,7 @@ class FraisAjout extends React.Component {
     // On vérifie que le mois à chercher est bien dans le tableau des mois contenant une NDF
     // Sinon, on affiche directement une table vide
     var parent = that.props.navigation.state.params.parent;
-    if (!parent.state.monthsWithNDF.includes(month)) {
+    if (!parent.state.monthsWithNDF.includes(month) && !forceReload) {
       that.setState(ndfEmptyState)
     }
     else {
@@ -186,7 +186,7 @@ class FraisAjout extends React.Component {
               });
 
               let fraisJour = new FraisJour(jour.format('YYYY-MM-DD'));
-              fraisJour.mapperDonnees(item); // Mapping des donnees et update du montant
+              fraisJour.mapFromService(item); // Mapping des donnees et update du montant
 
               totalAReglerAllFrais += fraisJour.totalAReglerFrais;
               totalClientAllFrais  += fraisJour.totalClientFrais;
@@ -301,6 +301,73 @@ class FraisAjout extends React.Component {
     })
   }
 
+  /**
+   * Sauvegarde une NDF, selon le mode demanndé :
+   *   - 0 => Enregistre un brouillon
+   *   - 1 => Demande de validation
+   * @param  {int} statusId : StatusId à utiliser pour la sauvegarde
+   * @return {[type]}      [description]
+   */
+  saveNDF(statusId) {
+    if (statusId !== 0 && statusId !== 1) {
+      showToast("Une erreur est survenue. Impossible d'effectuer l'opération");
+      return;
+    }
+
+    let url = "",
+        method = "",
+        mois = this.state.monthSelected,
+        annee = this.state.yearSelected;
+
+    if (this.state.statusId == null) {
+        // Nouvelle NDF : méthode POST
+        url = this.state.webServiceLien;
+        method = 'POST';
+    }
+    else {
+      // update de la DNF : méthode PUT
+      url = this.state.webServiceLien + annee + '/' + mois;
+      method = 'PUT';
+    }
+
+    // On construit un objet POST
+    var body = {
+      idUser: configurationAppli.userID,
+      mois: mois,
+      annee: annee,
+      etatID: statusId,
+      notesDeFrais: []
+    }
+
+    // On parcourt tous les FraisJour de la liste, et on filtre sur ceux qui ne
+    // sont pas vides
+    // Pour chaque jour non ivde, on l'ajoute au tableau notesDeFrais à passer dans le body
+    this.state.listFrais.filter((fraisJour) => fraisJour.hasData())
+                        .map((fraisJour) => {
+                          fraisJourData = fraisJour.mapToService()
+                          body.notesDeFrais.push(fraisJourData);
+                        });
+
+    // Appel au service
+    fetch(url, {
+      method: method,
+      headers: this.state.fetchOptions.headers,
+      body: JSON.stringify(body)
+    })
+    .then((response) => {
+      return Promise.all([response.status, response.json()]);
+    })
+    .then((res) => {
+      var [status, body] = res;
+      let success = (status == 200);
+      showToast((success ? "Succès" : "Erreur") + "\n" + body);
+      if (success) {
+          this.getNDF(annee, mois, true);
+      }
+    })
+
+  }
+
   saveDraft() {
     this.setState({
       statusId: 0,
@@ -348,14 +415,14 @@ class FraisAjout extends React.Component {
         <Button
           buttonStyles={styles.draftButton}
           text="BROUILLON"
-          onPress={() => this.saveDraft()}
+          onPress={() => this.saveNDF(0)}
         />
       );
   }
 
   showValidateButton() {
     if (this.state.statusId == null || this.state.statusId == 0) {
-      return <Button text="VALIDER" onPress={() => this.validateNDF()} />;
+      return <Button text="VALIDER" onPress={() => this.saveNDF(1)} />;
     }
   }
 
