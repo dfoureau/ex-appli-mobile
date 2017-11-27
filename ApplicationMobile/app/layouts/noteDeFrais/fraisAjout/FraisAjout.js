@@ -363,35 +363,12 @@ class FraisAjout extends React.Component {
       let success = (status == 200);
       showToast((success ? "Succès" : "Erreur") + "\n" + body);
       if (success) {
-          this.setState({isReady: false});
-          this.getNDF(annee, mois, true);
-          parent.reloadNDFByYear(annee);
+        parent.reloadNDFByYear(annee);
+        this.props.navigation.dispatch(NavigationActions.back());
       }
     })
-
   }
 
-  saveDraft() {
-    this.setState({
-      statusId: 0,
-      status: "Brouillon",
-    });
-    this.props.navigation.navigate("FraisConfirmation");
-  }
-  validateNDF() {
-    this.setState({
-      statusId: 2,
-      status: "Validé",
-    });
-    this.props.navigation.navigate("FraisConfirmation");
-  }
-
-  /*
-  checketat(etat) {
-    // Renvoie true si l'id correspond à l'état validé ou en attente de validation
-    return (etat == 1 || etat == 2);
-  }
-  */
 
   showDeleteButton() {
     if (this.state.statusId == 0)
