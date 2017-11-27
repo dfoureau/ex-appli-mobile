@@ -570,7 +570,9 @@ class CraController extends Controller
 							'0,5RT+0,5CP' => "0,5 RTT+ 0,5 Congé Payé",
 							'0,5RT+0,5IC' => "0,5 RTT+ 0,5 Intercontrat",
 							'CPA' => "Congé de paternité",
-							'CMA' => "Congé de maternité"
+							'CMA' => "Congé de maternité",
+							'1,0' => "Jour travaillé",
+							'0,5' => "Demie journée",
 							);
 		
 		//On va rechercher les codes disponibles dans la table valeurjourouvre
@@ -621,14 +623,13 @@ class CraController extends Controller
 			$label = $tablabel[$type];
 			}
 			else {
-				$label = 'non défini'; 
-				}
+                $label = 'non défini'; 
+            }
 			
 		$tabwe[]=array('code'=>$type, 'label'=>$label, 'valeur'=>$valeur);
 		}
 		// Et on rajoute les codes et labels n'existant pas dans la table valeurjourouvrewe
 		$tabwe[]=array('code'=>'0.0','label'=>'Jour non travaillé', 'valeur'=>'0.0');
-		$tabwe[]=array('code'=>'1.0','label'=>'Jour travaillé','valeur'=>'1.0');
 		
 		//Et on crée un tableau qui contient les deux tableaux précédents
 		$tab = array('jourouvre'=>$tabjo,'jourwe'=>$tabwe);
