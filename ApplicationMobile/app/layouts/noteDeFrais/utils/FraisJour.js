@@ -1,3 +1,7 @@
+import moment from "moment";
+import { momentConfig } from '../../../configuration/MomentConfig';
+
+
 class FraisJour {
 
   /**
@@ -29,13 +33,6 @@ class FraisJour {
         divers: 0,
         libelle: ""
       };
-      this.montants = {
-        forfait: 0,
-        transport: 0,
-        abonnements: 0,
-        reception: 0,
-        divers: 0
-      }
     }
 
   /**
@@ -44,7 +41,7 @@ class FraisJour {
    * @param  {Object} data Objet data à mapper dans le this.detail
    * @return {[type]}      [description]
    */
-  mapperDonnees(data) {
+  mapFromService(data) {
     this.detail = {
       facturable: Boolean(parseInt(data["facturable"])),
       indemKM: parseFloat(data["indemKM"]) || 0,
@@ -67,6 +64,36 @@ class FraisJour {
     }
 
     this.updateMontants();
+  }
+
+  /**
+   * Renvoie un objet dont les champs correspondent à ce qui est attendu
+   * en entrée de la méthode POST du service
+   * @return {[type]} [description]
+   */
+  mapToService() {
+    const output =  {
+      "jour": moment(this.date).format("D"),
+      "client": this.detail.client,
+      "facturable": this.detail.facturable ? 1 : 0,
+      "lieu": this.detail.lieu,
+      "nbKM": this.detail.nbKMS,
+      "montantPeages": this.detail.peages,
+      "montantFraisSNCF": this.detail.sncf,
+      "montantForfait": this.detail.forfait,
+      "montantNbZone": this.detail.nbZones,
+      "montantPourcentage": this.detail.pourcentage,
+      "montantHotel": this.detail.hotel,
+      "montantRepas": this.detail.repas,
+      "montantInvitation": this.detail.invit,
+      "montantTaxi": this.detail.taxi,
+      "montantEssence": this.detail.essence,
+      "montantParking": this.detail.parking,
+      "montantDivers": this.detail.divers,
+      "libelleDivers": this.detail.libelle
+    };
+
+    return output;
   }
 
   /**
@@ -173,6 +200,24 @@ class FraisJour {
           (parseFloat(detail.parking) || 0) +
           (parseFloat(detail.divers) || 0)
         );
+  }
+/**
+ * Vérifie si un FraisJour contient des données.
+ * On renvoie true si le  FraisJour :
+ *        - a un montant total > 0
+ *   (ou) - a au moins un libellé non vide
+ *   (ou) - a un nombre de kms > 0
+ * @return {Boolean}
+ */
+hasData() {
+    return (
+      this.totalClientFrais  != 0  ||
+      this.totalAReglerFrais != 0  ||
+      this.detail.indemKM    != 0  ||
+      this.detail.client     != "" ||
+      this.detail.lieu       != "" ||
+      this.detail.libelle    != ""
+    );
   }
 
   /**
