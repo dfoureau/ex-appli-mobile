@@ -99,9 +99,11 @@ class CongesController extends Controller
 		 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
 		 }
 
-		$data = json_decode(file_get_contents('php://input'), true);
+		//$data = json_decode(file_get_contents('php://input'), true);
 
 		try {
+			$content = $request->getContent();
+			$data = json_decode($content, true);
 			$retour = $this->createDemandeConges($data);
 		} catch (ContextErrorException $e) {
 			return new JsonResponse("Problème de paramètres", Response::HTTP_BAD_REQUEST);

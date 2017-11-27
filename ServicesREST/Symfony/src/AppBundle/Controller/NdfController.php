@@ -277,19 +277,21 @@ class NdfController extends Controller
         return new JsonResponse($retourdelete['message'],$retourdelete['code']);
       }
 
-	  $data = json_decode(file_get_contents('php://input'), true);
+	  //$data = json_decode(file_get_contents('php://input'), true);
 
-		  try {
-		  $retourpost = $this->postNdf($data,$idUserToken);
-		  }
-		   catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
-            return new JsonResponse("Modification échouée".$e, Response::HTTP_BAD_REQUEST);
-        }
+    try {
+      $content = $request->getContent();
+      $data = json_decode($content, true);
+      $retourpost = $this->postNdf($data,$idUserToken);
+    }
+    catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
+      return new JsonResponse("Modification échouée".$e, Response::HTTP_BAD_REQUEST);
+    }
 
 
-      if($retourpost['code']!=Response::HTTP_OK){
-        return new JsonResponse($retourpost['message'],$retourpost['code']);
-      }
+    if($retourpost['code']!=Response::HTTP_OK){
+      return new JsonResponse($retourpost['message'],$retourpost['code']);
+    }
 
 	  if($retourdelete['code'] == Response::HTTP_OK && $retourpost["code"] == Response::HTTP_OK){
         $message = array('message' => "Modification réussie");
