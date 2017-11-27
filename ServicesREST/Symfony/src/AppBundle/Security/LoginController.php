@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: r.landry
- * Date: 18/10/2017
- * Time: 11:25
- */
 
 namespace AppBundle\Security;
-
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -20,22 +13,18 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services;
 
 class LoginController extends Controller
 {
-
-
     /**
      * @param Request $request
      * @return JsonResponse
      * @Route("/login", name="connexion")
      * @Method("POST")
      */
-    public function ConnexionAction(Request $request)
-    {
+    public function ConnexionAction(Request $request) {
         //On récupère les identifiants
         $login= $request->request->get('login');
         $password= $request->request->get('password');
         //On parse le mdp
         $passMd5= md5($password);
-
 
         $sql='SELECT id,login,idAgence,mail,pass_crypt, nom, prenom, dateEntree
                FROM users 
@@ -52,6 +41,8 @@ class LoginController extends Controller
 
         $user=$list[0];
 
+        $this->ajouterDerniereConnexion($user['id']);
+
         //On définit les valeurs dans le token
         $time= time() + 3600;
         $data=array(
@@ -65,16 +56,15 @@ class LoginController extends Controller
                       ->encode($data);
 
         //Tableau retourné
-       $retour=array('id'=>$user['id'],
+        $retour=array('id'=>$user['id'],
                       'idAgence'=>$user['idAgence'],
                       'token'=>$token);
 
 		//$retour = array("token"=>$token);
         return new JsonResponse($retour);
-
     }
 
-    public function checkAuthentification($controller){
+    public function checkAuthentification($controller) {
 		//file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . "pas e pb" ."\r\n", FILE_APPEND);
         //On récupère la liste des headers
         $id = '';
@@ -127,6 +117,15 @@ class LoginController extends Controller
 		
 		//file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . $id.":".$idAgence."\r\n", FILE_APPEND);
         return array('id'=>$id, 'idAgence'=>$idAgence);
+    }
+
+    private function ajouterDerniereConnexion($userID) {
+        $sql='UPDATE users SET
+        derniereConnexion = Now()
+        where id = ' . $userID;
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
     }
 
 }
