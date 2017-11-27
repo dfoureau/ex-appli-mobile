@@ -333,7 +333,7 @@ class CraController extends Controller
     function deleteCra($idRA,$idUserToken){
 
 
-        $sql = 'DELETE FROM relevesactivites WHERE idRA = '.$idRA.' and idUser = '.$idUserToken.';';
+        $sql = 'DELETE FROM relevesactivites WHERE etat in ("1","2","4") and idRA = '.$idRA.' and idUser = '.$idUserToken.';';
 
         $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
         $stmt->execute();
@@ -474,7 +474,7 @@ class CraController extends Controller
             return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
         }
 		
-
+		$idUserToken = $retourAuth['id'];
         //$data = json_decode(file_get_contents('php://input'), true);
 
         try{
