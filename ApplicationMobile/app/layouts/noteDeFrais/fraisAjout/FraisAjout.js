@@ -357,6 +357,7 @@ class FraisAjout extends React.Component {
       body: JSON.stringify(body)
     })
     .then((response) => {
+      // On récupère le statut de retour, et on parse la requête en tant que JSON
       return Promise.all([response.status, response.json()]);
     })
     .then((res) => {
@@ -364,6 +365,8 @@ class FraisAjout extends React.Component {
       let success = (status == 200);
       showToast((success ? "Succès" : "Erreur") + "\n" + body.message);
 
+      // En cas de succès uniquement, on met à jour le parent et on revient
+      // sur la page précédente
       if (success) {
         parent.reloadNDFByYear(annee);
         this.props.navigation.dispatch(NavigationActions.back());
@@ -371,7 +374,7 @@ class FraisAjout extends React.Component {
     })
     .catch((err) => {
       console.log("ERREUR : \n" + err);
-    } )
+    })
   }
 
 
