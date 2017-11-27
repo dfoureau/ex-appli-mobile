@@ -316,6 +316,7 @@ class FraisAjout extends React.Component {
 
     let url = "",
         method = "",
+        idUser= configurationAppli.userID,
         mois = this.state.monthSelected,
         annee = this.state.yearSelected,
         parent = this.props.navigation.state.params.parent;
@@ -327,13 +328,13 @@ class FraisAjout extends React.Component {
     }
     else {
       // update de la DNF : méthode PUT
-      url = this.state.webServiceLien + annee + '/' + mois;
+      url = this.state.webServiceLien + idUser + '/' + annee + '/' + mois;
       method = 'PUT';
     }
 
     // On construit un objet POST
     var body = {
-      idUser: configurationAppli.userID,
+      idUser: idUser,
       mois: mois,
       annee: annee,
       etatID: statusId,
@@ -361,12 +362,16 @@ class FraisAjout extends React.Component {
     .then((res) => {
       var [status, body] = res;
       let success = (status == 200);
-      showToast((success ? "Succès" : "Erreur") + "\n" + body);
+      showToast((success ? "Succès" : "Erreur") + "\n" + body.message);
+
       if (success) {
         parent.reloadNDFByYear(annee);
         this.props.navigation.dispatch(NavigationActions.back());
       }
     })
+    .catch((err) => {
+      console.log("ERREUR : \n" + err);
+    } )
   }
 
 
