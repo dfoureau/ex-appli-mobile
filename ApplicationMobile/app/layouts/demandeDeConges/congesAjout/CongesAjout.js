@@ -56,7 +56,7 @@ class CongesAjout extends React.Component {
   setInitialValues() {
     this.state = {
       title: "Demande de congés",
-      statusId: 2,
+      statusId: 0,
       status: "En attente de validation",
       header: ["Date du", "Date au", "Type d'abs", "Nb. jours"],
       periods: [],
@@ -223,7 +223,7 @@ WSLinkTypeAbs: "http://localhost:8000/conges/typesabsences",
 
   saveDraft() {
     this.setState({
-      statusId: 1,
+      statusId: 0,
       status: "Brouillon",
     });
     this.props.navigation.navigate("CongesConfirmation");
@@ -231,7 +231,7 @@ WSLinkTypeAbs: "http://localhost:8000/conges/typesabsences",
 
   validateConge() {
   	this.setState({
-      statusId: 2,
+      statusId: 1,
       status: "En attente de validation",
     });
     if (this.state.numDemande !== null) {
@@ -290,7 +290,7 @@ console.warn(JSON.stringify(response.text()));
         hideLoading();
         that.setState({
           dataSaved: true,
-          statusId: 3,
+          statusId: 2,
           status: "Validé",
         });
         this.props.navigation.navigate("CongesConfirmation");
@@ -329,38 +329,41 @@ console.warn(JSON.stringify(response.text()));
   }
 
   showDeleteButton() {
-    // if(this.state.statusId == 2)
-    return (
-      <Button
-        buttonStyles={style.deleteButton}
-        text="SUPPRIMER"
-        onPress={() =>
-          Alert.alert(
-            "Suppression",
-            "Etes-vous sûr de vouloir supprimer le congé ?",
-            [
-              { text: "Non", onPress: () => console.log("Cancel!") },
-              { text: "Oui", onPress: () => this.deleteConge() },
-            ]
-          )}
-      />
-    );
+    if(this.state.statusId == 0) {
+      return (
+        <Button
+          buttonStyles={style.deleteButton}
+          text="SUPPRIMER"
+          onPress={() =>
+            Alert.alert(
+              "Suppression",
+              "Etes-vous sûr de vouloir supprimer le congé ?",
+              [
+                { text: "Non", onPress: () => console.log("Cancel!") },
+                { text: "Oui", onPress: () => this.deleteConge() },
+              ]
+            )}
+        />
+      );
+    }
   }
 
   showDraftButton() {
-    // if(this.state.statusId == 1 || this.state.statusId == 2)
-    return (
-      <Button
-        buttonStyles={style.draftButton}
-        text="BROUILLON"
-        onPress={() => this.saveDraft()}
-      />
-    );
+    if (this.state.statusId == null || this.state.statusId == 0) {
+      return (
+        <Button
+          buttonStyles={style.draftButton}
+          text="BROUILLON"
+          onPress={() => this.saveDraft()}
+        />
+      );
+    }
   }
 
   showValidateButton() {
-    // if(this.state.statusId == 1 || this.state.statusId == 2)
-    return <Button text="VALIDER" onPress={() => this.validateConge()} />;
+    if (this.state.statusId == null || this.state.statusId == 0) {
+      return <Button text="VALIDER" onPress={() => this.validateConge()} />;
+    }
   }
 
   render() {
