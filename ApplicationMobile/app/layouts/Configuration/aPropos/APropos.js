@@ -89,7 +89,7 @@ class APropos extends React.Component {
             {"\n"}
             Moussa	DIOMANDE
             {"\n"}
-            Vianney	Dubus
+            Vianney	DUBUS
             </Text>
             <Text>
             Célia	DUPRAT
@@ -101,7 +101,7 @@ class APropos extends React.Component {
             Franck	GAULTIER
             </Text>
             <Text>
-            Enzo	Ghedeba
+            Enzo	GHEDEBA
             {"\n"}
             Salah	JAIBER
             {"\n"}
