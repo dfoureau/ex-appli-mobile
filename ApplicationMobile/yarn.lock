@@ -3552,6 +3552,10 @@ react-devtools-core@^2.5.0:
     shell-quote "^1.6.1"
     ws "^2.0.3"
 
+react-native-auto-scrolling-message@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-auto-scrolling-message/-/react-native-auto-scrolling-message-0.0.2.tgz#89b14b0c53b27ac0759a9f54f6cc9da6e42f2d47"
+
 react-native-bottom-toolbar@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/react-native-bottom-toolbar/-/react-native-bottom-toolbar-3.0.0.tgz#1fd3f8e25aeb7e4631a1284cf6f44cd9d769cdb0"
