@@ -431,7 +431,7 @@ class FraisAjout extends React.Component {
       return (
         <View style={styles.mainContainer}>
           <ContainerTitre
-            title={this.state.title}
+            title={moment(this.state.yearSelected + '-' + this.state.monthSelected, 'YYYY-M').format('MMMM YYYY')}
             navigation={this.props.navigation}
           >
             <View style={styles.container}>
