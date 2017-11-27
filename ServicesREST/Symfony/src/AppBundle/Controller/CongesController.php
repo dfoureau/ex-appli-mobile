@@ -401,10 +401,14 @@ class CongesController extends Controller
                         demandesconges.validateur,
                         demandesconges.dateDemande,
 						concat(users.prenom,' ', users.nom) AS valid,
-						etatra.libelle AS libelleEtat
+						CASE 
+						 when etat='3' then 'A modifier'
+						when etat='2' then 'Validé' 
+						when etat='1' then 'En attente validation'
+						when etat='0' then 'Brouillon'
+						else 'Autre' end AS libelleEtat
 					FROM 
 						demandesconges
-					LEFT JOIN etatra ON demandesconges.etat = etatra.id
                     LEFT JOIN users ON demandesconges.validateur = users.id
 					WHERE idUser = " . $tUserId . "
 					AND EXTRACT(YEAR from dateDu) <= " . $tYear . "
@@ -473,10 +477,14 @@ class CongesController extends Controller
 						demandesconges.idTypeAbs AS typeabs,
 						typesabsences.code AS codeTypeAbs,
 						typesabsences.libelle AS libelleTypeAbs,
-						etatra.libelle AS libelleEtat
+						CASE 
+						 when etat='3' then 'A modifier'
+						when etat='2' then 'Validé' 
+						when etat='1' then 'En attente validation'
+						when etat='0' then 'Brouillon'
+						else 'Autre' end AS libelleEtat
 					FROM 
 						demandesconges
-					LEFT JOIN etatra ON demandesconges.etat = etatra.id
 					LEFT JOIN typesabsences ON demandesconges.idTypeAbs = typesabsences.idTypeAbs
 					WHERE idUser = " . $tUserId . "
 					AND numDemande = " . $tNumDemande . "
@@ -717,3 +725,4 @@ class CongesController extends Controller
 		}
 	}
 }
+?>
