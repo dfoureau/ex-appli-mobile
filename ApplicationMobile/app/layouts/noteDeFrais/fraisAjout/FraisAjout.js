@@ -317,7 +317,8 @@ class FraisAjout extends React.Component {
     let url = "",
         method = "",
         mois = this.state.monthSelected,
-        annee = this.state.yearSelected;
+        annee = this.state.yearSelected,
+        parent = this.props.navigation.state.params.parent;
 
     if (this.state.statusId == null) {
         // Nouvelle NDF : méthode POST
@@ -362,7 +363,9 @@ class FraisAjout extends React.Component {
       let success = (status == 200);
       showToast((success ? "Succès" : "Erreur") + "\n" + body);
       if (success) {
+          this.setState({isReady: false});
           this.getNDF(annee, mois, true);
+          parent.reloadNDFByYear(annee);
       }
     })
 
