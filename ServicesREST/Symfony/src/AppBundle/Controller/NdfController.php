@@ -156,42 +156,37 @@ class NdfController extends Controller
 
 		//on commence par vérifier les variables en entrée de la request
 		$etat = null;
-		
-		if (ctype_digit($id) && ctype_digit($annee) && ctype_digit($mois)) 
+
+		if (ctype_digit($id) && ctype_digit($annee) && ctype_digit($mois))
 		{
-			
-			
+
+
       $id = (int) $id;
       $annee = (int) $annee;
       $mois = (int) $mois;
       //on vérifie si la ligne existe
-      $sql ='select etat FROM notedefrais WHERE  idUser = "'.$id.'" AND mois = "'.$mois.'" AND annee = "'.$annee.'" group by etat' ;
+      $sql ='select etat FROM notedefrais WHERE  idUser = "'.$id.'" AND mois = "'.$mois.'" AND annee = "'.$annee.'" LIMIT 1';
       $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
       $stmt->execute();
 
       $list= $stmt->fetchAll();
+      $row=$list[0];
+      $etat = $row['etat'];
 
-      //si la ligne existe, alors on la supprime
-		
-      for($i=0; $i<count($list);$i++){
-        $row=$list[$i];
-        $etat=$row['etat'];
-			}
-		
 			if($etat == '0' || $etat == '1' || $etat == '3'){
 				/*
 			 when etat="3" then "A modifier"
-			 when etat="2" then "Validé" 
+			 when etat="2" then "Validé"
 			 when etat="1" then "En attente validation"
 			 when etat="0" then "Brouillon" */
 
-			   $sql ='DELETE FROM notedefrais WHERE  idUser = "'.$id.'" AND mois = "'.$mois.'" AND annee = "'.$annee.'"';
+			   $sql ='DELETE FROM notedefrais WHERE  idUser = "'.$id.'" AND mois = "'.$mois.'" AND annee = "'.$annee.'" AND etat IN (0,1,3)';
 
 			   $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
 			   $retour=$stmt->execute();
-		   
+
 			   $message=array('message'=>'Delete OK: Note de frais supprimee');
-			
+
 			   return  array('message'=>$message,'code'=>Response::HTTP_OK);
 			}
 			//si la ligne existe mais validee
