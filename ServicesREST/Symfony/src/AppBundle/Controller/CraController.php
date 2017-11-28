@@ -95,7 +95,6 @@ class CraController extends Controller
             $tabValeursSaisies = array_values($tabValeursSaisies);
         }
         
-        
         //de ce fait notre tableau commence bien au premier jour du mois, il ne reste plus qu'à faire la boucle sur le nombre de jours du mois = $dernierJourDuMois
         for ($j = 0; $j < $dernierJourDuMois; $j++) {
             $jour = $j+1;
@@ -121,7 +120,6 @@ class CraController extends Controller
     */
     public function getListCraByCollaborateur(Request $request, $id, $annee)
     {
-         
         //Vérification token
         $log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
@@ -170,7 +168,6 @@ class CraController extends Controller
         return new JsonResponse($retour, Response::HTTP_OK);
     }
 
-
     
     public function getMoreThanOne($mois, $idUser)
     {
@@ -214,11 +211,6 @@ class CraController extends Controller
             }
         }
     }
-         
-    
-    
-    
-    
     
     public function deleteCra($idRA, $idUserToken)
     {
@@ -245,7 +237,6 @@ class CraController extends Controller
     */
     public function deleteCraAction(Request $request, $idRA)
     {
-
           //Vérification token
         $log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
@@ -260,9 +251,6 @@ class CraController extends Controller
         return new JsonResponse($retourDelete["message"], $retourDelete["code"]);
     }
 
-
-
-    
     public function addCra($data, $idUserToken)
     {
         $idUser = $data['idUser'];
@@ -272,10 +260,8 @@ class CraController extends Controller
             return array('message' =>$message, 'code'=>Response::HTTP_BAD_REQUEST);
         }
         
-        
         $mois = $data['mois'];
         $annee = $data['annee'];
-        $libelle = $data['libelle'];
         $nbJourTravailles = $data['nbJourTravailles'];
         $nbJourAbs = $data['nbJourAbs'];
         $client = $data['client'];
