@@ -381,6 +381,7 @@ class CongesController extends Controller
 						demandesconges.etat,
                         demandesconges.validateur,
                         demandesconges.dateDemande,
+                        demandesconges.dateactionetat,
 						concat(users.prenom,' ', users.nom) AS valid,
 						CASE 
 						 when etat='3' then 'A modifier'
