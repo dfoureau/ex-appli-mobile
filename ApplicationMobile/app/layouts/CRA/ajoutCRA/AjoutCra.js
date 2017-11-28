@@ -57,7 +57,7 @@ class AjoutCra extends React.Component {
     const { params } = this.props.navigation.state;
 
     let now = moment();
-    monthSelected = now.month();
+    monthSelected = now.month() + 1; // On prend le mois +1 à case de l'indexation des mois en javascript (0 -> 11)
     yearSelected = now.year();
 
     if (params.month != null) {
@@ -72,7 +72,7 @@ class AjoutCra extends React.Component {
       yearSelected: parseInt(yearSelected),
       monthSelected: parseInt(monthSelected),
       title: "",
-      statusId: 1,
+      statusId: null,
       TextClient: " ",
       TextResponsable: " ",
       TextProjet: " ",
@@ -160,6 +160,7 @@ class AjoutCra extends React.Component {
       that.setState({
         isReady: true,
         data: cra,
+        statusId: cra.etat,
         listItemsCRA : that.getItemsCRA(cra.valeursSaisies),
         TextClient : cra.client,
         TextResponsable : cra.responsable,
@@ -252,7 +253,7 @@ class AjoutCra extends React.Component {
   }
 
   showDeleteButton() {
-    if(this.state.statusId == 1 || this.state.statusId == 2)
+    if(this.state.statusId == 1)
     return (
       <Button
         text="SUPPRIMER"
@@ -271,7 +272,7 @@ class AjoutCra extends React.Component {
   }
 
   showDraftButton() {
-    if(this.state.statusId == 1 || this.state.statusId == 2)
+    if(this.state.statusId == 1 || this.state.statusId == null)
     return (
       <Button
         buttonStyles={style.draftButton}
@@ -282,7 +283,7 @@ class AjoutCra extends React.Component {
   }
 
   showValidateButton() {
-    if(this.state.statusId == 1 || this.state.statusId == 2)
+    if(this.state.statusId == 1 || this.state.statusId == null)
       return <Button text="VALIDER" onPress={() => this.validate()} />;
   }
 
