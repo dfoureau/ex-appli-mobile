@@ -67,9 +67,12 @@ resetData() {
   })
 }
 
-  getDemandesByUserAndYear(_annee) {
+  getDemandesByUserAndYear(_annee, reloadPage) {
+    if (reloadPage) {
+      showLoading("Récupération des données. Veuillez patienter...");
+    }
+
     this.resetData();
-    showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
     fetch(this.state.webServiceLien + _annee, {
       method: 'GET',
@@ -94,7 +97,10 @@ resetData() {
             annee: _annee
           })
         }
-        hideLoading();
+        
+        if (reloadPage) {
+          hideLoading();
+        }
       });
   }
 
