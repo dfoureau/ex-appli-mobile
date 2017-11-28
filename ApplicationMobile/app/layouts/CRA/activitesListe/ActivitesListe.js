@@ -117,13 +117,15 @@ class ActivitesListe extends React.Component {
     this.props.navigation.navigate(ecran);
   }
 
-  //Transfert du paramétre vers la page AjoutCRa
-  //Params : date
-  SendDataCRA(id, ItemDate, month, year) {
+  /**
+   * Navigation vers la page AjoutCra
+   * @param {int} id    Id du CRA à modifier
+   * @param {int} year  Année du CRA à modifier
+   * @param {int} month Mois du CRA à modifier
+   */
+  SendDataCRA(id, year, month) {
     this.props.navigation.navigate("AjoutCra", {
       idCRA: id,
-      date: ItemDate,
-      isServiceCalled: true,
       month: month,
       year: year,
       parent: this
@@ -143,9 +145,9 @@ class ActivitesListe extends React.Component {
         <Text style={style.periodTextTitre}>
           {!item.hideDate ? item.date : null}
         </Text>
-          <TouchableOpacity
-            key={item.key}
-            onPress={() => this.SendDataCRA(item.Id, item.date)}
+        <TouchableOpacity
+          key={item.key}
+          onPress={() => this.SendDataCRA(item.Id, item.annee, item.mois)}
           >
           <CRAItem
             date={item.date}

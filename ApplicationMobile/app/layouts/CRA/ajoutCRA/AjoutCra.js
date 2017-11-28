@@ -20,6 +20,12 @@ import {
   Cell,
 } from "react-native-table-component";
 
+import {
+  showToast,
+  showNotification,
+  hide,
+} from "react-native-notifyer";
+
 import moment from "moment";
 import "whatwg-fetch";
 
@@ -44,12 +50,11 @@ class AjoutCra extends React.Component {
 
   static navigationOptions = ({ navigation }) => ({
     idCRA: navigation.state.params.idCRA,
-    date: navigation.state.params.date,
+    // date: navigation.state.params.date,
   });
 
   setInitialValues() {
     const { params } = this.props.navigation.state;
-    let dateStr = moment().format("MMMM YYYY");
 
     let now = moment();
     monthSelected = now.month();
@@ -74,19 +79,14 @@ class AjoutCra extends React.Component {
       TextComment: " ",
       status: "Nouveau",
       header: ["Date", "Activité"],
-      //monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1), //la premiere lettre du mois en majuscule
-      //listItemsCRA: this.getItemsCRA(), //liste des cra du mois, doit être ordonée
       listItemsCRA : [],
       modifiedLines: [], //liste des lignes à modifier si validation
       activitesListeJourOuvre: [],
       activitesListeJourWE: [],
       activitesListe: [],
       userId: configurationAppli.userID,
-      objGET: {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + configurationAppli.userToken,
-        },
+      fetchHeaders: {
+        Authorization: "Bearer " + configurationAppli.userToken,
       },
       WSLinkCRA: configurationAppli.apiURL + "CRA/RA/",
 	    webServiceLien1: configurationAppli.apiURL + "CRA/typesactivites",
@@ -94,9 +94,6 @@ class AjoutCra extends React.Component {
       data: [],
     };
 
-    if (params.isServiceCalled) {
-      this.saveItemsCRA();
-    }
   }
 
   //Permet d'afficher l'ecran choisi dans le menu
@@ -124,7 +121,10 @@ class AjoutCra extends React.Component {
 
    getTypeActivite() {
     var that = this;
-    fetch(this.state.webServiceLien1, this.state.objGET)
+    fetch(this.state.webServiceLien1, {
+      method: 'GET',
+      headers: this.state.fetchHeaders
+    })
       .then(function(response) {
         if (response.status >= 400) {
           throw new Error("GetUtilisateur : Bad response from server");
@@ -142,7 +142,10 @@ class AjoutCra extends React.Component {
 
   getCRAInfosByID(idCRA) {
     var that = this;
-    fetch(this.state.WSLinkCRA + idCRA, this.state.objGET)
+    fetch(this.state.WSLinkCRA + idCRA,  {
+      method: 'GET',
+      headers: this.state.fetchHeaders
+    })
     .then(function(response) {
       if (response.status >= 400) {
         that.setState({
@@ -177,35 +180,34 @@ class AjoutCra extends React.Component {
   }
 
 
-  saveItemsCRA() {
-    let list = [];
-    // Enregistrement des items du CRA dans le cache
-    if (this.state.listItemsCRA != null) {
-      this.state.listItemsCRA.forEach(function(item) {
-        var itemCRA = {
-          id: service.getNextKey(ITEMCRA_SCHEMA),
-          idItem: item.id,
-          idCRA: item.idCRA,
-          startDate: item.startDate,
-          endDate: item.endDate,
-          actType: item.actType,
-          workingDays: 1,
-        };
-
-        list.push(itemCRA); //need to replace, not to push
-        service.insert(ITEMCRA_SCHEMA, itemCRA);
-      });
-
-      this.state.listItemsCRA = list;
-    }
-  }
-
   /**
    * Supprime le CRA via un appel au service
    * @return {[type]} [description]
    */
   deleteCra() {
+    // var that = this;
+    let idCra = this.props.navigation.state.params.idCRA,
+        parent = this.props.navigation.state.params.parent,
+        year = this.state.yearSelected;
 
+    fetch(this.state.WSLinkCRA + idCra, {
+      method: 'DELETE',
+      headers: this.state.fetchHeaders
+    })
+    .then((response) => {
+      return Promise.all([response.status, response.json()]);
+    })
+    .then((res) => {
+      let [status, body] = res;
+      let success = status == 200;
+      showToast( (success ? "Succès" : "Erreur") + "\n" +  body.message );
+
+      // On redirige vers la page précédente uniquement en cas de succès
+      if (success) {
+        parent.getDemandesByUserAndYear(year);
+        this.props.navigation.dispatch(NavigationActions.back());
+      }
+    })
 
   }
 
@@ -258,7 +260,7 @@ class AjoutCra extends React.Component {
         onPress={() =>
           Alert.alert(
             "Suppression",
-            "Etes-vous sûr de vouloir supprimer le relevé d activité ?",
+            "Etes-vous sûr de vouloir supprimer le relevé d'activité ?",
             [
             { text: "Non", onPress: () => console.log("Cancel Pressed!") },
             { text: "Oui", onPress: () => this.deleteCra() },
@@ -291,7 +293,7 @@ class AjoutCra extends React.Component {
           style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }, (moment(row.startDate, "DD/MM/YYYY").day() == 0 || moment(row.startDate, "DD/MM/YYYY").day() == 6) && { backgroundColor: "#b4deea" } ]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
           textStyle={style.rowText}
-          data={[moment(row.startDate, 'DD/MM/YYYY').format('ddd DD/MM/YYYY'), row.actType]}
+          data={[moment(row.startDate, 'DD/MM/YYYY').format('dddd DD/MM/YYYY'), row.actType]}
         />
       </TouchableOpacity>
     ));
@@ -313,13 +315,12 @@ class AjoutCra extends React.Component {
     //Décralation du params transmis à l'écran courante.
     const { params } = this.props.navigation.state;
 
+    let title = moment(this.state.yearSelected + '-' + this.state.monthSelected, 'YYYY-M').format("MMMM YYYY");
+
     if (!this.state.isReady) {
       return (
         <View>
-          <ContainerTitre
-            title={params.date}
-
-          >
+          <ContainerTitre title={title}>
             <ActivityIndicator
               color={"#8b008b"}
               size={"large"}
@@ -334,7 +335,7 @@ class AjoutCra extends React.Component {
     } else {
       return (
         <View>
-          <ContainerTitre title={params.date} navigation={this.props.navigation}>
+          <ContainerTitre title={title} navigation={this.props.navigation}>
             <View style={style.container}>
               <View style={style.container1}>
                 <View style={style.containerFirstLine}>
