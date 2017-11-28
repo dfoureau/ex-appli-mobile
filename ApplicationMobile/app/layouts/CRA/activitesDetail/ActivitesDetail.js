@@ -45,10 +45,10 @@ class ActivitesDetail extends React.Component {
     date: navigation.state.params.date,
     activite: navigation.state.params.activite,
   });
-  
+
   setInitialValues() {
     const { params } = this.props.navigation.state;
-    
+
     var parent = params.parent;
 
     let dayDate = moment(params.date, "DD/MM/YYYY");
@@ -57,10 +57,10 @@ class ActivitesDetail extends React.Component {
 
     if (dayNumber == 0 || dayNumber == 6) {
       // Jours en weekend, Dimanche ou Samedi
-      activitesListe = parent.state.activitesListeJourWE;
+      activitesListe = parent.state.activitesListe.jourwe;
     } else {
       // Jours en semaine
-      activitesListe = parent.state.activitesListeJourOuvre;
+      activitesListe = parent.state.activitesListe.jourouvre;
     }
 
     let tmp = parent.state.listItemsCRA[params.line];
@@ -69,8 +69,6 @@ class ActivitesDetail extends React.Component {
       title: "Détails jour",
       date: params.date,
       linesToChange: [params.line],
-      activitesListeJourOuvre: parent.state.activitesListeJourOuvre,
-      activitesListeJourWE: parent.state.activitesListeJourWE,
       activitesListe: activitesListe,
       activiteClicked: { code: params.activite, label: params.activite },
       webServiceLien1: configurationAppli.apiURL + "CRA/typesactivites",
@@ -93,15 +91,14 @@ class ActivitesDetail extends React.Component {
   handleValidate() {
     const { params } = this.props.navigation.state;
     var parent = params.parent;
-	
+
 	let listItemsCRA = Array.from(parent.state.listItemsCRA);
-	
-	listItemsCRA[this.state.linesToChange] = 
-	
-	(<Row
-		  startDate={this.state.date}
-		  actType={this.state.activiteClicked.code}
-        />)
+
+	listItemsCRA[this.state.linesToChange] = {
+    startDate: this.state.date,
+    actType: this.state.activiteClicked.code,
+  }
+
 	  parent.setState({listItemsCRA: listItemsCRA},()=>{this.props.navigation.dispatch(NavigationActions.back())}); //on retourne à la page précédente qui à été modifié
   }
 
@@ -111,7 +108,7 @@ class ActivitesDetail extends React.Component {
     buttons = [];
     const maxItems = 4;
     let tempLength = this.state.activitesListe.length / 4;
-    
+
     //Boucle sur les 2 Lignes
     for (let j = 0; j < tempLength; j++) {
       //Boucle sur les Boutons

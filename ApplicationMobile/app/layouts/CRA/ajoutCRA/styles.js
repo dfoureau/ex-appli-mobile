@@ -140,8 +140,6 @@ export default StyleSheet.create({
 
   containerCommentaire: {
     flexDirection: "row",
-    flex: 1,
-    height: 85,
     flex: 0.25,
     marginHorizontal: 10,
     paddingHorizontal: 5,
@@ -210,8 +208,7 @@ export default StyleSheet.create({
   textInputComment: {
     marginLeft: 5,
     marginRight: 5,
-    width: 300,
-    height: 70,
+    flex: 1,
     backgroundColor: "#FFFFFF",
     borderRadius: 3,
     fontSize: 15,

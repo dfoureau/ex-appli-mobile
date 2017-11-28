@@ -20,6 +20,12 @@ import {
   Cell,
 } from "react-native-table-component";
 
+import {
+  showToast,
+  showNotification,
+  hide,
+} from "react-native-notifyer";
+
 import moment from "moment";
 import "whatwg-fetch";
 
@@ -36,8 +42,6 @@ import service from "../../../realm/service";
 
 import configurationAppli from "../../../configuration/Configuration";
 
-const ITEMCRA_SCHEMA = "ItemCRA";
-
 class AjoutCra extends React.Component {
   constructor(props) {
     super(props);
@@ -46,21 +50,19 @@ class AjoutCra extends React.Component {
 
   static navigationOptions = ({ navigation }) => ({
     idCRA: navigation.state.params.idCRA,
-    date: navigation.state.params.date,
+    // date: navigation.state.params.date,
   });
 
   setInitialValues() {
     const { params } = this.props.navigation.state;
-    let dateStr = moment().format("MMMM YYYY");
 
     let now = moment();
-    monthSelected = now.month();
+    monthSelected = now.month() + 1; // On prend le mois +1 à case de l'indexation des mois en javascript (0 -> 11)
     yearSelected = now.year();
 
     if (params.month != null) {
       monthSelected = params.month;
     }
-
     if (params.year != null) {
       yearSelected = params.year;
     }
@@ -69,148 +71,293 @@ class AjoutCra extends React.Component {
       yearSelected: parseInt(yearSelected),
       monthSelected: parseInt(monthSelected),
       title: "",
-      statusId: 1,
+      statusId: null,
       TextClient: " ",
       TextResponsable: " ",
       TextProjet: " ",
       TextComment: " ",
       status: "Nouveau",
       header: ["Date", "Activité"],
-      //monthSelected: dateStr.charAt(0).toUpperCase() + dateStr.slice(1), //la premiere lettre du mois en majuscule
-      //listItemsCRA: this.getItemsCRA(), //liste des cra du mois, doit être ordonée
+      newCra: params.newCra != undefined && params.newCra,
       listItemsCRA : [],
       modifiedLines: [], //liste des lignes à modifier si validation
-      activitesListeJourOuvre: [],
-      activitesListeJourWE: [],
       activitesListe: [],
       userId: configurationAppli.userID,
-      objGET: {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + configurationAppli.userToken,
-        },
+      fetchHeaders: {
+        Authorization: "Bearer " + configurationAppli.userToken,
       },
       WSLinkCRA: configurationAppli.apiURL + "CRA/RA/",
-	    webServiceLien1: configurationAppli.apiURL + "CRA/typesactivites",
       isReady: false,
       data: [],
     };
 
-    if (params.isServiceCalled) {
-      this.saveItemsCRA();
-    }
   }
 
   //Permet d'afficher l'ecran choisi dans le menu
   afficherEcranParent(ecran) {
     this.props.navigation.navigate(ecran);
   }
- 
+
+  /**
+   * On appelle le service pour récuéprer les éléments suivants :
+   *  - Liste des jours fériés
+   *  - liste des Types Action et leurs libellés
+   *  - Liste des jours de CP posés dans le mois
+   * @return {Promise} On renvoie un tableau Promise.all, où chaque élément correspond à un retour de webservice
+   */
+  getServiceGeneralData(year, month) {
+    let fetchObj = {
+      method: 'GET',
+      headers: this.state.fetchHeaders
+    };
+
+    let webServiceJoursFeries = configurationAppli.apiURL + 'joursferies' + '/' + year,
+        webServiceTypesActivites = configurationAppli.apiURL + "CRA/typesactivites"
+        webServiceDemandeConges = configurationAppli.apiURL + "conges" + '/' + configurationAppli.userID + '/' + year + '/' + month;
+
+    return Promise.all([
+      // 1. Liste des jours fériés
+      fetch(webServiceJoursFeries, fetchObj)
+       .then((response) => {
+        if (response.status == 200) {
+          return response.json();
+        }
+        else {
+          return Promise.resolve([]);
+        }
+      })
+      ,
+      // 2. Liste des typesAction
+      fetch(webServiceTypesActivites, fetchObj)
+        .then((response) => {
+        if (response.status == 200) {
+          return response.json();
+        }
+        else {
+          return Promise.resolve({
+            jourouvre: [],
+            jourwe: []
+          });
+        }
+      })
+      ,
+      // 3. Liste des conges
+      fetch(webServiceDemandeConges, fetchObj)
+        .then((response) => {
+          if (response.status == 200) {
+            return response.json();
+          }
+          else {
+            return Promise.resolve([]);
+          }
+        })
+    ])
+  }
+
+
   componentWillMount() {
     var that = this;
     //Récupération des paramètres de navigation
     const { params } = this.props.navigation.state;
 
-	  this.getTypeActivite();
-		
-    if (params.idCRA != null) {
-      // Récupere les périodes
-      this.getCRAInfosByID(params.idCRA);
-    } else {
-      that.setState({
-        data: [],
-        isReady: true,
+    // Récupération des infos générales
+    Promise.resolve(this.getServiceGeneralData(this.state.yearSelected, this.state.monthSelected))
+      .then((result) => {
+        let [feries, typesActions, conges] = result;
+
+        if (params.idCRA != null) {
+          // Récupération du CRA
+            this.getCRAInfosByID(params.idCRA, feries, typesActions, conges);
+        }
+        else if (this.state.newCra) {
+            // Initialisation des jours avec les valeurs par défaut
+            this.initDefaultCra(this.state.yearSelected, this.state.monthSelected, feries, typesActions, conges);
+        }
+        else {
+          that.setState({
+            data: [],
+            isReady: true,
+            activitesListe: typesAction
+          });
+        }
       });
     }
-  }
-  
-   getTypeActivite() {
-    var that = this; 
-    fetch(this.state.webServiceLien1, this.state.objGET)
-      .then(function(response) {
-        if (response.status >= 400) {
-          throw new Error("GetUtilisateur : Bad response from server");
-        }
-        return response.json();
-      })
-      .then(function(typesactivites) {
-        that.setState({
-          activitesListe: typesactivites,
-          activitesListeJourOuvre : typesactivites['jourouvre'],
-          activitesListeJourWE : typesactivites['jourwe'],
-        });
-      }) 
-   }
 
-  getCRAInfosByID(idCRA) {
+
+/**
+ * Initialise un CRA avec les valeurs par défaut
+ * Jours ouvrés : "1.0"
+ * WE et jours fériés : "0.0"
+ * On tient également compte des congés
+ * @param  {int} year     Année du CRA
+ * @param  {int} month    Mois du CRA
+ * @return {[type]}       [description]
+ */
+initDefaultCra(year, month, feries, typesActions, conges) {
+  let data = {
+    idRA: null,
+    mois: month,
+    annee: year,
+    libelle: "Nouveau",
+    NbJOuvres: 0,
+    nbJourTravailles: 0,
+    nbJourAbs: 0,
+    client: "",
+    responsable: "",
+    projet: "",
+    commentaires: "",
+    valeursSaisies: []
+  }; // Objet à peupler pour créer un nouveau CRA
+
+  let date = moment(year + '-' + month, 'YYYY-M');
+  let nbJours = date.daysInMonth();
+
+  let feriesArray = Object.values(feries);
+  var valeurSaisie = null;
+  for (i=1; i<= nbJours; i++) {
+    date.set('date', i);
+
+    valeurSaisie = {
+      startDate: date.format('dddd DD/MM/YYYY'),
+      disabled: false,
+      actType: "1.0"
+    };
+
+    // On verifie si le jour est férié
+    if (feriesArray.includes(date.format('DD/MM'))) {
+      valeurSaisie.isFerie = true;
+      valeurSaisie.actType = "0.0";
+      valeurSaisie.disabled = true;
+    }
+    // On vérifie si le jour est un samedi ou un dimanche
+    else if (date.day() == 0 || date.day() == 6) {
+      valeurSaisie.isWE = true;
+      valeurSaisie.actType = "0.0";
+    }
+    // On vérifie si le jour correspond à une demande de congé
+    else {
+      data.NbJOuvres ++;
+        congeData = conges.find((item) => item.jour == i);
+        if (congeData != undefined && congeData != null) {
+            if (congeData.code != "1.0") {
+              valeurSaisie.actType = congeData.code
+              valeurSaisie.disabled = true; // ??? à vérifier.
+            }
+        }
+    }
+
+    data.valeursSaisies.push(valeurSaisie);
+  }
+
+  data.NbJOuvres = data.NbJOuvres.toFixed(1);
+  this.setState({
+    isReady: true,
+    data: data,
+    statusId: null,
+    listItemsCRA : data.valeursSaisies,
+    TextClient : "",
+    TextResponsable : "",
+    TextProjet : "",
+    TextComment : "",
+    activitesListe: typesActions
+  });
+}
+
+  getCRAInfosByID(idCRA, feries, typesActions, conges) {
     var that = this;
-    fetch(this.state.WSLinkCRA + idCRA, this.state.objGET)
+    fetch(this.state.WSLinkCRA + idCRA,  {
+      method: 'GET',
+      headers: this.state.fetchHeaders
+    })
     .then(function(response) {
       if (response.status >= 400) {
         that.setState({
           data: [],
-          idReady: true, 
-        });
-        throw new Error("Bad response from server");
+          idReady: true,
+        }, () => {throw new Error("Bad response from server");} );
       }
-      return response.json();
+      else {
+        return response.json();
+      }
     })
     .then(function(cra) {
       that.setState({
         isReady: true,
         data: cra,
-        listItemsCRA : that.getItemsCRA(cra.valeursSaisies),
+        statusId: cra.etat,
+        listItemsCRA : that.getItemsCRA(cra.valeursSaisies, feries, conges),
         TextClient : cra.client,
         TextResponsable : cra.responsable,
         TextProjet : cra.projet,
         TextComment : cra.commentaires,
+        activitesListe: typesActions
       });
     });
   }
 
-  getItemsCRA(valeursSaisies) {
-    var rows = [];
-    for (var i = 0; i < valeursSaisies.length; i++) {
-      rows.push(
-        <Row
-          startDate={valeursSaisies[i]['date']}
-          actType={valeursSaisies[i]['activité']}
-          valeur={valeursSaisies[i]['valeur']}
-        />
-      );
-    }
-    return rows;
+  getItemsCRA(valeursSaisies, feries, conges) {
+    let feriesArray = Object.values(feries);
+    return valeursSaisies.map((item) => {
+      let actType = item.activité;
+      let disabled = false;
+      let date = moment(item.date, 'DD/MM/YYYY');
+      if (feriesArray.includes(date.format('DD/MM'))) {
+        disabled = true;
+      }
+      else {
+        if (date.day() > 0 && date.day() < 6) { // On vérifie qu'on est un jour en semaine
+          let congeData = conges.find((item) => item.jour == date.date()); // On récupère la ligne de congé pour vérifier si un CP a été posé ou pas
+          if (congeData != null && congeData != undefined && congeData.code != "1.0") {
+            // disabled = true;
+            // actType = congeData.code;
+          }
+        }
+      }
+
+      return {
+        startDate: item.date,
+        actType: actType,
+        disabled: disabled
+        // valeur: item.valeur
+      };
+    });
   }
 
 
-  saveItemsCRA() {
-    let list = [];
-    // Enregistrement des items du CRA dans le cache
-    if (this.state.listItemsCRA != null) {
-      this.state.listItemsCRA.forEach(function(item) {
-        var itemCRA = {
-          id: service.getNextKey(ITEMCRA_SCHEMA),
-          idItem: item.id,
-          idCRA: item.idCRA,
-          startDate: item.startDate,
-          endDate: item.endDate,
-          actType: item.actType,
-          workingDays: 1,
-        };
+  /**
+   * Supprime le CRA via un appel au service
+   * @return {[type]} [description]
+   */
+  deleteCra() {
+    // var that = this;
+    let idCra = this.props.navigation.state.params.idCRA,
+        parent = this.props.navigation.state.params.parent,
+        year = this.state.yearSelected;
 
-        list.push(itemCRA); //need to replace, not to push
-        service.insert(ITEMCRA_SCHEMA, itemCRA);
-      });
+    fetch(this.state.WSLinkCRA + idCra, {
+      method: 'DELETE',
+      headers: this.state.fetchHeaders
+    })
+    .then((response) => {
+      return Promise.all([response.status, response.json()]);
+    })
+    .then((res) => {
+      let [status, body] = res;
+      let success = status == 200;
+      showToast( (success ? "Succès" : "Erreur") + "\n" +  body.message );
 
-      this.state.listItemsCRA = list; 
-    }
+      // On redirige vers la page précédente uniquement en cas de succès
+      if (success) {
+        parent.getDemandesByUserAndYear(year);
+        this.props.navigation.dispatch(NavigationActions.back());
+      }
+    })
+
   }
 
-  deleteCr() {}
-
-  validatePressDelete() {
-    this.props.navigation.navigate("CraConfirmation");
-  }
+  // validatePressDelete() {
+  //   this.props.navigation.navigate("CraConfirmation");
+  // }
 
   saveDraft() {
     this.setState({
@@ -240,16 +387,16 @@ class AjoutCra extends React.Component {
       parent: this,
     });
   }
-  
+
   modifyPeriodeCRA() {
     this.props.navigation.navigate("ActivitesDetail", {
       line: -1,
       parent: this,
     });
-  }   
- 
+  }
+
   showDeleteButton() {
-    if(this.state.statusId == 1 || this.state.statusId == 2)
+    if(this.state.statusId == 1)
     return (
       <Button
         text="SUPPRIMER"
@@ -257,10 +404,10 @@ class AjoutCra extends React.Component {
         onPress={() =>
           Alert.alert(
             "Suppression",
-            "Etes-vous sûr de vouloir supprimer le relevé d activité ?",
+            "Etes-vous sûr de vouloir supprimer le relevé d'activité ?",
             [
-              { text: "Non", onPress: () => console.log("Cancel Pressed!") },
-              { text: "Oui", onPress: () => this.validatePressDelete() },
+            { text: "Non", onPress: () => console.log("Cancel Pressed!") },
+            { text: "Oui", onPress: () => this.deleteCra() },
             ]
           )}
       />
@@ -268,7 +415,7 @@ class AjoutCra extends React.Component {
   }
 
   showDraftButton() {
-    if(this.state.statusId == 1 || this.state.statusId == 2)
+    if(this.state.statusId == 1 || this.state.statusId == null)
     return (
       <Button
         buttonStyles={style.draftButton}
@@ -279,18 +426,18 @@ class AjoutCra extends React.Component {
   }
 
   showValidateButton() {
-    if(this.state.statusId == 1 || this.state.statusId == 2)
+    if(this.state.statusId == 1 || this.state.statusId == null)
       return <Button text="VALIDER" onPress={() => this.validate()} />;
   }
 
   afficherRows() {
     return this.state.listItemsCRA.map((row, i) => (
-      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(i, row.props.startDate, row.props.actType, row.props.valeur)}>
+      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(i, row.startDate, row.actType, row.valeur)} disabled={row.disabled}>
         <Row
-          style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }, (moment(row.props.startDate, "DD/MM/YYYY").day() == 0 || moment(row.props.startDate, "DD/MM/YYYY").day() == 6) && { backgroundColor: "#b4deea" } ]}
+          style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }, (moment(row.startDate, "DD/MM/YYYY").day() == 0 || moment(row.startDate, "DD/MM/YYYY").day() == 6) && { backgroundColor: "#b4deea" } ]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
           textStyle={style.rowText}
-          data={[row.props.startDate, row.props.actType]}
+          data={[moment(row.startDate, 'DD/MM/YYYY').format('dddd DD/MM/YYYY'), row.actType]}
         />
       </TouchableOpacity>
     ));
@@ -311,14 +458,13 @@ class AjoutCra extends React.Component {
   render() {
     //Décralation du params transmis à l'écran courante.
     const { params } = this.props.navigation.state;
- 
+
+    let title = moment(this.state.yearSelected + '-' + this.state.monthSelected, 'YYYY-M').format("MMMM YYYY");
+
     if (!this.state.isReady) {
       return (
         <View>
-          <ContainerTitre
-            title={params.date}
-
-          >
+          <ContainerTitre title={title}>
             <ActivityIndicator
               color={"#8b008b"}
               size={"large"}
@@ -333,14 +479,14 @@ class AjoutCra extends React.Component {
     } else {
       return (
         <View>
-          <ContainerTitre title={params.date} navigation={this.props.navigation}>
+          <ContainerTitre title={title} navigation={this.props.navigation}>
             <View style={style.container}>
               <View style={style.container1}>
                 <View style={style.containerFirstLine}>
                   <Text style={style.text}>Etat : {this.state.data.libelle}</Text>
                 </View>
                 <View style={style.containerFirstLine}>
-                <Text style={style.text}>Jours ouvrés : {this.state.data.NbJOuvres ? this.state.data.NbJOuvres : '0'} j</Text>
+                  <Text style={style.text}>Jours ouvrés : {this.state.data.NbJOuvres ? this.state.data.NbJOuvres : '0'} j</Text>
                 </View>
               </View>
 
@@ -438,7 +584,7 @@ class AjoutCra extends React.Component {
                     style={style.textInputComment}
                     multiline={true}
                     editable={true}
-                    numberOfLines={4}
+                    numberOfLines={8}
                     onChangeText={TextComment => this.setState({ TextComment })}
                     placeholderTextColor="#000000"
                     value={this.state.TextComment}

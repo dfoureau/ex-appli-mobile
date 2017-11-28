@@ -49,51 +49,53 @@ class ActivitesListe extends React.Component {
       isReady: false,
       isData: false,
       annee: moment().format("YYYY"),
-      webServiceLien:
-        configurationAppli.apiURL + "CRA/" + configurationAppli.userID + "/",
-      obj: {
-        method: "GET",
-        headers: {
+      webServiceLien: configurationAppli.apiURL + "CRA/" + configurationAppli.userID + "/",
+      fetchHeaders: {
           Authorization: "Bearer " + configurationAppli.userToken,
         },
-      },
     };
   }
 
-  getDemandesByUserAndYear(_annee, reloadPage) {
-    if (reloadPage) {
-      showLoading("Récupération des données. Veuillez patienter...");
-    }
+/**
+ * Remise à zéro des données dans le state
+ */
+resetData() {
+  this.setState({
+    data: [],
+    isData:false,
+    isReady: false
+  })
+}
 
+  getDemandesByUserAndYear(_annee) {
+    this.resetData();
+    showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
-    this.state.annee = _annee;
-    fetch(this.state.webServiceLien + _annee, this.state.obj)
-      .then(function(response) {
-        if (response.status == 400) {
+    fetch(this.state.webServiceLien + _annee, {
+      method: 'GET',
+      headers: this.state.fetchHeaders
+    })
+    .then(function(response) {
+      return Promise.all([response.status, response.json()]);
+    })
+    .then(function(response) {
+        let [status, cra] = response;
+        if (status > 200) {
           that.setState({
-            data: [],
             isReady: true,
-            isData: false,
-          });
-        } else if (response.status == 404) {
-          that.setState({
-            data: [],
-            isData: false,
-            isReady: true,
+            annee: _annee
           });
         }
-        if (reloadPage) {
-          hideLoading();
+        else {
+          that.setState({
+            data: that.parseCra(cra),
+            isData: true,
+            isReady: true,
+            annee: _annee
+          })
         }
-        return response.json();
-      })
-      .then(cra =>
-        this.setState({
-          data: this.parseCra(cra),
-          isData: true,
-          isReady: true,
-        })
-      );
+        hideLoading();
+      });
   }
 
   parseCra(cra) {
@@ -126,22 +128,27 @@ class ActivitesListe extends React.Component {
     this.props.navigation.navigate(ecran);
   }
 
-  //Transfert du paramétre vers la page AjoutCRa
-  //Params : date
-  SendDataCRA(id, ItemDate, month, year) {
+  /**
+   * Navigation vers la page AjoutCra
+   * @param {int} id    Id du CRA à modifier
+   * @param {int} year  Année du CRA à modifier
+   * @param {int} month Mois du CRA à modifier
+   */
+  SendDataCRA(id, year, month) {
     this.props.navigation.navigate("AjoutCra", {
       idCRA: id,
-      date: ItemDate,
-      isServiceCalled: true,
       month: month,
       year: year,
+      parent: this
     });
   }
 
   AfficherAjoutCRa() {
     this.props.navigation.navigate("AjoutCra", {
-      date: "Octobre 2017",
-      isServiceCalled: true,
+      idCRA: null,
+      year: moment().year(),
+      month: moment().month() +1,
+      newCra: true
     });
   }
 
@@ -151,10 +158,10 @@ class ActivitesListe extends React.Component {
         <Text style={style.periodTextTitre}>
           {!item.hideDate ? item.date : null}
         </Text>
-          <TouchableOpacity
-            key={item.key}
-            onPress={() => this.SendDataCRA(item.Id, item.date)}
-          >
+        <TouchableOpacity
+          key={item.key}
+          onPress={() => this.SendDataCRA(item.Id, item.annee, item.mois)}
+        >
           <CRAItem
             date={item.date}
             libelle={item.libelle}
