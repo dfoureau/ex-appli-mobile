@@ -267,14 +267,14 @@ WSLinkTypeAbs: "http://localhost:8000/conges/typesabsences",
 
     fetch(this.state.WSLinkCreate, this.state.obj)
       .then(function(response) {
-console.warn(JSON.stringify({
+      console.warn(JSON.stringify({
 				userId: that.state.userId,
 				etat: that.state.status,
 				dateEtat: that.state.dateDemande,
 				lignesDemandes: arrPeriodes,
 			}));
-console.warn(response.status);
-console.warn(JSON.stringify(response.text()));
+      console.warn(response.status);
+      console.warn(JSON.stringify(response.text()));
         if (response.status >= 400) {
           hideLoading();
           console.log("error : status >= 400");
@@ -444,7 +444,7 @@ console.warn(JSON.stringify(response.text()));
                 />
               </View>
             </View>
-            <View style={style.container4}>
+            <View style={style.containerButtons}>
               {this.showDeleteButton()}
               {this.showDraftButton()}
               {this.showValidateButton()}
