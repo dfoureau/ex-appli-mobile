@@ -56,10 +56,21 @@ class ActivitesListe extends React.Component {
     };
   }
 
+/**
+ * Remise à zéro des données dans le state
+ */
+resetData() {
+  this.setState({
+    data: [],
+    isData:false,
+    isReady: false
+  })
+}
+
   getDemandesByUserAndYear(_annee) {
+    this.resetData();
     showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
-    this.state.annee = _annee;
     fetch(this.state.webServiceLien + _annee, {
       method: 'GET',
       headers: this.state.fetchHeaders
@@ -71,9 +82,8 @@ class ActivitesListe extends React.Component {
         let [status, cra] = response;
         if (status > 200) {
           that.setState({
-            data: [],
-            isData: false,
             isReady: true,
+            annee: _annee
           });
         }
         else {
@@ -81,6 +91,7 @@ class ActivitesListe extends React.Component {
             data: that.parseCra(cra),
             isData: true,
             isReady: true,
+            annee: _annee
           })
         }
         hideLoading();
