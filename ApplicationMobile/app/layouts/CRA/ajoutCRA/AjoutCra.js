@@ -330,7 +330,6 @@ initDefaultCra(year, month, feries, typesActions, conges) {
    * @return {[type]} [description]
    */
   deleteCra() {
-    // var that = this;
     let idCra = this.props.navigation.state.params.idCRA,
         parent = this.props.navigation.state.params.parent,
         year = this.state.yearSelected;
@@ -353,8 +352,26 @@ initDefaultCra(year, month, feries, typesActions, conges) {
         this.props.navigation.dispatch(NavigationActions.back());
       }
     })
-
   }
+
+/**
+ * Enregistre un CRA en fonction du statusId choisi :
+ *   - 1 : Enregistre un brouillon
+ *   - 2 : Enregistre en demande de validation
+ *
+ * @param  {int} statusId [description]
+ * @return {void}      La méthode affiche une notification, et redirige vers la page de liste en cas de succès
+ */
+saveCra(statusId) {
+  if (statusId != 1 && statusId != 2) {
+    showToast("Une erreur est survenue.");
+    return;
+  }
+
+  const method = (this.state.newCra ? 'POST' : 'PUT'); // La méthode varie selon qu'on crée ou qu'on modifie un CRA
+
+    
+}
 
   // validatePressDelete() {
   //   this.props.navigation.navigate("CraConfirmation");
