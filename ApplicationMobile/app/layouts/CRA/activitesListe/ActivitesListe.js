@@ -49,14 +49,10 @@ class ActivitesListe extends React.Component {
       isReady: false,
       isData: false,
       annee: moment().format("YYYY"),
-      webServiceLien:
-        configurationAppli.apiURL + "CRA/" + configurationAppli.userID + "/",
-      obj: {
-        method: "GET",
-        headers: {
+      webServiceLien: configurationAppli.apiURL + "CRA/" + configurationAppli.userID + "/",
+      fetchHeaders: {
           Authorization: "Bearer " + configurationAppli.userToken,
         },
-      },
     };
   }
 
@@ -64,31 +60,31 @@ class ActivitesListe extends React.Component {
     showLoading("Récupération des données. Veuillez patienter...");
     var that = this;
     this.state.annee = _annee;
-    fetch(this.state.webServiceLien + _annee, this.state.obj)
-      .then(function(response) {
-        if (response.status == 400) {
-          that.setState({
-            data: [],
-            isReady: true,
-            isData: false,
-          });
-        } else if (response.status == 404) {
+    fetch(this.state.webServiceLien + _annee, {
+      method: 'GET',
+      headers: this.state.fetchHeaders
+    })
+    .then(function(response) {
+      return Promise.all([response.status, response.json()]);
+    })
+    .then(function(response) {
+        let [status, cra] = response;
+        if (status > 200) {
           that.setState({
             data: [],
             isData: false,
             isReady: true,
           });
         }
+        else {
+          that.setState({
+            data: that.parseCra(cra),
+            isData: true,
+            isReady: true,
+          })
+        }
         hideLoading();
-        return response.json();
-      })
-      .then(cra =>
-        this.setState({
-          data: this.parseCra(cra),
-          isData: true,
-          isReady: true,
-        })
-      );
+      });
   }
 
   parseCra(cra) {
@@ -130,6 +126,7 @@ class ActivitesListe extends React.Component {
       isServiceCalled: true,
       month: month,
       year: year,
+      parent: this
     });
   }
 

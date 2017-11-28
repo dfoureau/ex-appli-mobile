@@ -36,8 +36,6 @@ import service from "../../../realm/service";
 
 import configurationAppli from "../../../configuration/Configuration";
 
-const ITEMCRA_SCHEMA = "ItemCRA";
-
 class AjoutCra extends React.Component {
   constructor(props) {
     super(props);
@@ -105,14 +103,14 @@ class AjoutCra extends React.Component {
   afficherEcranParent(ecran) {
     this.props.navigation.navigate(ecran);
   }
- 
+
   componentWillMount() {
     var that = this;
     //Récupération des paramètres de navigation
     const { params } = this.props.navigation.state;
 
 	  this.getTypeActivite();
-		
+
     if (params.idCRA != null) {
       // Récupere les périodes
       this.getCRAInfosByID(params.idCRA);
@@ -123,9 +121,9 @@ class AjoutCra extends React.Component {
       });
     }
   }
-  
+
    getTypeActivite() {
-    var that = this; 
+    var that = this;
     fetch(this.state.webServiceLien1, this.state.objGET)
       .then(function(response) {
         if (response.status >= 400) {
@@ -139,7 +137,7 @@ class AjoutCra extends React.Component {
           activitesListeJourOuvre : typesactivites['jourouvre'],
           activitesListeJourWE : typesactivites['jourwe'],
         });
-      }) 
+      })
    }
 
   getCRAInfosByID(idCRA) {
@@ -149,7 +147,7 @@ class AjoutCra extends React.Component {
       if (response.status >= 400) {
         that.setState({
           data: [],
-          idReady: true, 
+          idReady: true,
         });
         throw new Error("Bad response from server");
       }
@@ -169,17 +167,13 @@ class AjoutCra extends React.Component {
   }
 
   getItemsCRA(valeursSaisies) {
-    var rows = [];
-    for (var i = 0; i < valeursSaisies.length; i++) {
-      rows.push(
-        <Row
-          startDate={valeursSaisies[i]['date']}
-          actType={valeursSaisies[i]['activité']}
-          valeur={valeursSaisies[i]['valeur']}
-        />
-      );
-    }
-    return rows;
+    return valeursSaisies.map((item) => {
+      return {
+        startDate: item.date,
+        actType: item.activité,
+        valeur: item.valeur
+      };
+    });
   }
 
 
@@ -202,15 +196,22 @@ class AjoutCra extends React.Component {
         service.insert(ITEMCRA_SCHEMA, itemCRA);
       });
 
-      this.state.listItemsCRA = list; 
+      this.state.listItemsCRA = list;
     }
   }
 
-  deleteCr() {}
+  /**
+   * Supprime le CRA via un appel au service
+   * @return {[type]} [description]
+   */
+  deleteCra() {
 
-  validatePressDelete() {
-    this.props.navigation.navigate("CraConfirmation");
+
   }
+
+  // validatePressDelete() {
+  //   this.props.navigation.navigate("CraConfirmation");
+  // }
 
   saveDraft() {
     this.setState({
@@ -240,14 +241,14 @@ class AjoutCra extends React.Component {
       parent: this,
     });
   }
-  
+
   modifyPeriodeCRA() {
     this.props.navigation.navigate("ActivitesDetail", {
       line: -1,
       parent: this,
     });
-  }   
- 
+  }
+
   showDeleteButton() {
     if(this.state.statusId == 1 || this.state.statusId == 2)
     return (
@@ -259,8 +260,8 @@ class AjoutCra extends React.Component {
             "Suppression",
             "Etes-vous sûr de vouloir supprimer le relevé d activité ?",
             [
-              { text: "Non", onPress: () => console.log("Cancel Pressed!") },
-              { text: "Oui", onPress: () => this.validatePressDelete() },
+            { text: "Non", onPress: () => console.log("Cancel Pressed!") },
+            { text: "Oui", onPress: () => this.deleteCra() },
             ]
           )}
       />
@@ -285,12 +286,12 @@ class AjoutCra extends React.Component {
 
   afficherRows() {
     return this.state.listItemsCRA.map((row, i) => (
-      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(i, row.props.startDate, row.props.actType, row.props.valeur)}>
+      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(i, row.startDate, row.actType, row.valeur)}>
         <Row
-          style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }, (moment(row.props.startDate, "DD/MM/YYYY").day() == 0 || moment(row.props.startDate, "DD/MM/YYYY").day() == 6) && { backgroundColor: "#b4deea" } ]}
+          style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }, (moment(row.startDate, "DD/MM/YYYY").day() == 0 || moment(row.startDate, "DD/MM/YYYY").day() == 6) && { backgroundColor: "#b4deea" } ]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
           textStyle={style.rowText}
-          data={[row.props.startDate, row.props.actType]}
+          data={[row.startDate, row.actType]}
         />
       </TouchableOpacity>
     ));
@@ -311,7 +312,7 @@ class AjoutCra extends React.Component {
   render() {
     //Décralation du params transmis à l'écran courante.
     const { params } = this.props.navigation.state;
- 
+
     if (!this.state.isReady) {
       return (
         <View>
@@ -340,7 +341,7 @@ class AjoutCra extends React.Component {
                   <Text style={style.text}>Etat : {this.state.data.libelle}</Text>
                 </View>
                 <View style={style.containerFirstLine}>
-                <Text style={style.text}>Jours ouvrés : {this.state.data.NbJOuvres ? this.state.data.NbJOuvres : '0'} j</Text>
+                  <Text style={style.text}>Jours ouvrés : {this.state.data.NbJOuvres ? this.state.data.NbJOuvres : '0'} j</Text>
                 </View>
               </View>
 
