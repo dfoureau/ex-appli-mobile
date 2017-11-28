@@ -280,7 +280,7 @@ class CongesListe extends React.Component {
                               {item.etat == 2 ? (
                                 <Text>
                                   {" "}
-                                  par {item.valid} le {item.dateValidation}
+                                  par {item.valid} le {moment(item.dateactionetat).format("DD/MM/YYYY")}
                                 </Text>
                               ) : null}
                             </Text>
