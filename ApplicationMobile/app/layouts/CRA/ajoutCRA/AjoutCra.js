@@ -291,7 +291,7 @@ class AjoutCra extends React.Component {
           style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }, (moment(row.startDate, "DD/MM/YYYY").day() == 0 || moment(row.startDate, "DD/MM/YYYY").day() == 6) && { backgroundColor: "#b4deea" } ]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
           textStyle={style.rowText}
-          data={[row.startDate, row.actType]}
+          data={[moment(row.startDate, 'DD/MM/YYYY').format('ddd DD/MM/YYYY'), row.actType]}
         />
       </TouchableOpacity>
     ));
