@@ -128,6 +128,7 @@ class CongesListe extends React.Component {
     if (reloadPage) {
       showLoading("Récupération des données. Veuillez patienter...");
     }
+    
     try {
       var that = this;
       fetch(this.state.WSLinkList + year, this.state.obj)
