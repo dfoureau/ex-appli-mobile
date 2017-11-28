@@ -283,22 +283,7 @@ class CraController extends Controller
         $projet = $data['projet'];
         $commentaires = $data['commentaires'];
         $tableauCRA = $data['valeursSaisies'];
-
-
-
-        
-        switch ($libelle) {
-            case "Brouillon":
-              $etat = 1;
-              break;
-            case "En attente validation":
-              $etat = 2;
-              break;
-            //Etats validés ou A modifier interdits, autres états inconnus
-            default:
-              $retour=array('message'=>'Etat invalide','code'=>Response::HTTP_BAD_REQUEST);
-              return $retour;
-        }
+        $etat = $data['etat'];
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ////////////// Algorithme pour transformer les périodes des CRA en chaine de caractères pour la BDD /////////////////
