@@ -313,7 +313,7 @@ class CongesController extends Controller
 				FROM 
 					demandesconges 
 				WHERE idUser = '$userId' 
-				AND numDemande = '$numRequest'";
+				AND numDemande = '$numRequest' and etat in ('0','1','3')";
 
         $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
         $stmt->execute();
