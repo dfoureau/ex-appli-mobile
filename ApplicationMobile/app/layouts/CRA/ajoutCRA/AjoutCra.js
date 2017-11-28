@@ -239,7 +239,7 @@ initDefaultCra(year, month, feries, typesActions, conges) {
       data.NbJOuvres ++;
         let congeData = conges.find((item) => item.jour == i);
         if (congeData != undefined && congeData != null) {
-            if (congeData.code != "1.0") {
+            if (congeData.code != "1,0" && congeData.code != "1.0") {
               valeurSaisie.actType = congeData.code
               valeurSaisie.disabled = true; // ??? à vérifier.
             }
@@ -303,13 +303,14 @@ initDefaultCra(year, month, feries, typesActions, conges) {
       let date = moment(item.date, 'DD/MM/YYYY');
       if (feriesArray.includes(date.format('DD/MM'))) {
         disabled = true;
+        actType = "0.0";
       }
       else {
         if (date.day() > 0 && date.day() < 6) { // On vérifie qu'on est un jour en semaine
           let congeData = conges.find((item) => item.jour == date.date()); // On récupère la ligne de congé pour vérifier si un CP a été posé ou pas
-          if (congeData != null && congeData != undefined && congeData.code != "1.0") {
-            // disabled = true;
-            // actType = congeData.code;
+          if (congeData != null && congeData != undefined && congeData.code != "1,0" && congeData.code != "1.0") {
+            disabled = true;
+            actType = congeData.code;
           }
         }
       }
