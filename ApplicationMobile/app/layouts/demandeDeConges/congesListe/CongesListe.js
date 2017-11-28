@@ -264,7 +264,7 @@ class CongesListe extends React.Component {
                               <Image
                                 style={style.listIcon}
                                 source={
-                                  item.etat == 1
+                                  item.etat == 2
                                     ? require("../../../images/icons/check2.png")
                                     : null
                                 }
@@ -277,7 +277,7 @@ class CongesListe extends React.Component {
                             </Text>
                             <Text style={style.statusText}>
                               Etat : {item.libelleEtat}
-                              {item.etat == 1 ? (
+                              {item.etat == 2 ? (
                                 <Text>
                                   {" "}
                                   par {item.valid} le {item.dateValidation}
