@@ -67,8 +67,8 @@ class FraisAjout extends React.Component {
     // S'ils sont vides, on prend le mois et l'année courants
     const { params } = this.props.navigation.state;
     let now = moment();
-    monthSelected = now.month();
-    yearSelected = now.year();
+    let monthSelected = now.month();
+    let yearSelected = now.year();
 
     if (params.month != null) {
       monthSelected = params.month;
@@ -115,7 +115,7 @@ class FraisAjout extends React.Component {
 
     let tableauFrais = [];
 
-    for (i=1; i<= nbJours; i++) {
+    for (let i=1; i<= nbJours; i++) {
       dateSelected.set('date', i);
       tableauFrais.push(new FraisJour(dateSelected.format('YYYY-MM-DD')));
     }
@@ -346,7 +346,7 @@ class FraisAjout extends React.Component {
     // Pour chaque jour non ivde, on l'ajoute au tableau notesDeFrais à passer dans le body
     this.state.listFrais.filter((fraisJour) => fraisJour.hasData())
                         .map((fraisJour) => {
-                          fraisJourData = fraisJour.mapToService()
+                          let fraisJourData = fraisJour.mapToService();
                           body.notesDeFrais.push(fraisJourData);
                         });
 

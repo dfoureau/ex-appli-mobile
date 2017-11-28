@@ -55,14 +55,14 @@ class FraisDetail extends React.Component {
       }
     }
     else {
-      let month = params.parent.state.monthSelected
+      let month = params.parent.state.monthSelected,
           year = params.parent.state.yearSelected;
 
           calendarDate = moment(year + '-' + month , 'YYYY-M');
     }
 
-    calendarMinDate = calendarDate.clone().set('date', 1).format(calendarDateFormat);
-    calendarMaxDate = calendarDate.clone().set('date', calendarDate.daysInMonth()).format(calendarDateFormat);
+    let calendarMinDate = calendarDate.clone().set('date', 1).format(calendarDateFormat);
+    let calendarMaxDate = calendarDate.clone().set('date', calendarDate.daysInMonth()).format(calendarDateFormat);
 
     this.state = {
       statusId: params.parent.state.statusId,
@@ -108,7 +108,7 @@ class FraisDetail extends React.Component {
           let currentDate = moment(this.state.calendarMinDate, this.state.calendarDateFormat);
           let nbJours = currentDate.daysInMonth(); // Nombre de jours dans le mois
 
-          for (i=1; i<= nbJours; i++) {
+          for (let i=1; i<= nbJours; i++) {
             currentDate.set('date', i);
 
             if (currentDate.day() > 0 && currentDate.day() < 6 && !this.state.joursFeries.includes(currentDate)) {

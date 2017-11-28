@@ -124,7 +124,7 @@ class AnnuaireListe extends React.Component {
 
   reloadAnnuaireByAgence(_idAgence) {
     this.state.idAgence = _idAgence;
-    requestURL = configurationAppli.apiURL + "annuaire/" + _idAgence;
+    let requestURL = configurationAppli.apiURL + "annuaire/" + _idAgence;
     return fetch(requestURL, this.state.obj)
       .then(response => response.json())
       .then(responseJson => {

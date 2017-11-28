@@ -186,7 +186,7 @@ class FraisJour {
    * @return {[type]}        [description]
    */
   static calculerTotal(detail) {
-    return total = (
+    let total = (
           (parseFloat(detail.indemKM) || 0) * (parseFloat(detail.nbKMS) || 0) +
           (parseFloat(detail.forfait) || 0) +
           (parseFloat(detail.sncf) || 0) +
@@ -200,6 +200,7 @@ class FraisJour {
           (parseFloat(detail.parking) || 0) +
           (parseFloat(detail.divers) || 0)
         );
+    return total;
   }
 /**
  * Vérifie si un FraisJour contient des données.

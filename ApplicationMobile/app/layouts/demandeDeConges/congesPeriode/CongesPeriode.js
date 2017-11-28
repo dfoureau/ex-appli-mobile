@@ -87,7 +87,8 @@ class CongesPeriode extends React.Component {
 	savePeriod(idPeriod) {
 		const { params } = this.props.navigation.state;
 		var parentState = params.parent.state;
-		var hour1 = hour2 = '';
+		var hour1 = '';
+		var hour2 = '';
 		if (params.idPeriod == null) {
 			parentState.nbPeriode = parentState.nbPeriode == 0 ? 1 : parentState.nbPeriode + 1;
 		}

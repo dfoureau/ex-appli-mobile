@@ -136,6 +136,7 @@ class FraisListe extends React.Component {
   }
 
   render() {
+    let textePasDeDonnes = <Text />;
     if (this.state.data && this.state.data.length > 0) {
       textePasDeDonnes = <Text />;
     } else {

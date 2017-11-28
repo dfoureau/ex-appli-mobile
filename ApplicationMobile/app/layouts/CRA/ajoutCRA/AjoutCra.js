@@ -57,8 +57,8 @@ class AjoutCra extends React.Component {
     const { params } = this.props.navigation.state;
 
     let now = moment();
-    monthSelected = now.month() + 1; // On prend le mois +1 à case de l'indexation des mois en javascript (0 -> 11)
-    yearSelected = now.year();
+    let monthSelected = now.month() + 1; // On prend le mois +1 à case de l'indexation des mois en javascript (0 -> 11)
+    let yearSelected = now.year();
 
     if (params.month != null) {
       monthSelected = params.month;
@@ -112,7 +112,7 @@ class AjoutCra extends React.Component {
     };
 
     let webServiceJoursFeries = configurationAppli.apiURL + 'joursferies' + '/' + year,
-        webServiceTypesActivites = configurationAppli.apiURL + "CRA/typesactivites"
+        webServiceTypesActivites = configurationAppli.apiURL + "CRA/typesactivites",
         webServiceDemandeConges = configurationAppli.apiURL + "conges" + '/' + configurationAppli.userID + '/' + year + '/' + month;
 
     return Promise.all([
@@ -214,7 +214,7 @@ initDefaultCra(year, month, feries, typesActions, conges) {
 
   let feriesArray = Object.values(feries);
   var valeurSaisie = null;
-  for (i=1; i<= nbJours; i++) {
+  for (let i=1; i<= nbJours; i++) {
     date.set('date', i);
 
     valeurSaisie = {
@@ -237,7 +237,7 @@ initDefaultCra(year, month, feries, typesActions, conges) {
     // On vérifie si le jour correspond à une demande de congé
     else {
       data.NbJOuvres ++;
-        congeData = conges.find((item) => item.jour == i);
+        let congeData = conges.find((item) => item.jour == i);
         if (congeData != undefined && congeData != null) {
             if (congeData.code != "1.0") {
               valeurSaisie.actType = congeData.code

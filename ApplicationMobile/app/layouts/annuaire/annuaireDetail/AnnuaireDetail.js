@@ -75,7 +75,7 @@ class AnnuaireDetail extends React.Component {
   }
 
   componentDidMount() {
-    requestURL = configurationAppli.apiURL + "annuaire/user/" + this.state.id;
+    let requestURL = configurationAppli.apiURL + "annuaire/user/" + this.state.id;
     return fetch(requestURL, this.state.obj)
       .then(response => response.json())
       .then(responseJson => {

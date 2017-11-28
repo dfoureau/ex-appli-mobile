@@ -10,11 +10,11 @@ const PickerRange = (start, end) => {
   // pour peupler l'intervalle
   let range = [];
   if (start <= end) {
-    for (i = start; i <= end; i++) {
+    for (let i = start; i <= end; i++) {
       range.push("" + i + "");
     }
   } else {
-    for (i = start; i >= end; i--) {
+    for (let i = start; i >= end; i--) {
       range.push("" + i + "");
     }
   }
