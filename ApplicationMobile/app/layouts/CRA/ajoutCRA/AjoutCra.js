@@ -440,7 +440,7 @@ class AjoutCra extends React.Component {
                     style={style.textInputComment}
                     multiline={true}
                     editable={true}
-                    numberOfLines={4}
+                    numberOfLines={8}
                     onChangeText={TextComment => this.setState({ TextComment })}
                     placeholderTextColor="#000000"
                     value={this.state.TextComment}
