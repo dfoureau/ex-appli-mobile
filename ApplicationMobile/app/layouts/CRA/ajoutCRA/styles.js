@@ -30,7 +30,6 @@ export default StyleSheet.create({
 
   containerPicker: {
     flexDirection: "row",
-    borderWidth: 1,
     width: 162,
     height: 29,
     alignItems: "center",
@@ -128,7 +127,6 @@ export default StyleSheet.create({
 
   containerInformation: {
     flexDirection: "row",
-    flex: 1,
     height: 210,
     flex: 0.25,
     marginHorizontal: 10,

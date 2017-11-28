@@ -80,7 +80,6 @@ export default StyleSheet.create({
 
   stickyFooter: {
     flex: 0.1,
-    alignItems: "center",
     borderColor: "#355A86",
     borderWidth: 1,
     alignItems:'center',

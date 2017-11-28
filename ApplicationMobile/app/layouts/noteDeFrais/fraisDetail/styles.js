@@ -83,13 +83,13 @@ export default StyleSheet.create({
     marginBottom: 5,
     marginTop: 5,
   },
+  
   deleteButton: {
     backgroundColor: "#FF0000",
   },
 
   stickyFooter: {
     flex: 0.1,
-    alignItems: "center",
     borderColor: "#355A86",
     borderWidth: 1,
     alignItems:'center',

@@ -57,7 +57,6 @@ export default StyleSheet.create({
   },
 
   containerInfoElement: {
-    flexDirection: "row",
     flex: 1,
     marginTop: 10,
     marginLeft: 20,

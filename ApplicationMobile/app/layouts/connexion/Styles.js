@@ -52,13 +52,6 @@ export default StyleSheet.create({
     alignItems: "center",
   },
 
-  txtMdpOublie: {
-    fontSize: 15,
-    color: "#2298AA",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
   viewMdpOublie: {
     alignItems: "center",
   },
@@ -69,6 +62,7 @@ export default StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  
   txtMdpOublie: {
     fontSize: 15,
     color: "#2298AA",
