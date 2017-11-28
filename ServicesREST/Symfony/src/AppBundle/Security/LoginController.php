@@ -19,7 +19,8 @@ class LoginController extends Controller
      * @Route("/login", name="connexion")
      * @Method("POST")
      */
-    public function ConnexionAction(Request $request) {
+    public function ConnexionAction(Request $request)
+    {
         //On récupère les identifiants
         $login= $request->request->get('login');
         $password= $request->request->get('password');
@@ -34,9 +35,9 @@ class LoginController extends Controller
         $stmt->execute();
 
         $list= $stmt->fetchAll();
-        if(count($list)==0){
+        if (count($list)==0) {
             $message=array('message'=>'Login et/ou mdp incorrect', 'login'=>$login,'$password'=>$password);
-            return new JsonResponse($message,400);
+            return new JsonResponse($message, 400);
         }
 
         $user=$list[0];
@@ -47,7 +48,7 @@ class LoginController extends Controller
         $time= time() + 3600;
         $data=array(
             'id' => $user['id'],
-			'idAgence'=>$user['idAgence'],
+            'idAgence'=>$user['idAgence'],
             'exp' => $time // 1 hour expiration
         );
 
@@ -60,66 +61,66 @@ class LoginController extends Controller
                       'idAgence'=>$user['idAgence'],
                       'token'=>$token);
 
-		//$retour = array("token"=>$token);
+        //$retour = array("token"=>$token);
         return new JsonResponse($retour);
     }
 
-    public function checkAuthentification($controller) {
-		//file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . "pas e pb" ."\r\n", FILE_APPEND);
+    public function checkAuthentification($controller)
+    {
+        //file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . "pas e pb" ."\r\n", FILE_APPEND);
         //On récupère la liste des headers
         $id = '';
-		$idAgence = '';
-		
-		$headers = apache_request_headers();
-		
-		/*foreach ($headers as $header => $value) {
-					
-		file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . $header.":".$value."\r\n", FILE_APPEND);
-		}*/
+        $idAgence = '';
+        
+        $headers = apache_request_headers();
+        
+        /*foreach ($headers as $header => $value) {
 
-		//On détermine si le token existe
-        if (!array_key_exists("authorization", $headers) &&  !array_key_exists("Authorization", $headers))  {
+        file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . $header.":".$value."\r\n", FILE_APPEND);
+        }*/
+
+        //On détermine si le token existe
+        if (!array_key_exists("authorization", $headers) &&  !array_key_exists("Authorization", $headers)) {
             //TODO erreur token non conforme
-		//file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . "pb auth" ."\r\n", FILE_APPEND);
-		return array('erreur' => 'Token non présent', 'connexion' => 1);
+            //file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . "pb auth" ."\r\n", FILE_APPEND);
+            return array('erreur' => 'Token non présent', 'connexion' => 1);
         }
-		
-		//on se retrouve avec un Bearer mlqdmqsldmqsljdqsmjl, il ne faut récupérer que le token
-		
-		if (array_key_exists("authorization", $headers)) {
-			
-		$tab = explode (" ",$headers['authorization']);
-		}
-		
-		if (array_key_exists("Authorization", $headers)) {
-			
-		$tab = explode (" ",$headers['Authorization']);
-		}
-		
-		$token = $tab[1];
-		
+        
+        //on se retrouve avec un Bearer mlqdmqsldmqsljdqsmjl, il ne faut récupérer que le token
+        
+        if (array_key_exists("authorization", $headers)) {
+            $tab = explode(" ", $headers['authorization']);
+        }
+        
+        if (array_key_exists("Authorization", $headers)) {
+            $tab = explode(" ", $headers['Authorization']);
+        }
+        
+        $token = $tab[1];
+        
         $list = $controller->get('lexik_jwt_authentication.encoder')
                            ->decode($token);
 
-        if($list===false){
+        if ($list===false) {
             //TODO erreur decodage du token
             // Le token peut être expiré
-				//file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . "pb to" ."\r\n", FILE_APPEND);
+            //file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . "pb to" ."\r\n", FILE_APPEND);
             return array('erreur'=>'Token non valide ou expire', 'connexion'=>1);
         }
         if (!array_key_exists("id", $list) && !array_key_exists("idAgence", $list)) {
             //TODO erreur token non conforme
-			//file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . "pb tok" ."\r\n", FILE_APPEND);
+            //file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . "pb tok" ."\r\n", FILE_APPEND);
             return array('erreur' => 'Token: liste des variables non conformes', 'connexion' => 1);
         }
         $id = $list['id'];
-		$idAgence = $list['idAgence'];
-		
-		//file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . $id.":".$idAgence."\r\n", FILE_APPEND);
+        $idAgence = $list['idAgence'];
+        
+        //file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . $id.":".$idAgence."\r\n", FILE_APPEND);
         return array('id'=>$id, 'idAgence'=>$idAgence);
     }
 
-    private function ajouterDerniereConnexion($userID) {
+    private function ajouterDerniereConnexion($userID)
+    {
         $sql='UPDATE users SET
         derniereConnexion = Now()
         where id = ' . $userID;
@@ -127,5 +128,4 @@ class LoginController extends Controller
         $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
         $stmt->execute();
     }
-
 }
