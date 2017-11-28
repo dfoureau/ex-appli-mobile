@@ -57,10 +57,10 @@ class ActivitesDetail extends React.Component {
 
     if (dayNumber == 0 || dayNumber == 6) {
       // Jours en weekend, Dimanche ou Samedi
-      activitesListe = parent.state.activitesListeJourWE;
+      activitesListe = parent.state.activitesListe.jourwe;
     } else {
       // Jours en semaine
-      activitesListe = parent.state.activitesListeJourOuvre;
+      activitesListe = parent.state.activitesListe.jourouvre;
     }
 
     let tmp = parent.state.listItemsCRA[params.line];
@@ -69,8 +69,6 @@ class ActivitesDetail extends React.Component {
       title: "Détails jour",
       date: params.date,
       linesToChange: [params.line],
-      activitesListeJourOuvre: parent.state.activitesListeJourOuvre,
-      activitesListeJourWE: parent.state.activitesListeJourWE,
       activitesListe: activitesListe,
       activiteClicked: { code: params.activite, label: params.activite },
       webServiceLien1: configurationAppli.apiURL + "CRA/typesactivites",

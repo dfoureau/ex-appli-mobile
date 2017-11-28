@@ -145,8 +145,10 @@ resetData() {
 
   AfficherAjoutCRa() {
     this.props.navigation.navigate("AjoutCra", {
-      date: "Octobre 2017",
-      isServiceCalled: true,
+      idCRA: null,
+      year: moment().year(),
+      month: moment().month() +1,
+      newCra: true
     });
   }
 
@@ -159,7 +161,7 @@ resetData() {
         <TouchableOpacity
           key={item.key}
           onPress={() => this.SendDataCRA(item.Id, item.annee, item.mois)}
-          >
+        >
           <CRAItem
             date={item.date}
             libelle={item.libelle}
