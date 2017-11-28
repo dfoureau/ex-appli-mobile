@@ -72,11 +72,14 @@ class FraisListe extends React.Component {
   componentDidMount() {
     var today = new Date();
     var year = today.getFullYear();
-    this.getNDFByUser(year);
+    this.getNDFByUser(year, false);
   }
 
-  getNDFByUser(_annee) {
-    showLoading("Récupération des données. Veuillez patienter...");
+  getNDFByUser(_annee, reloadPage) {
+    if (reloadPage) {
+      showLoading("Récupération des données. Veuillez patienter...");
+    }
+
     var that = this;
     // this.state.year = _annee;
     fetch(this.state.webServiceLien + _annee + "/" + configurationAppli.userID, this.state.obj)
@@ -96,7 +99,9 @@ class FraisListe extends React.Component {
         }
       })
       .then(function(ndf) {
-        hideLoading();
+        if (reloadPage) {
+          hideLoading();
+        }
         if (ndf.isEmpty !== true) {
           let monthsWithNDF = ndf.map(item => parseInt(item.mois));
 
@@ -114,7 +119,7 @@ class FraisListe extends React.Component {
   reloadNDFByYear(_year) {
     this.setState({ year: _year });
     this.setState({ isData: false, isReady: false });
-    this.getNDFByUser(_year);
+    this.getNDFByUser(_year, true);
   }
 
   //Fonction permettant de conditionner l'affichage du bloc valideur

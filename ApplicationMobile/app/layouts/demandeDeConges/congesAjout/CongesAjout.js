@@ -36,7 +36,6 @@ import { Button } from "../../../components/Buttons";
 import Accueil from "../../accueil/Accueil";
 import CongesPeriode from "../congesPeriode/CongesPeriode";
 import CongesConfirmation from "../congesConfirmation/CongesConfirmation";
-import service from "../../../realm/service";
 
 import configurationAppli from "../../../configuration/Configuration";
 
@@ -57,8 +56,8 @@ class CongesAjout extends React.Component {
   setInitialValues() {
     this.state = {
       title: "Demande de congés",
-      statusId: 1,
-      status: "Nouveau",
+      statusId: 0,
+      status: "En attente de validation",
       header: ["Date du", "Date au", "Type d'abs", "Nb. jours"],
       periods: [],
       WSLinkSolde:
@@ -91,8 +90,33 @@ class CongesAjout extends React.Component {
       dataSaved: false,
       numDemande: this.props.navigation.state.params.numDemande,
       isReady: false,
+      nbPeriode: 0,
+WSLinkTypeAbs: "http://localhost:8000/conges/typesabsences",
+			// WSLinkTypeAbs: configurationAppli.apiURL + conges/typesabsences,
+			arrTypeAbs: [],
     };
   }
+
+  // Retourne les types absences congés
+	getTypesAbsences() {
+		var that = this;
+
+		fetch(this.state.WSLinkTypeAbs)
+			.then(function(response) {
+				if (response.status >= 400) {
+					that.setState({arrTypeAbs: []});
+					throw new Error("Bad response from server");
+				}
+				return response.json();
+			})
+			.then(function(typeAbs) {
+				that.setState({arrTypeAbs: typeAbs});
+// console.warn("1" + JSON.stringify(that.state.arrTypeAbs));
+			})
+			.catch(function(error) {
+				console.log("error : " + error);
+			});
+	}
 
   componentDidMount() {
     var that = this;
@@ -100,6 +124,7 @@ class CongesAjout extends React.Component {
     const { params } = this.props.navigation.state;
 
     this.getSoldeCongesByUserId();
+    this.getTypesAbsences();
 
     if (params.numDemande != null) {
       // Récupere les périodes
@@ -131,6 +156,7 @@ class CongesAjout extends React.Component {
         that.setState({
           isReady: true,
           periods: p,
+          nbPeriode: p.lenghth,
         });
       });
 
@@ -163,7 +189,10 @@ class CongesAjout extends React.Component {
           soldeRTT: solde[0]["rtt"],
           soldeConges: solde[0]["cp"],
         });
-      });
+      })
+      .catch(function(error) {
+				console.log("error : " + error);
+			});
   }
 
   // Permet d'afficher l'ecran choisi dans le menu
@@ -194,13 +223,17 @@ class CongesAjout extends React.Component {
 
   saveDraft() {
     this.setState({
-      statusId: 2,
-      status: "brouillon",
+      statusId: 0,
+      status: "Brouillon",
     });
     this.props.navigation.navigate("CongesConfirmation");
   }
 
   validateConge() {
+  	this.setState({
+      statusId: 1,
+      status: "En attente de validation",
+    });
     if (this.state.numDemande !== null) {
       this.sendDemandeConges("POST");
     } else {
@@ -208,7 +241,7 @@ class CongesAjout extends React.Component {
     }
   }
 
-  // TODO finir le post
+// TODO : Voir pourquoi le post ne fonctionne pas
   sendDemandeConges(method) {
     showLoading("Enregistrement en cours. Veuillez patientier...");
 
@@ -216,7 +249,6 @@ class CongesAjout extends React.Component {
     this.state.periods.map(periodes => {
       arrPeriodes.push({
         numLigne: parseInt(periodes.numLigne),
-        // TODO : les dates ne sont pas formatées comme il faut si elles proviennent d'une nouvelle période
         dateDebut: periodes.dateDu,
         dateFin: periodes.dateAu,
         nbJours: parseInt(periodes.nbJour),
@@ -226,7 +258,7 @@ class CongesAjout extends React.Component {
 
     this.state.obj.method = method;
     this.state.obj.body = JSON.stringify({
-      userId: this.state.userId,
+      userId: parseInt(this.state.userId),
       etat: this.state.status,
       dateEtat: this.state.dateDemande,
       lignesDemandes: arrPeriodes,
@@ -235,14 +267,14 @@ class CongesAjout extends React.Component {
 
     fetch(this.state.WSLinkCreate, this.state.obj)
       .then(function(response) {
-        // console.warn(JSON.stringify({
-        // 				userId: that.state.userId,
-        // 				etat: that.state.status,
-        // 				dateEtat: that.state.dateDemande,
-        // 				lignesDemandes: arrPeriodes,
-        // 			}));
-        // console.warn(response.status);
-        // console.warn(JSON.stringify(response.text()));
+      console.warn(JSON.stringify({
+				userId: that.state.userId,
+				etat: that.state.status,
+				dateEtat: that.state.dateDemande,
+				lignesDemandes: arrPeriodes,
+			}));
+      console.warn(response.status);
+      console.warn(JSON.stringify(response.text()));
         if (response.status >= 400) {
           hideLoading();
           console.log("error : status >= 400");
@@ -258,19 +290,14 @@ class CongesAjout extends React.Component {
         hideLoading();
         that.setState({
           dataSaved: true,
-          statusId: 3,
-          status: "validé",
+          statusId: 2,
+          status: "Validé",
         });
-        // Après sauvegarde en bdd, on reset le cache
-        service.delete(PERIOD_SCHEMA);
         this.props.navigation.navigate("CongesConfirmation");
       })
       .catch(function(error) {
         hideLoading();
         console.log("error : " + error);
-        var id = showToast(
-          "Erreur : l'enregistrement s'est mal passé // " + error
-        );
       });
   }
 
@@ -301,45 +328,42 @@ class CongesAjout extends React.Component {
     return this.getRows(periods, false);
   }
 
-  afficherNewRows() {
-    // Périodes non encore enregistrées en base
-    let newPeriods = service.get(PERIOD_SCHEMA);
-    return this.getRows(newPeriods, true);
-  }
-
   showDeleteButton() {
-    // if(this.state.statusId == 2)
-    return (
-      <Button
-        buttonStyles={style.deleteButton}
-        text="SUPPRIMER"
-        onPress={() =>
-          Alert.alert(
-            "Suppression",
-            "Etes-vous sûr de vouloir supprimer le congé ?",
-            [
-              { text: "Non", onPress: () => console.log("Cancel!") },
-              { text: "Oui", onPress: () => this.deleteConge() },
-            ]
-          )}
-      />
-    );
+    if(this.state.statusId == 0) {
+      return (
+        <Button
+          buttonStyles={style.deleteButton}
+          text="SUPPRIMER"
+          onPress={() =>
+            Alert.alert(
+              "Suppression",
+              "Etes-vous sûr de vouloir supprimer le congé ?",
+              [
+                { text: "Non", onPress: () => console.log("Cancel!") },
+                { text: "Oui", onPress: () => this.deleteConge() },
+              ]
+            )}
+        />
+      );
+    }
   }
 
   showDraftButton() {
-    // if(this.state.statusId == 1 || this.state.statusId == 2)
-    return (
-      <Button
-        buttonStyles={style.draftButton}
-        text="BROUILLON"
-        onPress={() => this.saveDraft()}
-      />
-    );
+    if (this.state.statusId == null || this.state.statusId == 0) {
+      return (
+        <Button
+          buttonStyles={style.draftButton}
+          text="BROUILLON"
+          onPress={() => this.saveDraft()}
+        />
+      );
+    }
   }
 
   showValidateButton() {
-    // if(this.state.statusId == 1 || this.state.statusId == 2)
-    return <Button text="VALIDER" onPress={() => this.validateConge()} />;
+    if (this.state.statusId == null || this.state.statusId == 0) {
+      return <Button text="VALIDER" onPress={() => this.validateConge()} />;
+    }
   }
 
   render() {
@@ -411,7 +435,6 @@ class CongesAjout extends React.Component {
                     textStyle={style.headerText}
                   />
                   {this.afficherRows()}
-                  {this.afficherNewRows()}
                 </Table>
               </View>
               <View>
@@ -421,7 +444,7 @@ class CongesAjout extends React.Component {
                 />
               </View>
             </View>
-            <View style={style.container4}>
+            <View style={style.containerButtons}>
               {this.showDeleteButton()}
               {this.showDraftButton()}
               {this.showValidateButton()}

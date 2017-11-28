@@ -120,7 +120,7 @@ resetData() {
   }
 
   componentDidMount() {
-    this.getDemandesByUserAndYear(this.state.annee);
+    this.getDemandesByUserAndYear(this.state.annee, false);
   }
 
   //Permet d'afficher l'ecran choisi dans le menu
@@ -214,7 +214,7 @@ resetData() {
                     }}
                     selectedValue={this.state.annee}
                     onValueChange={(itemValue, itemIndex) =>
-                      this.getDemandesByUserAndYear(itemValue)}
+                      this.getDemandesByUserAndYear(itemValue, true)}
                   >
                     {PickerRange(currentYear, oldestYear)}
                   </Picker>

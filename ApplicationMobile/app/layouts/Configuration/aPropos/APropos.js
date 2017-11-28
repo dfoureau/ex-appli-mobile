@@ -83,7 +83,7 @@ class APropos extends React.Component {
             Fabrice	CADU
             </Text>
             <Text>
-            Maxime	Chevallier
+            Maxime	CHEVALLIER
             {"\n"}
             Stéphane	DILET
             {"\n"}
@@ -119,11 +119,11 @@ class APropos extends React.Component {
             Ludovic	MARMION
             </Text>
             <Text>
-            Alexis	Martial
+            Alexis	MARTIAL
             {"\n"}
             Kathie MARTIN
             {"\n"}
-            Romain	Martinez
+            Romain	MARTINEZ
             {"\n"}
             Etienne	MICHEL
             </Text>

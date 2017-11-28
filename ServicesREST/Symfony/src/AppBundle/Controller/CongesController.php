@@ -12,47 +12,44 @@ use Symfony\Component\Debug\Exception\ContextErrorException;
 use AppBundle\Controller\UtilsController;
 use AppBundle\Security\LoginController;
 
-
 class CongesController extends Controller
 {
 
-	/**
-	 * Retourne le dernier solde congés et le dernier solde RTT de l'utilisateur en paramère
-	 * 
-	 * @param Request 	$request 		Requete en entrée
-	 * @param int 		$userId 		Identifiant de l'utilisateur
-	 *
-	 * @return JsonResponse
-	 * 
-	 * @Route("/conges/solde/{userId}", name="soldeconges")
-	 * @Method("GET")
-	 */
-	public function getDemandeCongesByUserId(Request $request, $userId)
-	{
-	//Vérification token
+    /**
+     * Retourne le dernier solde congés et le dernier solde RTT de l'utilisateur en paramère
+     *
+     * @param Request 	$request 		Requete en entrée
+     * @param int 		$userId 		Identifiant de l'utilisateur
+     *
+     * @return JsonResponse
+     *
+     * @Route("/conges/solde/{userId}", name="soldeconges")
+     * @Method("GET")
+     */
+    public function getDemandeCongesByUserId(Request $request, $userId)
+    {
+        //Vérification token
         $log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
-            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+            return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
-		
-		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
-		$idUserToken = $retourAuth['id'];
-		
-		//On compare l'idUserToken et l'id fourni en paramètre
-		
-		if ($userId != $idUserToken) 
-		{
-			$message = array('message' => "Incohérence token/ID");
-		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
-		}
+        
+        // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+        $idUserToken = $retourAuth['id'];
+        
+        //On compare l'idUserToken et l'id fourni en paramètre
+        
+        if ($userId != $idUserToken) {
+            $message = array('message' => "Incohérence token/ID");
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
 
-		// Test valeur en entrée
-		if (UtilsController::isPositifInt($userId)) {
+        // Test valeur en entrée
+        if (UtilsController::isPositifInt($userId)) {
+            $tUserId = (int) $userId;
 
-			$tUserId = (int) $userId;
-
-			$sql = "SELECT 
+            $sql = "SELECT 
 						users.id, 
 						concat(RIGHT(concat('0', soldesconges.mois), 2),'/', soldesconges.annee) AS datesolde, 
 						soldesconges.cp, 
@@ -64,335 +61,319 @@ class CongesController extends Controller
 					AND users.id = " . $tUserId . " 
 					ORDER BY concat(annee, mois) DESC limit 1";
 
-			$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-			$stmt->execute();
-			$retour = $stmt->fetchAll();
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $retour = $stmt->fetchAll();
 
-			if (count($retour) != 0) {
-				return new JsonResponse($retour, Response::HTTP_OK);
-			} else {
-				$message = array('message' => 'Utilisateur non trouvé : ' . $tUserId);
-				return new JsonResponse($message, Response::HTTP_NOT_FOUND);
-			}
-		} else {
+            if (count($retour) != 0) {
+                return new JsonResponse($retour, Response::HTTP_OK);
+            } else {
+                $message = array('message' => 'Utilisateur non trouvé : ' . $tUserId);
+                return new JsonResponse($message, Response::HTTP_NOT_FOUND);
+            }
+        } else {
+            $message = array('message' => 'Format paramètres incorrect :' . $userId);
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
+    }
 
-			$message = array('message' => 'Format paramètres incorrect :' . $userId);
-			return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
-		}
-	}
+    /**
+     * Créer une nouvelle demande de congés
+     *
+     * @param Request 	$request 		Requete en entrée
+     *
+     * @return JsonResponse
+     *
+     * @Route("/conges", name="creerconges")
+     * @Method("POST")
+     */
+    public function createDemandeCongesAction(Request $request)
+    {
+        $log=new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
+        }
 
-	/**
-	 * Créer une nouvelle demande de congés
-	 *
-	 * @param Request 	$request 		Requete en entrée
-	 *
-	 * @return JsonResponse
-	 * 
-	 * @Route("/conges", name="creerconges")
-	 * @Method("POST")
-	 */
-	public function createDemandeCongesAction(Request $request)
-	{
-		 $log=new LoginController();
-		 $retourAuth = $log->checkAuthentification($this);
-		 if (array_key_exists("erreur", $retourAuth)) {
-		 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
-		 }
+        //$data = json_decode(file_get_contents('php://input'), true);
 
-		//$data = json_decode(file_get_contents('php://input'), true);
+        try {
+            $content = $request->getContent();
+            $data = json_decode($content, true);
+            $retour = $this->createDemandeConges($data);
+        } catch (ContextErrorException $e) {
+            return new JsonResponse("Problème de paramètres", Response::HTTP_BAD_REQUEST);
+        }
 
-		try {
-			$content = $request->getContent();
-			$data = json_decode($content, true);
-			$retour = $this->createDemandeConges($data);
-		} catch (ContextErrorException $e) {
-			return new JsonResponse("Problème de paramètres", Response::HTTP_BAD_REQUEST);
-		}
+        return new JsonResponse($retour['message'], $retour['code']);
+    }
+    
+    /**
+     * Execute les requetes de creation après vérifiction des parametres
+     *
+     * @param array 	$data 			Informations nécessaires à la création
+     *
+     * @return array
+     */
+    public function createDemandeConges($data)
+    {
+        // Test valeurs en entrée
+        if (is_int($data['userId'])) {
+            // Récupère l'userId à partir du $data
+            $userId = $data['userId'];
+            // Ou on le recupere à partir du token
+        } else {
+            $retour = array('code' => Response::HTTP_BAD_REQUEST, 'message' => 'Données en entrée invalides 1');
+            return $retour;
+        }
 
-		return new JsonResponse($retour['message'], $retour['code']);
-	}
-	
-	/**
-	 * Execute les requetes de creation après vérifiction des parametres
-	 *
-	 * @param array 	$data 			Informations nécessaires à la création
-	 *
-	 * @return array
-	 */
-	public function createDemandeConges($data)
-	{
-		// Test valeurs en entrée
-		if (is_int($data['userId'])) {
-			// Récupère l'userId à partir du $data
-			$userId = $data['userId'];
-// Ou on le recupere à partir du token
-		} else {
-			$retour = array('code' => Response::HTTP_BAD_REQUEST, 'message' => 'Données en entrée invalides 1');
-			return $retour;
-		}
-
-		// Récupere le numéro de la demande à partir de la table
-		$sql = "SELECT 
+        // Récupere le numéro de la demande à partir de la table
+        $sql = "SELECT 
 					MAX(numdemande) AS num 
 				FROM 
 					demandesconges 
 				WHERE idUser = " . $userId;
 
-		$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-		$stmt->execute();
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
 
-		$retour = $stmt->fetchAll();
-		
-		if (count($retour) == 0) { // Il n'existe pas de ligne; il n'y a jamais eu de demande de congés, donc on la met à 1
+        $retour = $stmt->fetchAll();
+        
+        if (count($retour) == 0) { // Il n'existe pas de ligne; il n'y a jamais eu de demande de congés, donc on la met à 1
 
-			$numDemande = '1';
+            $numDemande = '1';
+        } else { // S'il existe une ligne, on récupère et on incrémente d'1
+        
+            foreach ($retour as $key => $value) {
+                $numDemande = $value['num'] + 1 ;
+            }
+            // Ou de la fonction
+            // $numDemande = UtilsController::getMaxNumDemande($userId);
 
-		} else { // S'il existe une ligne, on récupère et on incrémente d'1
-		
-			foreach($retour as $key => $value) {
-				$numDemande = $value['num'] + 1 ;
-			}
-// Ou de la fonction
-// $numDemande = UtilsController::getMaxNumDemande($userId);
+            switch ($data['etat']) {
+                case "Brouillon":
+                    $etat = 0;
+                    break;
+                case "En attente de validation":
+                    $etat = 1;
+                    break;
+                    // Etats validés ou A modifier interdits, autres états inconnus
+                default:
+                    $retour = array('code' => Response::HTTP_BAD_REQUEST, 'message' => 'Etat invalide : ' . $data['etat']);
+                    return $retour;
+            }
 
-			switch ($data['etat']){
-				case "Brouillon" :
-					$etat = 0;
-					break;
-				case "En attente de validation" :
-					$etat = 1;
-					break;
-					// Etats validés ou A modifier interdits, autres états inconnus
-				default :
-					$retour = array('code' => Response::HTTP_BAD_REQUEST, 'message' => 'Etat invalide : ' . $data['etat']);
-					return $retour;
-					break;
-			}
+            // Test valeurs en entrée
+            if (is_array($data['lignesDemandes']) && UtilsController::isValidDate($data['dateEtat'])) {
+                $lignes = $data['lignesDemandes'];
+                $dateEtat = $data['dateEtat'];
+            } else {
+                $retour = array('code' => Response::HTTP_BAD_REQUEST, 'message' => 'Données en entrée invalides 2');
+                return $retour;
+            }
 
-			// Test valeurs en entrée
-			if (is_array($data['lignesDemandes']) && UtilsController::isValidDate($data['dateEtat'])) {
-				$lignes = $data['lignesDemandes'];
-				$dateEtat = $data['dateEtat'];
-			} else {
-				$retour = array('code' => Response::HTTP_BAD_REQUEST, 'message' => 'Données en entrée invalides 2');
-				return $retour;
-			}
+            $sql = 'INSERT INTO demandesconges (numDemande, dateDemande, idUser, numLigne, dateDu, dateAu, idTypeAbs, nbJour, etat, validateur, dateactionetat) VALUES ';
 
-			$sql = 'INSERT INTO demandesconges (numDemande, dateDemande, idUser, numLigne, dateDu, dateAu, idTypeAbs, nbJour, etat, validateur, dateactionetat) VALUES ';
+            $i = 0;
+            foreach ($lignes as $key => $row) {
 
-			$i = 0;
-			foreach ($lignes as $key => $row) {
+                // Test valeurs en entrée
+                if (UtilsController::isValidDate($row['dateDebut']) && UtilsController::isValidDate($row['dateFin'])
+                    && is_int($row['numLigne']) && is_int($row['nbJours']) && is_int($row['typeabs'])) {
+                    $numLigne = $row['numLigne'];
+                    $dateDebut = $row['dateDebut'];
+                    $dateFin = $row['dateFin'];
+                    $nbJours = $row['nbJours'];
+                    $typeAbs = $row['typeabs'];
+                } else {
+                    $retour = array('code' => Response::HTTP_BAD_REQUEST, 'message' => 'Données en entrée invalides 3');
+                    return $retour;
+                }
 
-				// Test valeurs en entrée
-				if (UtilsController::isValidDate($row['dateDebut']) && UtilsController::isValidDate($row['dateFin'])
-					&& is_int($row['numLigne']) && is_int($row['nbJours']) && is_int($row['typeabs'])) {
-					$numLigne = $row['numLigne'];
-					$dateDebut = $row['dateDebut'];
-					$dateFin = $row['dateFin'];
-					$nbJours = $row['nbJours'];
-					$typeAbs = $row['typeabs'];
+                if ($i > 0) {
+                    $sql .=',';
+                }
 
-				} else {
-					$retour = array('code' => Response::HTTP_BAD_REQUEST, 'message' => 'Données en entrée invalides 3');
-					return $retour;
-				}
+                $sql .= "('$numDemande', '$dateEtat', '$userId', '$numLigne', '$dateDebut', '$dateFin', '$typeAbs', '$nbJours', '$etat', '$userId', null)";
+                $i++;
+            }
+            $sql .= ';';
 
-				if ($i > 0) {
-					$sql .=',';
-				}
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
 
-				$sql .= "('$numDemande', '$dateEtat', '$userId', '$numLigne', '$dateDebut', '$dateFin', '$typeAbs', '$nbJours', '$etat', '$userId', null)"; 
-				$i++;
-			}
-			$sql .= ';';
+            $retour = array('message' => "OK", 'code' => Response::HTTP_OK);
+            return $retour;
+        }
+    }
 
-			$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-			$stmt->execute();
-
-			$retour = array('message' => "OK", 'code' => Response::HTTP_OK);
-			return $retour;
-		}
-	}
-
-	/**
-	 * Mettre à jour une demande de congés
-	 * 
-	 * @param Request 	$request 		Requete en entrée
-	 * @param int 		$userId 		Identifiant de l'utilisateur
-	 * @param int 		$numRequest 	Numéro de la demande de congés
-	 *
-	 * @return JsonResponse
-	 * 
-	 * @Route("/conges/{userId}/{numRequest}", name="majconges")
-	 * @Method("PUT")
-	 */
-	public function putDemandeCongesAction(Request $request, $userId, $numRequest)
-	{
-
-		$log = new LoginController();
+    /**
+     * Mettre à jour une demande de congés
+     *
+     * @param Request 	$request 		Requete en entrée
+     * @param int 		$userId 		Identifiant de l'utilisateur
+     * @param int 		$numRequest 	Numéro de la demande de congés
+     *
+     * @return JsonResponse
+     *
+     * @Route("/conges/{userId}/{numRequest}", name="majconges")
+     * @Method("PUT")
+     */
+    public function putDemandeCongesAction(Request $request, $userId, $numRequest)
+    {
+        $log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
-            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+            return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
-		
-		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
-		$idUserToken = $retourAuth['id'];
-		
-		if ($userId != $idUserToken) 
-		{
-			$message = array('message' => "Incohérence token/ID");
-		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
-		}
+        
+        // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+        $idUserToken = $retourAuth['id'];
+        
+        if ($userId != $idUserToken) {
+            $message = array('message' => "Incohérence token/ID");
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
 
-		// Test les valeurs en entrée
-		if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numRequest)) {
+        // Test les valeurs en entrée
+        if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numRequest)) {
 
-			// Appel la fonction deleteCongés
-			$retourdelete=$this->deleteDemandeConges((int)$userId, (int)$numRequest);  
-			if ($retourdelete['code'] != Response::HTTP_OK){
-				return new JsonResponse($retourdelete['message'], $retourdelete['code']);
-			}
+            // Appel la fonction deleteCongés
+            $retourdelete=$this->deleteDemandeConges((int)$userId, (int)$numRequest);
+            if ($retourdelete['code'] != Response::HTTP_OK) {
+                return new JsonResponse($retourdelete['message'], $retourdelete['code']);
+            }
 
-			// Appel la fonction postCongés
-			$retourpost = $this->createDemandeCongesAction($request);  
-			return $retourpost;
+            // Appel la fonction postCongés
+            $retourpost = $this->createDemandeCongesAction($request);
 
-			if ($retourpost['code'] != Response::HTTP_OK){
-				return new JsonResponse($retourpost['message'], $retourpost['code']);
-			}
-		} else {
+            if ($retourpost['code'] != Response::HTTP_OK) {
+                return new JsonResponse($retourpost['message'], $retourpost['code']);
+            }
 
-			$message = array('message' => 'Format paramètres incorrect');
-			return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+            return $retourpost;
+        } else {
+            $message = array('message' => 'Format paramètres incorrect');
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
+    }
+    
 
-		}
-	}
-	
-
-	/**
-	 * Supprimer une demande de congés
-	 * 
-	 * @param Request 	$request 		Requete en entrée
-	 * @param int 		$userId 		Identifiant de l'utilisateur
-	 * @param int 		$numRequest 	Numéro de la demande de congés
-	 *
-	 * @return JsonResponse
-	 *
-	 * @Route("/conges/supprimer/{userId}/{numRequest}", name="deleteconges")
-	 * @Method("DELETE")
-	 */
-	public function deleteDemandeCongesAction(Request $request, $userId, $numRequest)
-	{
-		$log = new LoginController();
+    /**
+     * Supprimer une demande de congés
+     *
+     * @param Request 	$request 		Requete en entrée
+     * @param int 		$userId 		Identifiant de l'utilisateur
+     * @param int 		$numRequest 	Numéro de la demande de congés
+     *
+     * @return JsonResponse
+     *
+     * @Route("/conges/supprimer/{userId}/{numRequest}", name="deleteconges")
+     * @Method("DELETE")
+     */
+    public function deleteDemandeCongesAction(Request $request, $userId, $numRequest)
+    {
+        $log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
-            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+            return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
-		
-		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
-		$idUserToken = $retourAuth['id'];
-		
-		if ($userId != $idUserToken) 
-		{
-			$message = array('message' => "Incohérence token/ID");
-		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
-		}
+        
+        // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+        $idUserToken = $retourAuth['id'];
+        
+        if ($userId != $idUserToken) {
+            $message = array('message' => "Incohérence token/ID");
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
 
-		// Test les valeurs en entrée
-		if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numRequest)) {
+        // Test les valeurs en entrée
+        if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numRequest)) {
+            $retourdelete=$this->deleteDemandeConges((int)$userId, (int)$numRequest);
+            return new JsonResponse($retourdelete['message'], $retourdelete['code']);
+        } else {
+            $message = array('message' => 'Format paramètres incorrect');
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
+    }
 
-			$retourdelete=$this->deleteDemandeConges((int)$userId, (int)$numRequest);  
-			return new JsonResponse($retourdelete['message'], $retourdelete['code']);
-
-		} else {
-
-			$message = array('message' => 'Format paramètres incorrect');
-			return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
-
-		}
-	}
-
-	/**
-	 * Execute les requetes de suppressions après vérifiction de l'existance de la demande de congé
-	 *
-	 * @param int 		$userId 		Identifiant de l'utilisateur
-	 * @param int 		$numRequest 	Numéro de la demande de congés
-	 *
-	 * @return array
-	 */
-	public function deleteDemandeConges($userId, $numRequest)
-	{
-		// Vérifie si la ligne existe
-		$sql = "SELECT 
+    /**
+     * Execute les requetes de suppressions après vérifiction de l'existance de la demande de congé
+     *
+     * @param int 		$userId 		Identifiant de l'utilisateur
+     * @param int 		$numRequest 	Numéro de la demande de congés
+     *
+     * @return array
+     */
+    public function deleteDemandeConges($userId, $numRequest)
+    {
+        // Vérifie si la ligne existe
+        $sql = "SELECT 
 					numdemande 
 				FROM 
 					demandesconges 
 				WHERE idUser = '$userId' 
 				AND numDemande = '$numRequest'";
 
-		$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-		$stmt->execute();
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
 
-		$list= $stmt->fetchAll();
+        $list= $stmt->fetchAll();
 
-		// La ligne existe, alors on la supprime
-		if (count($list) != 0) {
-			$sql = "DELETE 
+        // La ligne existe, alors on la supprime
+        if (count($list) != 0) {
+            $sql = "DELETE 
 					FROM 
 						demandesconges 
 					WHERE idUser = '$userId'
 					AND numDemande = '$numRequest'";
 
-			$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-			$retour = $stmt->execute();
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $retour = $stmt->execute();
 
-			$message = array('message' => 'Demande congés supprimée');
-			return array('message' => $message, 'code' => Response::HTTP_OK);
-		
-		} else { // La ligne n'existe pas, on le signale et on ne la supprime pas
+            $message = array('message' => 'Demande congés supprimée');
+            return array('message' => $message, 'code' => Response::HTTP_OK);
+        } else { // La ligne n'existe pas, on le signale et on ne la supprime pas
 
-			$message = array('message' => 'Delete KO');
-			return array('message' => $message, 'code' => Response::HTTP_BAD_REQUEST);
+            $message = array('message' => 'Delete KO');
+            return array('message' => $message, 'code' => Response::HTTP_BAD_REQUEST);
+        }
+    }
 
-		}
-	}
-
-	/**
-	 * Retourne toutes les demandes de congés de l'utilisateur et de l'année en paramètre
-	 * 
-	 * @param Request 	$request 		Requete en entrée
-	 * @param int 		$userId 		Identifiant de l'utilisateur
-	 * @param int 		$year 			Année demandée
-	 *
-	 * @return JsonResponse
-	 *
-	 * @Route("/conges/{userId}/{year}", name="congesparannee")
-	 * @Method("GET")
-	 */
-	public function getFindDemandesByUserAndYear(Request $request, $userId, $year)
-	{
-		
-		$log = new LoginController();
+    /**
+     * Retourne toutes les demandes de congés de l'utilisateur et de l'année en paramètre
+     *
+     * @param Request 	$request 		Requete en entrée
+     * @param int 		$userId 		Identifiant de l'utilisateur
+     * @param int 		$year 			Année demandée
+     *
+     * @return JsonResponse
+     *
+     * @Route("/conges/{userId}/{year}", name="congesparannee")
+     * @Method("GET")
+     */
+    public function getFindDemandesByUserAndYear(Request $request, $userId, $year)
+    {
+        $log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
-            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+            return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
-		
-		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
-		$idUserToken = $retourAuth['id'];
-		
-		if ($userId != $idUserToken) 
-		{
-			$message = array('message' => "Incohérence token/ID");
-		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
-		}
+        
+        // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+        $idUserToken = $retourAuth['id'];
+        
+        if ($userId != $idUserToken) {
+            $message = array('message' => "Incohérence token/ID");
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
 
-		// Test les valeurs en entrée
-		if (UtilsController::isPositifInt($userId) && ctype_digit($year) && (int)$year > 1995 && (int)$year < 2050) {
-			$tUserId = (int) $userId;
-			$tYear = (int) $year;
+        // Test les valeurs en entrée
+        if (UtilsController::isPositifInt($userId) && ctype_digit($year) && (int)$year > 1995 && (int)$year < 2050) {
+            $tUserId = (int) $userId;
+            $tYear = (int) $year;
 
-			$sql = "SELECT
+            $sql = "SELECT
 						numDemande,
 						min(DATE_FORMAT(dateDu, '%d/%m/%Y')) AS dateDuMin, 
 						max(DATE_FORMAT(dateAu, '%d/%m/%Y')) AS dateAuMax,
@@ -400,11 +381,16 @@ class CongesController extends Controller
 						demandesconges.etat,
                         demandesconges.validateur,
                         demandesconges.dateDemande,
+                        demandesconges.dateactionetat,
 						concat(users.prenom,' ', users.nom) AS valid,
-						etatra.libelle AS libelleEtat
+						CASE 
+						 when etat='3' then 'A modifier'
+						when etat='2' then 'Validé' 
+						when etat='1' then 'En attente validation'
+						when etat='0' then 'Brouillon'
+						else 'Autre' end AS libelleEtat
 					FROM 
 						demandesconges
-					LEFT JOIN etatra ON demandesconges.etat = etatra.id
                     LEFT JOIN users ON demandesconges.validateur = users.id
 					WHERE idUser = " . $tUserId . "
 					AND EXTRACT(YEAR from dateDu) <= " . $tYear . "
@@ -412,57 +398,56 @@ class CongesController extends Controller
 					GROUP BY numDemande
 					ORDER BY dateDu DESC";
 
-			$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-			$stmt->execute();
-			$retour = $stmt->fetchAll();
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $retour = $stmt->fetchAll();
 
-			if (count($retour) != 0) {
-				return new JsonResponse($retour, Response::HTTP_OK);
-			} else {
-				$message = array('message' => 'Utilisateur non trouve : ' . $tUserId);
-				return new JsonResponse($message, Response::HTTP_NOT_FOUND);
-			}
-		} else {
-			$message = array('message' => 'Format paramètres incorrect');
-			return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
-		}
-	}
+            if (count($retour) != 0) {
+                return new JsonResponse($retour, Response::HTTP_OK);
+            } else {
+                $message = array('message' => 'Utilisateur non trouve : ' . $tUserId);
+                return new JsonResponse($message, Response::HTTP_NOT_FOUND);
+            }
+        } else {
+            $message = array('message' => 'Format paramètres incorrect');
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
+    }
 
-	/**
-	 * Retourne toutes les périodes de congés de l'utilisateur et du numéro de demande en paramètre
-	 * 
-	 * @param Request 	$request 		Requete en entrée
-	 * @param int 		$userId 		Identifiant de l'utilisateur
-	 * @param int 		$numDemande 	Numéro de la demande de congé
-	 *
-	 * @return JsonResponse
-	 *
-	 * @Route("/conges/periodes/{userId}/{numDemande}", name="periodes")
-	 * @Method("GET")
-	 */
-	public function getFindPeriodesByUserAndNumDemande(Request $request, $userId, $numDemande)
-	{
-		$log = new LoginController();
+    /**
+     * Retourne toutes les périodes de congés de l'utilisateur et du numéro de demande en paramètre
+     *
+     * @param Request 	$request 		Requete en entrée
+     * @param int 		$userId 		Identifiant de l'utilisateur
+     * @param int 		$numDemande 	Numéro de la demande de congé
+     *
+     * @return JsonResponse
+     *
+     * @Route("/conges/periodes/{userId}/{numDemande}", name="periodes")
+     * @Method("GET")
+     */
+    public function getFindPeriodesByUserAndNumDemande(Request $request, $userId, $numDemande)
+    {
+        $log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
-            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+            return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
-		
-		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
-		$idUserToken = $retourAuth['id'];
-		
-		if ($userId != $idUserToken) 
-		{
-			$message = array('message' => "Incohérence token/ID");
-		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
-		}
+        
+        // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+        $idUserToken = $retourAuth['id'];
+        
+        if ($userId != $idUserToken) {
+            $message = array('message' => "Incohérence token/ID");
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
 
-		// Test les valeurs en entrée
-		if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numDemande)) {
-			$tUserId = (int) $userId;
-			$tNumDemande = (int) $numDemande;
+        // Test les valeurs en entrée
+        if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numDemande)) {
+            $tUserId = (int) $userId;
+            $tNumDemande = (int) $numDemande;
 
-			$sql = "SELECT
+            $sql = "SELECT
 						numLigne,
 						DATE_FORMAT(dateDu, '%d/%m/%Y') AS dateDuFormated, 
 						DATE_FORMAT(dateAu, '%d/%m/%Y') AS dateAuFormated,
@@ -473,50 +458,54 @@ class CongesController extends Controller
 						demandesconges.idTypeAbs AS typeabs,
 						typesabsences.code AS codeTypeAbs,
 						typesabsences.libelle AS libelleTypeAbs,
-						etatra.libelle AS libelleEtat
+						CASE 
+						 when etat='3' then 'A modifier'
+						when etat='2' then 'Validé' 
+						when etat='1' then 'En attente validation'
+						when etat='0' then 'Brouillon'
+						else 'Autre' end AS libelleEtat
 					FROM 
 						demandesconges
-					LEFT JOIN etatra ON demandesconges.etat = etatra.id
 					LEFT JOIN typesabsences ON demandesconges.idTypeAbs = typesabsences.idTypeAbs
 					WHERE idUser = " . $tUserId . "
 					AND numDemande = " . $tNumDemande . "
 					ORDER BY dateDu";
 
-			$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-			$stmt->execute();
-			$retour = $stmt->fetchAll();
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $retour = $stmt->fetchAll();
 
-			if (count($retour) != 0) {
-				return new JsonResponse($retour, Response::HTTP_OK);
-			} else {
-				$message = array('message' => 'Période non trouvée : ' . $tUserId);
-				return new JsonResponse($message, Response::HTTP_NOT_FOUND);
-			}
-		} else {
-			$message = array('message' => 'Format paramètres incorrect');
-			return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
-		}
-	}
+            if (count($retour) != 0) {
+                return new JsonResponse($retour, Response::HTTP_OK);
+            } else {
+                $message = array('message' => 'Période non trouvée : ' . $tUserId);
+                return new JsonResponse($message, Response::HTTP_NOT_FOUND);
+            }
+        } else {
+            $message = array('message' => 'Format paramètres incorrect');
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
+    }
 
-	/**
-	 * Retourne les types absences congés
-	 *
-	 * @param Request 	$request 		Requete en entrée
-	 *
-	 * @return JsonResponse
-	 *
-	 * @Route("/conges/typesabsences", name="typeabsconges")
-	 * @Method("GET")
-	 */
-	public function getTypesAbsences(Request $request)
-	{
-		// $log=new LoginController();
-		// $retourAuth = $log->checkAuthentification($this);
-		// if (array_key_exists("erreur", $retourAuth)) {
-		// 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
-		// }
+    /**
+     * Retourne les types absences congés
+     *
+     * @param Request 	$request 		Requete en entrée
+     *
+     * @return JsonResponse
+     *
+     * @Route("/conges/typesabsences", name="typeabsconges")
+     * @Method("GET")
+     */
+    public function getTypesAbsences(Request $request)
+    {
+        // $log=new LoginController();
+        // $retourAuth = $log->checkAuthentification($this);
+        // if (array_key_exists("erreur", $retourAuth)) {
+        // 	return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
+        // }
 
-		$sql = "SELECT DISTINCT
+        $sql = "SELECT DISTINCT
 					idTypeAbs,
 					code,
 					libelle
@@ -524,60 +513,58 @@ class CongesController extends Controller
 					typesabsences
 				";
 
-		$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-		$stmt->execute();
-		$retour = $stmt->fetchAll();
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetchAll();
 
-		return new JsonResponse($retour, Response::HTTP_OK);
-	}
+        return new JsonResponse($retour, Response::HTTP_OK);
+    }
 
-	/**
-	 * Retourne les congés du mois pour l'utilisateur donné en paramètre
-	 * 
-	 * @param Request 	$request 		Requete en entrée
-	 * @param int 		$userId 		Identifiant de l'utilisateur
-	 * @param int 		$year 			Année demandée
-	 * @param int 		$month 			Mois demandé
-	 *
-	 * @return JsonResponse
-	 *
-	 * @Route("/conges/{userId}/{year}/{month}", name="congesdumois")
-	 * @Method("GET")
-	 */
-	public function getInfosCongesDuMois(Request $request, $userId, $year, $month)
-	{
-		$log = new LoginController();
+    /**
+     * Retourne les congés du mois pour l'utilisateur donné en paramètre
+     *
+     * @param Request 	$request 		Requete en entrée
+     * @param int 		$userId 		Identifiant de l'utilisateur
+     * @param int 		$year 			Année demandée
+     * @param int 		$month 			Mois demandé
+     *
+     * @return JsonResponse
+     *
+     * @Route("/conges/{userId}/{year}/{month}", name="congesdumois")
+     * @Method("GET")
+     */
+    public function getInfosCongesDuMois(Request $request, $userId, $year, $month)
+    {
+        $log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
-            return new JsonResponse($retourAuth,Response::HTTP_BAD_REQUEST);
+            return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
-		
-		// On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
-		$idUserToken = $retourAuth['id'];
-		
-		if ($userId != $idUserToken) 
-		{
-			$message = array('message' => "Incohérence token/ID");
-		return new JsonResponse($message,Response::HTTP_BAD_REQUEST);
-		}
+        
+        // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+        $idUserToken = $retourAuth['id'];
+        
+        if ($userId != $idUserToken) {
+            $message = array('message' => "Incohérence token/ID");
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
 
-		// Test les valeurs en entrée
-		if (UtilsController::isPositifInt($userId) && ctype_digit($year) && ctype_digit($month)
-			&& (int)$month >= 1 && (int)$month <= 12 && (int)$year > 1995 && (int)$year < 2050) {
+        // Test les valeurs en entrée
+        if (UtilsController::isPositifInt($userId) && ctype_digit($year) && ctype_digit($month)
+            && (int)$month >= 1 && (int)$month <= 12 && (int)$year > 1995 && (int)$year < 2050) {
+            $tUserId = (int) $userId;
+            $tYear = (int) $year;
+            $tMonth = (int) $month;
 
-			$tUserId = (int) $userId;
-			$tYear = (int) $year;
-			$tMonth = (int) $month;
+            // Calcul du mois et de l'année suivant le mois en parametre
+            $tYearSuiv = $tMonth == 12 ? $tYear + 1 : $tYear;
+            $tMonthSuiv = $tMonth == 12 ? 1 : $tMonth + 1;
 
-			// Calcul du mois et de l'année suivant le mois en parametre
-			$tYearSuiv = $tMonth == 12 ? $tYear + 1 : $tYear;
-			$tMonthSuiv = $tMonth == 12 ? 1 : $tMonth + 1;
-
-			// Pour le AND : La date de debut du congé est égale au mois et a l'année recherchée
-			// 		ou bien La date de fin du congé est égale au mois et a l'année recherchée
-			// 		ou bien l'année recherchée est comprise entre les intervalles de début et fin de congé:
-			// 			Prise de plus d'un mois de congé
-			$sql = "
+            // Pour le AND : La date de debut du congé est égale au mois et a l'année recherchée
+            // 		ou bien La date de fin du congé est égale au mois et a l'année recherchée
+            // 		ou bien l'année recherchée est comprise entre les intervalles de début et fin de congé:
+            // 			Prise de plus d'un mois de congé
+            $sql = "
 				SELECT 
 					numDemande,
 					dateDu, 
@@ -601,119 +588,112 @@ class CongesController extends Controller
 				AND demandesconges.idTypeAbs = typesabsences.idTypeAbs
 				ORDER BY dateDu ASC";
 
-			$stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-			$stmt->execute();
-			$conge = $stmt->fetchAll();
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $conge = $stmt->fetchAll();
 
-			// Calcul le nombre de jour dans un mois
-			$mois = mktime(0, 0, 0, $tMonth, 1, $tYear);
-			$nbJourMois = intval(date("t", $mois));
+            // Calcul le nombre de jour dans un mois
+            $mois = mktime(0, 0, 0, $tMonth, 1, $tYear);
+            $nbJourMois = intval(date("t", $mois));
 
-			$arrRes = array();
+            $arrRes = array();
 
-			// Pas de congés pour cette période
-			if (count($conge) == 0) {
-				
-				$message = array('message' => "Aucunes informations trouvées pour l'utilisateur: " . $tUserId);
-				return new JsonResponse($message, Response::HTTP_NOT_FOUND);
+            // Pas de congés pour cette période
+            if (count($conge) == 0) {
+                $message = array('message' => "Aucunes informations trouvées pour l'utilisateur: " . $tUserId);
+                return new JsonResponse($message, Response::HTTP_NOT_FOUND);
+            } else {
+                $dateDu = $dateAu = $timeDu = $timeAu = array();
+                $midi = new \DateTime('12:00:00');
 
-			} else {
+                // Tableau des jours du mois
+                for ($i = 1; $i <= $nbJourMois; $i++) {
+                    $arrDay = array();
 
-				$dateDu = $dateAu = $timeDu = $timeAu = array();
-				$midi = new \DateTime('12:00:00');
+                    // Date en cours de traitement
+                    $processedDate = new \DateTime($tYear . "-" . $tMonth . "-" . $i);
+                    $hasDemiJournee = false;
 
-				// Tableau des jours du mois
-				for ($i = 1; $i <= $nbJourMois; $i++) {
-					$arrDay = array();
+                    // Les congés trouvés pour le mois $month
+                    foreach ($conge as $keyC => $valueC) {
 
-					// Date en cours de traitement
-					$processedDate = new \DateTime($tYear . "-" . $tMonth . "-" . $i);
-					$hasDemiJournee = false;
+                        // Il y a une virgule donc une demi-journée
+                        if (explode('.', $valueC["nbJour"])) {
+                            $hasDemiJournee = true;
+                        }
 
-					// Les congés trouvés pour le mois $month
-					foreach ($conge as $keyC => $valueC) {
+                        // Creation de dates à partir des infos de la requete
+                        if (!array_key_exists($keyC, $dateDu) && empty($dateDu[$keyC])) {
+                            $dateTmpDu = explode(" ", $valueC["dateDu"]);
+                            $dateDu[$keyC] = new \DateTime($dateTmpDu[0]);
+                            $timeDu[$keyC] = new \DateTime($dateTmpDu[1]);
+                        }
+                        if (!array_key_exists($keyC, $dateAu) && empty($dateAu[$keyC])) {
+                            $dateTmpAu = explode(" ", $valueC["dateAu"]);
+                            $dateAu[$keyC] = new \DateTime($dateTmpAu[0]);
+                            $timeAu[$keyC] = new \DateTime($dateTmpAu[1]);
+                        }
 
-						// Il y a une virgule donc une demi-journée
-						if (explode('.', $valueC["nbJour"])) {
-						  $hasDemiJournee = true;
-						}
+                        // La date n'est ni un jour férié ni un weekend
+                        if (!UtilsController::estJourWE($i, $tMonth, $tYear) && !UtilsController::estJourFerie($i, $tMonth, $tYear)) {
 
-						// Creation de dates à partir des infos de la requete
-						if (!array_key_exists($keyC, $dateDu) && empty($dateDu[$keyC])) {
-							$dateTmpDu = explode(" ", $valueC["dateDu"]);
-							$dateDu[$keyC] = new \DateTime($dateTmpDu[0]);
-							$timeDu[$keyC] = new \DateTime($dateTmpDu[1]);
-						}
-						if (!array_key_exists($keyC, $dateAu) && empty($dateAu[$keyC])) {
-							$dateTmpAu = explode(" ", $valueC["dateAu"]);
-							$dateAu[$keyC] = new \DateTime($dateTmpAu[0]);
-							$timeAu[$keyC] = new \DateTime($dateTmpAu[1]);
-						}
+                            // La date est comprise dans l'intervalle du congé en cours de traitement
+                            if (empty($arrDay) && $processedDate >= $dateDu[$keyC] && $processedDate <= $dateAu[$keyC]) {
+                                $code2Carac = substr($valueC["code"], 0, 2);
+                                $arrDay = array(
+                                    "jour" 	=> $i,
+                                    "code" 	=> $code2Carac,
+                                    "etat" 	=> $valueC["etat"]
+                                );
 
-						// La date n'est ni un jour férié ni un weekend
-						if (!UtilsController::estJourWE($i, $tMonth, $tYear) && !UtilsController::estJourFerie($i, $tMonth, $tYear)) {
+                                // La date est égale à une des bornes de l'intervalle de congé et c'est une demi-journée
+                                if ($hasDemiJournee && (($processedDate == $dateDu[$keyC] && $timeDu[$keyC] == $midi)
+                                    || ($processedDate == $dateAu[$keyC] && $timeAu[$keyC] == $midi))) {
+                                    $arrDay["code"] = "0,5+" . $code2Carac;
+                                }
 
-							// La date est comprise dans l'intervalle du congé en cours de traitement
-							if (empty($arrDay) && $processedDate >= $dateDu[$keyC] && $processedDate <= $dateAu[$keyC]) {
+                                // 2 intervalles ont des infos le meme jour: 2 demi-journées
+                            } elseif (!empty($arrDay) && $processedDate >= $dateDu[$keyC] && $processedDate <= $dateAu[$keyC]) {
+                                $code2Carac = substr($valueC["code"], 0, 2);
+                                
+                                // Dans l'id de la table valeurjourouvre RT est toujours en premier; pour faire correspondre le code a l'id de cette table:
+                                if (strtolower($code2Carac) == 'rt') {
+                                    // Les 2 derniers caracteres de la valeur deja presente ajouté aux autres infos
+                                    // Ex: 0,5RT+0,5CP
+                                    $arrDay["code"] = "0,5" . $code2Carac . "+0,5" . substr($arrDay["code"], -2);
+                                } else {
+                                    $arrDay["code"] = "0,5" . substr($arrDay["code"], -2) . "+0,5" . $code2Carac;
+                                }
+                            }
+                            // La date est un jour férié ou un weekend
+                        } else {
+                            $arrDay = array(
+                                "jour" 	=> $i,
+                                "code" 	=> "0,0",
+                                "etat" 	=> ""
+                            );
+                        }
+                    }
 
-								$code2Carac = substr($valueC["code"], 0, 2);
-								$arrDay = array(
-									"jour" 	=> $i,
-									"code" 	=> $code2Carac,
-									"etat" 	=> $valueC["etat"]
-								);
+                    // Pas de congés a cette date
+                    if (empty($arrDay)) {
+                        $arrDay = array(
+                            "jour" 	=> $i,
+                            "code" 	=> "1,0",
+                            "etat" 	=> ""
+                        );
+                    }
 
-								// La date est égale à une des bornes de l'intervalle de congé et c'est une demi-journée
-								if ($hasDemiJournee && (($processedDate == $dateDu[$keyC] && $timeDu[$keyC] == $midi) 
-									|| ($processedDate == $dateAu[$keyC] && $timeAu[$keyC] == $midi))) {
+                    array_push($arrRes, $arrDay);
+                }
+            }
 
-									$arrDay["code"] = "0,5+" . $code2Carac;
-								}
-
-							// 2 intervalles ont des infos le meme jour: 2 demi-journées
-							} elseif (!empty($arrDay) && $processedDate >= $dateDu[$keyC] && $processedDate <= $dateAu[$keyC]) {
-								
-								$code2Carac = substr($valueC["code"], 0, 2);
-								
-								// Dans l'id de la table valeurjourouvre RT est toujours en premier; pour faire correspondre le code a l'id de cette table:
-								if (strtolower($code2Carac) == 'rt') {
-									// Les 2 derniers caracteres de la valeur deja presente ajouté aux autres infos
-									// Ex: 0,5RT+0,5CP
-									$arrDay["code"] = "0,5" . $code2Carac . "+0,5" . substr($arrDay["code"], -2);
-								} else {
-									$arrDay["code"] = "0,5" . substr($arrDay["code"], -2) . "+0,5" . $code2Carac;
-								}
-							}
-						// La date est un jour férié ou un weekend
-						} else {
-							$arrDay = array(
-								"jour" 	=> $i,
-								"code" 	=> "0,0",
-								"etat" 	=> ""
-							);
-						}
-					}
-
-					// Pas de congés a cette date
-					if (empty($arrDay)) {
-						$arrDay = array(
-							"jour" 	=> $i,
-							"code" 	=> "1,0",
-							"etat" 	=> ""
-						);
-					}
-
-					array_push($arrRes, $arrDay);
-				}
-			}
-
-			if (count($arrRes) != 0) {
-				return new JsonResponse($arrRes, Response::HTTP_OK);
-			}
-
-		} else {
-			$message = array('message' => 'Format paramètres incorrect');
-			return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
-		}
-	}
+            if (count($arrRes) != 0) {
+                return new JsonResponse($arrRes, Response::HTTP_OK);
+            }
+        } else {
+            $message = array('message' => 'Format paramètres incorrect');
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
+    }
 }

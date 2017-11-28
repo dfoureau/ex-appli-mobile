@@ -109,11 +109,25 @@ export default StyleSheet.create({
     textAlign: "center",
   },
 
-  deleteButton: {
-    backgroundColor: "#FF0000",
-  },
-
-  draftButton: {
-    backgroundColor: "#808080",
-  },
+    //Boutons
+    containerButtons: {
+      alignItems: "center",
+      flexDirection: "row",
+      alignSelf: "flex-end",
+      marginRight: 30,
+      marginBottom: 5,
+      marginTop: 5,
+    },
+    deleteButton: {
+      backgroundColor: "#FF0000",
+    },
+    draftButton: {
+      backgroundColor: "#808080",
+    },
+    addButton: {
+      paddingLeft: 10,
+      paddingRight: 10,
+      paddingTop: 3,
+      paddingBottom: 3,
+    },
 });
