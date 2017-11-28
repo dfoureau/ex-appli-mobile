@@ -60,8 +60,11 @@ class ActivitesListe extends React.Component {
     };
   }
 
-  getDemandesByUserAndYear(_annee) {
-    showLoading("Récupération des données. Veuillez patienter...");
+  getDemandesByUserAndYear(_annee, reloadPage) {
+    if (reloadPage) {
+      showLoading("Récupération des données. Veuillez patienter...");
+    }
+
     var that = this;
     this.state.annee = _annee;
     fetch(this.state.webServiceLien + _annee, this.state.obj)
@@ -79,7 +82,9 @@ class ActivitesListe extends React.Component {
             isReady: true,
           });
         }
-        hideLoading();
+        if (reloadPage) {
+          hideLoading();
+        }
         return response.json();
       })
       .then(cra =>
@@ -113,7 +118,7 @@ class ActivitesListe extends React.Component {
   }
 
   componentDidMount() {
-    this.getDemandesByUserAndYear(this.state.annee);
+    this.getDemandesByUserAndYear(this.state.annee, false);
   }
 
   //Permet d'afficher l'ecran choisi dans le menu
@@ -202,7 +207,7 @@ class ActivitesListe extends React.Component {
                     }}
                     selectedValue={this.state.annee}
                     onValueChange={(itemValue, itemIndex) =>
-                      this.getDemandesByUserAndYear(itemValue)}
+                      this.getDemandesByUserAndYear(itemValue, true)}
                   >
                     {PickerRange(currentYear, oldestYear)}
                   </Picker>

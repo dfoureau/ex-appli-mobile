@@ -66,7 +66,7 @@ class CongesListe extends React.Component {
   componentDidMount() {
     var today = new Date();
     var year = today.getFullYear();
-    this.getDemandesByUserAndYear(year);
+    this.getDemandesByUserAndYear(year, false);
     this.getDemandeCongesByUserId();
   }
 
@@ -94,7 +94,7 @@ class CongesListe extends React.Component {
   reloadDemandesConges(_year) {
     this.setState({ year: _year });
     this.setState({ dataLoaded: false, noData: false });
-    this.getDemandesByUserAndYear(_year);
+    this.getDemandesByUserAndYear(_year, true);
   }
 
   // Retourne le dernier solde congés et le dernier solde RTT de l'utilisateur en paramère
@@ -124,8 +124,10 @@ class CongesListe extends React.Component {
   }
 
   // Retourne toutes les demandes de congés de l'utilisateur en paramètre pour l'année en paramètre
-  getDemandesByUserAndYear(year) {
-    showLoading("Récupération des données. Veuillez patienter...");
+  getDemandesByUserAndYear(year, reloadPage) {
+    if (reloadPage) {
+      showLoading("Récupération des données. Veuillez patienter...");
+    }
     try {
       var that = this;
       fetch(this.state.WSLinkList + year, this.state.obj)
@@ -141,7 +143,9 @@ class CongesListe extends React.Component {
             });
             //throw new Error("No data found");
           }
-          hideLoading();
+          if (reloadPage) {
+            hideLoading();
+          }
           return response.json();
         })
         .then(conges =>
