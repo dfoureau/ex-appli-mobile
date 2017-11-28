@@ -161,7 +161,6 @@ class CongesController extends Controller
                 default:
                     $retour = array('code' => Response::HTTP_BAD_REQUEST, 'message' => 'Etat invalide : ' . $data['etat']);
                     return $retour;
-                    break;
             }
 
             // Test valeurs en entrée
@@ -247,11 +246,12 @@ class CongesController extends Controller
 
             // Appel la fonction postCongés
             $retourpost = $this->createDemandeCongesAction($request);
-            return $retourpost;
 
             if ($retourpost['code'] != Response::HTTP_OK) {
                 return new JsonResponse($retourpost['message'], $retourpost['code']);
             }
+
+            return $retourpost;
         } else {
             $message = array('message' => 'Format paramètres incorrect');
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);

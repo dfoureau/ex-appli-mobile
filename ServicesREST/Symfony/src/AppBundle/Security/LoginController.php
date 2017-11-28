@@ -81,7 +81,7 @@ class LoginController extends Controller
 
         //On détermine si le token existe
         if (!array_key_exists("authorization", $headers) &&  !array_key_exists("Authorization", $headers)) {
-            //TODO erreur token non conforme
+            // Erreur token non conforme
             //file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . "pb auth" ."\r\n", FILE_APPEND);
             return array('erreur' => 'Token non présent', 'connexion' => 1);
         }
@@ -102,13 +102,13 @@ class LoginController extends Controller
                            ->decode($token);
 
         if ($list===false) {
-            //TODO erreur decodage du token
+            // Erreur decodage du token
             // Le token peut être expiré
             //file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . "pb to" ."\r\n", FILE_APPEND);
             return array('erreur'=>'Token non valide ou expire', 'connexion'=>1);
         }
         if (!array_key_exists("id", $list) && !array_key_exists("idAgence", $list)) {
-            //TODO erreur token non conforme
+            // Erreur token non conforme
             //file_put_contents('log.txt', date("Y-m-d H:i:s") ." : " . "pb tok" ."\r\n", FILE_APPEND);
             return array('erreur' => 'Token: liste des variables non conformes', 'connexion' => 1);
         }
