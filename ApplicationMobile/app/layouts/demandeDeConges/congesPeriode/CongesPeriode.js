@@ -3,7 +3,7 @@ import { View, Text, TextInput, Picker, TouchableOpacity } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "./styles";
 import moment from "moment";
-import business from "moment-business";
+import { momentConfig } from '../../../configuration/MomentConfig';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
@@ -13,7 +13,6 @@ import Calendar from "../../../components/calendar/Calendar";
 import styles from "./styles";
 import 'whatwg-fetch';
 
-const PERIOD_SCHEMA = "Period";
 const feries2017 = [
 	"01/01",
 	"17/04",
@@ -45,14 +44,14 @@ class CongesPeriode extends React.Component {
 
 		if (params.idPeriod == null) {
 
-			var currentDate = new Date();
+			let now = moment().format("DD/MM/YYYY");
 
 			// Nouvelle période
 			this.state = {
 				title: "Détails période",
-				date1: currentDate.toLocaleDateString('fr-FR'),
+				date1: now,
 				moment1: "1",
-				date2: currentDate.toLocaleDateString('fr-FR'),
+				date2: now,
 				moment2: "2",
 				absence: "",
 				joursFeries: feries2017,
@@ -86,11 +85,11 @@ class CongesPeriode extends React.Component {
 
 	savePeriod(idPeriod) {
 		const { params } = this.props.navigation.state;
-		var parentState = params.parent.state;
+		var parent = params.parent;
 		var hour1 = '';
 		var hour2 = '';
 		if (params.idPeriod == null) {
-			parentState.nbPeriode = parentState.nbPeriode == 0 ? 1 : parentState.nbPeriode + 1;
+			parent.state.nbPeriode = parent.state.nbPeriode == 0 ? 1 : parent.state.nbPeriode + 1;
 		}
 
 		// Matin =1, Midi =2
@@ -107,38 +106,32 @@ class CongesPeriode extends React.Component {
 			hour2 = '12:00:00';
 		}
 
+		let periodToSave = {
+			dateDuFormated: this.state.date1,
+			dateAuFormated: this.state.date2,
+			dateDu: moment(this.state.date1 + ' ' + hour1, 'DD-MM-YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
+			dateAu: moment(this.state.date2 + ' ' + hour2, 'DD-MM-YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
+			nbJour: parseInt(this.state.workingDays),
+			etat: 0, // A changer dans l'ecran suivant pour toutes les périodes
+			// lorsque l'utilisateur choisit de valider ou d'enregistrer en brouillon
+			typeabs: 0,//parseInt(this.state.arrTypeAbs[0][]),
+			codeTypeAbs: this.state.absence,
+			libelleTypeAbs: '',
+			libelleEtat: '',
+		};
+
+		let parentPeriods = Array.from(parent.state.periods);
+
 		if (params.idPeriod == null) {
-			// Ajout de la nouvelle période
-			parentState.periods.push({
-				numLigne: parentState.nbPeriode,
-				dateDuFormated: this.state.date1,
-				dateAuFormated: this.state.date2,
-				dateDu: moment(this.state.date1 + ' ' + hour1, 'DD-MM-YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
-				dateAu: moment(this.state.date2 + ' ' + hour2, 'DD-MM-YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
-				nbJour: parseInt(this.state.workingDays),
-				etat: 0, // A changer dans l'ecran suivant pour toutes les périodes
-								 // lorsque l'utilisateur choisit de valider ou d'enregistrer en brouillon
-				typeabs: 0,//parseInt(this.state.arrTypeAbs[0][]),
-				codeTypeAbs: this.state.absence,
-				libelleTypeAbs: '',
-				libelleEtat: '',
-			});
-		} else {
-			// Mise a jour de la période
-			parentState.periods[params.idPeriod - 1].dateDuFormated = this.state.date1;
-			parentState.periods[params.idPeriod - 1].dateAuFormated = this.state.date2;
-			parentState.periods[params.idPeriod - 1].dateDu = moment(this.state.date1 + ' ' + hour1, 'DD-MM-YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
-			parentState.periods[params.idPeriod - 1].dateAu = moment(this.state.date2 + ' ' + hour2, 'DD-MM-YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
-			parentState.periods[params.idPeriod - 1].nbJour = parseInt(this.state.workingDays);
-			parentState.periods[params.idPeriod - 1].etat = 0;
-			parentState.periods[params.idPeriod - 1].typeabs = 0;
-			parentState.periods[params.idPeriod - 1].codeTypeAbs = this.state.absence;
-			parentState.periods[params.idPeriod - 1].libelleTypeAbs = '';
-			parentState.periods[params.idPeriod - 1].libelleTypeAbs = '';
+			// Nouvelle période, on l'ajoute au tableau
+			periodToSave.numLigne = parentPeriods.length;
+			parentPeriods.push(periodToSave);
+		}
+		else {
+			parentPeriods[params.idPeriod -1] = periodToSave;
 		}
 
-		// Force l'appel de la fonction render sur la page précedente
-		params.parent.forceUpdate();
+		parent.setState({periods: parentPeriods});
 	}
 
 	handleValidate() {
@@ -164,7 +157,7 @@ class CongesPeriode extends React.Component {
 		let total = 0;
 		while (dateAu.diff(currentDate, "days") >= 0) {
 			//Si c'est un jour ouvré
-			if (business.isWeekDay(currentDate)) {
+			if (currentDate.day() > 0 && currentDate.day() < 6) {
 				//Si ce n'est pas un jour férié on incremente le compteur
 				total = !this.isJourFerie(currentDate) ? total + 1 : total;
 			}
@@ -174,14 +167,14 @@ class CongesPeriode extends React.Component {
 
 		//Change la durée totale en fonction du moment choisi
 		if (
-			business.isWeekDay(dateDu) &&
+			dateDu.day() > 0 && dateDu.day() < 6 &&
 			this.state.moment1 == 2 &&
 			!this.isJourFerie(dateDu)
 		) {
 			total = total > 0 ? total - 0.5 : total;
 		}
 		if (
-			business.isWeekDay(dateAu) &&
+			dateAu.day() > 0 && dateAu.day() < 6 &&
 			this.state.moment2 == 1 &&
 			!this.isJourFerie(dateAu)
 		) {
@@ -214,7 +207,7 @@ class CongesPeriode extends React.Component {
 // // console.warn(row.libelle)
 // 		));
 // 	}
-	
+
 // TODO : probleme d'affichage dur ios
 	render() {
 		return (
