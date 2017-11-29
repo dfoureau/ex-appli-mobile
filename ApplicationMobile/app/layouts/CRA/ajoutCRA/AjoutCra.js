@@ -23,6 +23,8 @@ import {
 import {
   showToast,
   showNotification,
+  showLoading,
+  hideLoading,
   hide,
 } from "react-native-notifyer";
 
@@ -50,6 +52,7 @@ class AjoutCra extends React.Component {
 
   static navigationOptions = ({ navigation }) => ({
     idCRA: navigation.state.params.idCRA,
+    parent: navigation.state.params.parent
     // date: navigation.state.params.date,
   });
 
@@ -86,7 +89,7 @@ class AjoutCra extends React.Component {
       fetchHeaders: {
         Authorization: "Bearer " + configurationAppli.userToken,
       },
-      WSLinkCRA: configurationAppli.apiURL + "CRA/RA/",
+      WSLinkCRA: configurationAppli.apiURL + "CRA/RA",
       isReady: false,
       data: [],
     };
@@ -193,6 +196,11 @@ getNbJoursAbsence() {
           }
         })
     ])
+    .catch((reason) =>  {
+      console.log("Une erreur est survenue : " + reason);
+      showToast("Une erreur est survenue : " + reason);
+      this.props.navigation.dispatch(NavigationActions.back());
+    });
   }
 
 
@@ -246,7 +254,7 @@ initDefaultCra(year, month, feries, typesActions, conges) {
     client: "",
     responsable: "",
     projet: "",
-    commentaires: "",
+    commentaire: "",
     valeursSaisies: []
   }; // Objet à peupler pour créer un nouveau CRA
 
@@ -259,7 +267,7 @@ initDefaultCra(year, month, feries, typesActions, conges) {
     date.set('date', i);
 
     valeurSaisie = {
-      startDate: date.format('dddd DD/MM/YYYY'),
+      startDate: date.format('DD/MM/YYYY'),
       disabled: false,
       actType: "1.0"
     };
@@ -306,7 +314,7 @@ initDefaultCra(year, month, feries, typesActions, conges) {
 
   getCRAInfosByID(idCRA, feries, typesActions, conges) {
     var that = this;
-    fetch(this.state.WSLinkCRA + idCRA,  {
+    fetch(this.state.WSLinkCRA + '/' + idCRA,  {
       method: 'GET',
       headers: this.state.fetchHeaders
     })
@@ -369,7 +377,6 @@ initDefaultCra(year, month, feries, typesActions, conges) {
     });
   }
 
-
   /**
    * Supprime le CRA via un appel au service
    * @return {[type]} [description]
@@ -377,9 +384,11 @@ initDefaultCra(year, month, feries, typesActions, conges) {
   deleteCra() {
     let idCra = this.props.navigation.state.params.idCRA,
         parent = this.props.navigation.state.params.parent,
-        year = this.state.yearSelected;
+        annee = this.state.yearSelected;
 
-    fetch(this.state.WSLinkCRA + idCra, {
+    let that = this;
+
+    fetch(this.state.WSLinkCRA + '/' + idCra, {
       method: 'DELETE',
       headers: this.state.fetchHeaders
     })
@@ -388,18 +397,20 @@ initDefaultCra(year, month, feries, typesActions, conges) {
     })
     .then((res) => {
       let [status, body] = res;
+
       let success = status == 200;
       showToast( (success ? "Succès" : "Erreur") + "\n" +  body.message );
 
       // On redirige vers la page précédente uniquement en cas de succès
       if (success) {
-        parent.getDemandesByUserAndYear(year);
-        this.props.navigation.dispatch(NavigationActions.back());
+        parent.getDemandesByUserAndYear(annee);
+        that.props.navigation.dispatch(NavigationActions.back());
       }
     })
+    .catch(err => console.log(err));
   }
 
-/**
+  /**
  * Enregistre un CRA en fonction du statusId choisi :
  *   - 1 : Enregistre un brouillon
  *   - 2 : Enregistre en demande de validation
@@ -413,39 +424,53 @@ saveCra(statusId) {
     return;
   }
 
-  const method = (this.state.newCra ? 'POST' : 'PUT'); // La méthode varie selon qu'on crée ou qu'on modifie un CRA
-  const body = {
+  showLoading("sauvegarde en cours...");
+
+  let that = this;
+
+  let method = (this.state.newCra ? 'POST' : 'PUT'), // La méthode varie selon qu'on crée ou qu'on modifie un CRA
+      annee = this.state.yearSelected,
+      parent = this.props.navigation.state.params.parent;
+
+  let body = {
     idUser: configurationAppli.userID,
     mois: this.state.monthSelected,
-    annee: this.state.yearSelected,
+    annee: annee,
     etat: statusId,
-    nbJourTravailles: this.state.nbJourTravailles
-  }
+    nbJourTravailles: this.getNbJoursTravailles().toFixed(1),
+    nbJourAbs: this.getNbJoursAbsence().toFixed(1),
+    client: this.state.TextClient,
+    responsable: this.state.TextResponsable,
+    projet: this.state.TextProjet,
+    commentaires: this.state.TextComment,
+    valeursSaisies: this.state.listItemsCRA.map((item) => { return {date: item.startDate, activité: item.actType}; })
+  };
 
+  fetch(this.state.WSLinkCRA, {
+    method: method,
+    headers: this.state.fetchHeaders,
+    body: JSON.stringify(body)
+  })
+  .then((response) => {
+    hideLoading();
+    return Promise.all([Promise.resolve(response.status), response.json()])
+  })
+  .then((res) => {
+    let [status, body] = res;
 
+    let success = status == 200;
+    showToast( (success ? "Succès" : "Erreur") + "\n" +  body.message );
+
+    // On redirige vers la page précédente uniquement en cas de succès
+    if (success) {
+      parent.getDemandesByUserAndYear(annee);
+      that.props.navigation.dispatch(NavigationActions.back());
+    }
+  })
+  .catch((err) => {
+    console.log("ERREUR : \n" + err);
+  })
 }
-
-  // validatePressDelete() {
-  //   this.props.navigation.navigate("CraConfirmation");
-  // }
-
-  saveDraft() {
-    this.setState({
-      statusId: 2,
-      status: "brouillon",
-    });
-    this.props.navigation.navigate("CraConfirmation");
-  }
-
-  validate() {
-    // Après sauvegarde en bdd, on reset le cache
-    service.delete(ITEMCRA_SCHEMA);
-    this.setState({
-      statusId: 3,
-      status: "validé",
-    });
-    this.props.navigation.navigate("CraConfirmation");
-  }
 
   modifyItemCRA(l, startDate, actType, labelAct, valeur) {
     this.props.navigation.navigate("ActivitesDetail", {
@@ -490,14 +515,14 @@ saveCra(statusId) {
       <Button
         buttonStyles={style.draftButton}
         text="BROUILLON"
-        onPress={() => this.saveDraft()}
+        onPress={() => this.saveCra(1)}
       />
     );
   }
 
   showValidateButton() {
     if(this.state.statusId == 1 || this.state.statusId == null)
-      return <Button text="VALIDER" onPress={() => this.validate()} />;
+      return <Button text="VALIDER" onPress={() => this.saveCra(2) } />;
   }
 
   afficherRows() {
@@ -592,7 +617,6 @@ saveCra(statusId) {
                   {this.afficherRows()}
                 </Table>
               </View>
-
               <Panel
                 title="Information mission *"
                 containerStyle={{ backgroundColor: "transparent", margin: 0 }}
