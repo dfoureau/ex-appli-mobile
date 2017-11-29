@@ -104,7 +104,8 @@ class CongesController extends Controller
             $data = json_decode($content, true);
             $retour = $this->createDemandeConges($data,$idUserToken);
         } catch (ContextErrorException $e) {
-            return new JsonResponse("Problème de paramètres".$e, Response::HTTP_BAD_REQUEST);
+			            $message = array('message' => "Problème de paramètres");
+			return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
 
         return new JsonResponse($retour['message'], $retour['code']);
