@@ -40,7 +40,6 @@ import CraConfirmation from "../craConfirmation/CraConfirmation";
 import StyleGeneral from "../../../styles/Styles";
 import style from "./styles";
 import Panel from "../../../components/Panel/Panel";
-import service from "../../../realm/service";
 
 import configurationAppli from "../../../configuration/Configuration";
 
@@ -198,7 +197,7 @@ getNbJoursAbsence() {
     ])
     .catch((reason) =>  {
       console.log("Une erreur est survenue : " + reason);
-      showToast("Une erreur est survenue : " + reason);
+      showToast("Une erreur est survenue.");
       this.props.navigation.dispatch(NavigationActions.back());
     });
   }
@@ -424,8 +423,22 @@ saveCra(statusId) {
     return;
   }
 
-  showLoading("sauvegarde en cours...");
+  let errMsg = "";
+  // Vérification des champs obligatoires client et responsable :
+  if (this.state.TextClient.trim() == "") {
+      errMsg += "Veuillez renseigner le nom du client.";
+  }
+  if (this.state.TextResponsable.trim() == "") {
+    errMsg += (errMsg != "" ? "\n" : "") + "Veuillez renseigner le nom du responsable.";
+  }
 
+  if (errMsg != "") {
+    showToast(errMsg);
+    return;
+  }
+
+
+  showLoading("sauvegarde en cours...");
   let that = this;
 
   let method = (this.state.newCra ? 'POST' : 'PUT'), // La méthode varie selon qu'on crée ou qu'on modifie un CRA
