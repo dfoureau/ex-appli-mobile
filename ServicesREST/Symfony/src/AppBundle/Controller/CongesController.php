@@ -95,18 +95,22 @@ class CongesController extends Controller
             return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
         }
 
+		$idUserToken = $retourAuth['id'];
+		
         //$data = json_decode(file_get_contents('php://input'), true);
 
         try {
             $content = $request->getContent();
             $data = json_decode($content, true);
-            $retour = $this->createDemandeConges($data);
+            $retour = $this->createDemandeConges($data,$idUserToken);
         } catch (ContextErrorException $e) {
-            return new JsonResponse("Problème de paramètres", Response::HTTP_BAD_REQUEST);
+            return new JsonResponse("Problème de paramètres".$e, Response::HTTP_BAD_REQUEST);
         }
 
         return new JsonResponse($retour['message'], $retour['code']);
     }
+	
+	
     
     /**
      * Execute les requetes de creation après vérifiction des parametres
@@ -115,24 +119,16 @@ class CongesController extends Controller
      *
      * @return array
      */
-    public function createDemandeConges($data)
+    public function createDemandeConges($data,$idUserToken)
     {
-        // Test valeurs en entrée
-        if (is_int($data['userId'])) {
-            // Récupère l'userId à partir du $data
-            $userId = $data['userId'];
-            // Ou on le recupere à partir du token
-        } else {
-            $retour = array('code' => Response::HTTP_BAD_REQUEST, 'message' => 'Données en entrée invalides 1');
-            return $retour;
-        }
+        $idUser = $data['idUser'];
 
         // Récupere le numéro de la demande à partir de la table
         $sql = "SELECT 
 					MAX(numdemande) AS num 
 				FROM 
 					demandesconges 
-				WHERE idUser = " . $userId;
+				WHERE idUser = " . $idUser;
 
         $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
         $stmt->execute();
@@ -150,7 +146,9 @@ class CongesController extends Controller
             // Ou de la fonction
             // $numDemande = UtilsController::getMaxNumDemande($userId);
 
-            switch ($data['etat']) {
+			
+			$etat = $data['etat'];
+            /*switch ($data['etat']) {
                 case "Brouillon":
                     $etat = 0;
                     break;
@@ -161,7 +159,8 @@ class CongesController extends Controller
                 default:
                     $retour = array('code' => Response::HTTP_BAD_REQUEST, 'message' => 'Etat invalide : ' . $data['etat']);
                     return $retour;
-            }
+                    break;
+            }*/
 
             // Test valeurs en entrée
             if (is_array($data['lignesDemandes']) && UtilsController::isValidDate($data['dateEtat'])) {
@@ -175,6 +174,7 @@ class CongesController extends Controller
             $sql = 'INSERT INTO demandesconges (numDemande, dateDemande, idUser, numLigne, dateDu, dateAu, idTypeAbs, nbJour, etat, validateur, dateactionetat) VALUES ';
 
             $i = 0;
+			
             foreach ($lignes as $key => $row) {
 
                 // Test valeurs en entrée
@@ -194,7 +194,7 @@ class CongesController extends Controller
                     $sql .=',';
                 }
 
-                $sql .= "('$numDemande', '$dateEtat', '$userId', '$numLigne', '$dateDebut', '$dateFin', '$typeAbs', '$nbJours', '$etat', '$userId', null)";
+                $sql .= "('$numDemande', '$dateEtat', '$idUser', '$numLigne', '$dateDebut', '$dateFin', '$typeAbs', '$nbJours', '$etat', '$idUser', null)";
                 $i++;
             }
             $sql .= ';';
@@ -202,8 +202,10 @@ class CongesController extends Controller
             $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
             $stmt->execute();
 
-            $retour = array('message' => "OK", 'code' => Response::HTTP_OK);
+            $retour = array('message' => "Création réussie", 'code' => Response::HTTP_OK);
             return $retour;
+			
+			
         }
     }
 
@@ -245,19 +247,34 @@ class CongesController extends Controller
             }
 
             // Appel la fonction postCongés
-            $retourpost = $this->createDemandeCongesAction($request);
+			 try {
+            $content = $request->getContent();
+			$data = json_decode($content, true);
+            $retourpost = $this->createDemandeConges($data,$idUserToken);
+            }
+			catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
+            return new JsonResponse("Modification échouée".$e, Response::HTTP_BAD_REQUEST);
+			}
 
             if ($retourpost['code'] != Response::HTTP_OK) {
                 return new JsonResponse($retourpost['message'], $retourpost['code']);
             }
-
-            return $retourpost;
-        } else {
+			
+			//Si tout est ok on envoie un code HTTP 200
+			if($retourdelete['code'] == Response::HTTP_OK && $retourpost["code"] == Response::HTTP_OK){
+			$message = array('message' => "Modification réussie");
+			return new JsonResponse($message, Response::HTTP_OK);
+		
+        }
+        } 
+		
+		else {
             $message = array('message' => 'Format paramètres incorrect');
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
     }
     
+	
 
     /**
      * Supprimer une demande de congés
@@ -273,7 +290,7 @@ class CongesController extends Controller
      */
     public function deleteDemandeCongesAction(Request $request, $userId, $numRequest)
     {
-        $log = new LoginController();
+        /*$log = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
@@ -285,7 +302,7 @@ class CongesController extends Controller
         if ($userId != $idUserToken) {
             $message = array('message' => "Incohérence token/ID");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
-        }
+        }*/
 
         // Test les valeurs en entrée
         if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numRequest)) {
@@ -697,3 +714,4 @@ class CongesController extends Controller
         }
     }
 }
+?>
