@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Http\Authentication;
 use Lexik\Bundle\JWTAuthenticationBundle\Services;
@@ -35,9 +36,9 @@ class LoginController extends Controller
         $stmt->execute();
 
         $list= $stmt->fetchAll();
-        if (count($list)==0) {
-            $message=array('message'=>'Login et/ou mdp incorrect', 'login'=>$login,'$password'=>$password);
-            return new JsonResponse($message, 400);
+        if(empty($list)){
+            $message=array('message'=>'Login et/ou mdp incorrect');
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
 
         $user=$list[0];
@@ -62,7 +63,7 @@ class LoginController extends Controller
                       'token'=>$token);
 
         //$retour = array("token"=>$token);
-        return new JsonResponse($retour);
+        return new JsonResponse($retour,Response::HTTP_OK);
     }
 
     public function checkAuthentification($controller)
@@ -129,3 +130,4 @@ class LoginController extends Controller
         $stmt->execute();
     }
 }
+?>
