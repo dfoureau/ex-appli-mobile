@@ -429,6 +429,7 @@ saveCra(statusId) {
   let that = this;
 
   let method = (this.state.newCra ? 'POST' : 'PUT'), // La méthode varie selon qu'on crée ou qu'on modifie un CRA
+      url = (this.state.newCra ? this.state.WSLinkCRA : this.state.WSLinkCRA + "/" + this.props.navigation.state.params.idCRA);
       annee = this.state.yearSelected,
       parent = this.props.navigation.state.params.parent;
 
@@ -446,7 +447,7 @@ saveCra(statusId) {
     valeursSaisies: this.state.listItemsCRA.map((item) => { return {date: item.startDate, activité: item.actType}; })
   };
 
-  fetch(this.state.WSLinkCRA, {
+  fetch(url, {
     method: method,
     headers: this.state.fetchHeaders,
     body: JSON.stringify(body)
