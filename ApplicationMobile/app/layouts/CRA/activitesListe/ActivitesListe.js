@@ -97,7 +97,7 @@ resetData() {
             annee: _annee
           })
         }
-        
+
         if (reloadPage) {
           hideLoading();
         }
@@ -125,7 +125,7 @@ resetData() {
     return rows;
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.getDemandesByUserAndYear(this.state.annee, false);
   }
 
@@ -154,7 +154,8 @@ resetData() {
       idCRA: null,
       year: moment().year(),
       month: moment().month() +1,
-      newCra: true
+      newCra: true,
+      parent: this,
     });
   }
 
