@@ -11,6 +11,13 @@ import CheckBox from "react-native-check-box";
 import moment from "moment";
 import { momentConfig } from '../../../configuration/MomentConfig';
 
+
+import {
+  showToast,
+  showNotification,
+  hide,
+} from "react-native-notifyer";
+
 // IMPORT DES COMPOSANTS EXOTIQUES
 //import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
 import { Button } from "../../../components/Buttons";
@@ -184,6 +191,21 @@ class FraisDetail extends React.Component {
    * @return {[type]} [description]
    */
   handleValidate() {
+    // On vérifie que les champs sont correctement remplis
+    errMsg = "";
+    if (this.state.client.trim() == "") {
+      errMsg += "Veuillez renseigner un client.";
+    }
+
+    if (this.state.lieu.trim() == "") {
+      errMsg += (errMsg != "" ? "\n" : "") + "Veuillez renseigner un lieu de dédéplacement.";
+    }
+
+    if (errMsg != "") {
+      showToast(errMsg);
+      return;
+    }
+
     // On initialise l'objet fraisData à utiliser pour updater les fraisJours
     // à partir du state
     let fraisJourData = this.getFraisJourData();
