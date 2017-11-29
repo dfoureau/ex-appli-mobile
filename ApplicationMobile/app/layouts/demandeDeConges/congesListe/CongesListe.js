@@ -76,7 +76,10 @@ class CongesListe extends React.Component {
   }
 
   addNewConge() {
-    this.props.navigation.navigate("CongesAjout", { idConge: null });
+    this.props.navigation.navigate("CongesAjout", {
+      idConge: null ,
+      parent: this
+    });
   }
 
   getConge(num, dateDem, dateD, dateA, nbj, etat, libEtat) {
@@ -88,6 +91,7 @@ class CongesListe extends React.Component {
       nbJour: nbj,
       etat: etat,
       libelleEtat: libEtat,
+      parent: this
     });
   }
 
@@ -115,9 +119,9 @@ class CongesListe extends React.Component {
         })
         .then(function(solde) {
           that.setState({
-            dateSolde: solde[0]["datesolde"],
-            soldeRTT: solde[0]["rtt"],
-            soldeConges: solde[0]["cp"],
+            dateSolde: solde.datesolde,
+            soldeRTT: solde.rtt,
+            soldeConges: solde.cp,
           });
         });
     } catch (error) {}
@@ -128,7 +132,7 @@ class CongesListe extends React.Component {
     if (reloadPage) {
       showLoading("Récupération des données. Veuillez patienter...");
     }
-    
+
     try {
       var that = this;
       fetch(this.state.WSLinkList + year, this.state.obj)
