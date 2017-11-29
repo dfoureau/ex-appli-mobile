@@ -98,6 +98,47 @@ class AjoutCra extends React.Component {
     this.props.navigation.navigate(ecran);
   }
 
+/**
+ * Calcule le nombre de jours travaillés du mois
+ * @return {[type]} [description]
+ */
+getNbJoursTravailles() {
+  return this.state.listItemsCRA.reduce((result, element) => {
+    return result + this.getValeurJour(element.actType);
+  }, 0);
+}
+
+/**
+ * Calcule le nombre de jours d'absence du mois
+ * @return {[type]} [description]
+ */
+getNbJoursAbsence() {
+  return this.state.data.NbJOuvres - this.getNbJoursTravailles();
+}
+
+
+  /**
+   * Retrouve la quantité travaillée et la quantité d'absence pour un code donné
+   * @param  {[type]} code [description]
+   * @return {[type]}      [description]
+   */
+  getValeurJour(code) {
+    let travaille = 0;
+    // On cherche le jour dans jourouvre, puis dans jourwe
+    let typeAct = this.state.activitesListe.jourouvre.find((element) => {return element.code == code});
+    if (typeAct == undefined) {
+      typeAct = this.state.activitesListe.jourwe.find((element) => {return element.code == code});
+    }
+    if (typeAct == undefined) {
+      console.log("CODE introuvable : " + code);
+    }
+    else {
+      travaille = typeAct.valeur;;
+    }
+
+    return parseFloat(travaille);
+  }
+
   /**
    * On appelle le service pour récuéprer les éléments suivants :
    *  - Liste des jours fériés
@@ -281,6 +322,10 @@ initDefaultCra(year, month, feries, typesActions, conges) {
       }
     })
     .then(function(cra) {
+      cra.NbJOuvres = parseFloat(cra.NbJOuvres);
+      // cra.nbJourTravailles = parseFloat(cra.nbJourTravailles);
+      // cra.nbJourAbs = parseFloat(cra.nbJourAbs);
+
       that.setState({
         isReady: true,
         data: cra,
@@ -369,8 +414,15 @@ saveCra(statusId) {
   }
 
   const method = (this.state.newCra ? 'POST' : 'PUT'); // La méthode varie selon qu'on crée ou qu'on modifie un CRA
+  const body = {
+    idUser: configurationAppli.userID,
+    mois: this.state.monthSelected,
+    annee: this.state.yearSelected,
+    etat: statusId,
+    nbJourTravailles: this.state.nbJourTravailles
+  }
 
-    
+
 }
 
   // validatePressDelete() {
@@ -510,10 +562,10 @@ saveCra(statusId) {
 
               <View style={style.container1}>
                 <View style={style.containerThirdLine}>
-                  <Text style={style.text}>Travaillés : {this.state.data.nbJourTravailles ? this.state.data.nbJourTravailles : '0'} j</Text>
+                  <Text style={style.text}>Travaillés : {this.getNbJoursTravailles().toFixed(1)} j</Text>
                 </View>
                 <View style={style.containerThirdLine}>
-                  <Text style={style.text}>Absences : {this.state.data.nbJourAbs ? this.state.data.nbJourAbs : '0'} j</Text>
+                  <Text style={style.text}>Absences : {this.getNbJoursAbsence().toFixed(1)} j</Text>
                 </View>
               </View>
 
