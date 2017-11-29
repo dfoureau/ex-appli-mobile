@@ -204,6 +204,10 @@ class FraisAjout extends React.Component {
             });
         }
       }
+    }).catch(err => {
+      console.log("Erreur : " + err);
+      showToast("Une erreur est survenue.");
+      this.props.navigation.dispatch(NavigationActions.back());
     });
   }
 }
