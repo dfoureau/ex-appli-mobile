@@ -179,14 +179,14 @@ class Accueil extends React.Component {
           <Panel title="SOLDES CONGES">
             <Text style={Style.text}>
               Sur votre bulletin de salaire du{" "}
-              {this.state.conges[0]["datesolde"]}, votre solde de congés se
+              {this.state.conges.datesolde}, votre solde de congés se
               compose de la manière suivante :
             </Text>
             <Text style={[Style.text, Style.text2]}>
-              - solde CP : {this.state.conges[0]["cp"]}
+              - solde CP : {this.state.conges.cp}
             </Text>
             <Text style={[Style.text, Style.text2]}>
-              - solde RTT : {this.state.conges[0]["rtt"]}
+              - solde RTT : {this.state.conges.rtt}
             </Text>
           </Panel>
           <Panel title="NEWS">{this.renderItemNews()}</Panel>
