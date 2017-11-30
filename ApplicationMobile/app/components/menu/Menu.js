@@ -10,6 +10,10 @@ import {
 import propTypes from "prop-types";
 import styles from "./styles";
 
+import configurationAppli from "../../configuration/Configuration";
+
+import RNRestart from 'react-native-restart';
+
 var { height, width } = Dimensions.get("window");
 
 class ContainerHeader extends Component {
@@ -63,6 +67,13 @@ class ContainerHeader extends Component {
         {news}
       </Text>
     ) : null;
+  }
+
+  deconnexion() {
+    configurationAppli.userID = null;
+    configurationAppli.userToken = null;
+    configurationAppli.idAgence = null;
+    RNRestart.Restart();
   }
 
   render() {
@@ -168,6 +179,19 @@ class ContainerHeader extends Component {
                 source={require("../../images/icons/CogIcon.png")}
               />
               <Text style={styles.TextItemMenu}>Rapporter une anomalie</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.ItemMenu}
+            onPress={() => this.deconnexion()}
+          >
+            <View style={styles.ItemMenuView}>
+              <Image
+                style={styles.IconItemMenu}
+                source={require("../../images/icons/logout.png")}
+              />
+              <Text style={styles.TextItemMenu}>Déconnexion</Text>
             </View>
           </TouchableOpacity>
 
