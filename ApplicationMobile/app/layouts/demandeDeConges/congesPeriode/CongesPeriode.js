@@ -81,6 +81,8 @@ class CongesPeriode extends React.Component {
 				numDemande: params.numDemande == null ? 0 : params.numDemande,
 			};
 		}
+
+		this.state.arrTypeAbs = params.parent.state.arrTypeAbs;
 	}
 
 	savePeriod(idPeriod) {
@@ -212,16 +214,11 @@ class CongesPeriode extends React.Component {
 		return false;
 	}
 
-// 	renderTypesAbsences() {
-// 		const { params } = this.props.navigation.state;
-// 		var parentState = params.parent.state;
-// // console.warn("2" + JSON.stringify(parentState.arrTypeAbs));
-// 		return parentState.arrTypeAbs.map((row) => (
-// 			// <Picker.Item key={row.idTypeAbs} label={row.libelle} value={row.code} />
-// // console.warn(row.libelle)
-// 		));
-// 	}
-
+getPickerTypeAbsences() {
+  return this.state.arrTypeAbs.map((item, index) => {
+    return <Picker.Item label={item.libelle} value={item.code}/>
+  });
+}
 
 
 // TODO : probleme d'affichage dur ios
@@ -285,13 +282,7 @@ class CongesPeriode extends React.Component {
 										this.setState({ absence: itemValue })}
 								>
 									<Picker.Item label="- Type d'absence -" value="0" />
-									<Picker.Item label="Congés payés" value="CP" />
-									<Picker.Item label="Congés anticipés" value="CA" />
-									<Picker.Item label="Congés sans solde" value="CS" />
-									<Picker.Item label="Solde RTT" value="RTT" />
-									<Picker.Item label="Congés maternité" value="CMA" />
-									<Picker.Item label="Congés paternité" value="CPA" />
-									<Picker.Item label="Absence exceptionnelle" value="AE" />
+									{this.getPickerTypeAbsences()}
 								</Picker>
 							</View>
 						</View>
