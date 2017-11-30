@@ -72,7 +72,6 @@ class Accueil extends React.Component {
 
   componentDidMount() {
     if ((this.state.user != null) && (this.state.conges != null) && (this.state.news != null)) {
-      console.log("no rest call");
       this.setState({
             isReadyw1: true,
             isReadyw2: true,
@@ -80,7 +79,6 @@ class Accueil extends React.Component {
           });
       return;
     } else {
-      console.log("yes rest call");
       var that = this;
       fetch(this.state.webServiceLien1, this.state.obj)
         .then(function(response) {
