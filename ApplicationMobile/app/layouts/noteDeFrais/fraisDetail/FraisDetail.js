@@ -9,6 +9,7 @@ import Style from "../../../styles/Styles";
 import styles from "./styles";
 import CheckBox from "react-native-check-box";
 import moment from "moment";
+import momentferiefr from "moment-ferie-fr";
 import { momentConfig } from '../../../configuration/MomentConfig';
 
 
@@ -99,7 +100,6 @@ class FraisDetail extends React.Component {
       calendarDate: calendarDate.format(calendarDateFormat),
       calendarMinDate: calendarMinDate,
       calendarMaxDate: calendarMaxDate,
-      joursFeries: [/* PLACEHOLDER pour stocker des objets momentjs correspondants à des jours fériés */],
     };
   }
 
@@ -118,7 +118,7 @@ class FraisDetail extends React.Component {
           for (let i=1; i<= nbJours; i++) {
             currentDate.set('date', i);
 
-            if (currentDate.day() > 0 && currentDate.day() < 6 && !this.state.joursFeries.includes(currentDate)) {
+            if (currentDate.day() > 0 && currentDate.day() < 6 && !currentDate.isFerie()) {
               selectedDates.push(currentDate.clone().format('YYYY-MM-DD'));
             }
           }
@@ -377,6 +377,7 @@ class FraisDetail extends React.Component {
                     current={this.state.calendarDate}
                     minDate={this.state.calendarMinDate}
                     maxDate={this.state.calendarMaxDate}
+                    firstDay={1}
                     hideArrows={true}
                     markedDates={this.convertDates()}
                     markingType={"interactive"}
