@@ -19,6 +19,7 @@ import { BugReport } from "../Configuration/bugReport";
 import { Reglages } from "../Configuration/reglages";
 
 import configurationAppli from "../../configuration/Configuration";
+import configAccueil from "../../configuration/ConfigAccueil";
 
 class Accueil extends React.Component {
   constructor(props) {
@@ -26,8 +27,8 @@ class Accueil extends React.Component {
     this.state = {
       //On définit les différentes variables
       title: "Cat-Amania",
-      user: [
-        {
+      user: configAccueil.user,
+        /*{
           id: null,
           nom: null,
           prenom: null,
@@ -35,26 +36,23 @@ class Accueil extends React.Component {
           entite: null,
           agence: null,
           responsable: null,
-        },
-      ],
-      conges: [
-        {
+        },*/
+      conges: configAccueil.conges,
+        /*{
           id: null,
           datesolde: null,
           cp: null,
           rtt: null,
-        },
-      ],
-      news: [
-        {
+        },*/
+      news: configAccueil.news,
+        /*{
           news_id: null,
           news_titre: null,
           news_contenu: null,
           news_date: null,
           news_file: null,
           news_photo: null,
-        },
-      ],
+        },*/
       isReadyw1: false,
       isReadyw2: false,
       isReadyw3: false,
@@ -73,47 +71,59 @@ class Accueil extends React.Component {
   }
 
   componentDidMount() {
-    var that = this;
-    fetch(this.state.webServiceLien1, this.state.obj)
-      .then(function(response) {
-        if (response.status >= 400) {
-          throw new Error("GetUtilisateur : Bad response from server");
-        }
-        return response.json();
-      })
-      .then(function(foncuser) {
-        that.setState({
-          user: foncuser,
-          isReadyw1: true,
+    if ((this.state.user != null) && (this.state.conges != null) && (this.state.news != null)) {
+      this.setState({
+            isReadyw1: true,
+            isReadyw2: true,
+            isReadyw3: true,
+          });
+      return;
+    } else {
+      var that = this;
+      fetch(this.state.webServiceLien1, this.state.obj)
+        .then(function(response) {
+          if (response.status >= 400) {
+            throw new Error("GetUtilisateur : Bad response from server");
+          }
+          return response.json();
+        })
+        .then(function(foncuser) {
+          that.setState({
+            user: foncuser,
+            isReadyw1: true,
+          });
+          configAccueil.user = foncuser;
+        })
+        .catch(function(error) {
+          return console.log(error);
         });
-      })
-      .catch(function(error) {
-        return console.log(error);
-      });
 
-    var that = this;
-    fetch(this.state.webServiceLien2, this.state.obj)
-      .then(function(response) {
-        if (response.status >= 400) {
-          throw new Error("GetConges : Bad response from server");
-        }
-        return response.json();
-      })
-      .then(function(fonconges) {
-        that.setState({ conges: fonconges, isReadyw2: true });
-      });
+      var that = this;
+      fetch(this.state.webServiceLien2, this.state.obj)
+        .then(function(response) {
+          if (response.status >= 400) {
+            throw new Error("GetConges : Bad response from server");
+          }
+          return response.json();
+        })
+        .then(function(fonconges) {
+          that.setState({ conges: fonconges, isReadyw2: true });
+          configAccueil.conges = fonconges;
+        });
 
-    var that = this;
-    fetch(this.state.webServiceLien3, this.state.obj)
-      .then(function(response) {
-        if (response.status >= 400) {
-          throw new Error("GetNews : Bad response from server");
-        }
-        return response.json();
-      })
-      .then(function(foncnews) {
-        that.setState({ news: foncnews, isReadyw3: true });
+      var that = this;
+      fetch(this.state.webServiceLien3, this.state.obj)
+        .then(function(response) {
+          if (response.status >= 400) {
+            throw new Error("GetNews : Bad response from server");
+          }
+          return response.json();
+        })
+        .then(function(foncnews) {
+          that.setState({ news: foncnews, isReadyw3: true });
+          configAccueil.news = foncnews;
       });
+    }
   }
 
   //Permet d'afficher l'ecran choisi dans le menu
