@@ -77,7 +77,7 @@ class CongesListe extends React.Component {
 
   addNewConge() {
     this.props.navigation.navigate("CongesAjout", {
-      idConge: null ,
+      numDemande: null ,
       parent: this
     });
   }

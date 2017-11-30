@@ -106,13 +106,17 @@ class CongesPeriode extends React.Component {
 			hour2 = '12:00:00';
 		}
 
+		// calcul de l'id Type absence à partir du code
+		const arrTypeAbs = parent.state.arrTypeAbs;
+		typeabs = arrTypeAbs.find((item) => {return item.code == this.state.absence}).idTypeAbs || 0
+
 		let periodToSave = {
 			dateDuFormated: this.state.date1,
 			dateAuFormated: this.state.date2,
 			dateDu: moment(this.state.date1 + ' ' + hour1, 'DD-MM-YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
 			dateAu: moment(this.state.date2 + ' ' + hour2, 'DD-MM-YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
 			nbJour: parseInt(this.state.workingDays),
-			typeabs: 0,//parseInt(this.state.arrTypeAbs[0][]),
+			typeabs:    typeabs,
 			codeTypeAbs: this.state.absence,
 			libelleTypeAbs: '',
 			libelleEtat: '',
