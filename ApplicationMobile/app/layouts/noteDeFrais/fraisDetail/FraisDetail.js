@@ -9,7 +9,7 @@ import Style from "../../../styles/Styles";
 import styles from "./styles";
 import CheckBox from "react-native-check-box";
 import moment from "moment";
-import momentferiefr from "moment-ferie-fr";
+import feries from "moment-ferie-fr";
 import { momentConfig } from '../../../configuration/MomentConfig';
 
 
