@@ -3037,9 +3037,19 @@ moment-business@^3.0.1:
     contained-periodic-values "^1.0.0"
     skipped-periodic-values "^1.0.0"
 
+moment-ferie-fr@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/moment-ferie-fr/-/moment-ferie-fr-0.2.1.tgz#762126dc35d83fa046a7644a96a2c2b82f3ea377"
+  dependencies:
+    moment "^2.4.0"
+
 moment@2.x.x, moment@^2.19.2:
   version "2.19.2"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.19.2.tgz#8a7f774c95a64550b4c7ebd496683908f9419dbe"
+
+moment@^2.4.0:
+  version "2.19.3"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.19.3.tgz#bdb99d270d6d7fda78cc0fbace855e27fe7da69f"
 
 morgan@~1.6.1:
   version "1.6.1"
