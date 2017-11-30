@@ -38,7 +38,7 @@ import CongesPeriode from "../congesPeriode/CongesPeriode";
 import CongesConfirmation from "../congesConfirmation/CongesConfirmation";
 
 import configurationAppli from "../../../configuration/Configuration";
-
+import moment from "moment";
 
 // SCREEN < DEMANDE DE CONGES
 class CongesAjout extends React.Component {
@@ -70,21 +70,10 @@ class CongesAjout extends React.Component {
         configurationAppli.userID +
         "/",
       WSLinkCreate: configurationAppli.apiURL + "conges",
+      WSLinkDelete: configurationAppli.apiURL + "conges/supprimer",
       userId: configurationAppli.userID,
-      objGET: {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: "Bearer " + configurationAppli.userToken,
-        },
-      },
-      obj: {
-        method: "",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: "Bearer " + configurationAppli.userToken,
-        },
-        body: "",
+      fetchHeaders: {
+        Authorization: "Bearer " + configurationAppli.userToken,
       },
       dateSolde: params.parent.state.dateSolde,
       soldeRTT: params.parent.state.soldeRTT,
@@ -139,8 +128,11 @@ class CongesAjout extends React.Component {
   getPeriodeCongesByUserIdNumDemande(numDemande) {
     var that = this;
 
-    fetch(this.state.WSLinkPeriode + numDemande, this.state.objGET)
-      .then(function(response) {
+    fetch(this.state.WSLinkPeriode + numDemande, {
+      method: 'GET',
+      headers: this.state.fetchHeaders
+    })
+    .then(function(response) {
         if (response.status >= 400) {
           that.setState({
             periods: [],
@@ -186,95 +178,113 @@ class CongesAjout extends React.Component {
     });
   }
 
+
+  /**
+   * Supprime la demande de conges
+   * @return {[type]} [description]
+   */
   deleteConge() {
-    this.props.navigation.navigate("CongesConfirmation");
+    const navigation = this.props.navigation;
+
+    const numDemande = navigation.state.params.numDemande,
+          idUser = configurationAppli.userID;
+    showLoading();
+    fetch(this.state.WSLinkDelete + '/' + idUser + '/' + numDemande, {
+      method: 'DELETE',
+      headers: this.state.fetchHeaders
+    })
+    .then((response) => {
+      return Promise.all([response.status, response.json()]);
+    })
+    .then((res) => {
+      hideLoading();
+      let [status, body] = res;
+
+      let success = status == 200;
+      showToast( (success ? "Succès" : "Erreur") + "\n" +  body.message );
+
+      // On redirige vers la page précédente uniquement en cas de succès
+      if (success) {
+        navigation.state.params.parent.reloadDemandesConges();
+        navigation.dispatch(NavigationActions.back());
+      }
+    })
+    .catch(err => console.log(err));
   }
 
-  saveDraft() {
-    this.setState({
-      statusId: 0,
-      status: "Brouillon",
+
+/**
+ * Sauvegarde une demande de conges, en fonction du statusId :
+ * - 0 : BROUILLON
+ * - 1 : Demande de validation
+ * @param  {[type]} $statusId [description]
+ * @return {[type]}           [description]
+ */
+saveConge($statusId) {
+  if ($statusId != 0 && $statusId != 1) {
+    showToast("Une erreur s'est produite");
+    return;
+  }
+  showLoading("Sauvegarde de la demande en cours...");
+
+  const navigation = this.props.navigation;
+  const method = this.state.numDemande == null ? 'POST' : 'PUT';
+  const url = this.state.WSLinkCreate + (method == 'POST' ? '' : '/' + configurationAppli.userID + '/' + this.state.numDemande);
+
+  let arrPeriodes = [];
+  this.state.periods.map((periode, index) => {
+    arrPeriodes.push({
+      numLigne: index +1 ,
+      dateDebut: periode.dateDu,
+      dateFin: periode.dateAu,
+      nbJours: parseInt(periode.nbJour),
+      typeabs: parseInt(periode.typeabs),
     });
-    this.props.navigation.navigate("CongesConfirmation");
+  });
+
+  const body = {
+    etat: $statusId,
+    idUser: configurationAppli.userID,
+    dateEtat: moment().format("YYYY-MM-DD HH:mm:ss"),
+    lignesDemandes: arrPeriodes,
   }
 
-  validateConge() {
-  	this.setState({
-      statusId: 1,
-      status: "En attente de validation",
-    });
-    if (this.state.numDemande !== null) {
-      this.sendDemandeConges("POST");
-    } else {
-      this.sendDemandeConges("PUT");
+  if (this.state.numDemande != null) {
+    body.numDemande = this.state.numDemande;
+  }
+
+  fetch(url, {
+    method: method,
+    headers: this.state.fetchHeaders,
+    body: JSON.stringify(body)
+  })
+  .then((response) => {
+    return Promise.all([Promise.resolve(response.status), response.json()])
+  })
+  .then((res) => {
+    hideLoading();
+    const [status, body] = res;
+    const success = (status == 200);
+
+    showToast((success ? "Succès" : "Erreur") + "\n" + body.message);
+
+    if (success) {
+      navigation.state.params.parent.reloadDemandesConges();
+      navigation.dispatch(NavigationActions.back());
     }
-  }
+  })
+  .catch(err => {
+    hideLoading();
+    showToast("Une erreur est survenue.");
+    console.log(err);
+  });
+}
 
-// TODO : Voir pourquoi le post ne fonctionne pas
-  sendDemandeConges(method) {
-    showLoading("Enregistrement en cours. Veuillez patientier...");
-
-    var arrPeriodes = [];
-    this.state.periods.map(periodes => {
-      arrPeriodes.push({
-        numLigne: parseInt(periodes.numLigne),
-        dateDebut: periodes.dateDu,
-        dateFin: periodes.dateAu,
-        nbJours: parseInt(periodes.nbJour),
-        typeabs: parseInt(periodes.typeabs),
-      });
-    });
-
-    this.state.obj.method = method;
-    this.state.obj.body = JSON.stringify({
-      userId: parseInt(this.state.userId),
-      etat: this.state.status,
-      dateEtat: this.state.dateDemande,
-      lignesDemandes: arrPeriodes,
-    });
-    var that = this;
-
-    fetch(this.state.WSLinkCreate, this.state.obj)
-      .then(function(response) {
-      console.warn(JSON.stringify({
-				userId: that.state.userId,
-				etat: that.state.status,
-				dateEtat: that.state.dateDemande,
-				lignesDemandes: arrPeriodes,
-			}));
-      console.warn(response.status);
-      console.warn(JSON.stringify(response.text()));
-        if (response.status >= 400) {
-          hideLoading();
-          console.log("error : status >= 400");
-          that.setState({
-            dataSaved: false,
-          });
-          var id = showToast("Erreur : l'enregistrement s'est mal passé");
-          throw new Error("Creation Error");
-        }
-        return response.json();
-      })
-      .then(function(demandeConge) {
-        hideLoading();
-        that.setState({
-          dataSaved: true,
-          statusId: 2,
-          status: "Validé",
-        });
-        this.props.navigation.navigate("CongesConfirmation");
-      })
-      .catch(function(error) {
-        hideLoading();
-        console.log("error : " + error);
-      });
-  }
-
-  getRows(tab, isNew) {
+  getRows(tab) {
     return tab.map((row, i) => (
       <TouchableOpacity
         key={i}
-        onPress={() => this.modifyPeriod(row.numLigne, isNew)}
+        onPress={() => this.modifyPeriod(i, false)}
       >
         <Row
           style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
@@ -308,8 +318,8 @@ class CongesAjout extends React.Component {
               "Suppression",
               "Etes-vous sûr de vouloir supprimer le congé ?",
               [
-                { text: "Non", onPress: () => console.log("Cancel!") },
-                { text: "Oui", onPress: () => this.deleteConge() },
+              { text: "Non", onPress: () => console.log("Cancel!") },
+              { text: "Oui", onPress: () => this.deleteConge() },
               ]
             )}
         />
@@ -323,7 +333,7 @@ class CongesAjout extends React.Component {
         <Button
           buttonStyles={style.draftButton}
           text="BROUILLON"
-          onPress={() => this.saveDraft()}
+          onPress={() => this.saveConge(0)}
         />
       );
     }
@@ -331,7 +341,7 @@ class CongesAjout extends React.Component {
 
   showValidateButton() {
     if (this.state.statusId == null || this.state.statusId == 0) {
-      return <Button text="VALIDER" onPress={() => this.validateConge()} />;
+      return <Button text="VALIDER" onPress={() => this.saveConge(1)} />;
     }
   }
 

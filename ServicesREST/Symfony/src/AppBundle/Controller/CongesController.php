@@ -108,11 +108,12 @@ class CongesController extends Controller
 			return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($retour['message'], $retour['code']);
+        $message = array('message' => $retour['message']);
+        return new JsonResponse($message, $retour['code']);
     }
-	
-	
-    
+
+
+
     /**
      * Execute les requetes de creation après vérifiction des parametres
      *

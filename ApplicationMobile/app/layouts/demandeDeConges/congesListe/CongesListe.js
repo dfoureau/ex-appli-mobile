@@ -63,7 +63,7 @@ class CongesListe extends React.Component {
     };
   }
 
-  componentDidMount() {
+  componentWillMount() {
     var today = new Date();
     var year = today.getFullYear();
     this.getDemandesByUserAndYear(year, false);
@@ -77,7 +77,7 @@ class CongesListe extends React.Component {
 
   addNewConge() {
     this.props.navigation.navigate("CongesAjout", {
-      idConge: null ,
+      numDemande: null ,
       parent: this
     });
   }
@@ -95,7 +95,7 @@ class CongesListe extends React.Component {
     });
   }
 
-  reloadDemandesConges(_year) {
+  reloadDemandesConges(_year = moment().year()) {
     this.setState({ year: _year });
     this.setState({ dataLoaded: false, noData: false });
     this.getDemandesByUserAndYear(_year, true);
@@ -124,7 +124,10 @@ class CongesListe extends React.Component {
             soldeConges: solde.cp,
           });
         });
-    } catch (error) {}
+    } catch (error) {
+      console.log("ERREUR : ");
+      console.log(err);
+    }
   }
 
   // Retourne toutes les demandes de congés de l'utilisateur en paramètre pour l'année en paramètre
