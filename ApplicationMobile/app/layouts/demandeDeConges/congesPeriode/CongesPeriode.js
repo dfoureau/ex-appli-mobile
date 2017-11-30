@@ -3,6 +3,7 @@ import { View, Text, TextInput, Picker, TouchableOpacity } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "./styles";
 import moment from "moment";
+import feries from "moment-ferie-fr";
 import { momentConfig } from '../../../configuration/MomentConfig';
 
 // IMPORT DES COMPOSANTS EXOTIQUES
@@ -12,19 +13,6 @@ import Accueil from "../../accueil/Accueil";
 import Calendar from "../../../components/calendar/Calendar";
 import styles from "./styles";
 import 'whatwg-fetch';
-
-const feries2017 = [
-	"01/01",
-	"17/04",
-	"01/05",
-	"08/05",
-	"25/05",
-	"14/07",
-	"15/08",
-	"01/11",
-	"11/11",
-	"25/12",
-];
 
 class CongesPeriode extends React.Component {
 	constructor(props) {
@@ -54,7 +42,6 @@ class CongesPeriode extends React.Component {
 				date2: now,
 				moment2: "2",
 				absence: "",
-				joursFeries: feries2017,
 				workingDays: 0,
 				numDemande: params.numDemande == null ? 0 : params.numDemande,
 			};
@@ -76,11 +63,12 @@ class CongesPeriode extends React.Component {
 				date2: period.endDate,
 				moment2: period.endPeriod,
 				absence: period.absTypeId,
-				joursFeries: feries2017,
 				workingDays: 0,
 				numDemande: params.numDemande == null ? 0 : params.numDemande,
 			};
 		}
+
+		this.state.arrTypeAbs = params.parent.state.arrTypeAbs;
 	}
 
 	savePeriod(idPeriod) {
@@ -173,7 +161,9 @@ class CongesPeriode extends React.Component {
 			//Si c'est un jour ouvré
 			if (currentDate.day() > 0 && currentDate.day() < 6) {
 				//Si ce n'est pas un jour férié on incremente le compteur
-				total = !this.isJourFerie(currentDate) ? total + 1 : total;
+				if (!currentDate.isFerie()) {
+					total ++;
+				}
 			}
 			//Augmente d'un jour
 			currentDate = currentDate.add(1, "days");
@@ -183,14 +173,14 @@ class CongesPeriode extends React.Component {
 		if (
 			dateDu.day() > 0 && dateDu.day() < 6 &&
 			this.state.moment1 == 2 &&
-			!this.isJourFerie(dateDu)
+			!dateDu.isFerie()
 		) {
 			total = total > 0 ? total - 0.5 : total;
 		}
 		if (
 			dateAu.day() > 0 && dateAu.day() < 6 &&
 			this.state.moment2 == 1 &&
-			!this.isJourFerie(dateAu)
+			!dateAu.isFerie()
 		) {
 			total = total > 0 ? total - 0.5 : total;
 		}
@@ -204,24 +194,12 @@ class CongesPeriode extends React.Component {
 		);
 	}
 
-	isJourFerie(date) {
-		let res = this.state.joursFeries.indexOf(date.format("DD/MM"));
-		if (res > -1) {
-			return true;
-		}
-		return false;
-	}
 
-// 	renderTypesAbsences() {
-// 		const { params } = this.props.navigation.state;
-// 		var parentState = params.parent.state;
-// // console.warn("2" + JSON.stringify(parentState.arrTypeAbs));
-// 		return parentState.arrTypeAbs.map((row) => (
-// 			// <Picker.Item key={row.idTypeAbs} label={row.libelle} value={row.code} />
-// // console.warn(row.libelle)
-// 		));
-// 	}
-
+getPickerTypeAbsences() {
+  return this.state.arrTypeAbs.map((item, index) => {
+    return <Picker.Item label={item.libelle} value={item.code}/>
+  });
+}
 
 
 // TODO : probleme d'affichage dur ios
@@ -285,13 +263,7 @@ class CongesPeriode extends React.Component {
 										this.setState({ absence: itemValue })}
 								>
 									<Picker.Item label="- Type d'absence -" value="0" />
-									<Picker.Item label="Congés payés" value="CP" />
-									<Picker.Item label="Congés anticipés" value="CA" />
-									<Picker.Item label="Congés sans solde" value="CS" />
-									<Picker.Item label="Solde RTT" value="RTT" />
-									<Picker.Item label="Congés maternité" value="CMA" />
-									<Picker.Item label="Congés paternité" value="CPA" />
-									<Picker.Item label="Absence exceptionnelle" value="AE" />
+									{this.getPickerTypeAbsences()}
 								</Picker>
 							</View>
 						</View>
