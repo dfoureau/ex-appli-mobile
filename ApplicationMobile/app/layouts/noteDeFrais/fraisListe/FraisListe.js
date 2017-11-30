@@ -106,7 +106,9 @@ class FraisListe extends React.Component {
           let monthsWithNDF = ndf.map(item => parseInt(item.mois));
 
           that.setState({
-            data: ndf,
+            data: ndf.sort((ndf1, ndf2) => {
+              return parseInt(ndf2.mois) - parseInt(ndf1.mois); // On inverse la fonction de comparaison pour avoir un tri décroissant
+            }),
             monthsWithNDF: monthsWithNDF,
             isReady: true,
             isData: true,
