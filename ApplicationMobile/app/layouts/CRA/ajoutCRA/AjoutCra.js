@@ -29,6 +29,7 @@ import {
 } from "react-native-notifyer";
 
 import moment from "moment";
+import feries from "moment-ferie-fr";
 import "whatwg-fetch";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
@@ -143,7 +144,6 @@ getNbJoursAbsence() {
 
   /**
    * On appelle le service pour récuéprer les éléments suivants :
-   *  - Liste des jours fériés
    *  - liste des Types Action et leurs libellés
    *  - Liste des jours de CP posés dans le mois
    * @return {Promise} On renvoie un tableau Promise.all, où chaque élément correspond à un retour de webservice
@@ -154,23 +154,11 @@ getNbJoursAbsence() {
       headers: this.state.fetchHeaders
     };
 
-    let webServiceJoursFeries = configurationAppli.apiURL + 'joursferies' + '/' + year,
-        webServiceTypesActivites = configurationAppli.apiURL + "CRA/typesactivites",
+    let webServiceTypesActivites = configurationAppli.apiURL + "CRA/typesactivites",
         webServiceDemandeConges = configurationAppli.apiURL + "conges" + '/' + configurationAppli.userID + '/' + year + '/' + month;
 
     return Promise.all([
-      // 1. Liste des jours fériés
-      fetch(webServiceJoursFeries, fetchObj)
-       .then((response) => {
-        if (response.status == 200) {
-          return response.json();
-        }
-        else {
-          return Promise.resolve([]);
-        }
-      })
-      ,
-      // 2. Liste des typesAction
+      // Liste des typesAction
       fetch(webServiceTypesActivites, fetchObj)
         .then((response) => {
         if (response.status == 200) {
@@ -184,7 +172,7 @@ getNbJoursAbsence() {
         }
       })
       ,
-      // 3. Liste des conges
+      // Liste des conges
       fetch(webServiceDemandeConges, fetchObj)
         .then((response) => {
           if (response.status == 200) {
@@ -211,15 +199,15 @@ getNbJoursAbsence() {
     // Récupération des infos générales
     Promise.resolve(this.getServiceGeneralData(this.state.yearSelected, this.state.monthSelected))
       .then((result) => {
-        let [feries, typesActions, conges] = result;
+        let [ typesActions, conges] = result;
 
         if (params.idCRA != null) {
           // Récupération du CRA
-            this.getCRAInfosByID(params.idCRA, feries, typesActions, conges);
+            this.getCRAInfosByID(params.idCRA, typesActions, conges);
         }
         else if (this.state.newCra) {
             // Initialisation des jours avec les valeurs par défaut
-            this.initDefaultCra(this.state.yearSelected, this.state.monthSelected, feries, typesActions, conges);
+            this.initDefaultCra(this.state.yearSelected, this.state.monthSelected, typesActions, conges);
         }
         else {
           that.setState({
@@ -241,7 +229,7 @@ getNbJoursAbsence() {
  * @param  {int} month    Mois du CRA
  * @return {[type]}       [description]
  */
-initDefaultCra(year, month, feries, typesActions, conges) {
+initDefaultCra(year, month, typesActions, conges) {
   let data = {
     idRA: null,
     mois: month,
@@ -260,7 +248,6 @@ initDefaultCra(year, month, feries, typesActions, conges) {
   let date = moment(year + '-' + month, 'YYYY-M');
   let nbJours = date.daysInMonth();
 
-  let feriesArray = Object.values(feries);
   var valeurSaisie = null;
   for (let i=1; i<= nbJours; i++) {
     date.set('date', i);
@@ -272,7 +259,7 @@ initDefaultCra(year, month, feries, typesActions, conges) {
     };
 
     // On verifie si le jour est férié
-    if (feriesArray.includes(date.format('DD/MM'))) {
+    if (date.isFerie()) {
       valeurSaisie.isFerie = true;
       valeurSaisie.actType = "0.0";
       valeurSaisie.disabled = true;
@@ -311,7 +298,7 @@ initDefaultCra(year, month, feries, typesActions, conges) {
   });
 }
 
-  getCRAInfosByID(idCRA, feries, typesActions, conges) {
+  getCRAInfosByID(idCRA, typesActions, conges) {
     var that = this;
     fetch(this.state.WSLinkCRA + '/' + idCRA,  {
       method: 'GET',
@@ -337,7 +324,7 @@ initDefaultCra(year, month, feries, typesActions, conges) {
         isReady: true,
         data: cra,
         statusId: cra.etat,
-        listItemsCRA : that.getItemsCRA(cra.valeursSaisies, feries, conges),
+        listItemsCRA : that.getItemsCRA(cra.valeursSaisies,conges),
         TextClient : cra.client,
         TextResponsable : cra.responsable,
         TextProjet : cra.projet,
@@ -347,13 +334,12 @@ initDefaultCra(year, month, feries, typesActions, conges) {
     });
   }
 
-  getItemsCRA(valeursSaisies, feries, conges) {
-    let feriesArray = Object.values(feries);
+  getItemsCRA(valeursSaisies, conges) {
     return valeursSaisies.map((item) => {
       let actType = item.activité;
       let disabled = false;
       let date = moment(item.date, 'DD/MM/YYYY');
-      if (feriesArray.includes(date.format('DD/MM'))) {
+      if (date.isFerie()) {
         disabled = true;
         actType = "0.0";
       }
