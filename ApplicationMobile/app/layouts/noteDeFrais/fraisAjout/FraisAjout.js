@@ -246,9 +246,21 @@ class FraisAjout extends React.Component {
 
   //Affiche le contenu du menu des mois/années
   loadPickerItems() {
-    return moment.months().map((item, i) => (
-      <Picker.Item label={item + ' ' + this.state.yearSelected} value={i+1} key={i} />
-    ));
+    const year = this.state.yearSelected;
+    let now = moment();
+
+    let startMonth = 11;
+    if (year >= now.year()) {
+      startMonth = now.month();
+    }
+
+    let months = [];
+    for(let i=startMonth; i>=0; i--) {
+      let date = now.clone().month(i);
+      months.push(<Picker.Item label={date.format('MMMM YYYY')} value={i+1} key={i}/>);
+    }
+
+    return months;
   }
 
   /**
@@ -453,6 +465,19 @@ class FraisAjout extends React.Component {
                 </View>
               </View>
               <View style={styles.container2}>
+
+                <View style={styles.containerPicker}>
+                  <Picker
+                    style={{ width: 160 }}
+                    selectedValue={this.state.monthSelected}
+                    onValueChange={(itemValue, itemIndex) => {
+                      this.setState({monthSelected: itemValue}, () => this.reloadNDFByYear(itemValue)
+                      )}}
+                  >
+                    {this.loadPickerItems()}
+                  </Picker>
+                </View>
+
                 <View style={styles.containerColumn}>
                   <View style={styles.containerInfoElement}>
                     <Text style={styles.text}>
