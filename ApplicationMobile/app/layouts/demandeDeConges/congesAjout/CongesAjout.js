@@ -39,7 +39,6 @@ import CongesConfirmation from "../congesConfirmation/CongesConfirmation";
 
 import configurationAppli from "../../../configuration/Configuration";
 
-const PERIOD_SCHEMA = "Period";
 
 // SCREEN < DEMANDE DE CONGES
 class CongesAjout extends React.Component {
@@ -51,9 +50,12 @@ class CongesAjout extends React.Component {
   // Récupération des paramètres de navigation
   static navigationOptions = ({ navigation }) => ({
     numDemande: navigation.state.params.numDemande,
+    parent: navigation.state.params.parent
   });
 
   setInitialValues() {
+    const { params } = this.props.navigation.state;
+
     this.state = {
       title: "Demande de congés",
       statusId: 0,
@@ -84,46 +86,42 @@ class CongesAjout extends React.Component {
         },
         body: "",
       },
-      dateSolde: "",
-      soldeRTT: "",
-      soldeConges: "",
+      dateSolde: params.parent.state.dateSolde,
+      soldeRTT: params.parent.state.soldeRTT,
+      soldeConges: params.parent.state.soldeConges,
       dataSaved: false,
-      numDemande: this.props.navigation.state.params.numDemande,
+      numDemande: params.numDemande,
       isReady: false,
-      nbPeriode: 0,
-WSLinkTypeAbs: "http://localhost:8000/conges/typesabsences",
-			// WSLinkTypeAbs: configurationAppli.apiURL + conges/typesabsences,
+      //  WSLinkTypeAbs: "http://localhost:8000/conges/typesabsences",
+			WSLinkTypeAbs: configurationAppli.apiURL + "conges/typesabsences",
 			arrTypeAbs: [],
     };
   }
 
   // Retourne les types absences congés
 	getTypesAbsences() {
-		var that = this;
-
-		fetch(this.state.WSLinkTypeAbs)
+      fetch(this.state.WSLinkTypeAbs)
 			.then(function(response) {
 				if (response.status >= 400) {
-					that.setState({arrTypeAbs: []});
-					throw new Error("Bad response from server");
+          console.log("TypesAbsences : Bad response from server");
+					return Promise.resolve([])
 				}
-				return response.json();
+        else {
+          return response.json();
+        }
 			})
-			.then(function(typeAbs) {
-				that.setState({arrTypeAbs: typeAbs});
-// console.warn("1" + JSON.stringify(that.state.arrTypeAbs));
-			})
-			.catch(function(error) {
-				console.log("error : " + error);
-			});
+      .then((res) => {
+        this.setState({
+          arrTypeAbs: res
+        })
+      });
 	}
 
-  componentDidMount() {
+  componentWillMount() {
     var that = this;
     //Récupération des paramètres de navigation
     const { params } = this.props.navigation.state;
 
-    this.getSoldeCongesByUserId();
     this.getTypesAbsences();
 
     if (params.numDemande != null) {
@@ -156,7 +154,6 @@ WSLinkTypeAbs: "http://localhost:8000/conges/typesabsences",
         that.setState({
           isReady: true,
           periods: p,
-          nbPeriode: p.lenghth,
         });
       });
 
@@ -165,34 +162,6 @@ WSLinkTypeAbs: "http://localhost:8000/conges/typesabsences",
     that.state.statusId = that.props.navigation.state.params.etat;
     that.state.status = that.props.navigation.state.params.libelleEtat;
     that.state.dateDemande = that.props.navigation.state.params.dateDemande;
-  }
-
-  // Retourne le dernier solde congés et le dernier solde RTT de l'utilisateur en paramère
-  getSoldeCongesByUserId() {
-    var that = this;
-
-    fetch(this.state.WSLinkSolde, this.state.objGET)
-      .then(function(response) {
-        if (response.status >= 400) {
-          that.setState({
-            dateSolde: "",
-            soldeRTT: "",
-            soldeConges: "",
-          });
-          throw new Error("Bad response from server");
-        }
-        return response.json();
-      })
-      .then(function(solde) {
-        that.setState({
-          dateSolde: solde[0]["datesolde"],
-          soldeRTT: solde[0]["rtt"],
-          soldeConges: solde[0]["cp"],
-        });
-      })
-      .catch(function(error) {
-				console.log("error : " + error);
-			});
   }
 
   // Permet d'afficher l'ecran choisi dans le menu

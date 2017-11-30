@@ -49,21 +49,21 @@ class CongesController extends Controller
         if (UtilsController::isPositifInt($userId)) {
             $tUserId = (int) $userId;
 
-            $sql = "SELECT 
-						users.id, 
-						concat(RIGHT(concat('0', soldesconges.mois), 2),'/', soldesconges.annee) AS datesolde, 
-						soldesconges.cp, 
-						soldesconges.rtt 
-					FROM 
+            $sql = "SELECT
+						users.id,
+						concat(RIGHT(concat('0', soldesconges.mois), 2),'/', soldesconges.annee) AS datesolde,
+						soldesconges.cp,
+						soldesconges.rtt
+					FROM
 						users,
-						soldesconges 
+						soldesconges
 					WHERE users.numMat = soldesconges.nummat
-					AND users.id = " . $tUserId . " 
+					AND users.id = " . $tUserId . "
 					ORDER BY concat(annee, mois) DESC limit 1";
 
             $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
             $stmt->execute();
-            $retour = $stmt->fetchAll();
+            $retour = $stmt->fetch();
 
             if (count($retour) != 0) {
                 return new JsonResponse($retour, Response::HTTP_OK);
