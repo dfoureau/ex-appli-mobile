@@ -12,8 +12,6 @@ import styles from "./styles";
 
 import configurationAppli from "../../configuration/Configuration";
 
-import RNRestart from 'react-native-restart';
-
 var { height, width } = Dimensions.get("window");
 
 class ContainerHeader extends Component {
@@ -73,7 +71,7 @@ class ContainerHeader extends Component {
     configurationAppli.userID = null;
     configurationAppli.userToken = null;
     configurationAppli.idAgence = null;
-    RNRestart.Restart();
+    this.afficherEcran("Connexion");
   }
 
   render() {
