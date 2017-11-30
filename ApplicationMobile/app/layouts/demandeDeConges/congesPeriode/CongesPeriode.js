@@ -42,8 +42,6 @@ class CongesPeriode extends React.Component {
 		const { params } = this.props.navigation.state;
 		var parentState = params.parent.state;
 
-		console.log("INIT : " + params.idPeriod);
-
 		if (params.idPeriod == null) {
 
 			let now = moment().format("DD/MM/YYYY");
@@ -114,8 +112,6 @@ class CongesPeriode extends React.Component {
 			dateDu: moment(this.state.date1 + ' ' + hour1, 'DD-MM-YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
 			dateAu: moment(this.state.date2 + ' ' + hour2, 'DD-MM-YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
 			nbJour: parseInt(this.state.workingDays),
-			etat: 0, // A changer dans l'ecran suivant pour toutes les périodes
-			// lorsque l'utilisateur choisit de valider ou d'enregistrer en brouillon
 			typeabs: 0,//parseInt(this.state.arrTypeAbs[0][]),
 			codeTypeAbs: this.state.absence,
 			libelleTypeAbs: '',
@@ -135,6 +131,16 @@ class CongesPeriode extends React.Component {
 
 
 		// On retrie les périodes par date de début
+		parentPeriods.sort((p1, p2) => {
+			let d1 = moment(p1.dateDu, 'YYYY-MM-DD HH:mm:ss'),
+					d2 = moment(p2.dateDu, 'YYYY-MM-DD HH:mm:ss');
+			return (d1.valueOf() - d2.valueOf());
+		});
+
+		// TODO :
+		// * Vérification des chevauchements
+		// * Vérification des trous dans les périodes
+
 		parent.setState({periods: parentPeriods});
 	}
 
@@ -211,6 +217,8 @@ class CongesPeriode extends React.Component {
 // // console.warn(row.libelle)
 // 		));
 // 	}
+
+
 
 // TODO : probleme d'affichage dur ios
 	render() {

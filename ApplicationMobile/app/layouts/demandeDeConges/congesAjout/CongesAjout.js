@@ -70,21 +70,10 @@ class CongesAjout extends React.Component {
         configurationAppli.userID +
         "/",
       WSLinkCreate: configurationAppli.apiURL + "conges",
+      WSLinkDelete: configurationAppli.apiURL + "conges/supprimer",
       userId: configurationAppli.userID,
-      objGET: {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: "Bearer " + configurationAppli.userToken,
-        },
-      },
-      obj: {
-        method: "",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: "Bearer " + configurationAppli.userToken,
-        },
-        body: "",
+      fetchHeaders: {
+        Authorization: "Bearer " + configurationAppli.userToken,
       },
       dateSolde: params.parent.state.dateSolde,
       soldeRTT: params.parent.state.soldeRTT,
@@ -139,8 +128,11 @@ class CongesAjout extends React.Component {
   getPeriodeCongesByUserIdNumDemande(numDemande) {
     var that = this;
 
-    fetch(this.state.WSLinkPeriode + numDemande, this.state.objGET)
-      .then(function(response) {
+    fetch(this.state.WSLinkPeriode + numDemande, {
+      method: 'GET',
+      headers: this.state.fetchHeaders
+    })
+    .then(function(response) {
         if (response.status >= 400) {
           that.setState({
             periods: [],
@@ -186,8 +178,38 @@ class CongesAjout extends React.Component {
     });
   }
 
+
+  /**
+   * Supprime la demande de conges
+   * @return {[type]} [description]
+   */
   deleteConge() {
-    this.props.navigation.navigate("CongesConfirmation");
+    const navigation = this.props.navigation;
+
+    const numDemande = navigation.state.params.numDemande,
+          idUser = configurationAppli.userID;
+    showLoading();
+    fetch(this.state.WSLinkDelete + '/' + idUser + '/' + numDemande, {
+      method: 'DELETE',
+      headers: this.state.fetchHeaders
+    })
+    .then((response) => {
+      return Promise.all([response.status, response.json()]);
+    })
+    .then((res) => {
+      hideLoading();
+      let [status, body] = res;
+
+      let success = status == 200;
+      showToast( (success ? "Succès" : "Erreur") + "\n" +  body.message );
+
+      // On redirige vers la page précédente uniquement en cas de succès
+      if (success) {
+        navigation.state.params.parent.reloadDemandesConges();
+        navigation.dispatch(NavigationActions.back());
+      }
+    })
+    .catch(err => console.log(err));
   }
 
   saveDraft() {
@@ -225,16 +247,19 @@ class CongesAjout extends React.Component {
       });
     });
 
-    this.state.obj.method = method;
-    this.state.obj.body = JSON.stringify({
+    const body = {
       userId: parseInt(this.state.userId),
       etat: this.state.status,
       dateEtat: this.state.dateDemande,
       lignesDemandes: arrPeriodes,
-    });
+    }
     var that = this;
 
-    fetch(this.state.WSLinkCreate, this.state.obj)
+    fetch(this.state.WSLinkCreate, {
+      method: 'POST',
+      headers: this.state.fetchHeaders,
+      body: JSON.stringify(body)
+    })
       .then(function(response) {
       console.warn(JSON.stringify({
 				userId: that.state.userId,
@@ -308,8 +333,8 @@ class CongesAjout extends React.Component {
               "Suppression",
               "Etes-vous sûr de vouloir supprimer le congé ?",
               [
-                { text: "Non", onPress: () => console.log("Cancel!") },
-                { text: "Oui", onPress: () => this.deleteConge() },
+              { text: "Non", onPress: () => console.log("Cancel!") },
+              { text: "Oui", onPress: () => this.deleteConge() },
               ]
             )}
         />

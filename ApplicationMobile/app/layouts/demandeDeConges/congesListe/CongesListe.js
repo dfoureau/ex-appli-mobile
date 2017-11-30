@@ -95,7 +95,7 @@ class CongesListe extends React.Component {
     });
   }
 
-  reloadDemandesConges(_year) {
+  reloadDemandesConges(_year = moment().year()) {
     this.setState({ year: _year });
     this.setState({ dataLoaded: false, noData: false });
     this.getDemandesByUserAndYear(_year, true);
@@ -118,8 +118,6 @@ class CongesListe extends React.Component {
           return response.json();
         })
         .then(function(solde) {
-          console.log("SOLDE : ");
-          console.log(solde);
           that.setState({
             dateSolde: solde.datesolde,
             soldeRTT: solde.rtt,
@@ -127,7 +125,7 @@ class CongesListe extends React.Component {
           });
         });
     } catch (error) {
-      console.log("ERREUR ! ");
+      console.log("ERREUR : ");
       console.log(err);
     }
   }
