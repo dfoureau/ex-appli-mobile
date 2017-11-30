@@ -42,6 +42,8 @@ class CongesPeriode extends React.Component {
 		const { params } = this.props.navigation.state;
 		var parentState = params.parent.state;
 
+		console.log("INIT : " + params.idPeriod);
+
 		if (params.idPeriod == null) {
 
 			let now = moment().format("DD/MM/YYYY");
@@ -62,11 +64,11 @@ class CongesPeriode extends React.Component {
 			// Récupéré depuis le state du parent
 			var period = {
 				numDemande: parentState.numDemande,
-				startDate: parentState.periods[params.idPeriod - 1].dateDuFormated,
+				startDate: parentState.periods[params.idPeriod].dateDuFormated,
 				startPeriod: "1",
-				endDate: parentState.periods[params.idPeriod - 1].dateAuFormated,
+				endDate: parentState.periods[params.idPeriod].dateAuFormated,
 				endPeriod: "2",
-				absTypeId: parentState.periods[params.idPeriod - 1].codeTypeAbs,
+				absTypeId: parentState.periods[params.idPeriod].codeTypeAbs,
 			};
 
 			this.state = {
@@ -124,13 +126,15 @@ class CongesPeriode extends React.Component {
 
 		if (params.idPeriod == null) {
 			// Nouvelle période, on l'ajoute au tableau
-			periodToSave.numLigne = parentPeriods.length;
+			// periodToSave.numLigne = parentPeriods.length;
 			parentPeriods.push(periodToSave);
 		}
 		else {
-			parentPeriods[params.idPeriod -1] = periodToSave;
+			parentPeriods[params.idPeriod] = periodToSave;
 		}
 
+
+		// On retrie les périodes par date de début
 		parent.setState({periods: parentPeriods});
 	}
 

@@ -217,7 +217,7 @@ class CongesAjout extends React.Component {
     var arrPeriodes = [];
     this.state.periods.map(periodes => {
       arrPeriodes.push({
-        numLigne: parseInt(periodes.numLigne),
+        // numLigne: parseInt(periodes.numLigne),
         dateDebut: periodes.dateDu,
         dateFin: periodes.dateAu,
         nbJours: parseInt(periodes.nbJour),
@@ -270,11 +270,11 @@ class CongesAjout extends React.Component {
       });
   }
 
-  getRows(tab, isNew) {
+  getRows(tab) {
     return tab.map((row, i) => (
       <TouchableOpacity
         key={i}
-        onPress={() => this.modifyPeriod(row.numLigne, isNew)}
+        onPress={() => this.modifyPeriod(i, false)}
       >
         <Row
           style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
