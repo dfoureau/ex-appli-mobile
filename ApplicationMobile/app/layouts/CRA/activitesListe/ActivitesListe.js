@@ -118,7 +118,7 @@ resetData() {
     }
     else {
       // On trie les cra par ordre d'id croissant au sein d'un même mois/année
-      return parseInt(cra1.Id) - parseInt(cra2.Id)
+      return parseInt(cra2.Id) - parseInt(cra1.Id)
     }
   });
 

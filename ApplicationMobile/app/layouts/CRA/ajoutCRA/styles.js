@@ -28,16 +28,26 @@ export default StyleSheet.create({
     marginTop: 3,
   },
 
+  // containerPicker: {
+  //   flexDirection: "row",
+  //   width: 162,
+  //   height: 29,
+  //   alignItems: "center",
+  //   padding: 2,
+  //   marginTop: -27,
+  //   marginLeft: -160,
+  //   borderWidth: 1,
+  //   backgroundColor: "#f4f4f4",
+  // },
+
   containerPicker: {
     flexDirection: "row",
-    width: 162,
+    borderWidth: 1,
+    width: 160,
     height: 29,
     alignItems: "center",
-    padding: 2,
-    marginTop: -27,
-    marginLeft: -160,
-    borderWidth: 1,
     backgroundColor: "#f4f4f4",
+    padding: 2,
   },
 
   containerFirstLine: {
