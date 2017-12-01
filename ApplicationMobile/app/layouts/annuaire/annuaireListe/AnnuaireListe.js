@@ -131,34 +131,51 @@ class AnnuaireListe extends React.Component {
     return result;
   }
 
+
+getAnnuaireFromAgence(agenceId) {
+  if (agenceId == configAnnuaire.idAgenceDefaut && configAnnuaire.annuaireAgenceDefaut != null) {
+    return Promise.resolve(configAnnuaire.annuaireAgenceDefaut);
+  }
+  else {
+    let requestURL = configurationAppli.apiURL + "annuaire/" + agenceId;
+    var that = this;
+    console.log("ON FETCH !!!");
+    return fetch(requestURL, this.state.obj)
+           .then((response) => response.json()
+           .then((responseJson) => {
+             if (agenceId == configAnnuaire.idAgenceDefaut) {
+               console.log("MAJ de l'annuaire de rattachement");
+               // console.log(responseJson);
+               configAnnuaire.annuaireAgenceDefaut = responseJson;
+             }
+             return responseJson;
+           })
+
+         );
+  }
+}
+
   reloadAnnuaireByAgence(_idAgence, reloadPage) {
     if (reloadPage) {
       showLoading("Récupération des données. Veuillez patienter...");
     }
 
-    this.state.idAgence = _idAgence;
-    let requestURL = configurationAppli.apiURL + "annuaire/" + _idAgence;
-    var that = this;
-    var idAgenceNouveau = _idAgence;
-    return fetch(requestURL, this.state.obj)
-      .then(response => response.json())
-      .then(responseJson => {
-        this.setState({
-          annuaire: responseJson,
-          isReady: true,
-          annuaireComplet: responseJson,
-        });
-        if (idAgenceNouveau == configurationAppli.idAgence) {
-          configAnnuaire.annuaireAgenceDefaut = responseJson;
-          configAnnuaire.idAgenceDefaut = idAgenceNouveau;
-        }
-        if (reloadPage) {
-          hideLoading();
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    this.getAnnuaireFromAgence(_idAgence)
+        .then((responseJson) => {
+          this.setState({
+            annuaire: responseJson,
+            annuaireComplet: responseJson,
+            isReady: true,
+          });
+        })
+        .catch(error => {
+          console.error(error);
+        })
+        .finally(() => {
+          if (reloadPage) {
+            hideLoading();
+          }
+        })
   }
 
   realoadAnnuaireByNameOnChange(_searchedName) {
@@ -232,8 +249,11 @@ class AnnuaireListe extends React.Component {
                   style={styles.OptionFilter}
                   selectedValue={this.state.idAgence}
                   onValueChange={(itemValue, itemIndex) =>
-                    this.reloadAnnuaireByAgence(itemValue, true)}
-                >
+                    {
+                      this.setState({idAgence: itemValue});
+                      this.reloadAnnuaireByAgence(itemValue, true)}
+                  }
+                  >
                   <Picker.Item label="Ile de France" value="1" />
                   <Picker.Item label="Atlantique" value="3" />
                   <Picker.Item label="Niort" value="4" />
