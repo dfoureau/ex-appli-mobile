@@ -105,6 +105,24 @@ resetData() {
   }
 
   parseCra(cra) {
+    // On commence par trier le tableau par ordre de date décroissant
+    cra.sort((cra1, cra2) => {
+      let date1 = moment(cra1.annee + '-' + cra1.mois, 'YYYY-M'),
+          date2 = moment(cra2.annee + '-' + cra2.mois, 'YYYY-M');
+
+    if (date1 > date2) {
+      return -1;
+    }
+    else if (date1 < date2) {
+      return 1;
+    }
+    else {
+      // On trie les cra par ordre d'id croissant au sein d'un même mois/année
+      return parseInt(cra1.Id) - parseInt(cra2.Id)
+    }
+  });
+
+
     let currentDate = "";
     let hideDate = false;
     let rows = [];
