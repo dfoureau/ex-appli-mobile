@@ -92,6 +92,7 @@ class AjoutCra extends React.Component {
       WSLinkCRA: configurationAppli.apiURL + "CRA/RA",
       isReady: false,
       data: [],
+      pickerNewCraValue: null
     };
 
   }
@@ -157,7 +158,7 @@ getNbJoursAbsence() {
     let webServiceTypesActivites = configurationAppli.apiURL + "CRA/typesactivites",
         webServiceDemandeConges = configurationAppli.apiURL + "conges" + '/' + configurationAppli.userID + '/' + year + '/' + month;
 
-    return Promise.all([
+   return Promise.all([
       // Liste des typesAction
       fetch(webServiceTypesActivites, fetchObj)
         .then((response) => {
@@ -220,6 +221,31 @@ getNbJoursAbsence() {
     }
 
 
+reloadNewCra(date) {
+  let year = moment(date, 'YYYY-MM').year(),
+      month = moment(date, 'YYYY-MM').month() + 1;
+    showLoading("Chargement des informations...");
+
+    this.getServiceGeneralData(year, month)
+    .then((result) => {
+        let [ typesActions, conges] = result;
+        this.setState({
+          yearSelected: year,
+          monthSelected: month
+        });
+        this.initDefaultCra(year, month, typesActions, conges);
+    })
+    .catch(error => {
+      showToast("Une erreur est survenue.");
+      this.props.navigation.dispatch(NavigationActions.back());
+    })
+    .finally(() => {
+      hideLoading();
+    });
+}
+
+
+
 /**
  * Initialise un CRA avec les valeurs par défaut
  * Jours ouvrés : "1.0"
@@ -242,7 +268,8 @@ initDefaultCra(year, month, typesActions, conges) {
     responsable: "",
     projet: "",
     commentaire: "",
-    valeursSaisies: []
+    valeursSaisies: [],
+    pickerNewCraValue: moment().format('YYYY-MM'),
   }; // Objet à peupler pour créer un nouveau CRA
 
   let date = moment(year + '-' + month, 'YYYY-M');
@@ -543,18 +570,29 @@ saveCra(statusId) {
     this.props.navigation.navigate("ActivitesListe"); //navigate back
   };
 
-  //Affiche le contenu du menu des mois/années
-  loadPickerItems() {
-    return moment.months().map((item, i) => (
-      <Picker.Item label={item + ' ' + this.state.yearSelected} value={i+1} key={i} />
-    ));
+/**
+ * Affiche les items du picker pour un ajout de CRA.
+ * On affiche le mois en cours et les 2 mois précédents
+ * @return {[type]} [description]
+ */
+newCraPicker() {
+  const now = moment();
+  let pickerArray = [];
+
+  for (let i=0; i<3; i++) {
+    let currentDate = now.clone().subtract(i, 'months');
+    pickerArray.push(<Picker.Item label={currentDate.format("MMMM YYYY")} value={currentDate.format("YYYY-MM")} key={currentDate.format('YYYY-MM')}/>);
   }
+
+  return pickerArray;
+}
+
 
   render() {
     //Décralation du params transmis à l'écran courante.
     const { params } = this.props.navigation.state;
 
-    let title = moment(this.state.yearSelected + '-' + this.state.monthSelected, 'YYYY-M').format("MMMM YYYY");
+    let title = this.state.newCra ? "Nouveau Cra" : moment(this.state.yearSelected + '-' + this.state.monthSelected, 'YYYY-M').format("MMMM YYYY");
 
     if (!this.state.isReady) {
       return (
@@ -576,6 +614,23 @@ saveCra(statusId) {
         <View>
           <ContainerTitre title={title} navigation={this.props.navigation}>
             <View style={style.container}>
+
+              {this.state.newCra  &&
+                <View style={style.containerPicker}>
+                  <Picker
+                    style={{ width: 160 }}
+                    selectedValue={this.state.pickerNewCraValue}
+                    onValueChange={(itemValue, itemIndex) => {
+                      this.setState({pickerNewCraValue: itemValue});
+                      this.reloadNewCra(itemValue)
+                    }}
+                  >
+                    {this.newCraPicker()}
+                  </Picker>
+                </View>
+              }
+
+
               <View style={style.container1}>
                 <View style={style.containerFirstLine}>
                   <Text style={style.text}>Etat : {this.state.data.libelle}</Text>
