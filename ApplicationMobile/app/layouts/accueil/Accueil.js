@@ -88,11 +88,11 @@ class Accueil extends React.Component {
           return response.json();
         })
         .then(function(foncuser) {
+          configAccueil.user = foncuser;
           that.setState({
             user: foncuser,
             isReadyw1: true,
           });
-          configAccueil.user = foncuser;
         })
         .catch(function(error) {
           return console.log(error);
@@ -107,8 +107,8 @@ class Accueil extends React.Component {
           return response.json();
         })
         .then(function(fonconges) {
-          that.setState({ conges: fonconges, isReadyw2: true });
           configAccueil.conges = fonconges;
+          that.setState({ conges: fonconges, isReadyw2: true });
         });
 
       var that = this;
@@ -120,8 +120,8 @@ class Accueil extends React.Component {
           return response.json();
         })
         .then(function(foncnews) {
-          that.setState({ news: foncnews, isReadyw3: true });
           configAccueil.news = foncnews;
+          that.setState({ news: foncnews, isReadyw3: true });
       });
     }
   }
@@ -132,11 +132,13 @@ class Accueil extends React.Component {
   }
 
   renderItemNews() {
-    return this.state.news.map((item, index) => (
-      <View key={index}>
-        <NewsItem {...item} />
-      </View>
-    ));
+    if (this.state.news != null) {
+      return this.state.news.map((item, index) => (
+        <View key={index}>
+          <NewsItem {...item} />
+        </View>
+      ));
+    }
   }
 
   render() {
