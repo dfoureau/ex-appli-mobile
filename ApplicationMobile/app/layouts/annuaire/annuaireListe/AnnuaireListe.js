@@ -30,6 +30,15 @@ import { OptionFilter } from "../../../components/optionFilter";
 import { AnnuaireDetail } from "../annuaireDetail";
 
 import configurationAppli from "../../../configuration/Configuration";
+import configAnnuaire from "../../../configuration/ConfigAnnuaire";
+
+import {
+  showToast,
+  showNotification,
+  showLoading,
+  hideLoading,
+  hide,
+} from "react-native-notifyer";
 
 class AnnuaireListe extends React.Component {
   constructor(props) {
@@ -37,11 +46,11 @@ class AnnuaireListe extends React.Component {
     this.state = {
       //On définit les différentes variables
       title: "Annuaire",
-      annuaire: [],
+      annuaire: configAnnuaire.annuaireAgenceDefaut,
       isReady: false,
-      idAgence: 1,
+      idAgence: configAnnuaire.idAgenceDefaut,
       searchName: "",
-      annuaireComplet: [],
+      annuaireComplet: configAnnuaire.annuaireAgenceDefaut,
       obj: {
         method: "GET",
         headers: {
@@ -122,9 +131,15 @@ class AnnuaireListe extends React.Component {
     return result;
   }
 
-  reloadAnnuaireByAgence(_idAgence) {
+  reloadAnnuaireByAgence(_idAgence, reloadPage) {
+    if (reloadPage) {
+      showLoading("Récupération des données. Veuillez patienter...");
+    }
+
     this.state.idAgence = _idAgence;
     let requestURL = configurationAppli.apiURL + "annuaire/" + _idAgence;
+    var that = this;
+    var idAgenceNouveau = _idAgence;
     return fetch(requestURL, this.state.obj)
       .then(response => response.json())
       .then(responseJson => {
@@ -133,6 +148,13 @@ class AnnuaireListe extends React.Component {
           isReady: true,
           annuaireComplet: responseJson,
         });
+        if (idAgenceNouveau == configurationAppli.idAgence) {
+          configAnnuaire.annuaireAgenceDefaut = responseJson;
+          configAnnuaire.idAgenceDefaut = idAgenceNouveau;
+        }
+        if (reloadPage) {
+          hideLoading();
+        }
       })
       .catch(error => {
         console.error(error);
@@ -160,7 +182,14 @@ class AnnuaireListe extends React.Component {
   }
 
   componentDidMount() {
-    this.reloadAnnuaireByAgence(configurationAppli.idAgence);
+    if (this.state.annuaire != null) {
+      this.setState({
+            isReady: true,
+          });
+      return;
+    } else {
+      this.reloadAnnuaireByAgence(configurationAppli.idAgence, false);
+    }
   }
 
   render() {
@@ -203,7 +232,7 @@ class AnnuaireListe extends React.Component {
                   style={styles.OptionFilter}
                   selectedValue={this.state.idAgence}
                   onValueChange={(itemValue, itemIndex) =>
-                    this.reloadAnnuaireByAgence(itemValue)}
+                    this.reloadAnnuaireByAgence(itemValue, true)}
                 >
                   <Picker.Item label="Ile de France" value="1" />
                   <Picker.Item label="Atlantique" value="3" />
