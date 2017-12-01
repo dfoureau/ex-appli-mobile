@@ -57,7 +57,7 @@ class Connexion extends React.Component {
       token: "",
       data: [],
       isReady: false,
-      webServiceLien1: "http://185.57.13.103/rest/web/app_dev.php/login",
+      webServiceLien1: configurationAppli.apiURL + "login",
       obj: {
         method: "POST",
         headers: {
