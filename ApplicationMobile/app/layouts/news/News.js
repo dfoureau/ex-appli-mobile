@@ -7,13 +7,15 @@ import NewsItem from "../../components/newsItem/NewsItem";
 import ContainerAccueil from "../../components/containerAccueil/ContainerAccueil";
 
 import configurationAppli from "../../configuration/Configuration";
+import configNews from "../../configuration/ConfigNews";
 
 class News extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       title: "News",
-      newsList: [
+      newsList: configNews.newsList,
+      /*[
         {
           news_id: null,
           news_titre: null,
@@ -22,7 +24,7 @@ class News extends React.Component {
           news_file: null,
           news_photo: null,
         },
-      ],
+      ],*/
       isReady: false,
       webServiceLien: configurationAppli.apiURL + "news/10",
       obj: {
@@ -35,17 +37,25 @@ class News extends React.Component {
   }
 
   componentDidMount() {
-    var that = this;
-    fetch(this.state.webServiceLien, this.state.obj)
-      .then(function(response) {
-        if (response.status >= 400) {
-          throw new Error("Bad response from server");
-        }
-        return response.json();
-      })
-      .then(function(foncnews) {
-        that.setState({ newsList: foncnews, isReady: true });
-      });
+    if (this.state.newsList != null) {
+      this.setState({
+            isReady: true,
+          });
+      return;
+    } else {
+      var that = this;
+      fetch(this.state.webServiceLien, this.state.obj)
+        .then(function(response) {
+          if (response.status >= 400) {
+            throw new Error("Bad response from server");
+          }
+          return response.json();
+        })
+        .then(function(foncnews) {
+          that.setState({ newsList: foncnews, isReady: true });
+          configNews.newsList = foncnews;
+        });
+    }
   }
 
   //Permet d'afficher l'ecran choisi dans le menu
