@@ -197,7 +197,7 @@ class CongesPeriode extends React.Component {
 
 getPickerTypeAbsences() {
   return this.state.arrTypeAbs.map((item, index) => {
-    return <Picker.Item label={item.libelle} value={item.code}/>
+    return <Picker.Item label={item.libelle} value={item.code} key={index}/>
   });
 }
 
