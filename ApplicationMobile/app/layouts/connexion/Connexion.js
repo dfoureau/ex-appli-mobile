@@ -93,7 +93,7 @@ class Connexion extends React.Component {
       }
     } catch (error) {
       hideLoading();
-      var id = showToast("Erreur : Login et/ou mot de passe incorrecte");
+      var id = showToast("Erreur : Login et/ou mot de passe incorrect");
     }
 
     // On supprime automatiquement les paramètres de connexion en cache
