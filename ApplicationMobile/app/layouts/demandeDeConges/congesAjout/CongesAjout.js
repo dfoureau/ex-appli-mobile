@@ -214,6 +214,73 @@ class CongesAjout extends React.Component {
 
 
 /**
+ * Vérifie qu'un tableau de périodes est valide :
+ * - Pas d'inclusions de périodes
+ * - Pas de chevauchement de jours ouvrés sur la période
+ * - Pas de trous correspondant à un jour ouvré sur la période
+ * @param  {Array} periodes  Le tableau des périodes à vérifier
+ * @return {[Boolean, String]}    Tableau à 2 éléments : Un Boolean (true si les périodes sont valides, false sinon), et une String pour donner la raison de la
+ */
+checkPeriodes(periodes) {
+  let isValid = true,
+      reason = "";
+
+  // On parcourt le tableau des périodes, et on compare les périodes 2 à 2
+  let index = 0;
+  while (isValid && index < periodes.length -1) {
+  // for(let i = 0; i<periodes.length -1; i++) {
+    let periode1 = periodes[index],
+        periode2 = periodes[index+1];
+
+      let debut1 = moment(periode1.dateDu, 'YYYY-MM-DD HH:mm:ss'),
+          debut2 = moment(periode2.dateDu, 'YYYY-MM-DD HH:mm:ss'),
+          fin1   = moment(periode1.dateAu, 'YYYY-MM-DD HH:mm:ss'),
+          fin2   = moment(periode2.dateAu, 'YYYY-MM-DD HH:mm:ss');
+
+    // Détection du tri et des inclusions
+    if (debut2.isSameOrBefore(debut1) || fin2.isSameOrBefore(fin1)) {
+        isValid = false;
+        reason = "Le tableau des périodes n'est pas trié ou contient des inclusions";
+    }
+    // Détection des chevauchements
+    else if (debut2.isBefore(fin1)) {
+        // possibilité de chevauchement. On prend tous les jours compris entre debut2 et fin1, et on regarde s'il y a des jours ouvrés entre les 2 dates
+        let iterationDate = debut2.clone();
+
+        while(isValid && iterationDate.isSameOrBefore(fin1)) {
+          if (iterationDate.day() > 0 && iterationDate.day() < 6 && !iterationDate.isFerie()) {
+            isValid = false;
+            reason = "Le tableau des périodes contient des chevauchements";
+          }
+          else {
+            iterationDate.add(1, 'days');
+          }
+        }
+    }
+    else if (debut2.diff(fin1, 'hours') > 1) {
+      // Détection des trous.
+      // On fait une différence en heures pour éviter de traiter le cas normal
+      // où la date de fin est à 23:59:59 et la date de début le jour suivant à 00:00:00
+      let iterationDate = fin1.clone();
+
+      while (isValid && iterationDate.isSameOrBefore(debut2)) {
+        if (iterationDate.day() > 0 && iterationDate.day() < 6 && !iterationDate.isFerie()) {
+          isValid = false;
+          reason = "Le tableau des périodes contient des trous";
+        }
+        else {
+          iterationDate.add(1, 'days');
+        }
+      }
+    }
+    index ++;
+  }
+
+  return [isValid, reason];
+}
+
+
+/**
  * Sauvegarde une demande de conges, en fonction du statusId :
  * - 0 : BROUILLON
  * - 1 : Demande de validation
@@ -225,59 +292,67 @@ saveConge($statusId) {
     showToast("Une erreur s'est produite");
     return;
   }
-  showLoading("Sauvegarde de la demande en cours...");
 
-  const navigation = this.props.navigation;
-  const method = this.state.numDemande == null ? 'POST' : 'PUT';
-  const url = this.state.WSLinkCreate + (method == 'POST' ? '' : '/' + configurationAppli.userID + '/' + this.state.numDemande);
+  let [isValid, reason] = this.checkPeriodes(this.state.periods);
 
-  let arrPeriodes = [];
-  this.state.periods.map((periode, index) => {
-    arrPeriodes.push({
-      numLigne: index +1 ,
-      dateDebut: periode.dateDu,
-      dateFin: periode.dateAu,
-      nbJours: parseInt(periode.nbJour),
-      typeabs: parseInt(periode.typeabs),
+  if (isValid) {
+    showLoading("Sauvegarde de la demande en cours...");
+    const navigation = this.props.navigation;
+    const method = this.state.numDemande == null ? 'POST' : 'PUT';
+    const url = this.state.WSLinkCreate + (method == 'POST' ? '' : '/' + configurationAppli.userID + '/' + this.state.numDemande);
+
+    let arrPeriodes = [];
+    this.state.periods.map((periode, index) => {
+      arrPeriodes.push({
+        numLigne: index +1 ,
+        dateDebut: periode.dateDu,
+        dateFin: periode.dateAu,
+        nbJours: parseInt(periode.nbJour),
+        typeabs: parseInt(periode.typeabs),
+      });
     });
-  });
 
-  const body = {
-    etat: $statusId,
-    idUser: configurationAppli.userID,
-    dateEtat: moment().format("YYYY-MM-DD HH:mm:ss"),
-    lignesDemandes: arrPeriodes,
-  }
-
-  if (this.state.numDemande != null) {
-    body.numDemande = this.state.numDemande;
-  }
-
-  fetch(url, {
-    method: method,
-    headers: this.state.fetchHeaders,
-    body: JSON.stringify(body)
-  })
-  .then((response) => {
-    return Promise.all([Promise.resolve(response.status), response.json()])
-  })
-  .then((res) => {
-    hideLoading();
-    const [status, body] = res;
-    const success = (status == 200);
-
-    showToast((success ? "Succès" : "Erreur") + "\n" + body.message);
-
-    if (success) {
-      navigation.state.params.parent.reloadDemandesConges();
-      navigation.dispatch(NavigationActions.back());
+    const body = {
+      etat: $statusId,
+      idUser: configurationAppli.userID,
+      dateEtat: moment().format("YYYY-MM-DD HH:mm:ss"),
+      lignesDemandes: arrPeriodes,
     }
-  })
-  .catch(err => {
-    hideLoading();
-    showToast("Une erreur est survenue.");
-    console.log(err);
-  });
+
+    if (this.state.numDemande != null) {
+      body.numDemande = this.state.numDemande;
+    }
+
+    fetch(url, {
+      method: method,
+      headers: this.state.fetchHeaders,
+      body: JSON.stringify(body)
+    })
+    .then((response) => {
+      return Promise.all([Promise.resolve(response.status), response.json()])
+    })
+    .then((res) => {
+      hideLoading();
+      const [status, body] = res;
+      const success = (status == 200);
+
+      showToast((success ? "Succès" : "Erreur") + "\n" + body.message);
+
+      if (success) {
+        navigation.state.params.parent.reloadDemandesConges();
+        navigation.dispatch(NavigationActions.back());
+      }
+    })
+    .catch(err => {
+      hideLoading();
+      showToast("Une erreur est survenue.");
+      console.log(err);
+    });
+  }
+  else {
+    showToast("Erreur\n" + reason);
+  }
+
 }
 
   getRows(tab) {
@@ -294,7 +369,8 @@ saveConge($statusId) {
             row.dateDuFormated,
             row.dateAuFormated,
             row.codeTypeAbs,
-            row.nbJour.toFixed(1),
+            row.nbJour,
+            // row.nbJour.toFixed(1),
           ]}
         />
       </TouchableOpacity>
