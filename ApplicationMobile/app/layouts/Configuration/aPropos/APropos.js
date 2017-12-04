@@ -125,13 +125,18 @@ class APropos extends React.Component {
             {"\n"}
             Romain	MARTINEZ
             {"\n"}
-            Etienne	MICHEL
+            Samuel MEYER
             </Text>
             <Text>
-            Adel	NOUREDDINE
+            Etienne MICHEL
             {"\n"}
-            Julien	PEREZ
+            Valérie MORO
             {"\n"}
+            Adel  NOUREDDINE
+            {"\n"}
+            Julien  PEREZ
+            </Text>
+            <Text>
             Sylvain	PERNOT
             {"\n"}
             Julien	PINEAU
