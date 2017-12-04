@@ -6,6 +6,14 @@ import moment from "moment";
 import feries from "moment-ferie-fr";
 import { momentConfig } from '../../../configuration/MomentConfig';
 
+import {
+  showToast,
+  showNotification,
+  showLoading,
+  hideLoading,
+  hide,
+} from "react-native-notifyer";
+
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
 import { Button } from "../../../components/Buttons";
@@ -71,6 +79,34 @@ class CongesPeriode extends React.Component {
 		this.state.arrTypeAbs = params.parent.state.arrTypeAbs;
 	}
 
+	/**
+	 * Vérifie qu'une période est valide,
+	 * c'est à dire que la date de début est bien avant la date de fin
+	 * @param  {String} date1   Chaine correspondant à la date 1, au format DD/MM/YYYY
+	 * @param  {Int}    moment1 Id du moment de la date 1 : 1 = matin ; 2 = midi
+	 * @param  {String} date2   Chaîne correspondant à la date 2, au format DD/MM/YYYY
+	 * @param  {Int}    moment2 Id du moment de la date 2 : 1 = midi ; 2 = soir
+	 * @return {Boolean}         true si la date1/moment1 est strictement avant la date2/moment2. false sinon
+	 */
+	checkPeriode(strDate1, moment1, strDate2, moment2) {
+		let date1 = moment(strDate1, 'DD/MM/YYYY'),
+				date2 = moment(strDate2, 'DD/MM/YYYY');
+
+				if (date1.isBefore(date2)) {
+					return true;
+				}
+				else if (date2.isBefore(date1)) {
+					return false;
+				}
+				else if (moment1 == 2 && moment2==1)  {
+					// Période vide : absent du midi au midi du même jour.
+					return false;
+				}
+				else {
+					return true;
+				}
+	}
+
 	savePeriod(idPeriod) {
 		const { params } = this.props.navigation.state;
 		var parent = params.parent;
@@ -129,18 +165,27 @@ class CongesPeriode extends React.Component {
 			return (d1.valueOf() - d2.valueOf());
 		});
 
-		// TODO :
-		// * Vérification des chevauchements
-		// * Vérification des trous dans les périodes
-
 		parent.setState({periods: parentPeriods});
 	}
 
 	handleValidate() {
 		const { params } = this.props.navigation.state;
-		this.savePeriod(params.idPeriod);
-		// Retour à la page d'ajout
-		this.props.navigation.dispatch(NavigationActions.back());
+
+		if (this.state.absence != null && this.state.absence != "" && this.state.absence != 0) {
+			if (this.checkPeriode(this.state.date1, this.state.moment1, this.state.date2, this.state.moment2)) {
+				this.savePeriod(params.idPeriod);
+				// Retour à la page d'ajout
+				this.props.navigation.dispatch(NavigationActions.back());
+			}
+			else {
+				showToast("Erreur.\nLa période sélectionnée est invalide");
+			}
+		}
+		else {
+				showToast("Veuillez saisir un type d'absence");
+		}
+
+
 	}
 
 	handleSupprimer() {
