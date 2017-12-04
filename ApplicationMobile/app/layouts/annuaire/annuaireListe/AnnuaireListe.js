@@ -139,13 +139,10 @@ getAnnuaireFromAgence(agenceId) {
   else {
     let requestURL = configurationAppli.apiURL + "annuaire/" + agenceId;
     var that = this;
-    console.log("ON FETCH !!!");
     return fetch(requestURL, this.state.obj)
            .then((response) => response.json()
            .then((responseJson) => {
              if (agenceId == configAnnuaire.idAgenceDefaut) {
-               console.log("MAJ de l'annuaire de rattachement");
-               // console.log(responseJson);
                configAnnuaire.annuaireAgenceDefaut = responseJson;
              }
              return responseJson;
