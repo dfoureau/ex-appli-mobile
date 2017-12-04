@@ -11,20 +11,21 @@ info:
 host: "espacecollaborateur.cat-amania.com"
 basePath: "/api/1/"
 tags:
-- name: conges
-  description: Demandes de congés
-- name: CRA
-  description: Services REST relatifs aux CRA
-- name: annuaire
-  description: Services REST relatifs à  l'ANNUAIRE
 - name: login
   description: Services REST relatifs au login
+- name: utilisateur
+  description: Services REST relatifs à  l'utilisateur
+- name: CRA
+  description: Services REST relatifs aux CRA
+- name: conges
+  description: Demandes de congés
+- name: annuaire
+  description: Services REST relatifs à  l'ANNUAIRE
 - name: news
   description: Services REST relatifs aux news
 - name: ndf
   description: Services REST relatifs aux notes de frais
-- name: utilisateur
-  description: Services REST relatifs à  l'utilisateur
+
 
 schemes:
 - "https"
@@ -42,21 +43,169 @@ paths:
       - "application/json"
       parameters:
       - in: "body"
-        name: "userAuthentication"
-        description: "Identification utilisateur"
+        name: "login"
+        description: "Identification de l'utilisateur"
         required: true
         schema:
           $ref: "#/definitions/userAuthentication"
       responses:
         200:
-          description: "successful operation"
+          description: "OK"
           schema:
             $ref: "#/definitions/token"
         400:
-          description: "Format ID incorrect"
-        404:
-          description: "Identification incorrecte"
+          description: "Login et/ou mdp incorrect"
  
+  /CRA/RA/{idRA}:
+    get:
+      tags:
+        - CRA
+      summary: Consulte un CRA unitaire
+      description: Retourne les informations d'un CRA unitaire
+      operationId: getCra()
+      produces:
+        - application/json
+      parameters:
+        - name: idRA
+          in: path
+          description: id du CRA a consulter
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ReleveActivite'
+        '400':
+          description: Pas de correspondance CRA
+      security:
+      - Bearer: []
+    put:
+      tags:
+        - CRA
+      summary: Mise à  jour d'un CRA
+      description: Mise à  jour d'un CRA
+      operationId: updateCra
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: idRA
+          in: path
+          description: id du relevé à  mettre à  jour
+          required: true
+          type: integer
+          format: int64
+        - name : body
+          in : body
+          schema:
+            $ref: '#/definitions/NouveauReleveActivite'
+      responses:
+        '200':
+          description: Modification réussie
+        '400':
+          description: Modification KO
+      security:
+      - Bearer: []
+    delete:
+      tags:
+        - CRA
+      summary: Supprime un CRA unitaire
+      description: Supprime un CRA unitaire
+      operationId: supprCRA
+      produces:
+        - application/json
+      parameters:
+        - name: idRA
+          in: path
+          description: id du CRA a supprimer
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Suppression reussie
+        '400':
+          description: Erreur dans la suppression
+      security:
+      - Bearer: []
+  
+  /CRA/{id}/{annee}:
+    get:
+      tags:
+        - CRA
+      summary: Ramène la liste des CRA pour un collaborateur en fonction de l'annee
+      description: Retourne la liste des CRA
+      operationId: getListCraByCollaborateur
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: id du collaborateur a consulter
+          required: true
+          type: integer
+          format: int9
+        - name: annee
+          in: path
+          description: annee a consulter
+          required: true
+          type: integer
+          format: int4
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ListeReleveActivite'
+        '400':
+          description: Aucun CRA trouvé
+      security:
+      - Bearer: []
+  /CRA/RA:
+    post:
+      tags:
+        - CRA
+      summary: Ajout d'un nouveau CRA
+      description: Ajout d'un nouveau relevé d'activité pour un collaborateur
+      operationId: addCra
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Informations du CRA à  insérer
+          required: true
+          schema:
+            $ref: '#/definitions/NouveauReleveActivite'
+      responses:
+        '200':
+          description: Création réussie
+        '400':
+          description: Erreur dans la création
+      security:
+      - Bearer: []
+  
+  /CRA/typesactivites:
+   get:
+      tags:
+        - CRA
+      summary: Ramène la liste des activités possibles
+      description: permet de ramener la liste des activités
+      operationId: getTypesActivites
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/TypesActivites'
+      security:
+      - Bearer: []
+      
   /conges:
     post:
       tags:
@@ -65,7 +214,7 @@ paths:
       description: ""
       operationId: "createDemandeConges"
       consumes:
-      - "application/x-www-form-urlencoded"
+      - "application/json"
       produces:
       - "application/json"
       parameters:
@@ -76,8 +225,10 @@ paths:
         schema:
             $ref: "#/definitions/demandeConges"
       responses:
-        default:
-          description: "successful operation"
+        200:
+          description: "Création réussie"
+      security:
+      - Bearer: []
     put:
       tags:
       - "conges"
@@ -85,7 +236,7 @@ paths:
       description: ""
       operationId: "updateDemandeConges"
       consumes:
-      - "application/x-www-form-urlencoded"
+      - "application/json"
       produces:
       - "application/json"
       parameters:
@@ -96,8 +247,12 @@ paths:
         schema:
             $ref: "#/definitions/demandeConges"
       responses:
-        default:
-          description: "successful operation"
+        200:
+          description: "Modification réussie"
+        400:
+          description: "Modification échouée"
+      security:
+      - Bearer: []
   /conges/supprimer/{userId}/{numDemande}:
     delete:
       tags:
@@ -119,10 +274,13 @@ paths:
         required: true
         type: "string"
       responses:
+        200:
+          description: "Demande congés supprimée"
         400:
-          description: "Format paramètres invalide"
-        404:
-          description: "Demande non trouvée"
+          description: "Delete KO"
+      security:
+      - Bearer: []
+
   /conges/solde/{userId}:
     get:
       tags:
@@ -141,13 +299,15 @@ paths:
         format: "int64"
       responses:
         200:
-          description: "successful operation"
+          description : ""
           schema:
             $ref: "#/definitions/soldeConges"
         400:
-          description: "Format ID incorrect"
+          description: "Format paramètres incorrect"
         404:
-          description: "ID Utilisateur non trouvé"
+          description: "Utilisateur non trouvé"
+      security:
+      - Bearer: []   
       
   /conges/{userId}/{annee}:
     get:
@@ -173,13 +333,13 @@ paths:
         format: "int64"
       responses:
         200:
-          description: "successful operation"
+          description : ""
           schema: 
             $ref: "#/definitions/listeDemandesConges"
         400:
           description: "Format paramètres incorrect"
         404:
-          description: "ID Utilisateur non trouvé"
+          description: "Utilisateur non trouve"
       security:
       - Bearer: []     
 
@@ -194,196 +354,11 @@ paths:
       - "application/json"
       responses:
         200:
-          description: "successful operation"
+          description: ""
           schema:
-            $ref: "#/definitions/listeTypesAbsences"
-        400:
-          description: "Format ID incorrect"
-        404:
-          description: "ID Utilisateur non trouvé"
+            $ref: "#/definitions/ListTypeAbsences"
       security:
-      - Bearer: []      
-  /conges/{userId}/{annee}/{mois}:
-    get:
-      tags:
-      - "conges"
-      summary: "Retourne les congés du mois pour l'utilisateur donné en paramètre"
-      description: "Retourne les congés du mois pour l'utilisateur donné en paramètre"
-      operationId: "infosCongesDuMois"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "userId"
-        in: "path"
-        description: "ID utilisateur"
-        required: true
-        type: "integer"
-        format: "int64"
-      - name: "mois"
-        in: "path"
-        description: "Mois des demandes de congés"
-        required: true
-        type: "integer"
-        format: "int64"
-      - name: "annee"
-        in: "path"
-        description: "Annee des demandes de congés"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/listeCongesDuMois"
-        400:
-          description: "Format ID incorrect"
-        404:
-          description: "ID Utilisateur non trouvé"
-      security:
-        - Bearer: []
-  
-  /CRA/RA/{idRA}:
-    get:
-      tags:
-        - CRA
-      summary: Consulte un CRA unitaire
-      description: Retourne les informations d'un CRA unitaire
-      operationId: consultCRA
-      produces:
-        - application/json
-      parameters:
-        - name: idRA
-          in: path
-          description: id du CRA a consulter
-          required: true
-          type: integer
-          format: int64
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/ReleveActivite'
-        '400':
-          description: KO
-        '404':
-          description: KO
-    put:
-      tags:
-        - CRA
-      summary: Mise à  jour d'un CRA
-      description: Mise à  jour d'un CRA
-      operationId: majCRA
-      consumes:
-        - application/x-www-form-urlencoded
-      produces:
-        - application/json
-      parameters:
-        - name: idRA
-          in: path
-          description: id du relevé à  mettre à  jour
-          required: true
-          type: integer
-          format: int64
-        - name: donnees
-          in: formData
-          description: données à  mettre à  jour
-          required: false
-          type: string
-        - name: etat
-          in: formData
-          description: etat à  envoyer brouillon ou validé
-          required: false
-          type: integer
-      responses:
-        '200':
-          description: OK
-        '400':
-          description: KO 400
-        '404':
-          description: KO 404
-        '405':
-          description: Invalid input
-    delete:
-      tags:
-        - CRA
-      summary: Supprime un CRA unitaire
-      description: Supprime un CRA unitaire
-      operationId: supprCRA
-      produces:
-        - application/json
-      parameters:
-        - name: idRA
-          in: path
-          description: id du CRA a supprimer
-          required: true
-          type: integer
-          format: int64
-      responses:
-        '200':
-          description: OK
-        '400':
-          description: KO
-        '404':
-          description: KO
-  
-  /CRA/{id}/{annee}:
-    get:
-      tags:
-        - CRA
-      summary: Ramène la liste des CRA pour un collaborateur en fonction de l'annee
-      description: Retourne la liste des CRA
-      operationId: listCRA
-      produces:
-        - application/json
-      parameters:
-        - name: id
-          in: path
-          description: id du collaborateur a consulter
-          required: true
-          type: integer
-          format: int64
-        - name: annee
-          in: path
-          description: 'annee a consulter, par defaut annee courante'
-          required: true
-          type: integer
-          format: int4
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/ListeReleveActivite'
-        '400':
-          description: KO
-        '404':
-          description: KO
-  
-  /CRA/RA:
-    post:
-      tags:
-        - CRA
-      summary: Ajout d'un nouveau CRA
-      description: Ajout d'un nouveau relevé d'activité pour un collaborateur
-      operationId: newCRA
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: Informations du CRA à  insérer
-          required: true
-          schema:
-            $ref: '#/definitions/NouveauReleveActivite'
-      responses:
-        '200':
-          description: OK
-        '400':
-          description: KO 400
-        '404':
-          description: KO 404
+      - Bearer: []   
   
   /annuaire/{idAgence}:
     get:
@@ -403,15 +378,17 @@ paths:
           format: int64
       responses:
         '200':
-          description: OK
+          description: ""
           schema:
-            $ref: '#/definitions/AnnuaireCollab'
+            $ref: '#/definitions/AnnuaireAgence'
         '400':
-          description: KO 400
+          description: "Paramètre idAgence incorrect"
         '404':
-          description: KO 404
+          description: "Agence non trouvée"
+      security:
+      - Bearer: [] 
   
-  /annuaire/user{id}:
+  /annuaire/user/{id}:
     get:
       tags:
         - annuaire
@@ -428,13 +405,15 @@ paths:
           type: integer
       responses:
         '200':
-          description: OK
+          description: ""
           schema:
             $ref: '#/definitions/AnnuaireDetailCollab'
         '400':
-          description: KO 400
+          description: "Format paramètres incorrect"
         '404':
-          description: KO 404
+          description: "Utilisateur non trouvé"
+      security:
+      - Bearer: [] 
   
   /ndf:
     post:
@@ -603,13 +582,15 @@ paths:
           format: int64
       responses:
         '200':
-          description: OK
+          description: ""
           schema:
-            $ref: '#/definitions/infoCollab'
+            $ref: '#/definitions/utilisateur'
         '400':
-          description: KO
+          description: Paramètre id incorrect
         '404':
-          description: KO
+          description: Utilisateur non trouvé
+      security:
+      - Bearer: []
   
   /news/{nombre}:
     get:
@@ -628,13 +609,15 @@ paths:
           type: integer
       responses:
         '200':
-          description: OK
+          description: ""
           schema:
             $ref: '#/definitions/News'
         '400':
-          description: KO 400
+          description: Paramètre nombre incorrect
         '404':
-          description: KO 404
+          description: Aucune news trouvée
+      security:
+      - Bearer: []
 
 securityDefinitions:
     Bearer:
@@ -642,206 +625,257 @@ securityDefinitions:
         name: "Authorization"
         in: "header"
 definitions:
-  utilisateur:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      prenom:
-        type: "string"
-      nom:
-        type: "string"
-    xml:
-      name: "utilisateur"
+  token:
+    type: object
+    properties :
+      id :
+        type : integer
+        format: int9
+        example: '124124251'
+      idAgence :
+        type : integer
+        format: int1
+        example: '3'
+      token : 
+        type : string
+        example: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXUyJ9.eyJpZCI6IjEyNDEyNDI1MSIsImlkQWdlbmNlIjoiMyIsImV4cCI6MTUxMTg2NjQyMSwiaWF0IjoiMTUxMTg2MjgyMSJ9.0vjG3KkfqowQSpesin3M0vIccwCk87MVxp74Ki0_VYuxXWB3DjhtZdtBQSpzIlNk73x70IyvY18cLKhovDt3f6_xWuNQxkVwEEf8yqqij2od7lTj16hvW2BPhCoD3e6g6ILKbkR5Mq13AGJkqSCN6KNJhxHfGSs9tBlpezGxshKtuxdcURVo1UQjMrBXYNkTRqbLMf2HFEvaNrdcd-bB4Ig03QWJTn5cdAqYZLTqs022nd_rZ-lofAnh7r6O6sG5dKfDJCy44d9Mu1-5HWb08-nFxpD2aO4Ujoeo33oHNHC5J2KrBt0BDDS-1cdv9OqFVNlKkmaXNq_DOIUcq5zGHvAOtdnBnGmEchAf2eYPDtlkksjRTlPnLVhqS9z7SzdnLiOo9uM0iocVomRCNvSHD0uRsuDmsRMKTtrbdhvOazSyEB92ofXpbFGmgt1ZvPsJWi70T8jwGJ1KyGYUsx4ILf7C2TXZdhf0I_1TPXREdnidOkFN6l2hElOTihvA25qS1N9zmzTu_iRkxyMo9Jb5OQwpCiWdT-D3jqGqt1JeaRja1wjSd41GsZjyZCLR61CCxP2u6j-ox8HTJvqrBpAFxGAGY4oarDKDQKD5aGQNqBkyQg36OkxL_-Mjhm62Wh2CLyeOEHHF1MWAfn-aHQVMdmV9utGCqPE5bo1PpdXntg8'
+  
   soldeConges:
+    type: "array"
+    items :
+      $ref: "#/definitions/Conges"
+      
+  Conges:    
     type: "object"
-    properties:
-      userId:
-        type: "integer"
-        format: "int64"
-        example: "12345"
-      dateSolde:
-        type: "string"
-        format: "date-time"
-      nbConges:
-        type : "integer"
-        format: "int64"
-      nbRtt:
-        type : "integer"
-        format: "int64"
-    xml:
-      name: "soldeConges"
-  numMatricule:
-    type: "integer"
-    format: "int64"
-    example: "54321"
-    xml:
-      name: "numMatricule"
+    properties :
+        id:
+          type: "integer"
+          format: "int64"
+          example: "12345"
+        datesolde:
+          type: "string"
+          format: "date-time"
+          example: "06/2017"
+        cp:
+          type : "integer"
+          format: "dec3"
+          example: "0.0"
+        rtt:
+          type : "integer"
+          format: "dec3"
+          example: "2.5"
+
   ligneConges:
     type: "object"
     properties:
       numLigne:
         type: "integer"
-        format: "int64"
+        format: "int2"
+        example : "1"
       dateDebut:
         type: "string"
         format: "date-time"
+        example : "2017-10-12"
       dateFin:
         type: "string"
         format: "date-time"
+        example : "2017-10-13"
       nbJours:
         type: "integer"
+        format: "int2"
+        example : "1"
+      typeabs:
+        type: "integer"
         format: "int64"
+        example : "2"
     xml:
       name: "ligneConges"
   demandeConges:
     type: "object"
     properties:
-      numDemande: 
+      idUser: 
         type: "integer"
-        format: "int64"
-      userId:
-        type: "integer"
-        format: "int64"
+        format: "int9"
+        example : '124124251'
       etat:
         type: "string"
-        description: "état de la demande de congés"
         enum:
-        - "Brouillon"
-        - "En attente validation"
-        - "Validée"
-      validateur:
-          $ref: "#/definitions/utilisateur"
+        - "0"
+        - "1"
       dateEtat:
         type: "string"
         format: "date-time"
+        example : "2017-10-10"
       lignesDemandes: 
         type: "array"
         items:
           $ref: "#/definitions/ligneConges"
+ 
   listeDemandesConges:
-    type: "object"
-    properties:
-      demandeConges: 
-        type: "array"
-        items:
-          $ref: "#/definitions/demandeConges"
+    type: "array"
+    items:
+      $ref: "#/definitions/listdemandeConges"
+     
+  listdemandeConges:
+    type : "object"
+    properties :
+      numDemande:
+        type: "integer"
+        format: "int2"
+        example : "5"
+      dateDuMin:
+        type: "string"
+        format: "date"
+        example : "12/10/2017"
+      dateAuMax:
+        type: "string"
+        format: "date"
+        example : "23/10/2017"
+      nbJour:
+        type: "string"
+        format: "dec4"
+        example: "11.0" 
+      etat:
+        type: "string"
+        format: "int1"
+        example: "2"
+      validateur:
+        type: "string"
+        format: "int9"
+        example : "124124251"
+      dateDemande:
+        type: "string"
+        format: "date-time"
+        example : "2017-10-23 00:00:00"
+      dateactionetat:
+        format: "date-time"
+        example : "2017-10-25 00:00:00"
+      valid:
+        type: "string"
+        format: "int64"
+        example : "Anne-Edythe LARREUR"
+      libelleEtat:
+        type: "string"
+        format: "int64"
+        example: "Validé"
+  
+  ListTypeAbsences:
+    type: "array"
+    items:
+      $ref: "#/definitions/typeAbsences"
+      
   typeAbsences:
     type: "object"
     properties:
-      idType:
+      idTypeAbs:
         type: "integer"
         format: "int64"
-      codeType:
+        example: "1"
+      code:
         type: "string"
-      libelleType:
+        format: "varchar"
+        example : "CP"
+      libelle:
         type: "string"
-  listeTypesAbsences:
-    type: "object"
-    properties:
-      typeAbsences: 
-        type: "array"
-        items:
-          $ref: "#/definitions/typeAbsences"
-  absence:
-    type: "object"
-    properties:
-      date:
-        type: "string"
-        format: "date-time"
-      typeAbsence:
-        $ref: "#/definitions/typeAbsences"
-  listeCongesDuMois:
-    type: "object"
-    properties:
-      listeAbsences: 
-        type: "array"
-        items:
-          $ref: "#/definitions/absence"
+        format: "varchar"
+        example : "Congés payés"
+
   ReleveActivite:
     type: object
     properties:
       idRA:
         type: integer
         format: int10
-        example: '124'
-      libelleEtat:
+        example: '14780'
+      mois:
+        type: string
+        format: int2
+        example: '1'   
+      annee :
+        type: string
+        format: int4
+        example: '2017'
+      libelle:
         type: string
         format: varchar255
         example: Brouillon
+      etat :
+        type : string
+        format : int1
+        example : '0'
       NbJOuvres:
         type: integer
         format: int2
         example: '21'
-      NbJTravail:
+      nbJourTravailles:
         type: number
         format: dec4
         example: '20,5'
-      NbJAbsence:
+      nbJourAbs:
         type: number
         format: dec4
         example: '0,5'
-      Client:
+      client:
         type: string
         example: Innova
-      Responsable:
+      responsable:
         type: string
         example: Adel Noureddine
-      Projet:
+      projet:
         type: string
         example: Appli Mobile
-      Commentaire:
+      commentaires:
         type: string
         example: Exemple de commentaire
-      TableauPeriodeActivite:
+      valeursSaisies:
         type: array
         items:
-          type: object
-        properties:
-          datedebut:
-            type: string
-            format: date-time
-            example: 17/09/2017
-          datefin:
-            type: string
-            format: date-time
-            example: 19/09/2017
-          activite:
-            type: string
-            example: CP
-          nbJ:
-            type: integer
-            format: int2
-            example: '3'
+          $ref: "#/definitions/valeursSaisies"
   ListeReleveActivite:
     type: object
-    properties:
-      TableauPeriodeActivite:
-        type: array
+    properties :
+      ListeRA:
+        type: "array"
         items:
-          type: object
-        properties:
+          $ref: "#/definitions/ListeRA"       
+
+  ListeRA:
+    type: object
+    items:
+        type: object
+    properties:
+          idUser:
+            type: integer
+            format: int9
+            example: '124124251'          
+          Id:
+            type: integer
+            format: int2
+            example: '14780'
           mois:
             type: integer
             format: int2
-            example: '10'
-          Annee:
+            example: '1'
+          annee:
             type: integer
             format: int4
             example: '2017'
-          Tableau:
-            type: array
-            items:
-              type: object
-            properties:
-              Client:
-                type: string
-                example: Innova
-              Etat:
-                type: string
-                format: varchar
-                example: Brouillon
+          client:
+            type: integer
+            format: int4
+            example: 'MUTEX'
+          libelle:
+            type: integer
+            format: varchar
+            example: 'Brouillon'
+          status:
+            type: integer
+            format: int1
+            example: '0'  
+          date:
+            type: integer
+            format: varchar
+            example: 'Janvier 2017'             
   NouveauReleveActivite:
     type: object
     properties:
@@ -873,27 +907,30 @@ definitions:
       Commentaire:
         type: string
         example: Exemple de commentaire
-      TableauPeriodeActivite:
+      valeursSaisies:
         type: array
+        items:
+          $ref: "#/definitions/valeursSaisies"
+      
+  valeursSaisies:
+        type: object
         items:
           type: object
         properties:
-          datedebut:
+          date:
             type: string
             format: date-time
-            example: 17/09/2017
-          datefin:
-            type: string
-            format: date-time
-            example: 19/09/2017
+            example: "01/01/2017"
           activite:
             type: string
-            example: CP
-          nbJ:
-            type: integer
-            format: int2
-            example: '3'
+            example: AB
+   
+   
   AnnuaireDetailCollab:
+    type: array
+    items:
+      $ref: "#/definitions/DetailCollab"          
+  DetailCollab:
     type: object
     properties:
       id:
@@ -908,54 +945,60 @@ definitions:
         type: string
         format: varchar
         example: Adel
-      profil:
-        type: string
-        format: varchar
-        example: Production
       nomEntite:
         type: string
         format: varchar
         example: CAT-AMANIA
-      libelleAgence:
+      idprofil:
+        type: string
+        format: int2
+        example: "1"
+      libelle:
+        type: string
+        format: int2
+        example: Production
+      telmobile:
         type: string
         format: varchar
-        example: Atlantique
-      telMobile:
+        example: "0249521436"
+      telclient:
         type: string
         format: varchar
-        example: 0249521436
-      telClient:
-        type: string
-        format: varchar
-        example: 0623548596
+        example: "0623548596"
       mail:
         type: string
         format: varchar
         example: a.noureddine@cat-amania.com
-      mailClient:
+      mailclient:
         type: string
         format: varchar
         example: a.noureddine@innova.cat-amania.com
-  AnnuaireCollab:
+      agence:
+        type: string
+        format: varchar
+        example: Atlantique
+ 
+ 
+  AnnuaireAgence:
+    type: "array"
+    items:
+       $ref: "#/definitions/Agence"       
+
+  Agence:
     type: object
     properties:
-      ListeCollab:
-        type: array
-        items:
-          type: object
-        properties:
-          id:
-            type: integer
-            format: int64
-            example: '123456'
-          nom:
-            type: string
-            format: varchar
-            example: Nourredine
-          prenom:
-            type: string
-            format: varchar
-            example: Adel
+      id:
+        type: integer
+        format: int64
+        example: '124124136'
+      nom:
+        type: string
+        format: varchar
+        example: ABDELKHALEK
+      prenom:
+        type: string
+        format: varchar
+        example: Seloua
   NoteDeFrais:
     type: object
     properties:
@@ -1032,15 +1075,15 @@ definitions:
       datevalidation:
         type: string
         format: date
-  token:
-    type: string
   userAuthentication:
     type: object
     properties:
       login:
         type: string
+        example: 'etie.mich'
       password:
         type: string
+        example: '12345'
   infoCollab:
     type: object
     properties:
@@ -1090,19 +1133,75 @@ definitions:
     items:
       type: object
     properties:
-      titre:
+      news_id:
+        type: string
+        example: "66" 
+      news_titre:
         type: string
         example: Titre de la news
-      contenu:
+      news_contenu:
         type: string
         example: Contenu de la news
-      date:
+      news_date:
         type: string
         format: date-time
         example: 17/09/2017
-      photo:
+      news_photo:
         type: string
         example: 'http://test.net/photo.jpg'
-      file:
+      news_file:
         type: string
         example: 'http://test.net/news.pdf'
+        
+  TypesActivites:
+    type: object
+    properties :
+      jourouvre:
+        type: "array"
+        items:
+          $ref: "#/definitions/Jour"
+      jourwe:
+        type: "array"
+        items:
+          $ref: "#/definitions/Jour"
+  Jour:
+    type: object
+    items :
+      type : object
+    properties:
+      code:
+        type: string
+        example: "CP"
+      label:
+        type: string
+        example: "Congé Payé"
+      valeur:
+        type: string
+        format: int
+        example: "1.0"
+  utilisateur:
+    type: object
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        example: "214124541"
+      nom:
+        type: "string"
+        example: "MICHEL"
+      prenom:
+        type: "string"
+        example : "Etienne"
+      profil:
+        type: "string"
+        example: "Production"
+      entite:
+        type: "string"
+        example: "CAT-AMANIA"
+      agence:
+        type: "string"
+        example: "Atlantique"
+      responsable :
+        type : "string"
+        example: "Anne-Edythe LARREUR"
+ 
