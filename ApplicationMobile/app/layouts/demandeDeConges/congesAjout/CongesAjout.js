@@ -266,7 +266,7 @@ checkPeriodes(periodes) {
       while (isValid && iterationDate.isSameOrBefore(debut2)) {
         if (iterationDate.day() > 0 && iterationDate.day() < 6 && !iterationDate.isFerie()) {
           isValid = false;
-          reason = "Le tableau des périodes contient des trous";
+          reason = "Les demandes de congés doivent être consécutives ou séparées par le week end ou un jour férié";
         }
         else {
           iterationDate.add(1, 'days');
