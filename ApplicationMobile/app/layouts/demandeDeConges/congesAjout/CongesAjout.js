@@ -294,7 +294,7 @@ saveConge($statusId) {
             row.dateDuFormated,
             row.dateAuFormated,
             row.codeTypeAbs,
-            row.nbJour,
+            row.nbJour.toFixed(1),
           ]}
         />
       </TouchableOpacity>
