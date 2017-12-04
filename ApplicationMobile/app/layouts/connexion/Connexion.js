@@ -23,6 +23,7 @@ import Accueil from "../accueil/Accueil";
 import service from "../../realm/service";
 
 import configurationAppli from "../../configuration/Configuration";
+import configAnnuaire from "../../configuration/ConfigAnnuaire";
 
 import {
   showToast,
@@ -113,6 +114,7 @@ class Connexion extends React.Component {
       configurationAppli.userID = this.state.data.id;
       configurationAppli.userToken = this.state.data.token;
       configurationAppli.idAgence = this.state.data.idAgence;
+      configAnnuaire.idAgenceDefaut = this.state.data.idAgence;
       hideLoading();
       this.props.navigation.navigate("Accueil");
     }
