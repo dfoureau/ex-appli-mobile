@@ -170,7 +170,7 @@ class CongesPeriode extends React.Component {
 
 	handleValidate() {
 		const { params } = this.props.navigation.state;
-
+    // On vérifie qu'un type d'absence a bien été saisi
 		if (this.state.absence != null && this.state.absence != "" && this.state.absence != 0) {
 			if (this.checkPeriode(this.state.date1, this.state.moment1, this.state.date2, this.state.moment2)) {
 				this.savePeriod(params.idPeriod);
@@ -184,13 +184,18 @@ class CongesPeriode extends React.Component {
 		else {
 				showToast("Veuillez saisir un type d'absence");
 		}
-
-
 	}
 
 	handleSupprimer() {
-		// Retour à la page d'ajout
-		this.props.navigation.dispatch(NavigationActions.back());
+    const { params } = this.props.navigation.state;
+    const idPeriod = params.idPeriod,
+          parent   = params.parent;
+    if (idPeriod != null && idPeriod != undefined)  {
+      let parentPeriods = Array.from(parent.state.periods);
+      parentPeriods.splice(idPeriod, 1); // Suppression de l'élément dans le tableau des périodes
+      parent.setState({periods: parentPeriods});
+    }
+    this.props.navigation.dispatch(NavigationActions.back());
 	}
 
 	calculNbJours() {
