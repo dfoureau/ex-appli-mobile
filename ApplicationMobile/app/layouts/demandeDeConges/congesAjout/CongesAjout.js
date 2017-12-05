@@ -307,7 +307,7 @@ saveConge($statusId) {
         numLigne: index +1 ,
         dateDebut: periode.dateDu,
         dateFin: periode.dateAu,
-        nbJours: parseInt(periode.nbJour),
+        nbJours: parseFloat(periode.nbJour).toFixed(1),
         typeabs: parseInt(periode.typeabs),
       });
     });
@@ -369,8 +369,8 @@ saveConge($statusId) {
             row.dateDuFormated,
             row.dateAuFormated,
             row.codeTypeAbs,
-            row.nbJour,
-            // row.nbJour.toFixed(1),
+            // row.nbJour,
+            parseFloat(row.nbJour).toFixed(1),
           ]}
         />
       </TouchableOpacity>
