@@ -28,6 +28,10 @@ class NewsController extends Controller
         if (UtilsController::isPositifInt($nombre)) {
             $tNombre = (int) $nombre;
 
+            // Le service pourra retourner 25 news au max
+            if ($tNombre > 25)
+                $tNombre = 25;
+
             //Désormais l'idAgence est fourni lors de la vérification du token, donc on le récupère
             $idAgence = $retourAuth['idAgence'];
         

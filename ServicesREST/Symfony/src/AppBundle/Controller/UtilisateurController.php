@@ -70,7 +70,7 @@ class UtilisateurController extends Controller
         }
     }
     
-    public function getUserManager($id)
+    private function getUserManager($id)
     {
         $sql = 'SELECT idManager as manager FROM users WHERE id = '.$id;
 
