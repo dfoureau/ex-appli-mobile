@@ -139,7 +139,7 @@ class CongesPeriode extends React.Component {
 			dateAuFormated: this.state.date2,
 			dateDu: moment(this.state.date1 + ' ' + hour1, 'DD-MM-YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
 			dateAu: moment(this.state.date2 + ' ' + hour2, 'DD-MM-YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
-			nbJour: parseInt(this.state.workingDays),
+			nbJour: parseFloat(this.state.workingDays),
 			typeabs:    typeabs,
 			codeTypeAbs: this.state.absence,
 			libelleTypeAbs: '',

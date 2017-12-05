@@ -35,12 +35,12 @@ class CongesController extends Controller
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
-        
+
         // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
         $idUserToken = $retourAuth['id'];
-        
+
         //On compare l'idUserToken et l'id fourni en paramètre
-        
+
         if ($userId != $idUserToken) {
             $message = array('message' => "Incohérence token/ID");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
@@ -97,7 +97,7 @@ class CongesController extends Controller
         }
 
 		$idUserToken = $retourAuth['id'];
-		
+
         //$data = json_decode(file_get_contents('php://input'), true);
 
         try {
@@ -310,7 +310,7 @@ class CongesController extends Controller
 
             // Test valeurs en entrée
             if (UtilsController::isValidDate($row['dateDebut']) && UtilsController::isValidDate($row['dateFin'])
-            && is_int($row['numLigne']) && is_int($row['nbJours']) && is_int($row['typeabs'])) {
+            && is_int($row['numLigne']) && is_numeric($row['nbJours']) && is_int($row['typeabs'])) {
               $numLigne = $row['numLigne'];
               $dateDebut = $row['dateDebut'];
               $dateFin = $row['dateFin'];
