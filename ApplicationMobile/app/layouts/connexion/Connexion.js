@@ -15,6 +15,7 @@ import {
   StatusBar,
   Linking,
   Keyboard,
+  BackHandler,
 } from "react-native";
 import CheckBox from "react-native-check-box";
 import { StackNavigator, NavigationActions } from "react-navigation";
@@ -69,6 +70,18 @@ class Connexion extends React.Component {
     };
   }
 
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.backPress)
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.backPress)
+  }
+
+  backPress() {
+    return true;
+  }
+
   async seConnecter() {
     Keyboard.dismiss();
     showLoading("Connexion en cours. Veuillez patientier...");
@@ -116,6 +129,7 @@ class Connexion extends React.Component {
       configurationAppli.idAgence = this.state.data.idAgence;
       configAnnuaire.idAgenceDefaut = this.state.data.idAgence;
       hideLoading();
+      BackHandler.removeEventListener('hardwareBackPress', this.backPress)
       this.props.navigation.navigate("Accueil");
     }
   }
