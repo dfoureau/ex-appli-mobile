@@ -3572,7 +3572,7 @@ react-native-bottom-toolbar@^3.0.0:
   dependencies:
     react-native-vector-icons "^3.0.0"
 
-react-native-calendars@^1.14.2:
+react-native-calendars@^1.6.2:
   version "1.14.2"
   resolved "https://registry.yarnpkg.com/react-native-calendars/-/react-native-calendars-1.14.2.tgz#7d1f870cc7de91a99cef131fee3da7670163d5f3"
   dependencies:
