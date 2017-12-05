@@ -2,13 +2,13 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Security\LoginController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use AppBundle\Security\LoginController;
 
 class AnnuaireController extends Controller
 {
@@ -18,7 +18,7 @@ class AnnuaireController extends Controller
      */
     public function annuaire(Request $request, $idAgence)
     {
-        $log=new LoginController();
+        $log        = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
@@ -29,15 +29,15 @@ class AnnuaireController extends Controller
             $tIdAgence = (int) $idAgence;
 
             $sql = '
-				SELECT 
-					id, 
-					nom, 
-					prenom 
-				FROM 
-					users 
-				WHERE idAgence = "' . $tIdAgence . '" 
-				AND archive != "O" 
-				ORDER BY nom ASC, prenom ASC';
+                SELECT
+                    id,
+                    nom,
+                    prenom
+                FROM
+                    users
+                WHERE idAgence = "' . $tIdAgence . '"
+                AND archive != "O"
+                ORDER BY nom ASC, prenom ASC';
 
             $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
             $stmt->execute();
@@ -61,7 +61,7 @@ class AnnuaireController extends Controller
      */
     public function infos_collab(Request $request, $userId)
     {
-        $log = new LoginController();
+        $log        = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
@@ -71,36 +71,36 @@ class AnnuaireController extends Controller
         if (UtilsController::isPositifInt($userId)) {
             $tUserId = (int) $userId;
 
-            $sql = 'SELECT 
-						id,
-						nom,
-						prenom,
-						entitesjuridiques.nomEntite,
-						users.idprofil,
-						profils.libelle,
-						telmobile,
-						telclient,
-						mail,
-						mailclient,
-						societeagence.nomSocieteAgence as agence
-					FROM 
-						users,
-						societeagence,
-						entitesjuridiques,
-						profils
-					WHERE idAgence = idSocieteAgence 
-					AND users.identitejuridique = entitesjuridiques.idEntite 
-					AND users.idprofil = profils.idprofil 
-					AND users.archive != "O"
-					AND users.idagence = societeagence.idSocieteAgence
-					AND id = ' . $tUserId;
-            
+            $sql = 'SELECT
+                        id,
+                        nom,
+                        prenom,
+                        entitesjuridiques.nomEntite,
+                        users.idprofil,
+                        profils.libelle,
+                        telmobile,
+                        telclient,
+                        mail,
+                        mailclient,
+                        societeagence.nomSocieteAgence as agence
+                    FROM
+                        users,
+                        societeagence,
+                        entitesjuridiques,
+                        profils
+                    WHERE idAgence = idSocieteAgence
+                    AND users.identitejuridique = entitesjuridiques.idEntite
+                    AND users.idprofil = profils.idprofil
+                    AND users.archive != "O"
+                    AND users.idagence = societeagence.idSocieteAgence
+                    AND id = ' . $tUserId;
+
             $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
             $stmt->execute();
             $retour = $stmt->fetchAll();
 
             if (count($retour) == 0) {
-                $message=array('message' => 'Utilisateur non trouvé ' . $tUserId);
+                $message = array('message' => 'Utilisateur non trouvé ' . $tUserId);
                 return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
             } else {
                 return new JsonResponse($retour, Response::HTTP_OK);
