@@ -17,7 +17,6 @@ export default StyleSheet.create({
   containerCalendar: {
     marginTop: 10,
     flex: 1,
-    height: 380,
   },
   containerDetails: {
     flex: 1,
