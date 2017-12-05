@@ -55,12 +55,19 @@ class CongesPeriode extends React.Component {
 			};
 		} else {
 			// Récupéré depuis le state du parent
+
+      let date1 = moment(parentState.periods[params.idPeriod].dateDu, 'YYYY-MM-DD HH:mm:ss'),
+          date2 = moment(parentState.periods[params.idPeriod].dateAu, 'YYYY-MM-DD HH:mm:ss');
+
+      let moment1 = date1.hours() == 0 ? '1' : '2';
+      let moment2 = date2.hours() == 12 ? '1' : '2';
+
 			var period = {
 				numDemande: parentState.numDemande,
 				startDate: parentState.periods[params.idPeriod].dateDuFormated,
-				startPeriod: "1",
+				startPeriod: moment1,
 				endDate: parentState.periods[params.idPeriod].dateAuFormated,
-				endPeriod: "2",
+				endPeriod: moment2,
 				absTypeId: parentState.periods[params.idPeriod].codeTypeAbs,
 			};
 
@@ -259,7 +266,7 @@ getPickerTypeAbsences() {
 				<ContainerTitre
 					title={this.state.title}
 					navigation={this.props.navigation}
-				>
+    >
 					<View style={Style.firstView}>
 						<View style={styles.container}>
 							<View style={styles.flexContainer}>
@@ -268,7 +275,7 @@ getPickerTypeAbsences() {
 									style={styles.calendarComponent}
 									date={this.state.date1}
 									onValueChange={newDate => this.setState({ date1: newDate })}
-								/>
+        />
 								<View style={styles.pickerContainer}>
 									<Picker
 										style={styles.picker}
