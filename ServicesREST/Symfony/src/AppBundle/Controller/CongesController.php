@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Debug\Exception\ContextErrorException;
 use AppBundle\Controller\UtilsController;
 use AppBundle\Security\LoginController;
+use \DateTime;
 
 class CongesController extends Controller
 {
@@ -34,12 +35,12 @@ class CongesController extends Controller
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
-        
+
         // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
         $idUserToken = $retourAuth['id'];
-        
+
         //On compare l'idUserToken et l'id fourni en paramètre
-        
+
         if ($userId != $idUserToken) {
             $message = array('message' => "Incohérence token/ID");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
@@ -96,7 +97,7 @@ class CongesController extends Controller
         }
 
 		$idUserToken = $retourAuth['id'];
-		
+
         //$data = json_decode(file_get_contents('php://input'), true);
 
         try {
@@ -105,7 +106,7 @@ class CongesController extends Controller
             $retour = $this->createDemandeConges($data,$idUserToken);
         } catch (ContextErrorException $e) {
 			            $message = array('message' => "Problème de paramètres");
-			return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+			            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
 
         $message = array('message' => $retour['message']);
@@ -113,6 +114,138 @@ class CongesController extends Controller
     }
 
 
+    /**
+     * Vérifie qu'une demande de congés est valide.
+     * On vérifie toutes les périodes au sein d'une demande de congés.
+     * On vérifie ensuite que la demande de congés ne déborde pas sur une demande déjà existante
+     * @var [type]
+     */
+    public function verifDemandeConges($periodes, $idUser) {
+      $datesFormat = 'Y-m-d H:i:s';
+      $periodesLength = count($periodes);
+      $isValid = true;
+      $errMessage = "";
+      $index = 0;
+
+      // Vérification des périodes à l'intérieur de la demande
+
+      // On vérifie les dates de l'index 0
+      $periode1 = $periodes[0];
+      // Test de la validité de la période:
+      $debut1 = DateTime::createFromFormat($datesFormat, $periode1['dateDebut']);
+      $fin1 = DateTime::createFromFormat($datesFormat, $periode1['dateFin']);
+
+      if (!$debut1 || !$fin1) {
+        $isValid = false;
+        $errMessage = "Ligne " . $periode1["numLigne"] . " : Les dates saisies sont invalides";
+      }
+      // On vérifie que le début est bien avant la fin
+      elseif ($debut1 >= $fin1) {
+        $isValid = false;
+        $errMessage = "Ligne " . $periode1["numLigne"] . " : La date de début doit être antérieure à la date de fin";
+      }
+
+      // On parcourt toutes les lignes de la demande.
+      // On vérifie les points suivants :
+      // - Les périodes sont classées par dates de début ET de fin croissants
+      //      => Sinon, on est dans un cas d'inclusion de périodes
+      // - Il n'y a pas de chevauchements entre les périodes de la demande
+      // - Il n'y a pas de trous au niveau des périodes de la demande
+      while ($isValid && $index < $periodesLength - 1) {
+        // On ne teste pas la période1. Le test a été effectué au cours de l'itération précédente
+        $periode1 = $periodes[$index];
+        $debut1 = DateTime::createFromFormat($datesFormat, $periode1['dateDebut']);
+        $fin1 = DateTime::createFromFormat($datesFormat, $periode1['dateFin']);
+
+        $periode2 = $periodes[$index +1];
+        $debut2 = DateTime::createFromFormat($datesFormat, $periode2['dateDebut']);
+        $fin2 = DateTime::createFromFormat($datesFormat, $periode2['dateFin']);
+
+        // Test de la validité de la période2
+        if (!$debut2 || !$fin2) {
+          $isValid = false;
+          $errMessage = "Ligne " . $periode1["numLigne"] + 1 . " : Les dates saisies sont invalides";
+        }
+        elseif ($debut2 >= $fin2) {
+          $isValid = false;
+          $errMessage = "Ligne " . $periode1["numLigne"] + 1 . " : La date de début doit être antérieure à la date de fin";
+        }
+        // On vérifie que le tri est valide
+        elseif ($debut1 >= $debut2 || $fin1>= $fin2){
+            $isValid = false;
+            $errMessage = "Le tableau des périodes n'est pas trié ou contient des inclusions";
+        }
+        // Risque de chevauchement. On vérifie que les jours entre début2 et fin1 ne sont pas des jours ouvrés
+        elseif ($debut2 < $fin1) {
+          $iterationDate = clone $debut2;
+
+          while ($isValid && $iterationDate <= $fin1) {
+            $dayOfWeek = $iterationDate->format('w');
+            $year = $iterationDate->format('Y');
+            $month = $iterationDate->format('m');
+            $day = $iterationDate->format('d');
+
+
+            if ($dayOfWeek > 0 && $dayOfWeek < 6 && !UtilsController::estJourFerie($day, $month, $year)) {
+              $isValid = false;
+              $errMessage = "Le tableau des périodes contient des chevauchements";
+            }
+
+            $iterationDate->modify('+1 days');
+          }
+        }
+        // Risque de trou. On vérifie si les jours entre fin1 et début 2 sont des jours ouvrés.
+        // On vérifie au préalable l'intervalle entre din1 et début2, pour ignorer le cas normal
+        // où fin 1 correspont à 23:59:59 et début 2 à 00:00:00 le lendemain
+        elseif($debut2 > $fin1 && ($debut2->getTimestamp() - $fin1->gettimestamp() > 60)) {
+          $iterationDate = clone $fin1;
+
+          while ($isValid && $iterationDate <= $debut2) {
+            $dayOfWeek = $iterationDate->format('w');
+            $year = $iterationDate->format('Y');
+            $month = $iterationDate->format('m');
+            $day = $iterationDate->format('d');
+            if ($dayOfWeek > 0 && $dayOfWeek < 6 && !UtilsController::estJourFerie($day, $month, $year)) {
+              $isValid = false;
+              $errMessage = "Le tableau des périodes contient des trous";
+            }
+
+            $iterationDate->modify('+1 days');
+          }
+        }
+        $index++;
+      }
+
+      // Vérification de la demande de congés par rapport aux autres demandes.
+      // On cherche si la période intersecte d'autres demandes de congés validées ou en attente de validation
+      if ($isValid) {
+          $dateMin = $periodes[0]['dateDebut'];
+          $dateMax = $periodes[count($periodes) -1]['dateFin'];
+
+          $sql  = "SELECT numDemande, dateDu, dateAu FROM demandesconges "
+                . "WHERE idUser = ${idUser} "
+                . "AND etat IN (1, 2) "
+                . "AND ("
+                . "( dateDu <= '${dateMin}' AND '${dateMin}' < dateAu ) "
+                . "OR "
+                . "( '${dateMin}' <= dateDu AND dateDu < '${dateMax}' ) "
+                . " )";
+
+        $query = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $query->execute();
+
+        $retour = $query->fetchAll();
+        if (!empty($retour)) {
+            $isValid = false;
+            $errMessage = "La demande de congés est en conflit avec des demandes déjà existantes";
+        }
+      }
+
+      return array(
+        'isValid' => $isValid,
+        'errMessage' => $errMessage
+      );
+    }
 
     /**
      * Execute les requetes de creation après vérifiction des parametres
@@ -126,89 +259,84 @@ class CongesController extends Controller
         $idUser = $data['idUser'];
 
         // Récupere le numéro de la demande à partir de la table
-        $sql = "SELECT 
-					MAX(numdemande) AS num 
-				FROM 
-					demandesconges 
-				WHERE idUser = " . $idUser;
+        $sql = "SELECT MAX(numdemande) AS num	FROM demandesconges WHERE idUser = " . $idUser;
 
-        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-        $stmt->execute();
+        if (isset($data['lignesDemandes'])) {
+          $res = $this->verifDemandeConges($data['lignesDemandes'], $idUser);
 
-        $retour = $stmt->fetchAll();
-        
-        if (count($retour) == 0) { // Il n'existe pas de ligne; il n'y a jamais eu de demande de congés, donc on la met à 1
+          $isValid = $res['isValid'];
+          $errMessage = $res['errMessage'];
+
+          if (!$isValid) {
+            return array(
+              'message' => $errMessage,
+              'code' => Response::HTTP_FORBIDDEN
+            );
+          }
+
+          $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+          $stmt->execute();
+
+          $retour = $stmt->fetchAll();
+
+          if (count($retour) == 0) { // Il n'existe pas de ligne; il n'y a jamais eu de demande de congés, donc on la met à 1
 
             $numDemande = '1';
-        } else { // S'il existe une ligne, on récupère et on incrémente d'1
-        
+          } else { // S'il existe une ligne, on récupère et on incrémente d'1
+
             foreach ($retour as $key => $value) {
-                $numDemande = $value['num'] + 1 ;
+              $numDemande = $value['num'] + 1 ;
             }
             // Ou de la fonction
             // $numDemande = UtilsController::getMaxNumDemande($userId);
 
-			
-			$etat = $data['etat'];
-            /*switch ($data['etat']) {
-                case "Brouillon":
-                    $etat = 0;
-                    break;
-                case "En attente de validation":
-                    $etat = 1;
-                    break;
-                    // Etats validés ou A modifier interdits, autres états inconnus
-                default:
-                    $retour = array('code' => Response::HTTP_BAD_REQUEST, 'message' => 'Etat invalide : ' . $data['etat']);
-                    return $retour;
-                    break;
-            }*/
+
+          $etat = $data['etat'];
+
+          // Test valeurs en entrée
+          if (is_array($data['lignesDemandes']) && UtilsController::isValidDate($data['dateEtat'])) {
+            $lignes = $data['lignesDemandes'];
+            $dateEtat = $data['dateEtat'];
+          } else {
+            $retour = array('code' => Response::HTTP_BAD_REQUEST, 'message' => 'Données en entrée invalides 2');
+            return $retour;
+          }
+
+          $sql = 'INSERT INTO demandesconges (numDemande, dateDemande, idUser, numLigne, dateDu, dateAu, idTypeAbs, nbJour, etat, validateur, dateactionetat) VALUES ';
+
+          $i = 0;
+
+          foreach ($lignes as $key => $row) {
 
             // Test valeurs en entrée
-            if (is_array($data['lignesDemandes']) && UtilsController::isValidDate($data['dateEtat'])) {
-                $lignes = $data['lignesDemandes'];
-                $dateEtat = $data['dateEtat'];
+            if (UtilsController::isValidDate($row['dateDebut']) && UtilsController::isValidDate($row['dateFin'])
+            && is_int($row['numLigne']) && is_numeric($row['nbJours']) && is_int($row['typeabs'])) {
+              $numLigne = $row['numLigne'];
+              $dateDebut = $row['dateDebut'];
+              $dateFin = $row['dateFin'];
+              $nbJours = $row['nbJours'];
+              $typeAbs = $row['typeabs'];
             } else {
-                $retour = array('code' => Response::HTTP_BAD_REQUEST, 'message' => 'Données en entrée invalides 2');
-                return $retour;
+              $retour = array('code' => Response::HTTP_BAD_REQUEST, 'message' => 'Données en entrée invalides 3');
+              return $retour;
             }
 
-            $sql = 'INSERT INTO demandesconges (numDemande, dateDemande, idUser, numLigne, dateDu, dateAu, idTypeAbs, nbJour, etat, validateur, dateactionetat) VALUES ';
-
-            $i = 0;
-			
-            foreach ($lignes as $key => $row) {
-
-                // Test valeurs en entrée
-                if (UtilsController::isValidDate($row['dateDebut']) && UtilsController::isValidDate($row['dateFin'])
-                    && is_int($row['numLigne']) && is_int($row['nbJours']) && is_int($row['typeabs'])) {
-                    $numLigne = $row['numLigne'];
-                    $dateDebut = $row['dateDebut'];
-                    $dateFin = $row['dateFin'];
-                    $nbJours = $row['nbJours'];
-                    $typeAbs = $row['typeabs'];
-                } else {
-                    $retour = array('code' => Response::HTTP_BAD_REQUEST, 'message' => 'Données en entrée invalides 3');
-                    return $retour;
-                }
-
-                if ($i > 0) {
-                    $sql .=',';
-                }
-
-                $sql .= "('$numDemande', '$dateEtat', '$idUser', '$numLigne', '$dateDebut', '$dateFin', '$typeAbs', '$nbJours', '$etat', '$idUser', null)";
-                $i++;
+            if ($i > 0) {
+              $sql .=',';
             }
-            $sql .= ';';
 
-            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-            $stmt->execute();
+            $sql .= "('$numDemande', '$dateEtat', '$idUser', '$numLigne', '$dateDebut', '$dateFin', '$typeAbs', '$nbJours', '$etat', '$idUser', null)";
+            $i++;
+          }
+          $sql .= ';';
 
-            $retour = array('message' => "Création réussie", 'code' => Response::HTTP_OK);
-            return $retour;
-			
-			
+          $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+          $stmt->execute();
+
+          $retour = array('message' => "Création réussie", 'code' => Response::HTTP_OK);
+          return $retour;
         }
+      }
     }
 
     /**
@@ -230,10 +358,10 @@ class CongesController extends Controller
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
-        
+
         // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
         $idUserToken = $retourAuth['id'];
-        
+
         if ($userId != $idUserToken) {
             $message = array('message' => "Incohérence token/ID");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
@@ -261,22 +389,22 @@ class CongesController extends Controller
             if ($retourpost['code'] != Response::HTTP_OK) {
                 return new JsonResponse($retourpost['message'], $retourpost['code']);
             }
-			
+
 			//Si tout est ok on envoie un code HTTP 200
 			if($retourdelete['code'] == Response::HTTP_OK && $retourpost["code"] == Response::HTTP_OK){
 			$message = array('message' => "Modification réussie");
 			return new JsonResponse($message, Response::HTTP_OK);
-		
+
         }
-        } 
-		
+        }
+
 		else {
             $message = array('message' => 'Format paramètres incorrect');
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
     }
-    
-	
+
+
 
     /**
      * Supprimer une demande de congés
@@ -297,10 +425,10 @@ class CongesController extends Controller
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
-        
+
         // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
         $idUserToken = $retourAuth['id'];
-        
+
         if ($userId != $idUserToken) {
             $message = array('message' => "Incohérence token/ID");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
@@ -327,11 +455,11 @@ class CongesController extends Controller
     public function deleteDemandeConges($userId, $numRequest)
     {
         // Vérifie si la ligne existe
-        $sql = "SELECT 
-					numdemande 
-				FROM 
-					demandesconges 
-				WHERE idUser = '$userId' 
+        $sql = "SELECT
+					numdemande
+				FROM
+					demandesconges
+				WHERE idUser = '$userId'
 				AND numDemande = '$numRequest' and etat in ('0','1','3')";
 
         $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
@@ -341,9 +469,9 @@ class CongesController extends Controller
 
         // La ligne existe, alors on la supprime
         if (count($list) != 0) {
-            $sql = "DELETE 
-					FROM 
-						demandesconges 
+            $sql = "DELETE
+					FROM
+						demandesconges
 					WHERE idUser = '$userId'
 					AND numDemande = '$numRequest'";
 
@@ -378,10 +506,10 @@ class CongesController extends Controller
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
-        
+
         // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
         $idUserToken = $retourAuth['id'];
-        
+
         if ($userId != $idUserToken) {
             $message = array('message' => "Incohérence token/ID");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
@@ -394,7 +522,7 @@ class CongesController extends Controller
 
             $sql = "SELECT
 						numDemande,
-						min(DATE_FORMAT(dateDu, '%d/%m/%Y')) AS dateDuMin, 
+						min(DATE_FORMAT(dateDu, '%d/%m/%Y')) AS dateDuMin,
 						max(DATE_FORMAT(dateAu, '%d/%m/%Y')) AS dateAuMax,
 						SUM(nbJour) AS nbJour,
 						demandesconges.etat,
@@ -402,13 +530,13 @@ class CongesController extends Controller
                         demandesconges.dateDemande,
                         demandesconges.dateactionetat,
 						concat(users.prenom,' ', users.nom) AS valid,
-						CASE 
+						CASE
 						 when etat='3' then 'A modifier'
-						when etat='2' then 'Validé' 
+						when etat='2' then 'Validé'
 						when etat='1' then 'En attente validation'
 						when etat='0' then 'Brouillon'
 						else 'Autre' end AS libelleEtat
-					FROM 
+					FROM
 						demandesconges
                     LEFT JOIN users ON demandesconges.validateur = users.id
 					WHERE idUser = " . $tUserId . "
@@ -452,10 +580,10 @@ class CongesController extends Controller
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
-        
+
         // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
         $idUserToken = $retourAuth['id'];
-        
+
         if ($userId != $idUserToken) {
             $message = array('message' => "Incohérence token/ID");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
@@ -468,7 +596,7 @@ class CongesController extends Controller
 
             $sql = "SELECT
 						numLigne,
-						DATE_FORMAT(dateDu, '%d/%m/%Y') AS dateDuFormated, 
+						DATE_FORMAT(dateDu, '%d/%m/%Y') AS dateDuFormated,
 						DATE_FORMAT(dateAu, '%d/%m/%Y') AS dateAuFormated,
 						dateDu,
 						dateAu,
@@ -477,13 +605,13 @@ class CongesController extends Controller
 						demandesconges.idTypeAbs AS typeabs,
 						typesabsences.code AS codeTypeAbs,
 						typesabsences.libelle AS libelleTypeAbs,
-						CASE 
+						CASE
 						 when etat='3' then 'A modifier'
-						when etat='2' then 'Validé' 
+						when etat='2' then 'Validé'
 						when etat='1' then 'En attente validation'
 						when etat='0' then 'Brouillon'
 						else 'Autre' end AS libelleEtat
-					FROM 
+					FROM
 						demandesconges
 					LEFT JOIN typesabsences ON demandesconges.idTypeAbs = typesabsences.idTypeAbs
 					WHERE idUser = " . $tUserId . "
@@ -528,7 +656,7 @@ class CongesController extends Controller
 					idTypeAbs,
 					code,
 					libelle
-				FROM 
+				FROM
 					typesabsences
 				";
 
@@ -559,10 +687,10 @@ class CongesController extends Controller
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
-        
+
         // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
         $idUserToken = $retourAuth['id'];
-        
+
         if ($userId != $idUserToken) {
             $message = array('message' => "Incohérence token/ID");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
@@ -584,21 +712,21 @@ class CongesController extends Controller
             // 		ou bien l'année recherchée est comprise entre les intervalles de début et fin de congé:
             // 			Prise de plus d'un mois de congé
             $sql = "
-				SELECT 
+				SELECT
 					numDemande,
-					dateDu, 
+					dateDu,
 					dateAu,
 					demandesconges.idTypeAbs,
 					nbJour,
 					etat,
 					code
-				FROM 
+				FROM
 					demandesconges,
 					typesabsences
 				WHERE (demandesconges.etat = 1 OR demandesconges.etat = 2)
 				AND (
 						(EXTRACT(YEAR from dateDu) = " . $tYear . " AND EXTRACT(MONTH from dateDu) = " . $tMonth . ")
-						OR 
+						OR
 						(EXTRACT(YEAR from dateAu) = " . $tYear . " AND EXTRACT(MONTH from dateAu) = " . $tMonth . ")
 						OR
 						(dateDu < '" . $tYear . "-" . $tMonth . "-01' AND dateAu >= '" . $tYearSuiv . "-" . $tMonthSuiv . "-01')
@@ -674,7 +802,7 @@ class CongesController extends Controller
                                 // 2 intervalles ont des infos le meme jour: 2 demi-journées
                             } elseif (!empty($arrDay) && $processedDate >= $dateDu[$keyC] && $processedDate <= $dateAu[$keyC]) {
                                 $code2Carac = substr($valueC["code"], 0, 2);
-                                
+
                                 // Dans l'id de la table valeurjourouvre RT est toujours en premier; pour faire correspondre le code a l'id de cette table:
                                 if (strtolower($code2Carac) == 'rt') {
                                     // Les 2 derniers caracteres de la valeur deja presente ajouté aux autres infos
