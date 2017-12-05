@@ -512,7 +512,8 @@ saveCra(statusId) {
 
   modifyPeriodeCRA() {
     this.props.navigation.navigate("ActivitesDetail", {
-      line: -1,
+      line: null,
+      date: null,
       parent: this,
     });
   }
