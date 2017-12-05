@@ -131,26 +131,25 @@ class AnnuaireListe extends React.Component {
     return result;
   }
 
-
-getAnnuaireFromAgence(agenceId) {
-  if (agenceId == configAnnuaire.idAgenceDefaut && configAnnuaire.annuaireAgenceDefaut != null) {
-    return Promise.resolve(configAnnuaire.annuaireAgenceDefaut);
+  getAnnuaireFromAgence(agenceId) {
+    if (
+      agenceId == configAnnuaire.idAgenceDefaut &&
+      configAnnuaire.annuaireAgenceDefaut != null
+    ) {
+      return Promise.resolve(configAnnuaire.annuaireAgenceDefaut);
+    } else {
+      let requestURL = configurationAppli.apiURL + "annuaire/" + agenceId;
+      var that = this;
+      return fetch(requestURL, this.state.obj).then(response =>
+        response.json().then(responseJson => {
+          if (agenceId == configAnnuaire.idAgenceDefaut) {
+            configAnnuaire.annuaireAgenceDefaut = responseJson;
+          }
+          return responseJson;
+        })
+      );
+    }
   }
-  else {
-    let requestURL = configurationAppli.apiURL + "annuaire/" + agenceId;
-    var that = this;
-    return fetch(requestURL, this.state.obj)
-           .then((response) => response.json()
-           .then((responseJson) => {
-             if (agenceId == configAnnuaire.idAgenceDefaut) {
-               configAnnuaire.annuaireAgenceDefaut = responseJson;
-             }
-             return responseJson;
-           })
-
-         );
-  }
-}
 
   reloadAnnuaireByAgence(_idAgence, reloadPage) {
     if (reloadPage) {
@@ -158,21 +157,21 @@ getAnnuaireFromAgence(agenceId) {
     }
 
     this.getAnnuaireFromAgence(_idAgence)
-        .then((responseJson) => {
-          this.setState({
-            annuaire: responseJson,
-            annuaireComplet: responseJson,
-            isReady: true,
-          });
-        })
-        .catch(error => {
-          console.error(error);
-        })
-        .finally(() => {
-          if (reloadPage) {
-            hideLoading();
-          }
-        })
+      .then(responseJson => {
+        this.setState({
+          annuaire: responseJson,
+          annuaireComplet: responseJson,
+          isReady: true,
+        });
+      })
+      .catch(error => {
+        console.error(error);
+      })
+      .finally(() => {
+        if (reloadPage) {
+          hideLoading();
+        }
+      });
   }
 
   realoadAnnuaireByNameOnChange(_searchedName) {
@@ -198,8 +197,8 @@ getAnnuaireFromAgence(agenceId) {
   componentDidMount() {
     if (this.state.annuaire != null) {
       this.setState({
-            isReady: true,
-          });
+        isReady: true,
+      });
       return;
     } else {
       this.reloadAnnuaireByAgence(configurationAppli.idAgence, false);
@@ -245,12 +244,11 @@ getAnnuaireFromAgence(agenceId) {
                 <Picker
                   style={styles.OptionFilter}
                   selectedValue={this.state.idAgence}
-                  onValueChange={(itemValue, itemIndex) =>
-                    {
-                      this.setState({idAgence: itemValue});
-                      this.reloadAnnuaireByAgence(itemValue, true)}
-                  }
-                  >
+                  onValueChange={(itemValue, itemIndex) => {
+                    this.setState({ idAgence: itemValue });
+                    this.reloadAnnuaireByAgence(itemValue, true);
+                  }}
+                >
                   <Picker.Item label="Ile de France" value="1" />
                   <Picker.Item label="Atlantique" value="3" />
                   <Picker.Item label="Niort" value="4" />

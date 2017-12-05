@@ -114,5 +114,4 @@ export default StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
   },
-
 });

@@ -77,8 +77,8 @@ class CongesListe extends React.Component {
 
   addNewConge() {
     this.props.navigation.navigate("CongesAjout", {
-      numDemande: null ,
-      parent: this
+      numDemande: null,
+      parent: this,
     });
   }
 
@@ -91,7 +91,7 @@ class CongesListe extends React.Component {
       nbJour: nbj,
       etat: etat,
       libelleEtat: libEtat,
-      parent: this
+      parent: this,
     });
   }
 
@@ -292,7 +292,10 @@ class CongesListe extends React.Component {
                               {item.etat == 2 ? (
                                 <Text>
                                   {" "}
-                                  par {item.valid} le {moment(item.dateactionetat).format("DD/MM/YYYY")}
+                                  par {item.valid} le{" "}
+                                  {moment(item.dateactionetat).format(
+                                    "DD/MM/YYYY"
+                                  )}
                                 </Text>
                               ) : null}
                             </Text>

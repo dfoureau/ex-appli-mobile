@@ -10,9 +10,7 @@ import {
   ScrollView,
 } from "react-native";
 
-import {
-  Row,
-} from "react-native-table-component";
+import { Row } from "react-native-table-component";
 
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "../../../styles/Styles";
@@ -65,7 +63,6 @@ class ActivitesDetail extends React.Component {
 
     let tmp = parent.state.listItemsCRA[params.line];
 
-
     this.state = {
       title: "Détails jour",
       date: params.date,
@@ -94,20 +91,22 @@ class ActivitesDetail extends React.Component {
     const { params } = this.props.navigation.state;
     var parent = params.parent;
 
-	let listItemsCRA = Array.from(parent.state.listItemsCRA);
+    let listItemsCRA = Array.from(parent.state.listItemsCRA);
 
-	listItemsCRA[this.state.linesToChange] = {
-    startDate: this.state.date,
-    actType: this.state.activiteClicked.code,
-  }
+    listItemsCRA[this.state.linesToChange] = {
+      startDate: this.state.date,
+      actType: this.state.activiteClicked.code,
+    };
 
-	  parent.setState({listItemsCRA: listItemsCRA},()=>{this.props.navigation.dispatch(NavigationActions.back())}); //on retourne à la page précédente qui à été modifié
+    parent.setState({ listItemsCRA: listItemsCRA }, () => {
+      this.props.navigation.dispatch(NavigationActions.back());
+    }); //on retourne à la page précédente qui à été modifié
   }
 
   // Gère le rendu des boutons sur plusieurs lignes, et gère le toggle
   renderActiviteButtons = () => {
     let button,
-    buttons = [];
+      buttons = [];
     const maxItems = 4;
     let tempLength = this.state.activitesListe.length / 4;
 
@@ -148,7 +147,7 @@ class ActivitesDetail extends React.Component {
           key={j + 100}
           style={[styles.calendarFlexContainer, styles.marginBottom20]}
         >
-        {button}
+          {button}
         </View>
       );
     }
@@ -217,16 +216,18 @@ class ActivitesDetail extends React.Component {
   }
 
   showValidateButton() {
-    if(this.state.statusId == 1 || this.state.statusId == null) {
-      return <View style={styles.stickyFooter}>
-            <View style={styles.containerButton}>
-              <Button
-                styleButton={styles.validateButton}
-                text="VALIDER"
-                onPress={() => this.handleValidate()}
-              />
-            </View>
-          </View>;
+    if (this.state.statusId == 1 || this.state.statusId == null) {
+      return (
+        <View style={styles.stickyFooter}>
+          <View style={styles.containerButton}>
+            <Button
+              styleButton={styles.validateButton}
+              text="VALIDER"
+              onPress={() => this.handleValidate()}
+            />
+          </View>
+        </View>
+      );
     }
   }
 
@@ -234,12 +235,12 @@ class ActivitesDetail extends React.Component {
     return (
       <View style={styles.mainContainer}>
         <ScrollView style={styles.scrollViewBody}>
-
           {/*Le containerTitre est remplacé par ce code spécifique pour pouvoir mettre un footer persistent*/}
           <View style={styles.ContainerHeader}>
             <TouchableHighlight
               style={styles.MenuIconLink}
-              onPress={() => this.props.navigation.dispatch(NavigationActions.back()) }
+              onPress={() =>
+                this.props.navigation.dispatch(NavigationActions.back())}
             >
               <Image
                 style={styles.MenuIcon}
@@ -265,11 +266,9 @@ class ActivitesDetail extends React.Component {
               {this.renderActiviteButtons()}
             </View>
           </View>
+        </ScrollView>
 
-          </ScrollView>
-
-          {this.showValidateButton()}
-
+        {this.showValidateButton()}
       </View>
     );
   }

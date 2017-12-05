@@ -4,7 +4,7 @@ import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "./styles";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
-import ScrollingMessageView from 'react-native-auto-scrolling-message'
+import ScrollingMessageView from "react-native-auto-scrolling-message";
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
 import configurationAppli from "../../../configuration/Configuration";
 
@@ -61,86 +61,87 @@ class APropos extends React.Component {
             </TouchableHighlight>
 
             <Text style={Style.texte}>
-              Nous remercions, en particulier, toutes les personnes, par ordre alphabétique, qui ont participé
-              au développement de l'application dans toutes ses phases (pilotage, spécifications, 
-              développement, recette, etc.) :
+              Nous remercions, en particulier, toutes les personnes, par ordre
+              alphabétique, qui ont participé au développement de l'application
+              dans toutes ses phases (pilotage, spécifications, développement,
+              recette, etc.) :
             </Text>
 
             <ScrollingMessageView
               height={100}
               childrenHeight={80}
               duration={2000}
-              containerStyle={{backgroundColor: 'transparent'}}
+              containerStyle={{ backgroundColor: "transparent" }}
               childrenStyle={{}}
             >
-            <Text>
-            Zakaria	AKLI
-            {"\n"}
-            Jonathan ALAMI
-            {"\n"}
-            Marie-Charlotte	BARBOTIN
-            {"\n"}
-            Fabrice	CADU
-            </Text>
-            <Text>
-            Maxime	CHEVALLIER
-            {"\n"}
-            Stéphane	DILET
-            {"\n"}
-            Moussa	DIOMANDE
-            {"\n"}
-            Vianney	DUBUS
-            </Text>
-            <Text>
-            Célia	DUPRAT
-            {"\n"}
-            Axel	GALVIER
-            {"\n"}
-            Laetitia	GARRIGUES
-            {"\n"}
-            Franck	GAULTIER
-            </Text>
-            <Text>
-            Enzo	GHEDEBA
-            {"\n"}
-            Salah	JAIBER
-            {"\n"}
-            Anne-Laure	JOUHANNEAU
-            {"\n"}
-            Rhony	LANDRY
-            </Text>
-            <Text>
-            Sandrine	LAPLACE-TOULOUSE
-            {"\n"}
-            Sophie	LIGAN
-            {"\n"}
-            Jessica	MARMIGNON
-            {"\n"}
-            Ludovic	MARMION
-            </Text>
-            <Text>
-            Alexis	MARTIAL
-            {"\n"}
-            Kathie MARTIN
-            {"\n"}
-            Romain	MARTINEZ
-            {"\n"}
-            Samuel MEYER
-            </Text>
-            <Text>
-            Etienne MICHEL
-            {"\n"}
-            Valérie MORO
-            {"\n"}
-            Adel  NOUREDDINE
-            {"\n"}
-            Julien  PEREZ
-            </Text>
-            <Text>
-            Sylvain	PERNOT
-            {"\n"}
-            Julien	PINEAU
-            </Text>
+              <Text>
+                Zakaria AKLI
+                {"\n"}
+                Jonathan ALAMI
+                {"\n"}
+                Marie-Charlotte BARBOTIN
+                {"\n"}
+                Fabrice CADU
+              </Text>
+              <Text>
+                Maxime CHEVALLIER
+                {"\n"}
+                Stéphane DILET
+                {"\n"}
+                Moussa DIOMANDE
+                {"\n"}
+                Vianney DUBUS
+              </Text>
+              <Text>
+                Célia DUPRAT
+                {"\n"}
+                Axel GALVIER
+                {"\n"}
+                Laetitia GARRIGUES
+                {"\n"}
+                Franck GAULTIER
+              </Text>
+              <Text>
+                Enzo GHEDEBA
+                {"\n"}
+                Salah JAIBER
+                {"\n"}
+                Anne-Laure JOUHANNEAU
+                {"\n"}
+                Rhony LANDRY
+              </Text>
+              <Text>
+                Sandrine LAPLACE-TOULOUSE
+                {"\n"}
+                Sophie LIGAN
+                {"\n"}
+                Jessica MARMIGNON
+                {"\n"}
+                Ludovic MARMION
+              </Text>
+              <Text>
+                Alexis MARTIAL
+                {"\n"}
+                Kathie MARTIN
+                {"\n"}
+                Romain MARTINEZ
+                {"\n"}
+                Samuel MEYER
+              </Text>
+              <Text>
+                Etienne MICHEL
+                {"\n"}
+                Valérie MORO
+                {"\n"}
+                Adel NOUREDDINE
+                {"\n"}
+                Julien PEREZ
+              </Text>
+              <Text>
+                Sylvain PERNOT
+                {"\n"}
+                Julien PINEAU
+              </Text>
             </ScrollingMessageView>
           </View>
         </ContainerAccueil>

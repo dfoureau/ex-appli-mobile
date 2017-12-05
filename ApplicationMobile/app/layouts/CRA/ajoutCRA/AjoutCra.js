@@ -52,7 +52,7 @@ class AjoutCra extends React.Component {
 
   static navigationOptions = ({ navigation }) => ({
     idCRA: navigation.state.params.idCRA,
-    parent: navigation.state.params.parent
+    parent: navigation.state.params.parent,
     // date: navigation.state.params.date,
   });
 
@@ -82,7 +82,7 @@ class AjoutCra extends React.Component {
       status: "Nouveau",
       header: ["Date", "Activité"],
       newCra: params.newCra != undefined && params.newCra,
-      listItemsCRA : [],
+      listItemsCRA: [],
       modifiedLines: [], //liste des lignes à modifier si validation
       activitesListe: [],
       userId: configurationAppli.userID,
@@ -92,9 +92,8 @@ class AjoutCra extends React.Component {
       WSLinkCRA: configurationAppli.apiURL + "CRA/RA",
       isReady: false,
       data: [],
-      pickerNewCraValue: null
+      pickerNewCraValue: null,
     };
-
   }
 
   //Permet d'afficher l'ecran choisi dans le menu
@@ -102,24 +101,23 @@ class AjoutCra extends React.Component {
     this.props.navigation.navigate(ecran);
   }
 
-/**
+  /**
  * Calcule le nombre de jours travaillés du mois
  * @return {[type]} [description]
  */
-getNbJoursTravailles() {
-  return this.state.listItemsCRA.reduce((result, element) => {
-    return result + this.getValeurJour(element.actType);
-  }, 0);
-}
+  getNbJoursTravailles() {
+    return this.state.listItemsCRA.reduce((result, element) => {
+      return result + this.getValeurJour(element.actType);
+    }, 0);
+  }
 
-/**
+  /**
  * Calcule le nombre de jours d'absence du mois
  * @return {[type]} [description]
  */
-getNbJoursAbsence() {
-  return this.state.data.NbJOuvres - this.getNbJoursTravailles();
-}
-
+  getNbJoursAbsence() {
+    return this.state.data.NbJOuvres - this.getNbJoursTravailles();
+  }
 
   /**
    * Retrouve la quantité travaillée et la quantité d'absence pour un code donné
@@ -129,15 +127,18 @@ getNbJoursAbsence() {
   getValeurJour(code) {
     let travaille = 0;
     // On cherche le jour dans jourouvre, puis dans jourwe
-    let typeAct = this.state.activitesListe.jourouvre.find((element) => {return element.code == code});
+    let typeAct = this.state.activitesListe.jourouvre.find(element => {
+      return element.code == code;
+    });
     if (typeAct == undefined) {
-      typeAct = this.state.activitesListe.jourwe.find((element) => {return element.code == code});
+      typeAct = this.state.activitesListe.jourwe.find(element => {
+        return element.code == code;
+      });
     }
     if (typeAct == undefined) {
       console.log("CODE introuvable : " + code);
-    }
-    else {
-      travaille = typeAct.valeur;;
+    } else {
+      travaille = typeAct.valeur;
     }
 
     return parseFloat(travaille);
@@ -151,46 +152,48 @@ getNbJoursAbsence() {
    */
   getServiceGeneralData(year, month) {
     let fetchObj = {
-      method: 'GET',
-      headers: this.state.fetchHeaders
+      method: "GET",
+      headers: this.state.fetchHeaders,
     };
 
-    let webServiceTypesActivites = configurationAppli.apiURL + "CRA/typesactivites",
-        webServiceDemandeConges = configurationAppli.apiURL + "conges" + '/' + configurationAppli.userID + '/' + year + '/' + month;
+    let webServiceTypesActivites =
+        configurationAppli.apiURL + "CRA/typesactivites",
+      webServiceDemandeConges =
+        configurationAppli.apiURL +
+        "conges" +
+        "/" +
+        configurationAppli.userID +
+        "/" +
+        year +
+        "/" +
+        month;
 
-   return Promise.all([
+    return Promise.all([
       // Liste des typesAction
-      fetch(webServiceTypesActivites, fetchObj)
-        .then((response) => {
+      fetch(webServiceTypesActivites, fetchObj).then(response => {
         if (response.status == 200) {
           return response.json();
-        }
-        else {
+        } else {
           return Promise.resolve({
             jourouvre: [],
-            jourwe: []
+            jourwe: [],
           });
         }
-      })
-      ,
+      }),
       // Liste des conges
-      fetch(webServiceDemandeConges, fetchObj)
-        .then((response) => {
-          if (response.status == 200) {
-            return response.json();
-          }
-          else {
-            return Promise.resolve([]);
-          }
-        })
-    ])
-    .catch((reason) =>  {
+      fetch(webServiceDemandeConges, fetchObj).then(response => {
+        if (response.status == 200) {
+          return response.json();
+        } else {
+          return Promise.resolve([]);
+        }
+      }),
+    ]).catch(reason => {
       console.log("Une erreur est survenue : " + reason);
       showToast("Une erreur est survenue.");
       this.props.navigation.dispatch(NavigationActions.back());
     });
   }
-
 
   componentWillMount() {
     var that = this;
@@ -198,55 +201,59 @@ getNbJoursAbsence() {
     const { params } = this.props.navigation.state;
 
     // Récupération des infos générales
-    Promise.resolve(this.getServiceGeneralData(this.state.yearSelected, this.state.monthSelected))
-      .then((result) => {
-        let [ typesActions, conges] = result;
+    Promise.resolve(
+      this.getServiceGeneralData(
+        this.state.yearSelected,
+        this.state.monthSelected
+      )
+    ).then(result => {
+      let [typesActions, conges] = result;
 
-        if (params.idCRA != null) {
-          // Récupération du CRA
-            this.getCRAInfosByID(params.idCRA, typesActions, conges);
-        }
-        else if (this.state.newCra) {
-            // Initialisation des jours avec les valeurs par défaut
-            this.initDefaultCra(this.state.yearSelected, this.state.monthSelected, typesActions, conges);
-        }
-        else {
-          that.setState({
-            data: [],
-            isReady: true,
-            activitesListe: typesAction
-          });
-        }
-      });
-    }
+      if (params.idCRA != null) {
+        // Récupération du CRA
+        this.getCRAInfosByID(params.idCRA, typesActions, conges);
+      } else if (this.state.newCra) {
+        // Initialisation des jours avec les valeurs par défaut
+        this.initDefaultCra(
+          this.state.yearSelected,
+          this.state.monthSelected,
+          typesActions,
+          conges
+        );
+      } else {
+        that.setState({
+          data: [],
+          isReady: true,
+          activitesListe: typesAction,
+        });
+      }
+    });
+  }
 
-
-reloadNewCra(date) {
-  let year = moment(date, 'YYYY-MM').year(),
-      month = moment(date, 'YYYY-MM').month() + 1;
+  reloadNewCra(date) {
+    let year = moment(date, "YYYY-MM").year(),
+      month = moment(date, "YYYY-MM").month() + 1;
     showLoading("Chargement des informations...");
 
     this.getServiceGeneralData(year, month)
-    .then((result) => {
-        let [ typesActions, conges] = result;
+      .then(result => {
+        let [typesActions, conges] = result;
         this.setState({
           yearSelected: year,
-          monthSelected: month
+          monthSelected: month,
         });
         this.initDefaultCra(year, month, typesActions, conges);
-    })
-    .catch(error => {
-      showToast("Une erreur est survenue.");
-      this.props.navigation.dispatch(NavigationActions.back());
-    })
-    .finally(() => {
-      hideLoading();
-    });
-}
+      })
+      .catch(error => {
+        showToast("Une erreur est survenue.");
+        this.props.navigation.dispatch(NavigationActions.back());
+      })
+      .finally(() => {
+        hideLoading();
+      });
+  }
 
-
-
-/**
+  /**
  * Initialise un CRA avec les valeurs par défaut
  * Jours ouvrés : "1.0"
  * WE et jours fériés : "0.0"
@@ -255,125 +262,132 @@ reloadNewCra(date) {
  * @param  {int} month    Mois du CRA
  * @return {[type]}       [description]
  */
-initDefaultCra(year, month, typesActions, conges) {
-  let data = {
-    idRA: null,
-    mois: month,
-    annee: year,
-    libelle: "Nouveau",
-    NbJOuvres: 0,
-    nbJourTravailles: 0,
-    nbJourAbs: 0,
-    client: "",
-    responsable: "",
-    projet: "",
-    commentaire: "",
-    valeursSaisies: [],
-    pickerNewCraValue: moment().format('YYYY-MM'),
-  }; // Objet à peupler pour créer un nouveau CRA
+  initDefaultCra(year, month, typesActions, conges) {
+    let data = {
+      idRA: null,
+      mois: month,
+      annee: year,
+      libelle: "Nouveau",
+      NbJOuvres: 0,
+      nbJourTravailles: 0,
+      nbJourAbs: 0,
+      client: "",
+      responsable: "",
+      projet: "",
+      commentaire: "",
+      valeursSaisies: [],
+      pickerNewCraValue: moment().format("YYYY-MM"),
+    }; // Objet à peupler pour créer un nouveau CRA
 
-  let date = moment(year + '-' + month, 'YYYY-M');
-  let nbJours = date.daysInMonth();
+    let date = moment(year + "-" + month, "YYYY-M");
+    let nbJours = date.daysInMonth();
 
-  var valeurSaisie = null;
-  for (let i=1; i<= nbJours; i++) {
-    date.set('date', i);
+    var valeurSaisie = null;
+    for (let i = 1; i <= nbJours; i++) {
+      date.set("date", i);
 
-    valeurSaisie = {
-      startDate: date.format('DD/MM/YYYY'),
-      disabled: false,
-      actType: "1.0"
-    };
+      valeurSaisie = {
+        startDate: date.format("DD/MM/YYYY"),
+        disabled: false,
+        actType: "1.0",
+      };
 
-    // On verifie si le jour est férié
-    if (date.isFerie()) {
-      valeurSaisie.isFerie = true;
-      valeurSaisie.actType = "0.0";
-      valeurSaisie.disabled = true;
-    }
-    // On vérifie si le jour est un samedi ou un dimanche
-    else if (date.day() == 0 || date.day() == 6) {
-      valeurSaisie.isWE = true;
-      valeurSaisie.actType = "0.0";
-    }
-    // On vérifie si le jour correspond à une demande de congé
-    else {
-      data.NbJOuvres ++;
-        let congeData = conges.find((item) => item.jour == i);
+      // On verifie si le jour est férié
+      if (date.isFerie()) {
+        valeurSaisie.isFerie = true;
+        valeurSaisie.actType = "0.0";
+        valeurSaisie.disabled = true;
+      } else if (date.day() == 0 || date.day() == 6) {
+        // On vérifie si le jour est un samedi ou un dimanche
+        valeurSaisie.isWE = true;
+        valeurSaisie.actType = "0.0";
+      } else {
+        // On vérifie si le jour correspond à une demande de congé
+        data.NbJOuvres++;
+        let congeData = conges.find(item => item.jour == i);
         if (congeData != undefined && congeData != null) {
-            if (congeData.code != "1,0" && congeData.code != "1.0") {
-              valeurSaisie.actType = congeData.code
-              valeurSaisie.disabled = true; // ??? à vérifier.
-            }
+          if (congeData.code != "1,0" && congeData.code != "1.0") {
+            valeurSaisie.actType = congeData.code;
+            valeurSaisie.disabled = true; // ??? à vérifier.
+          }
         }
+      }
+
+      data.valeursSaisies.push(valeurSaisie);
     }
 
-    data.valeursSaisies.push(valeurSaisie);
-  }
-
-  data.NbJOuvres = data.NbJOuvres.toFixed(1);
-  this.setState({
-    isReady: true,
-    data: data,
-    statusId: null,
-    listItemsCRA : data.valeursSaisies,
-    TextClient : "",
-    TextResponsable : "",
-    TextProjet : "",
-    TextComment : "",
-    activitesListe: typesActions
-  });
-}
-
-  getCRAInfosByID(idCRA, typesActions, conges) {
-    var that = this;
-    fetch(this.state.WSLinkCRA + '/' + idCRA,  {
-      method: 'GET',
-      headers: this.state.fetchHeaders
-    })
-    .then(function(response) {
-      if (response.status >= 400) {
-        that.setState({
-          data: [],
-          idReady: true,
-        }, () => {throw new Error("Bad response from server");} );
-      }
-      else {
-        return response.json();
-      }
-    })
-    .then(function(cra) {
-      cra.NbJOuvres = parseFloat(cra.NbJOuvres);
-      // cra.nbJourTravailles = parseFloat(cra.nbJourTravailles);
-      // cra.nbJourAbs = parseFloat(cra.nbJourAbs);
-
-      that.setState({
-        isReady: true,
-        data: cra,
-        statusId: cra.etat,
-        listItemsCRA : that.getItemsCRA(cra.valeursSaisies,conges),
-        TextClient : cra.client,
-        TextResponsable : cra.responsable,
-        TextProjet : cra.projet,
-        TextComment : cra.commentaires,
-        activitesListe: typesActions
-      });
+    data.NbJOuvres = data.NbJOuvres.toFixed(1);
+    this.setState({
+      isReady: true,
+      data: data,
+      statusId: null,
+      listItemsCRA: data.valeursSaisies,
+      TextClient: "",
+      TextResponsable: "",
+      TextProjet: "",
+      TextComment: "",
+      activitesListe: typesActions,
     });
   }
 
+  getCRAInfosByID(idCRA, typesActions, conges) {
+    var that = this;
+    fetch(this.state.WSLinkCRA + "/" + idCRA, {
+      method: "GET",
+      headers: this.state.fetchHeaders,
+    })
+      .then(function(response) {
+        if (response.status >= 400) {
+          that.setState(
+            {
+              data: [],
+              idReady: true,
+            },
+            () => {
+              throw new Error("Bad response from server");
+            }
+          );
+        } else {
+          return response.json();
+        }
+      })
+      .then(function(cra) {
+        cra.NbJOuvres = parseFloat(cra.NbJOuvres);
+        // cra.nbJourTravailles = parseFloat(cra.nbJourTravailles);
+        // cra.nbJourAbs = parseFloat(cra.nbJourAbs);
+
+        that.setState({
+          isReady: true,
+          data: cra,
+          statusId: cra.etat,
+          listItemsCRA: that.getItemsCRA(cra.valeursSaisies, conges),
+          TextClient: cra.client,
+          TextResponsable: cra.responsable,
+          TextProjet: cra.projet,
+          TextComment: cra.commentaires,
+          activitesListe: typesActions,
+        });
+      });
+  }
+
   getItemsCRA(valeursSaisies, conges) {
-    return valeursSaisies.map((item) => {
+    return valeursSaisies.map(item => {
       let actType = item.activité;
       let disabled = false;
-      let date = moment(item.date, 'DD/MM/YYYY');
+      let date = moment(item.date, "DD/MM/YYYY");
       if (date.isFerie()) {
         disabled = true;
         actType = "0.0";
-      }
-      else {
-        if (date.day() > 0 && date.day() < 6) { // On vérifie qu'on est un jour en semaine
-          let congeData = conges.find((item) => item.jour == date.date()); // On récupère la ligne de congé pour vérifier si un CP a été posé ou pas
-          if (congeData != null && congeData != undefined && congeData.code != "1,0" && congeData.code != "1.0") {
+      } else {
+        if (date.day() > 0 && date.day() < 6) {
+          // On vérifie qu'on est un jour en semaine
+          let congeData = conges.find(item => item.jour == date.date()); // On récupère la ligne de congé pour vérifier si un CP a été posé ou pas
+          if (
+            congeData != null &&
+            congeData != undefined &&
+            congeData.code != "1,0" &&
+            congeData.code != "1.0"
+          ) {
             disabled = true;
             actType = congeData.code;
           }
@@ -383,7 +397,7 @@ initDefaultCra(year, month, typesActions, conges) {
       return {
         startDate: item.date,
         actType: actType,
-        disabled: disabled
+        disabled: disabled,
         // valeur: item.valeur
       };
     });
@@ -395,31 +409,31 @@ initDefaultCra(year, month, typesActions, conges) {
    */
   deleteCra() {
     let idCra = this.props.navigation.state.params.idCRA,
-        parent = this.props.navigation.state.params.parent,
-        annee = this.state.yearSelected;
+      parent = this.props.navigation.state.params.parent,
+      annee = this.state.yearSelected;
 
     let that = this;
 
-    fetch(this.state.WSLinkCRA + '/' + idCra, {
-      method: 'DELETE',
-      headers: this.state.fetchHeaders
+    fetch(this.state.WSLinkCRA + "/" + idCra, {
+      method: "DELETE",
+      headers: this.state.fetchHeaders,
     })
-    .then((response) => {
-      return Promise.all([response.status, response.json()]);
-    })
-    .then((res) => {
-      let [status, body] = res;
+      .then(response => {
+        return Promise.all([response.status, response.json()]);
+      })
+      .then(res => {
+        let [status, body] = res;
 
-      let success = status == 200;
-      showToast( (success ? "Succès" : "Erreur") + "\n" +  body.message );
+        let success = status == 200;
+        showToast((success ? "Succès" : "Erreur") + "\n" + body.message);
 
-      // On redirige vers la page précédente uniquement en cas de succès
-      if (success) {
-        parent.getDemandesByUserAndYear(annee);
-        that.props.navigation.dispatch(NavigationActions.back());
-      }
-    })
-    .catch(err => console.log(err));
+        // On redirige vers la page précédente uniquement en cas de succès
+        if (success) {
+          parent.getDemandesByUserAndYear(annee);
+          that.props.navigation.dispatch(NavigationActions.back());
+        }
+      })
+      .catch(err => console.log(err));
   }
 
   /**
@@ -430,74 +444,79 @@ initDefaultCra(year, month, typesActions, conges) {
  * @param  {int} statusId [description]
  * @return {void}      La méthode affiche une notification, et redirige vers la page de liste en cas de succès
  */
-saveCra(statusId) {
-  if (statusId != 1 && statusId != 2) {
-    showToast("Une erreur est survenue.");
-    return;
-  }
-
-  let errMsg = "";
-  // Vérification des champs obligatoires client et responsable :
-  if (this.state.TextClient.trim() == "") {
-      errMsg += "Veuillez renseigner le nom du client.";
-  }
-  if (this.state.TextResponsable.trim() == "") {
-    errMsg += (errMsg != "" ? "\n" : "") + "Veuillez renseigner le nom du responsable.";
-  }
-
-  if (errMsg != "") {
-    showToast(errMsg);
-    return;
-  }
-
-
-  showLoading("sauvegarde en cours...");
-  let that = this;
-
-  let method = (this.state.newCra ? 'POST' : 'PUT'), // La méthode varie selon qu'on crée ou qu'on modifie un CRA
-      url = (this.state.newCra ? this.state.WSLinkCRA : this.state.WSLinkCRA + "/" + this.props.navigation.state.params.idCRA);
-      annee = this.state.yearSelected,
-      parent = this.props.navigation.state.params.parent;
-
-  let body = {
-    idUser: configurationAppli.userID,
-    mois: this.state.monthSelected,
-    annee: annee,
-    etat: statusId,
-    nbJourTravailles: this.getNbJoursTravailles().toFixed(1),
-    nbJourAbs: this.getNbJoursAbsence().toFixed(1),
-    client: this.state.TextClient,
-    responsable: this.state.TextResponsable,
-    projet: this.state.TextProjet,
-    commentaires: this.state.TextComment,
-    valeursSaisies: this.state.listItemsCRA.map((item) => { return {date: item.startDate, activité: item.actType}; })
-  };
-
-  fetch(url, {
-    method: method,
-    headers: this.state.fetchHeaders,
-    body: JSON.stringify(body)
-  })
-  .then((response) => {
-    hideLoading();
-    return Promise.all([Promise.resolve(response.status), response.json()])
-  })
-  .then((res) => {
-    let [status, body] = res;
-
-    let success = status == 200;
-    showToast( (success ? "Succès" : "Erreur") + "\n" +  body.message );
-
-    // On redirige vers la page précédente uniquement en cas de succès
-    if (success) {
-      parent.getDemandesByUserAndYear(annee);
-      that.props.navigation.dispatch(NavigationActions.back());
+  saveCra(statusId) {
+    if (statusId != 1 && statusId != 2) {
+      showToast("Une erreur est survenue.");
+      return;
     }
-  })
-  .catch((err) => {
-    console.log("ERREUR : \n" + err);
-  })
-}
+
+    let errMsg = "";
+    // Vérification des champs obligatoires client et responsable :
+    if (this.state.TextClient.trim() == "") {
+      errMsg += "Veuillez renseigner le nom du client.";
+    }
+    if (this.state.TextResponsable.trim() == "") {
+      errMsg +=
+        (errMsg != "" ? "\n" : "") +
+        "Veuillez renseigner le nom du responsable.";
+    }
+
+    if (errMsg != "") {
+      showToast(errMsg);
+      return;
+    }
+
+    showLoading("sauvegarde en cours...");
+    let that = this;
+
+    let method = this.state.newCra ? "POST" : "PUT", // La méthode varie selon qu'on crée ou qu'on modifie un CRA
+      url = this.state.newCra
+        ? this.state.WSLinkCRA
+        : this.state.WSLinkCRA + "/" + this.props.navigation.state.params.idCRA;
+    (annee = this.state.yearSelected),
+      (parent = this.props.navigation.state.params.parent);
+
+    let body = {
+      idUser: configurationAppli.userID,
+      mois: this.state.monthSelected,
+      annee: annee,
+      etat: statusId,
+      nbJourTravailles: this.getNbJoursTravailles().toFixed(1),
+      nbJourAbs: this.getNbJoursAbsence().toFixed(1),
+      client: this.state.TextClient,
+      responsable: this.state.TextResponsable,
+      projet: this.state.TextProjet,
+      commentaires: this.state.TextComment,
+      valeursSaisies: this.state.listItemsCRA.map(item => {
+        return { date: item.startDate, activité: item.actType };
+      }),
+    };
+
+    fetch(url, {
+      method: method,
+      headers: this.state.fetchHeaders,
+      body: JSON.stringify(body),
+    })
+      .then(response => {
+        hideLoading();
+        return Promise.all([Promise.resolve(response.status), response.json()]);
+      })
+      .then(res => {
+        let [status, body] = res;
+
+        let success = status == 200;
+        showToast((success ? "Succès" : "Erreur") + "\n" + body.message);
+
+        // On redirige vers la page précédente uniquement en cas de succès
+        if (success) {
+          parent.getDemandesByUserAndYear(annee);
+          that.props.navigation.dispatch(NavigationActions.back());
+        }
+      })
+      .catch(err => {
+        console.log("ERREUR : \n" + err);
+      });
+  }
 
   modifyItemCRA(l, startDate, actType, labelAct, valeur) {
     this.props.navigation.navigate("ActivitesDetail", {
@@ -505,7 +524,7 @@ saveCra(statusId) {
       date: startDate,
       activite: actType,
       activiteLabel: labelAct,
-      activiteValeur : valeur,
+      activiteValeur: valeur,
       parent: this,
     });
   }
@@ -518,48 +537,63 @@ saveCra(statusId) {
   }
 
   showDeleteButton() {
-    if(this.state.statusId == 1)
-    return (
-      <Button
-        text="SUPPRIMER"
-        buttonStyles={style.deleteButton}
-        onPress={() =>
-          Alert.alert(
-            "Suppression",
-            "Etes-vous sûr de vouloir supprimer le relevé d'activité ?",
-            [
-            { text: "Non", onPress: () => console.log("Cancel Pressed!") },
-            { text: "Oui", onPress: () => this.deleteCra() },
-            ]
-          )}
-      />
-    );
+    if (this.state.statusId == 1)
+      return (
+        <Button
+          text="SUPPRIMER"
+          buttonStyles={style.deleteButton}
+          onPress={() =>
+            Alert.alert(
+              "Suppression",
+              "Etes-vous sûr de vouloir supprimer le relevé d'activité ?",
+              [
+                { text: "Non", onPress: () => console.log("Cancel Pressed!") },
+                { text: "Oui", onPress: () => this.deleteCra() },
+              ]
+            )}
+        />
+      );
   }
 
   showDraftButton() {
-    if(this.state.statusId == 1 || this.state.statusId == null)
-    return (
-      <Button
-        buttonStyles={style.draftButton}
-        text="BROUILLON"
-        onPress={() => this.saveCra(1)}
-      />
-    );
+    if (this.state.statusId == 1 || this.state.statusId == null)
+      return (
+        <Button
+          buttonStyles={style.draftButton}
+          text="BROUILLON"
+          onPress={() => this.saveCra(1)}
+        />
+      );
   }
 
   showValidateButton() {
-    if(this.state.statusId == 1 || this.state.statusId == null)
-      return <Button text="VALIDER" onPress={() => this.saveCra(2) } />;
+    if (this.state.statusId == 1 || this.state.statusId == null)
+      return <Button text="VALIDER" onPress={() => this.saveCra(2)} />;
   }
 
   afficherRows() {
     return this.state.listItemsCRA.map((row, i) => (
-      <TouchableOpacity key={i} onPress={() => this.modifyItemCRA(i, row.startDate, row.actType, row.valeur)} disabled={row.disabled}>
+      <TouchableOpacity
+        key={i}
+        onPress={() =>
+          this.modifyItemCRA(i, row.startDate, row.actType, row.valeur)}
+        disabled={row.disabled}
+      >
         <Row
-          style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }, (moment(row.startDate, "DD/MM/YYYY").day() == 0 || moment(row.startDate, "DD/MM/YYYY").day() == 6) && { backgroundColor: "#b4deea" } ]}
+          style={[
+            style.row,
+            i % 2 && { backgroundColor: "#FFFFFF" },
+            (moment(row.startDate, "DD/MM/YYYY").day() == 0 ||
+              moment(row.startDate, "DD/MM/YYYY").day() == 6) && {
+              backgroundColor: "#b4deea",
+            },
+          ]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
           textStyle={style.rowText}
-          data={[moment(row.startDate, 'DD/MM/YYYY').format('dddd DD/MM/YYYY'), row.actType]}
+          data={[
+            moment(row.startDate, "DD/MM/YYYY").format("dddd DD/MM/YYYY"),
+            row.actType,
+          ]}
         />
       </TouchableOpacity>
     ));
@@ -570,29 +604,39 @@ saveCra(statusId) {
     this.props.navigation.navigate("ActivitesListe"); //navigate back
   };
 
-/**
+  /**
  * Affiche les items du picker pour un ajout de CRA.
  * On affiche le mois en cours et les 2 mois précédents
  * @return {[type]} [description]
  */
-newCraPicker() {
-  const now = moment();
-  let pickerArray = [];
+  newCraPicker() {
+    const now = moment();
+    let pickerArray = [];
 
-  for (let i=0; i<3; i++) {
-    let currentDate = now.clone().subtract(i, 'months');
-    pickerArray.push(<Picker.Item label={currentDate.format("MMMM YYYY")} value={currentDate.format("YYYY-MM")} key={currentDate.format('YYYY-MM')}/>);
+    for (let i = 0; i < 3; i++) {
+      let currentDate = now.clone().subtract(i, "months");
+      pickerArray.push(
+        <Picker.Item
+          label={currentDate.format("MMMM YYYY")}
+          value={currentDate.format("YYYY-MM")}
+          key={currentDate.format("YYYY-MM")}
+        />
+      );
+    }
+
+    return pickerArray;
   }
-
-  return pickerArray;
-}
-
 
   render() {
     //Décralation du params transmis à l'écran courante.
     const { params } = this.props.navigation.state;
 
-    let title = this.state.newCra ? "Nouveau Cra" : moment(this.state.yearSelected + '-' + this.state.monthSelected, 'YYYY-M').format("MMMM YYYY");
+    let title = this.state.newCra
+      ? "Nouveau Cra"
+      : moment(
+          this.state.yearSelected + "-" + this.state.monthSelected,
+          "YYYY-M"
+        ).format("MMMM YYYY");
 
     if (!this.state.isReady) {
       return (
@@ -614,40 +658,50 @@ newCraPicker() {
         <View>
           <ContainerTitre title={title} navigation={this.props.navigation}>
             <View style={style.container}>
-
-              {this.state.newCra  &&
+              {this.state.newCra && (
                 <View style={style.container1}>
-                <View style={style.containerPicker}>
-                  <Picker
-                    style={{ width: 160 }}
-                    selectedValue={this.state.pickerNewCraValue}
-                    onValueChange={(itemValue, itemIndex) => {
-                      this.setState({pickerNewCraValue: itemValue});
-                      this.reloadNewCra(itemValue)
-                    }}
-                  >
-                    {this.newCraPicker()}
-                  </Picker>
+                  <View style={style.containerPicker}>
+                    <Picker
+                      style={{ width: 160 }}
+                      selectedValue={this.state.pickerNewCraValue}
+                      onValueChange={(itemValue, itemIndex) => {
+                        this.setState({ pickerNewCraValue: itemValue });
+                        this.reloadNewCra(itemValue);
+                      }}
+                    >
+                      {this.newCraPicker()}
+                    </Picker>
+                  </View>
                 </View>
-                </View>
-              }
-
+              )}
 
               <View style={style.container1}>
                 <View style={style.containerFirstLine}>
-                  <Text style={style.text}>Etat : {this.state.data.libelle}</Text>
+                  <Text style={style.text}>
+                    Etat : {this.state.data.libelle}
+                  </Text>
                 </View>
                 <View style={style.containerFirstLine}>
-                  <Text style={style.text}>Jours ouvrés : {this.state.data.NbJOuvres ? this.state.data.NbJOuvres : '0'} j</Text>
+                  <Text style={style.text}>
+                    Jours ouvrés :{" "}
+                    {this.state.data.NbJOuvres
+                      ? this.state.data.NbJOuvres
+                      : "0"}{" "}
+                    j
+                  </Text>
                 </View>
               </View>
 
               <View style={style.container1}>
                 <View style={style.containerThirdLine}>
-                  <Text style={style.text}>Travaillés : {this.getNbJoursTravailles().toFixed(1)} j</Text>
+                  <Text style={style.text}>
+                    Travaillés : {this.getNbJoursTravailles().toFixed(1)} j
+                  </Text>
                 </View>
                 <View style={style.containerThirdLine}>
-                  <Text style={style.text}>Absences : {this.getNbJoursAbsence().toFixed(1)} j</Text>
+                  <Text style={style.text}>
+                    Absences : {this.getNbJoursAbsence().toFixed(1)} j
+                  </Text>
                 </View>
               </View>
 

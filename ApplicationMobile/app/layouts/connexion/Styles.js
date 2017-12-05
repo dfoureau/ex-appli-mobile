@@ -62,7 +62,7 @@ export default StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  
+
   txtMdpOublie: {
     fontSize: 15,
     color: "#2298AA",

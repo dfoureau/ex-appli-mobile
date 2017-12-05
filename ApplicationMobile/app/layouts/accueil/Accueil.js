@@ -28,7 +28,7 @@ class Accueil extends React.Component {
       //On définit les différentes variables
       title: "Cat-Amania",
       user: configAccueil.user,
-        /*{
+      /*{
           id: null,
           nom: null,
           prenom: null,
@@ -38,14 +38,14 @@ class Accueil extends React.Component {
           responsable: null,
         },*/
       conges: configAccueil.conges,
-        /*{
+      /*{
           id: null,
           datesolde: null,
           cp: null,
           rtt: null,
         },*/
       news: configAccueil.news,
-        /*{
+      /*{
           news_id: null,
           news_titre: null,
           news_contenu: null,
@@ -71,12 +71,16 @@ class Accueil extends React.Component {
   }
 
   componentDidMount() {
-    if ((this.state.user != null) && (this.state.conges != null) && (this.state.news != null)) {
+    if (
+      this.state.user != null &&
+      this.state.conges != null &&
+      this.state.news != null
+    ) {
       this.setState({
-            isReadyw1: true,
-            isReadyw2: true,
-            isReadyw3: true,
-          });
+        isReadyw1: true,
+        isReadyw2: true,
+        isReadyw3: true,
+      });
       return;
     } else {
       var that = this;
@@ -122,7 +126,7 @@ class Accueil extends React.Component {
         .then(function(foncnews) {
           configAccueil.news = foncnews;
           that.setState({ news: foncnews, isReadyw3: true });
-      });
+        });
     }
   }
 
@@ -190,9 +194,8 @@ class Accueil extends React.Component {
           </Panel>
           <Panel title="SOLDES CONGES">
             <Text style={Style.text}>
-              Sur votre bulletin de salaire du{" "}
-              {this.state.conges.datesolde}, votre solde de congés se
-              compose de la manière suivante :
+              Sur votre bulletin de salaire du {this.state.conges.datesolde},
+              votre solde de congés se compose de la manière suivante :
             </Text>
             <Text style={[Style.text, Style.text2]}>
               - solde CP : {this.state.conges.cp}

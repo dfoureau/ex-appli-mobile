@@ -16,7 +16,7 @@ export default StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "flex-end",
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
 
   containerPeriod: {
@@ -27,5 +27,4 @@ export default StyleSheet.create({
     height: 15,
     width: 15,
   },
-
 });

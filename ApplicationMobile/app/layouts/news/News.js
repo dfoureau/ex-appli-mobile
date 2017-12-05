@@ -39,8 +39,8 @@ class News extends React.Component {
   componentDidMount() {
     if (this.state.newsList != null) {
       this.setState({
-            isReady: true,
-          });
+        isReady: true,
+      });
       return;
     } else {
       var that = this;

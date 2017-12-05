@@ -71,11 +71,11 @@ class Connexion extends React.Component {
   }
 
   componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.backPress)
+    BackHandler.addEventListener("hardwareBackPress", this.backPress);
   }
 
   componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.backPress)
+    BackHandler.removeEventListener("hardwareBackPress", this.backPress);
   }
 
   backPress() {
@@ -129,7 +129,7 @@ class Connexion extends React.Component {
       configurationAppli.idAgence = this.state.data.idAgence;
       configAnnuaire.idAgenceDefaut = this.state.data.idAgence;
       hideLoading();
-      BackHandler.removeEventListener('hardwareBackPress', this.backPress)
+      BackHandler.removeEventListener("hardwareBackPress", this.backPress);
       this.props.navigation.navigate("Accueil");
     }
   }

@@ -83,7 +83,7 @@ export default StyleSheet.create({
     marginBottom: 5,
     marginTop: 5,
   },
-  
+
   deleteButton: {
     backgroundColor: "#FF0000",
   },
@@ -92,8 +92,8 @@ export default StyleSheet.create({
     flex: 0.1,
     borderColor: "#355A86",
     borderWidth: 1,
-    alignItems:'center',
-    justifyContent:'center'
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   scrollViewBody: {
@@ -142,5 +142,4 @@ export default StyleSheet.create({
     fontSize: 16,
     paddingRight: 30,
   },
-
 });
