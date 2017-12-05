@@ -1,8 +1,16 @@
 import React from "react";
 import { Calendar } from "react-native-calendars";
-import { CalendarConfig } from '../../../configuration/CalendarConfig';
+import { CalendarConfig } from "../../../configuration/CalendarConfig";
 
-import { View, Text, TextInput, ScrollView, Alert, TouchableHighlight, Image, } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  Alert,
+  TouchableHighlight,
+  Image,
+} from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import PropTypes from "prop-types";
 import Style from "../../../styles/Styles";
@@ -10,14 +18,9 @@ import styles from "./styles";
 import CheckBox from "react-native-check-box";
 import moment from "moment";
 import feries from "moment-ferie-fr";
-import { momentConfig } from '../../../configuration/MomentConfig';
+import { momentConfig } from "../../../configuration/MomentConfig";
 
-
-import {
-  showToast,
-  showNotification,
-  hide,
-} from "react-native-notifyer";
+import { showToast, showNotification, hide } from "react-native-notifyer";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 //import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
@@ -39,7 +42,9 @@ class FraisDetail extends React.Component {
   }
 
   findFraisJour(jour) {
-      return ((element) => {return element.date == jour; });
+    return element => {
+      return element.date == jour;
+    };
   }
 
   setInitialValues() {
@@ -52,25 +57,32 @@ class FraisDetail extends React.Component {
 
     if (params.idFrais != null && params.idFrais != undefined) {
       // on récupère le frais dans le cas d'une modification
-      calendarDate = moment(params.idFrais, 'DD-MM-YYYY');
+      calendarDate = moment(params.idFrais, "DD-MM-YYYY");
 
       // Recherche du fraisJour dans la listFrais du parent
-      var frais = params.parent.state.listFrais.find(this.findFraisJour(params.idFrais));
+      var frais = params.parent.state.listFrais.find(
+        this.findFraisJour(params.idFrais)
+      );
 
       if (frais != null && frais != undefined) {
         // il existe un frais déjà crée en cache
         isNewFrais = false;
       }
-    }
-    else {
+    } else {
       let month = params.parent.state.monthSelected,
-          year = params.parent.state.yearSelected;
+        year = params.parent.state.yearSelected;
 
-          calendarDate = moment(year + '-' + month , 'YYYY-M');
+      calendarDate = moment(year + "-" + month, "YYYY-M");
     }
 
-    let calendarMinDate = calendarDate.clone().set('date', 1).format(calendarDateFormat);
-    let calendarMaxDate = calendarDate.clone().set('date', calendarDate.daysInMonth()).format(calendarDateFormat);
+    let calendarMinDate = calendarDate
+      .clone()
+      .set("date", 1)
+      .format(calendarDateFormat);
+    let calendarMaxDate = calendarDate
+      .clone()
+      .set("date", calendarDate.daysInMonth())
+      .format(calendarDateFormat);
 
     this.state = {
       statusId: params.parent.state.statusId,
@@ -110,21 +122,27 @@ class FraisDetail extends React.Component {
     // dans le cas d'une modifcation d'un frais on alimente le tableau de date avec la date du frais (correspondant à son id)
     if (this.props.navigation.state.params.idFrais != null) {
       selectedDates.push(this.props.navigation.state.params.idFrais);
-    }
-    else {
-          let currentDate = moment(this.state.calendarMinDate, this.state.calendarDateFormat);
-          let nbJours = currentDate.daysInMonth(); // Nombre de jours dans le mois
+    } else {
+      let currentDate = moment(
+        this.state.calendarMinDate,
+        this.state.calendarDateFormat
+      );
+      let nbJours = currentDate.daysInMonth(); // Nombre de jours dans le mois
 
-          for (let i=1; i<= nbJours; i++) {
-            currentDate.set('date', i);
+      for (let i = 1; i <= nbJours; i++) {
+        currentDate.set("date", i);
 
-            if (currentDate.day() > 0 && currentDate.day() < 6 && !currentDate.isFerie()) {
-              selectedDates.push(currentDate.clone().format('YYYY-MM-DD'));
-            }
-          }
+        if (
+          currentDate.day() > 0 &&
+          currentDate.day() < 6 &&
+          !currentDate.isFerie()
+        ) {
+          selectedDates.push(currentDate.clone().format("YYYY-MM-DD"));
         }
-        return selectedDates;
       }
+    }
+    return selectedDates;
+  }
 
   onDateSelected(day) {
     let date = day.dateString;
@@ -182,7 +200,7 @@ class FraisDetail extends React.Component {
       taxi: this.state.taxi,
       parking: this.state.parking,
       divers: this.state.divers,
-      libelle: this.state.libelle
+      libelle: this.state.libelle,
     };
   }
 
@@ -198,7 +216,9 @@ class FraisDetail extends React.Component {
     }
 
     if (this.state.lieu.trim() == "") {
-      errMsg += (errMsg != "" ? "\n" : "") + "Veuillez renseigner un lieu de dédéplacement.";
+      errMsg +=
+        (errMsg != "" ? "\n" : "") +
+        "Veuillez renseigner un lieu de dédéplacement.";
     }
 
     if (errMsg != "") {
@@ -214,37 +234,38 @@ class FraisDetail extends React.Component {
     var listFrais = Array.from(parent.state.listFrais);
     // Pour chaque date sélectionnée, on récupère le fraisJour correspondant
     // dans la listeFrais du parent, et on lui mappe les données de notre state
-    this.state.selectedDatesArray.forEach( date => {
-
+    this.state.selectedDatesArray.forEach(date => {
       //recherche du jour dans le tableau parent
       let fraisJour = listFrais.find(this.findFraisJour(date));
       if (fraisJour !== null && fraisJour !== undefined) {
         fraisJour.updateDetail(fraisJourData);
-      }
-      else {
+      } else {
         console.log("JOUR " + date + " : non trouvé");
       }
     });
 
     // On recalcule les montants totaux
-      let totalMontant = 0,
-          totalClient = 0;
+    let totalMontant = 0,
+      totalClient = 0;
 
-      listFrais.forEach((fraisJour) => {
-        totalMontant += fraisJour.totalAReglerFrais;
-        totalClient +=  fraisJour.totalClientFrais;
-      });
-
-    parent.setState({
-      totalMontant: totalMontant,
-      totalClient: totalClient,
-      listFrais: listFrais
-    }, () => {
-      this.props.navigation.dispatch(NavigationActions.back());
+    listFrais.forEach(fraisJour => {
+      totalMontant += fraisJour.totalAReglerFrais;
+      totalClient += fraisJour.totalClientFrais;
     });
+
+    parent.setState(
+      {
+        totalMontant: totalMontant,
+        totalClient: totalClient,
+        listFrais: listFrais,
+      },
+      () => {
+        this.props.navigation.dispatch(NavigationActions.back());
+      }
+    );
   }
 
-/**
+  /**
  * Suppression : On crée un nouveau frais vide
  * pour chaque jour sélectionné
  * @return {[type]} [description]
@@ -253,35 +274,35 @@ class FraisDetail extends React.Component {
     var parent = this.props.navigation.state.params.parent;
     var listFrais = Array.from(parent.state.listFrais);
 
-    this.state.selectedDatesArray.forEach( date => {
-
+    this.state.selectedDatesArray.forEach(date => {
       //recherche du jour dans le tableau parent
       let fraisJourIndex = listFrais.findIndex(this.findFraisJour(date));
       if (fraisJourIndex !== null && fraisJourIndex !== undefined) {
         listFrais[fraisJourIndex] = new FraisJour(date);
-      }
-      else {
+      } else {
         console.log("JOUR " + date + " : non trouvé");
       }
     });
 
     // On recalcule les montants totaux
-      let totalMontant = 0,
-          totalClient = 0;
+    let totalMontant = 0,
+      totalClient = 0;
 
-      listFrais.forEach((fraisJour) => {
-        totalMontant += fraisJour.totalAReglerFrais;
-        totalClient +=  fraisJour.totalClientFrais;
-      });
-
-    parent.setState({
-      totalMontant: totalMontant,
-      totalClient: totalClient,
-      listFrais: listFrais
-    }, () => {
-      this.props.navigation.dispatch(NavigationActions.back());
+    listFrais.forEach(fraisJour => {
+      totalMontant += fraisJour.totalAReglerFrais;
+      totalClient += fraisJour.totalClientFrais;
     });
 
+    parent.setState(
+      {
+        totalMontant: totalMontant,
+        totalClient: totalClient,
+        listFrais: listFrais,
+      },
+      () => {
+        this.props.navigation.dispatch(NavigationActions.back());
+      }
+    );
   }
 
   /**
@@ -304,7 +325,7 @@ class FraisDetail extends React.Component {
   }
 
   showValidateButton() {
-    if ((this.state.statusId == null || this.state.statusId == 0)) {
+    if (this.state.statusId == null || this.state.statusId == 0) {
       return (
         /*Bouton validera affiché que si c'est une NDF en brouillon ou une nouvelle NDF*/
         <Button onPress={() => this.handleValidate()} text="VALIDER" />
@@ -313,7 +334,10 @@ class FraisDetail extends React.Component {
   }
 
   showDeleteButton() {
-    if ((this.state.statusId == null || this.state.statusId == 0) && (!this.state.isforfait)) {
+    if (
+      (this.state.statusId == null || this.state.statusId == 0) &&
+      !this.state.isforfait
+    ) {
       return (
         /*Bouton supprimer affiché que si ce n'est pas un forfait, et que si c'est une NDF en brouillon ou une nouvelle NDF*/
         <Button
@@ -335,7 +359,7 @@ class FraisDetail extends React.Component {
 
   componentWillMount() {
     this.setState({
-      selectedDatesArray: this.setDatesArray()
+      selectedDatesArray: this.setDatesArray(),
     });
   }
 
@@ -343,12 +367,12 @@ class FraisDetail extends React.Component {
     return (
       <View style={styles.mainContainer}>
         <ScrollView style={styles.scrollViewBody}>
-
           {/*Le containerTitre est remplacé par ce code spécifique pour pouvoir mettre un footer persistent*/}
           <View style={styles.ContainerHeader}>
             <TouchableHighlight
               style={styles.MenuIconLink}
-              onPress={() => this.props.navigation.dispatch(NavigationActions.back()) }
+              onPress={() =>
+                this.props.navigation.dispatch(NavigationActions.back())}
             >
               <Image
                 style={styles.MenuIcon}
@@ -422,8 +446,7 @@ class FraisDetail extends React.Component {
                       style={styles.inputComponent}
                       value={this.state.lieu}
                       placeholderTextColor="#000000"
-                      onChangeText={text =>
-                        this.setState({ lieu: text })}
+                      onChangeText={text => this.setState({ lieu: text })}
                       editable={true}
                       underlineColorAndroid="transparent"
                     />
@@ -583,7 +606,8 @@ class FraisDetail extends React.Component {
                     <TextInput
                       style={[styles.inputComponent, styles.inputComponentRow]}
                       value={this.state.pourcentage}
-                      onChangeText={text => this.setState({ pourcentage: text })}
+                      onChangeText={text =>
+                        this.setState({ pourcentage: text })}
                       editable={true}
                       underlineColorAndroid="transparent"
                       keyboardType="numeric"
@@ -672,8 +696,7 @@ class FraisDetail extends React.Component {
                         styles.inputComponentSmall,
                       ]}
                       value={this.state.libelle}
-                      onChangeText={text =>
-                        this.setState({ libelle: text })}
+                      onChangeText={text => this.setState({ libelle: text })}
                       editable={true}
                       underlineColorAndroid="transparent"
                     />
@@ -682,20 +705,18 @@ class FraisDetail extends React.Component {
               </Panel>
             </View>
           </View>
+        </ScrollView>
 
-          </ScrollView>
-
-          <View style={styles.stickyFooter}>
-            <View style={styles.containerButton}>
-              <Text style={styles.textFooter}> Total : {(
-                  FraisJour.calculerTotal(this.state).toFixed(2)
-                )}
-              </Text>
-              {this.showDeleteButton()}
-              {this.showValidateButton()}
-            </View>
+        <View style={styles.stickyFooter}>
+          <View style={styles.containerButton}>
+            <Text style={styles.textFooter}>
+              {" "}
+              Total : {FraisJour.calculerTotal(this.state).toFixed(2)}
+            </Text>
+            {this.showDeleteButton()}
+            {this.showValidateButton()}
           </View>
-
+        </View>
       </View>
     );
   }

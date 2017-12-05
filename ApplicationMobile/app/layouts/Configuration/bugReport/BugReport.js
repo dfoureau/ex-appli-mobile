@@ -32,15 +32,15 @@ class BugReport extends React.Component {
         >
           <View style={{ paddingVertical: 20 }}>
             <Text style={Style.texte}>
-              Nous vous remercions de votre temps et efforts pour testesr
-              notre, votre, application Cat-Amania.
+              Nous vous remercions de votre temps et efforts pour testesr notre,
+              votre, application Cat-Amania.
               {"\n"}
-              Si vous rencontrer une anomalie (fonctionelle, IHM, etc.),
-              merci de nous la rapporter avec le plus d'éléments de détails
-              possible sur notre Service Desk.
+              Si vous rencontrer une anomalie (fonctionelle, IHM, etc.), merci
+              de nous la rapporter avec le plus d'éléments de détails possible
+              sur notre Service Desk.
               {"\n"}
-              Vous pouvez nous suggérer des améliorations sur le même lien 
-              du Service Desk ci-dessous.
+              Vous pouvez nous suggérer des améliorations sur le même lien du
+              Service Desk ci-dessous.
             </Text>
 
             <TouchableHighlight

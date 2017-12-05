@@ -20,12 +20,12 @@ export default class CRAItem extends Component {
     super(props);
     this.state = {
       //On définit les différentes variables
-	    date: props.date,
+      date: props.date,
       client: props.client,
       status: props.status,
-	    libelle: props.libelle,
+      libelle: props.libelle,
       hideDate: props.hideDate,
-	    Id: props.Id, 
+      Id: props.Id,
     };
   }
   render() {

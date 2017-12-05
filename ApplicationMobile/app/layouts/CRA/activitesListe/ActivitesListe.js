@@ -49,23 +49,24 @@ class ActivitesListe extends React.Component {
       isReady: false,
       isData: false,
       annee: moment().format("YYYY"),
-      webServiceLien: configurationAppli.apiURL + "CRA/" + configurationAppli.userID + "/",
+      webServiceLien:
+        configurationAppli.apiURL + "CRA/" + configurationAppli.userID + "/",
       fetchHeaders: {
-          Authorization: "Bearer " + configurationAppli.userToken,
-        },
+        Authorization: "Bearer " + configurationAppli.userToken,
+      },
     };
   }
 
-/**
+  /**
  * Remise à zéro des données dans le state
  */
-resetData() {
-  this.setState({
-    data: [],
-    isData:false,
-    isReady: false
-  })
-}
+  resetData() {
+    this.setState({
+      data: [],
+      isData: false,
+      isReady: false,
+    });
+  }
 
   getDemandesByUserAndYear(_annee, reloadPage) {
     if (reloadPage) {
@@ -75,27 +76,26 @@ resetData() {
     this.resetData();
     var that = this;
     fetch(this.state.webServiceLien + _annee, {
-      method: 'GET',
-      headers: this.state.fetchHeaders
+      method: "GET",
+      headers: this.state.fetchHeaders,
     })
-    .then(function(response) {
-      return Promise.all([response.status, response.json()]);
-    })
-    .then(function(response) {
+      .then(function(response) {
+        return Promise.all([response.status, response.json()]);
+      })
+      .then(function(response) {
         let [status, cra] = response;
         if (status > 200) {
           that.setState({
             isReady: true,
-            annee: _annee
+            annee: _annee,
           });
-        }
-        else {
+        } else {
           that.setState({
             data: that.parseCra(cra),
             isData: true,
             isReady: true,
-            annee: _annee
-          })
+            annee: _annee,
+          });
         }
 
         if (reloadPage) {
@@ -107,38 +107,34 @@ resetData() {
   parseCra(cra) {
     // On commence par trier le tableau par ordre de date décroissant
     cra.sort((cra1, cra2) => {
-      let date1 = moment(cra1.annee + '-' + cra1.mois, 'YYYY-M'),
-          date2 = moment(cra2.annee + '-' + cra2.mois, 'YYYY-M');
+      let date1 = moment(cra1.annee + "-" + cra1.mois, "YYYY-M"),
+        date2 = moment(cra2.annee + "-" + cra2.mois, "YYYY-M");
 
-    if (date1 > date2) {
-      return -1;
-    }
-    else if (date1 < date2) {
-      return 1;
-    }
-    else {
-      // On trie les cra par ordre d'id croissant au sein d'un même mois/année
-      return parseInt(cra2.Id) - parseInt(cra1.Id)
-    }
-  });
-
+      if (date1 > date2) {
+        return -1;
+      } else if (date1 < date2) {
+        return 1;
+      } else {
+        // On trie les cra par ordre d'id croissant au sein d'un même mois/année
+        return parseInt(cra2.Id) - parseInt(cra1.Id);
+      }
+    });
 
     let currentDate = "";
     let hideDate = false;
     let rows = [];
 
-    cra.forEach((item) => {
-      if (item.date !== currentDate)  {
+    cra.forEach(item => {
+      if (item.date !== currentDate) {
         currentDate = item.date;
         hideDate = false;
-      }
-      else {
+      } else {
         hideDate = true;
       }
 
       item.hideDate = hideDate;
       rows.push(item);
-    })
+    });
 
     return rows;
   }
@@ -163,7 +159,7 @@ resetData() {
       idCRA: id,
       month: month,
       year: year,
-      parent: this
+      parent: this,
     });
   }
 
@@ -171,7 +167,7 @@ resetData() {
     this.props.navigation.navigate("AjoutCra", {
       idCRA: null,
       year: moment().year(),
-      month: moment().month() +1,
+      month: moment().month() + 1,
       newCra: true,
       parent: this,
     });
@@ -263,7 +259,7 @@ resetData() {
                   <FlatList
                     data={this.state.data}
                     keyExtractor={(item, index) => index}
-                    renderItem={({ item }) => this.afficherCra(item) }
+                    renderItem={({ item }) => this.afficherCra(item)}
                   />
                 )}
               </View>

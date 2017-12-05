@@ -181,7 +181,7 @@ class ActivitesDetail extends React.Component {
   // Gère le rendu des boutons sur plusieurs lignes, et gère le toggle
   renderActiviteButtons = () => {
     let button,
-    buttons = [];
+      buttons = [];
     const maxItems = 4;
     let tempLength = this.state.activitesListe.length / 4;
 
@@ -226,7 +226,7 @@ class ActivitesDetail extends React.Component {
           key={j + 100}
           style={[styles.calendarFlexContainer, styles.marginBottom20]}
         >
-        {button}
+          {button}
         </View>
       );
     }
@@ -305,16 +305,18 @@ class ActivitesDetail extends React.Component {
   }
 
   showValidateButton() {
-    if(this.state.statusId == 1 || this.state.statusId == null) {
-      return <View style={styles.stickyFooter}>
-            <View style={styles.containerButton}>
-              <Button
-                styleButton={styles.validateButton}
-                text="VALIDER"
-                onPress={() => this.handleValidate()}
-              />
-            </View>
-          </View>;
+    if (this.state.statusId == 1 || this.state.statusId == null) {
+      return (
+        <View style={styles.stickyFooter}>
+          <View style={styles.containerButton}>
+            <Button
+              styleButton={styles.validateButton}
+              text="VALIDER"
+              onPress={() => this.handleValidate()}
+            />
+          </View>
+        </View>
+      );
     }
   }
 
@@ -322,12 +324,12 @@ class ActivitesDetail extends React.Component {
     return (
       <View style={styles.mainContainer}>
         <ScrollView style={styles.scrollViewBody}>
-
           {/*Le containerTitre est remplacé par ce code spécifique pour pouvoir mettre un footer persistent*/}
           <View style={styles.ContainerHeader}>
             <TouchableHighlight
               style={styles.MenuIconLink}
-              onPress={() => this.props.navigation.dispatch(NavigationActions.back()) }
+              onPress={() =>
+                this.props.navigation.dispatch(NavigationActions.back())}
             >
               <Image
                 style={styles.MenuIcon}
@@ -353,11 +355,9 @@ class ActivitesDetail extends React.Component {
               {this.renderActiviteButtons()}
             </View>
           </View>
+        </ScrollView>
 
-          </ScrollView>
-
-          {this.showValidateButton()}
-
+        {this.showValidateButton()}
       </View>
     );
   }

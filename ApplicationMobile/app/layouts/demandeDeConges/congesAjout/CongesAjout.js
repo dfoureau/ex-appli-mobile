@@ -50,7 +50,7 @@ class CongesAjout extends React.Component {
   // Récupération des paramètres de navigation
   static navigationOptions = ({ navigation }) => ({
     numDemande: navigation.state.params.numDemande,
-    parent: navigation.state.params.parent
+    parent: navigation.state.params.parent,
   });
 
   setInitialValues() {
@@ -82,29 +82,28 @@ class CongesAjout extends React.Component {
       numDemande: params.numDemande,
       isReady: false,
       //  WSLinkTypeAbs: "http://localhost:8000/conges/typesabsences",
-			WSLinkTypeAbs: configurationAppli.apiURL + "conges/typesabsences",
-			arrTypeAbs: [],
+      WSLinkTypeAbs: configurationAppli.apiURL + "conges/typesabsences",
+      arrTypeAbs: [],
     };
   }
 
   // Retourne les types absences congés
-	getTypesAbsences() {
-      fetch(this.state.WSLinkTypeAbs)
-			.then(function(response) {
-				if (response.status >= 400) {
+  getTypesAbsences() {
+    fetch(this.state.WSLinkTypeAbs)
+      .then(function(response) {
+        if (response.status >= 400) {
           console.log("TypesAbsences : Bad response from server");
-					return Promise.resolve([])
-				}
-        else {
+          return Promise.resolve([]);
+        } else {
           return response.json();
         }
-			})
-      .then((res) => {
+      })
+      .then(res => {
         this.setState({
-          arrTypeAbs: res
-        })
+          arrTypeAbs: res,
+        });
       });
-	}
+  }
 
   componentWillMount() {
     var that = this;
@@ -129,10 +128,10 @@ class CongesAjout extends React.Component {
     var that = this;
 
     fetch(this.state.WSLinkPeriode + numDemande, {
-      method: 'GET',
-      headers: this.state.fetchHeaders
+      method: "GET",
+      headers: this.state.fetchHeaders,
     })
-    .then(function(response) {
+      .then(function(response) {
         if (response.status >= 400) {
           that.setState({
             periods: [],
@@ -178,7 +177,6 @@ class CongesAjout extends React.Component {
     });
   }
 
-
   /**
    * Supprime la demande de conges
    * @return {[type]} [description]
@@ -187,33 +185,32 @@ class CongesAjout extends React.Component {
     const navigation = this.props.navigation;
 
     const numDemande = navigation.state.params.numDemande,
-          idUser = configurationAppli.userID;
+      idUser = configurationAppli.userID;
     showLoading();
-    fetch(this.state.WSLinkDelete + '/' + idUser + '/' + numDemande, {
-      method: 'DELETE',
-      headers: this.state.fetchHeaders
+    fetch(this.state.WSLinkDelete + "/" + idUser + "/" + numDemande, {
+      method: "DELETE",
+      headers: this.state.fetchHeaders,
     })
-    .then((response) => {
-      return Promise.all([response.status, response.json()]);
-    })
-    .then((res) => {
-      hideLoading();
-      let [status, body] = res;
+      .then(response => {
+        return Promise.all([response.status, response.json()]);
+      })
+      .then(res => {
+        hideLoading();
+        let [status, body] = res;
 
-      let success = status == 200;
-      showToast( (success ? "Succès" : "Erreur") + "\n" +  body.message );
+        let success = status == 200;
+        showToast((success ? "Succès" : "Erreur") + "\n" + body.message);
 
-      // On redirige vers la page précédente uniquement en cas de succès
-      if (success) {
-        navigation.state.params.parent.reloadDemandesConges();
-        navigation.dispatch(NavigationActions.back());
-      }
-    })
-    .catch(err => console.log(err));
+        // On redirige vers la page précédente uniquement en cas de succès
+        if (success) {
+          navigation.state.params.parent.reloadDemandesConges();
+          navigation.dispatch(NavigationActions.back());
+        }
+      })
+      .catch(err => console.log(err));
   }
 
-
-/**
+  /**
  * Vérifie qu'un tableau de périodes est valide :
  * - Pas d'inclusions de périodes
  * - Pas de chevauchement de jours ouvrés sur la période
@@ -221,146 +218,153 @@ class CongesAjout extends React.Component {
  * @param  {Array} periodes  Le tableau des périodes à vérifier
  * @return {[Boolean, String]}    Tableau à 2 éléments : Un Boolean (true si les périodes sont valides, false sinon), et une String pour donner la raison de la
  */
-checkPeriodes(periodes) {
-  let isValid = true,
+  checkPeriodes(periodes) {
+    let isValid = true,
       reason = "";
 
-  // On parcourt le tableau des périodes, et on compare les périodes 2 à 2
-  let index = 0;
-  while (isValid && index < periodes.length -1) {
-  // for(let i = 0; i<periodes.length -1; i++) {
-    let periode1 = periodes[index],
-        periode2 = periodes[index+1];
+    // On parcourt le tableau des périodes, et on compare les périodes 2 à 2
+    let index = 0;
+    while (isValid && index < periodes.length - 1) {
+      // for(let i = 0; i<periodes.length -1; i++) {
+      let periode1 = periodes[index],
+        periode2 = periodes[index + 1];
 
-      let debut1 = moment(periode1.dateDu, 'YYYY-MM-DD HH:mm:ss'),
-          debut2 = moment(periode2.dateDu, 'YYYY-MM-DD HH:mm:ss'),
-          fin1   = moment(periode1.dateAu, 'YYYY-MM-DD HH:mm:ss'),
-          fin2   = moment(periode2.dateAu, 'YYYY-MM-DD HH:mm:ss');
+      let debut1 = moment(periode1.dateDu, "YYYY-MM-DD HH:mm:ss"),
+        debut2 = moment(periode2.dateDu, "YYYY-MM-DD HH:mm:ss"),
+        fin1 = moment(periode1.dateAu, "YYYY-MM-DD HH:mm:ss"),
+        fin2 = moment(periode2.dateAu, "YYYY-MM-DD HH:mm:ss");
 
-    // Détection du tri et des inclusions
-    if (debut2.isSameOrBefore(debut1) || fin2.isSameOrBefore(fin1)) {
+      // Détection du tri et des inclusions
+      if (debut2.isSameOrBefore(debut1) || fin2.isSameOrBefore(fin1)) {
         isValid = false;
-        reason = "Le tableau des périodes n'est pas trié ou contient des inclusions";
-    }
-    // Détection des chevauchements
-    else if (debut2.isBefore(fin1)) {
+        reason =
+          "Le tableau des périodes n'est pas trié ou contient des inclusions";
+      } else if (debut2.isBefore(fin1)) {
+        // Détection des chevauchements
         // possibilité de chevauchement. On prend tous les jours compris entre debut2 et fin1, et on regarde s'il y a des jours ouvrés entre les 2 dates
         let iterationDate = debut2.clone();
 
-        while(isValid && iterationDate.isSameOrBefore(fin1)) {
-          if (iterationDate.day() > 0 && iterationDate.day() < 6 && !iterationDate.isFerie()) {
+        while (isValid && iterationDate.isSameOrBefore(fin1)) {
+          if (
+            iterationDate.day() > 0 &&
+            iterationDate.day() < 6 &&
+            !iterationDate.isFerie()
+          ) {
             isValid = false;
             reason = "Le tableau des périodes contient des chevauchements";
-          }
-          else {
-            iterationDate.add(1, 'days');
+          } else {
+            iterationDate.add(1, "days");
           }
         }
-    }
-    else if (debut2.diff(fin1, 'hours') > 1) {
-      // Détection des trous.
-      // On fait une différence en heures pour éviter de traiter le cas normal
-      // où la date de fin est à 23:59:59 et la date de début le jour suivant à 00:00:00
-      let iterationDate = fin1.clone();
+      } else if (debut2.diff(fin1, "hours") > 1) {
+        // Détection des trous.
+        // On fait une différence en heures pour éviter de traiter le cas normal
+        // où la date de fin est à 23:59:59 et la date de début le jour suivant à 00:00:00
+        let iterationDate = fin1.clone();
 
-      while (isValid && iterationDate.isSameOrBefore(debut2)) {
-        if (iterationDate.day() > 0 && iterationDate.day() < 6 && !iterationDate.isFerie()) {
-          isValid = false;
-          reason = "Les demandes de congés doivent être consécutives ou séparées par le week end ou un jour férié";
-        }
-        else {
-          iterationDate.add(1, 'days');
+        while (isValid && iterationDate.isSameOrBefore(debut2)) {
+          if (
+            iterationDate.day() > 0 &&
+            iterationDate.day() < 6 &&
+            !iterationDate.isFerie()
+          ) {
+            isValid = false;
+            reason =
+              "Les demandes de congés doivent être consécutives ou séparées par le week end ou un jour férié";
+          } else {
+            iterationDate.add(1, "days");
+          }
         }
       }
+      index++;
     }
-    index ++;
+
+    return [isValid, reason];
   }
 
-  return [isValid, reason];
-}
-
-
-/**
+  /**
  * Sauvegarde une demande de conges, en fonction du statusId :
  * - 0 : BROUILLON
  * - 1 : Demande de validation
  * @param  {[type]} $statusId [description]
  * @return {[type]}           [description]
  */
-saveConge($statusId) {
-  if ($statusId != 0 && $statusId != 1) {
-    showToast("Une erreur s'est produite");
-    return;
-  }
+  saveConge($statusId) {
+    if ($statusId != 0 && $statusId != 1) {
+      showToast("Une erreur s'est produite");
+      return;
+    }
 
-  let [isValid, reason] = this.checkPeriodes(this.state.periods);
+    let [isValid, reason] = this.checkPeriodes(this.state.periods);
 
-  if (isValid) {
-    showLoading("Sauvegarde de la demande en cours...");
-    const navigation = this.props.navigation;
-    const method = this.state.numDemande == null ? 'POST' : 'PUT';
-    const url = this.state.WSLinkCreate + (method == 'POST' ? '' : '/' + configurationAppli.userID + '/' + this.state.numDemande);
+    if (isValid) {
+      showLoading("Sauvegarde de la demande en cours...");
+      const navigation = this.props.navigation;
+      const method = this.state.numDemande == null ? "POST" : "PUT";
+      const url =
+        this.state.WSLinkCreate +
+        (method == "POST"
+          ? ""
+          : "/" + configurationAppli.userID + "/" + this.state.numDemande);
 
-    let arrPeriodes = [];
-    this.state.periods.map((periode, index) => {
-      arrPeriodes.push({
-        numLigne: index +1 ,
-        dateDebut: periode.dateDu,
-        dateFin: periode.dateAu,
-        nbJours: parseFloat(periode.nbJour).toFixed(1),
-        typeabs: parseInt(periode.typeabs),
+      let arrPeriodes = [];
+      this.state.periods.map((periode, index) => {
+        arrPeriodes.push({
+          numLigne: index + 1,
+          dateDebut: periode.dateDu,
+          dateFin: periode.dateAu,
+          nbJours: parseFloat(periode.nbJour).toFixed(1),
+          typeabs: parseInt(periode.typeabs),
+        });
       });
-    });
 
-    const body = {
-      etat: $statusId,
-      idUser: configurationAppli.userID,
-      dateEtat: moment().format("YYYY-MM-DD HH:mm:ss"),
-      lignesDemandes: arrPeriodes,
-    }
+      const body = {
+        etat: $statusId,
+        idUser: configurationAppli.userID,
+        dateEtat: moment().format("YYYY-MM-DD HH:mm:ss"),
+        lignesDemandes: arrPeriodes,
+      };
 
-    if (this.state.numDemande != null) {
-      body.numDemande = this.state.numDemande;
-    }
-
-    fetch(url, {
-      method: method,
-      headers: this.state.fetchHeaders,
-      body: JSON.stringify(body)
-    })
-    .then((response) => {
-      return Promise.all([Promise.resolve(response.status), response.json()])
-    })
-    .then((res) => {
-      hideLoading();
-      const [status, body] = res;
-      const success = (status == 200);
-
-      showToast((success ? "Succès" : "Erreur") + "\n" + body.message);
-
-      if (success) {
-        navigation.state.params.parent.reloadDemandesConges();
-        navigation.dispatch(NavigationActions.back());
+      if (this.state.numDemande != null) {
+        body.numDemande = this.state.numDemande;
       }
-    })
-    .catch(err => {
-      hideLoading();
-      showToast("Une erreur est survenue.");
-      console.log(err);
-    });
-  }
-  else {
-    showToast("Erreur\n" + reason);
-  }
 
-}
+      fetch(url, {
+        method: method,
+        headers: this.state.fetchHeaders,
+        body: JSON.stringify(body),
+      })
+        .then(response => {
+          return Promise.all([
+            Promise.resolve(response.status),
+            response.json(),
+          ]);
+        })
+        .then(res => {
+          hideLoading();
+          const [status, body] = res;
+          const success = status == 200;
+
+          showToast((success ? "Succès" : "Erreur") + "\n" + body.message);
+
+          if (success) {
+            navigation.state.params.parent.reloadDemandesConges();
+            navigation.dispatch(NavigationActions.back());
+          }
+        })
+        .catch(err => {
+          hideLoading();
+          showToast("Une erreur est survenue.");
+          console.log(err);
+        });
+    } else {
+      showToast("Erreur\n" + reason);
+    }
+  }
 
   getRows(tab) {
     return tab.map((row, i) => (
-      <TouchableOpacity
-        key={i}
-        onPress={() => this.modifyPeriod(i, false)}
-      >
+      <TouchableOpacity key={i} onPress={() => this.modifyPeriod(i, false)}>
         <Row
           style={[style.row, i % 2 && { backgroundColor: "#FFFFFF" }]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}
@@ -384,7 +388,7 @@ saveConge($statusId) {
   }
 
   showDeleteButton() {
-    if(this.state.statusId == 0) {
+    if (this.state.statusId == 0) {
       return (
         <Button
           buttonStyles={style.deleteButton}
@@ -394,8 +398,8 @@ saveConge($statusId) {
               "Suppression",
               "Etes-vous sûr de vouloir supprimer le congé ?",
               [
-              { text: "Non", onPress: () => console.log("Cancel!") },
-              { text: "Oui", onPress: () => this.deleteConge() },
+                { text: "Non", onPress: () => console.log("Cancel!") },
+                { text: "Oui", onPress: () => this.deleteConge() },
               ]
             )}
         />

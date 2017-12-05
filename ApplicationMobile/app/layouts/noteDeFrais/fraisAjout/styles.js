@@ -109,7 +109,7 @@ export default StyleSheet.create({
     fontSize: 12,
     color: "#000000",
     textAlign: "center",
-    flex: 1
+    flex: 1,
   },
   //Boutons
   containerButtons: {

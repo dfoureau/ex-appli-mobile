@@ -10,6 +10,11 @@ import {
 import propTypes from "prop-types";
 import styles from "./styles";
 
+import configurationAppli from "../../configuration/Configuration";
+import configAccueil from "../../configuration/ConfigAccueil";
+import configNews from "../../configuration/ConfigNews";
+import configAnnuaire from "../../configuration/ConfigAnnuaire";
+
 var { height, width } = Dimensions.get("window");
 
 class ContainerHeader extends Component {
@@ -63,6 +68,14 @@ class ContainerHeader extends Component {
         {news}
       </Text>
     ) : null;
+  }
+
+  deconnexion() {
+    configurationAppli.clean();
+    configNews.clean();
+    configAccueil.clean();
+    configAnnuaire.clean();
+    this.afficherEcran("Connexion");
   }
 
   render() {
@@ -168,6 +181,19 @@ class ContainerHeader extends Component {
                 source={require("../../images/icons/CogIcon.png")}
               />
               <Text style={styles.TextItemMenu}>Rapporter une anomalie</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.ItemMenu}
+            onPress={() => this.deconnexion()}
+          >
+            <View style={styles.ItemMenuView}>
+              <Image
+                style={styles.IconItemMenu}
+                source={require("../../images/icons/logout.png")}
+              />
+              <Text style={styles.TextItemMenu}>Déconnexion</Text>
             </View>
           </TouchableOpacity>
 

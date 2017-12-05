@@ -57,7 +57,7 @@ export default StyleSheet.create({
   btnChoixClicked: {
     backgroundColor: "#99C6E7",
   },
-  
+
   activitesText: {
     fontWeight: "400",
     fontSize: 15.5,
@@ -82,8 +82,8 @@ export default StyleSheet.create({
     flex: 0.1,
     borderColor: "#355A86",
     borderWidth: 1,
-    alignItems:'center',
-    justifyContent:'center'
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   scrollViewBody: {

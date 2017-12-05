@@ -29,10 +29,9 @@ export class Panel extends Component {
   _setMinHeight(event) {
     if (this.state.expanded) {
       this.setState({
-        minHeight: event.nativeEvent.layout.height
+        minHeight: event.nativeEvent.layout.height,
       });
-    }
-    else {
+    } else {
       this.setState({
         minHeight: event.nativeEvent.layout.height,
         animation: new Animated.Value(event.nativeEvent.layout.height),

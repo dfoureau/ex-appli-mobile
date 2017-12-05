@@ -65,7 +65,7 @@ class FraisListe extends React.Component {
       idUser: id,
       month: month,
       year: year,
-      parent: this
+      parent: this,
     });
   }
 
@@ -82,8 +82,11 @@ class FraisListe extends React.Component {
 
     var that = this;
     // this.state.year = _annee;
-    fetch(this.state.webServiceLien + _annee + "/" + configurationAppli.userID, this.state.obj)
-    .then(function(response) {
+    fetch(
+      this.state.webServiceLien + _annee + "/" + configurationAppli.userID,
+      this.state.obj
+    )
+      .then(function(response) {
         if (response.status >= 400) {
           that.setState({
             data: [],
@@ -92,9 +95,8 @@ class FraisListe extends React.Component {
             isData: false,
             year: _annee,
           });
-          return {isEmpty: true}
-        }
-        else {
+          return { isEmpty: true };
+        } else {
           return response.json();
         }
       })
@@ -112,7 +114,7 @@ class FraisListe extends React.Component {
             monthsWithNDF: monthsWithNDF,
             isReady: true,
             isData: true,
-            year: _annee
+            year: _annee,
           });
         }
       });
@@ -191,7 +193,15 @@ class FraisListe extends React.Component {
                 </View>
                 <View style={style.containerButton}>
                   {/* Le bouton AJOUTER renvoie en fait vers la fonction getNDF, qui pointe sur la date courante*/}
-                  <Button text="AJOUTER" onPress={() => this.getNDF(configurationAppli.userID, moment().month() +1, moment().year())} />
+                  <Button
+                    text="AJOUTER"
+                    onPress={() =>
+                      this.getNDF(
+                        configurationAppli.userID,
+                        moment().month() + 1,
+                        moment().year()
+                      )}
+                  />
                 </View>
               </View>
             </View>
@@ -211,7 +221,10 @@ class FraisListe extends React.Component {
                       <View style={style.containerList}>
                         <View style={style.containerPeriod}>
                           <Text style={style.periodText}>
-                            {moment({month: item.mois -1, year: item.annee}).format("MMMM YYYY")}
+                            {moment({
+                              month: item.mois - 1,
+                              year: item.annee,
+                            }).format("MMMM YYYY")}
                           </Text>
                           <View style={style.containerIcon}>
                             <Image
@@ -233,7 +246,10 @@ class FraisListe extends React.Component {
                             {this.checkItem(item) == true ? (
                               <Text>
                                 {" "}
-                                par {item.valideur} le {moment(item.dateactionetat).format("DD/MM/YYYY")}
+                                par {item.valideur} le{" "}
+                                {moment(item.dateactionetat).format(
+                                  "DD/MM/YYYY"
+                                )}
                               </Text>
                             ) : null}
                           </Text>
