@@ -49,7 +49,7 @@ class APropos extends React.Component {
               Tous droits réservés &copy; 2017 Cat-Amania
             </Text>
 
-            <Text style={Style.texte}>Version : 1.0.0 </Text>
+            <Text style={Style.texte}>Version : 1.0.0 BETA</Text>
 
             <TouchableHighlight
               underlayColor="white"
