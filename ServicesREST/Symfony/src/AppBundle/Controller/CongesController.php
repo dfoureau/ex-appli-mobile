@@ -226,9 +226,9 @@ class CongesController extends Controller
                 . "WHERE idUser = ${idUser} "
                 . "AND etat IN (1, 2) "
                 . "AND ("
-                . "( dateDu <= '${dateMin}' AND '${dateMin}' <= dateAu ) "
+                . "( dateDu <= '${dateMin}' AND '${dateMin}' < dateAu ) "
                 . "OR "
-                . "( '${dateMin}' <= dateDu AND dateDu <= '${dateMax}' ) "
+                . "( '${dateMin}' <= dateDu AND dateDu < '${dateMax}' ) "
                 . " )";
 
         $query = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
