@@ -128,11 +128,11 @@ class AjoutCra extends React.Component {
     let travaille = 0;
     // On cherche le jour dans jourouvre, puis dans jourwe
     let typeAct = this.state.activitesListe.jourouvre.find(element => {
-      return element.code == code;
+      return element.code.replace(',', '.') == code.replace(',', '.');
     });
     if (typeAct == undefined) {
       typeAct = this.state.activitesListe.jourwe.find(element => {
-        return element.code == code;
+        return element.code.replace(',', '.') == code.replace(',', '.');
       });
     }
     if (typeAct == undefined) {
