@@ -10,11 +10,22 @@ import {
   ScrollView,
 } from "react-native";
 
-import { Row } from "react-native-table-component";
+import {
+  showToast,
+  showNotification,
+  showLoading,
+  hideLoading,
+  hide,
+} from "react-native-notifyer";
+
+import {
+  Row,
+} from "react-native-table-component";
 
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "../../../styles/Styles";
 import moment from "moment";
+import feries from "moment-ferie-fr";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
@@ -29,10 +40,6 @@ import styles from "./styles";
 
 import configurationAppli from "../../../configuration/Configuration";
 
-//import service from "../../../realm/service";
-
-const ITEMCRA_SCHEMA = "ItemCRA";
-
 class ActivitesDetail extends React.Component {
   constructor(props) {
     super(props);
@@ -46,27 +53,44 @@ class ActivitesDetail extends React.Component {
 
   setInitialValues() {
     const { params } = this.props.navigation.state;
+    const parent = params.parent;
 
-    var parent = params.parent;
+    const calendarDateFormat = "YYYY-MM-DD";
 
-    let dayDate = moment(params.date, "DD/MM/YYYY");
-    let dayNumber = dayDate.day();
+    let calendarDate = null,
+        calendarMinDate = null,
+        calendarMaxDate = null;
+
+
     let activitesListe = [];
 
-    if (dayNumber == 0 || dayNumber == 6) {
-      // Jours en weekend, Dimanche ou Samedi
-      activitesListe = parent.state.activitesListe.jourwe;
-    } else {
-      // Jours en semaine
+    if (params.date != undefined && params.date != null) {
+      let dayDate = moment(params.date, "DD/MM/YYYY");
+      let dayNumber = dayDate.day();
+      if (dayNumber == 0 || dayNumber == 6 || dayDate.isFerie()) {
+        // Jours en weekend, Dimanche ou Samedi
+        activitesListe = parent.state.activitesListe.jourwe;
+      } else {
+        // Jours en semaine
+        activitesListe = parent.state.activitesListe.jourouvre;
+      }
+    }
+    else {
+      // Cas d'une période
+      const date = moment({year: parent.state.yearSelected, month: parent.state.monthSelected -1});
+
+      calendarDate = date.format(calendarDateFormat);
+      calendarMinDate = date.startOf('month').format(calendarDateFormat);
+      calendarMaxDate = date.endOf('month').format(calendarDateFormat);
+
       activitesListe = parent.state.activitesListe.jourouvre;
     }
-
-    let tmp = parent.state.listItemsCRA[params.line];
 
     this.state = {
       title: "Détails jour",
       date: params.date,
-      linesToChange: [params.line],
+      linesToChange: params.line ? [params.line] : [],
+      isPeriod: (params.line == undefined || params.line == null),
       activitesListe: activitesListe,
       activiteClicked: { code: params.activite, label: params.activite },
       webServiceLien1: configurationAppli.apiURL + "CRA/typesactivites",
@@ -77,30 +101,81 @@ class ActivitesDetail extends React.Component {
         },
       },
       statusId: parent.state.statusId,
+      calendarDate: calendarDate,
+      calendarMinDate: calendarMinDate,
+      calendarMaxDate: calendarMaxDate,
+      calendarDateFormat: calendarDateFormat
     };
   }
 
-  choixActivite = activite => {
-    // Change le bouton sélectionné
-    var tmp = this.state;
-    tmp.activiteClicked = activite;
-    this.setState(tmp);
-  };
+  /**
+   * Vérifie si un jour donné est compatible avec le code sélectionné
+   * On renvoie false si aucun code n'est sélectionné
+   * @param  {[type]} day [description]
+   * @return {[type]}     [description]
+   */
+  checkDay(day) {
+    let code = this.state.activiteClicked.code;
+
+    if (code == "" || code == undefined ||code == null) {
+      return false;
+    }
+    else {
+      const parent = this.props.navigation.state.params.parent;
+      const codesOuvres = parent.state.activitesListe.jourouvre;
+      const codesWE     = parent.state.activitesListe.jourwe;
+
+      let date = moment({
+        year: parent.state.yearSelected,
+        month: parent.state.monthSelected -1,
+        day: day
+      });
+
+      let index = -1;
+      if (date.day() > 0 && date.day() < 6 && !date.isFerie()) {
+
+        index = codesOuvres.findIndex((item) => {
+          return Boolean(item.code == code);
+        })
+      }
+      else {
+        index = codesWE.findIndex((item) => {
+          return item.code == code;
+        })
+      }
+
+      if (index >= 0) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+  }
 
   handleValidate() {
     const { params } = this.props.navigation.state;
     var parent = params.parent;
 
-    let listItemsCRA = Array.from(parent.state.listItemsCRA);
+    // En cas de période, on parcourt tous les jours sélectionnés, et on vérifie
+    // qu'ils ont tous un code valide.
+    let date = moment(this.state.calendarDate, this.state.calendarDateFormat);
 
-    listItemsCRA[this.state.linesToChange] = {
-      startDate: this.state.date,
-      actType: this.state.activiteClicked.code,
-    };
+    let codeOk = this.state.linesToChange.every((item) => {
+      return this.checkDay(item +1)
+    })
 
-    parent.setState({ listItemsCRA: listItemsCRA }, () => {
-      this.props.navigation.dispatch(NavigationActions.back());
-    }); //on retourne à la page précédente qui à été modifié
+    if (codeOk) {
+      let listItemsCRA = Array.from(parent.state.listItemsCRA);
+
+      for (item of this.state.linesToChange) {
+        listItemsCRA[item].actType = this.state.activiteClicked.code;
+      }
+      parent.setState({listItemsCRA: listItemsCRA},()=>{ this.props.navigation.dispatch(NavigationActions.back()); }); //on retourne à la page précédente qui à été modifié
+    }
+    else {
+      showToast("Le code choisi est incompatible avec certains jours de la période.");
+    }
   }
 
   // Gère le rendu des boutons sur plusieurs lignes, et gère le toggle
@@ -132,7 +207,11 @@ class ActivitesDetail extends React.Component {
           button.push(
             <View key={nb}>
               <TouchableOpacity
-                onPress={() => this.choixActivite(activite)}
+                onPress={() => {
+                  this.setState({
+                      activiteClicked: activite
+                  });
+                }}
                 style={styleButton}
               >
                 <Text style={styles.activitesText}>{code}</Text>
@@ -164,19 +243,25 @@ class ActivitesDetail extends React.Component {
       //Suppression d'une date du tableau
       set.delete(index);
     }
-    this.state.linesToChange = [...set];
-    this.forceUpdate();
+    this.setState({
+      linesToChange: [...set]
+    });
   }
 
   convertDates() {
     //Converti les dates selectionnees stockees sous forme de tableau en objet
     let datesObject = {};
-    this.state.linesToChange.forEach(date => {
-      datesObject[date + 1] = [
-        { startingDay: true, color: "#355A86" },
-        { endingDay: true, color: "#355A86", textColor: "#ffff" },
+    let currentDate = moment(this.state.calendarDate, this.state.calendarDateFormat);
+    this.state.linesToChange.forEach(index => {
+
+      let color = (this.checkDay(index +1, this.state.activiteClicked.code)) ? "#355A86" : "#f44242";
+
+      datesObject[currentDate.date(index +1).format(this.state.calendarDateFormat)] = [
+        { startingDay: true, color: color },
+        { endingDay: true, color: color, textColor: "#ffff" },
       ];
     });
+
     return datesObject;
   }
 
@@ -186,6 +271,10 @@ class ActivitesDetail extends React.Component {
       ret = (
         <View style={styles.containerCalendar}>
           <Calendar
+            current={this.state.calendarDate}
+            minDate={this.state.calendarMinDate}
+            maxDate={this.state.calendarMaxDate}
+            firstDay={1}
             hideArrows={true}
             markedDates={this.convertDates()}
             markingType={"interactive"}

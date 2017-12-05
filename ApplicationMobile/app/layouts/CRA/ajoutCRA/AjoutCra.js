@@ -531,7 +531,8 @@ class AjoutCra extends React.Component {
 
   modifyPeriodeCRA() {
     this.props.navigation.navigate("ActivitesDetail", {
-      line: -1,
+      line: null,
+      date: null,
       parent: this,
     });
   }
