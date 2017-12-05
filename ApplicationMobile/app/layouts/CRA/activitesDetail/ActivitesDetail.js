@@ -65,6 +65,7 @@ class ActivitesDetail extends React.Component {
 
     let tmp = parent.state.listItemsCRA[params.line];
 
+
     this.state = {
       title: "Détails jour",
       date: params.date,
@@ -78,6 +79,7 @@ class ActivitesDetail extends React.Component {
           Authorization: "Bearer " + configurationAppli.userToken,
         },
       },
+      statusId: parent.state.statusId,
     };
   }
 
@@ -214,6 +216,20 @@ class ActivitesDetail extends React.Component {
       else return <Text style={styles.texteLabel}>{activite.code}</Text>;
   }
 
+  showValidateButton() {
+    if(this.state.statusId == 1 || this.state.statusId == null) {
+      return <View style={styles.stickyFooter}>
+            <View style={styles.containerButton}>
+              <Button
+                styleButton={styles.validateButton}
+                text="VALIDER"
+                onPress={() => this.handleValidate()}
+              />
+            </View>
+          </View>;
+    }
+  }
+
   render() {
     return (
       <View style={styles.mainContainer}>
@@ -252,15 +268,7 @@ class ActivitesDetail extends React.Component {
 
           </ScrollView>
 
-          <View style={styles.stickyFooter}>
-            <View style={styles.containerButton}>
-              <Button
-                styleButton={styles.validateButton}
-                text="VALIDER"
-                onPress={() => this.handleValidate()}
-              />
-            </View>
-          </View>
+          {this.showValidateButton()}
 
       </View>
     );

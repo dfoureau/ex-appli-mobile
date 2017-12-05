@@ -616,6 +616,7 @@ newCraPicker() {
             <View style={style.container}>
 
               {this.state.newCra  &&
+                <View style={style.container1}>
                 <View style={style.containerPicker}>
                   <Picker
                     style={{ width: 160 }}
@@ -627,6 +628,7 @@ newCraPicker() {
                   >
                     {this.newCraPicker()}
                   </Picker>
+                </View>
                 </View>
               }
 
