@@ -11,6 +11,14 @@ import {
 } from "react-native";
 
 import {
+  showToast,
+  showNotification,
+  showLoading,
+  hideLoading,
+  hide,
+} from "react-native-notifyer";
+
+import {
   Row,
 } from "react-native-table-component";
 
@@ -48,7 +56,7 @@ class ActivitesDetail extends React.Component {
     const parent = params.parent;
 
     const calendarDateFormat = "YYYY-MM-DD";
-    
+
     let calendarDate = null,
         calendarMinDate = null,
         calendarMaxDate = null;
@@ -69,7 +77,6 @@ class ActivitesDetail extends React.Component {
     }
     else {
       // Cas d'une période
-      console.log("Période !");
       const date = moment({year: parent.state.yearSelected, month: parent.state.monthSelected -1});
 
       calendarDate = date.format(calendarDateFormat);
@@ -101,18 +108,74 @@ class ActivitesDetail extends React.Component {
     };
   }
 
+  /**
+   * Vérifie si un jour donné est compatible avec le code sélectionné
+   * On renvoie false si aucun code n'est sélectionné
+   * @param  {[type]} day [description]
+   * @return {[type]}     [description]
+   */
+  checkDay(day) {
+    let code = this.state.activiteClicked.code;
+
+    if (code == "" || code == undefined ||code == null) {
+      return false;
+    }
+    else {
+      const parent = this.props.navigation.state.params.parent;
+      const codesOuvres = parent.state.activitesListe.jourouvre;
+      const codesWE     = parent.state.activitesListe.jourwe;
+
+      let date = moment({
+        year: parent.state.yearSelected,
+        month: parent.state.monthSelected -1,
+        day: day
+      });
+
+      let index = -1;
+      if (date.day() > 0 && date.day() < 6 && !date.isFerie()) {
+
+        index = codesOuvres.findIndex((item) => {
+          return Boolean(item.code == code);
+        })
+      }
+      else {
+        index = codesWE.findIndex((item) => {
+          return item.code == code;
+        })
+      }
+
+      if (index >= 0) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+  }
+
   handleValidate() {
     const { params } = this.props.navigation.state;
     var parent = params.parent;
 
-	let listItemsCRA = Array.from(parent.state.listItemsCRA);
+    // En cas de période, on parcourt tous les jours sélectionnés, et on vérifie
+    // qu'ils ont tous un code valide.
+    let date = moment(this.state.calendarDate, this.state.calendarDateFormat);
 
-  for (item of this.state.linesToChange) {
-    listItemsCRA[item].actType = this.state.activiteClicked.code;
-  }
+    let codeOk = this.state.linesToChange.every((item) => {
+      return this.checkDay(item +1)
+    })
 
+    if (codeOk) {
+      let listItemsCRA = Array.from(parent.state.listItemsCRA);
 
-	  parent.setState({listItemsCRA: listItemsCRA},()=>{ this.props.navigation.dispatch(NavigationActions.back()); }); //on retourne à la page précédente qui à été modifié
+      for (item of this.state.linesToChange) {
+        listItemsCRA[item].actType = this.state.activiteClicked.code;
+      }
+      parent.setState({listItemsCRA: listItemsCRA},()=>{ this.props.navigation.dispatch(NavigationActions.back()); }); //on retourne à la page précédente qui à été modifié
+    }
+    else {
+      showToast("Le code choisi est incompatible avec certains jours de la période.");
+    }
   }
 
   // Gère le rendu des boutons sur plusieurs lignes, et gère le toggle
@@ -182,9 +245,6 @@ class ActivitesDetail extends React.Component {
     }
     this.setState({
       linesToChange: [...set]
-    }, () => {
-      console.log("LINES  => ");
-      console.log(this.state.linesToChange);
     });
   }
 
@@ -193,9 +253,12 @@ class ActivitesDetail extends React.Component {
     let datesObject = {};
     let currentDate = moment(this.state.calendarDate, this.state.calendarDateFormat);
     this.state.linesToChange.forEach(index => {
+
+      let color = (this.checkDay(index +1, this.state.activiteClicked.code)) ? "#355A86" : "#f44242";
+
       datesObject[currentDate.date(index +1).format(this.state.calendarDateFormat)] = [
-        { startingDay: true, color: "#355A86" },
-        { endingDay: true, color: "#355A86", textColor: "#ffff" },
+        { startingDay: true, color: color },
+        { endingDay: true, color: color, textColor: "#ffff" },
       ];
     });
 
