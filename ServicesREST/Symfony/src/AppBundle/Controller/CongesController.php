@@ -240,7 +240,7 @@ class CongesController extends Controller
         }
       }
 
-      return = array(
+      return array(
         'isValid' => $isValid,
         'errMessage' => $errMessage
       );
