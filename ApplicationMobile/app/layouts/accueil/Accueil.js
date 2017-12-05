@@ -246,10 +246,6 @@ const navigation = StackNavigator({
     screen: Reglages,
     navigationOptions: { header: null },
   },
-  Connexion: {
-    screen: Connexion,
-    navigationOptions: { header: null },
-  },
 });
 
 //Il faut exporteer la na vigation ou bien la classe

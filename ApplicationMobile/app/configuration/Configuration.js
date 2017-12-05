@@ -6,6 +6,11 @@ var configurationAppli = {
   lienMdpOublie:
     "https://espacecollaborateur.cat-amania.com/espacecollaborateur/connexion.php",
   lienSupportJira: "http://jira.svc.cat-amania.com/servicedesk/customer/portal/6",
+  clean() {
+    configurationAppli.userID = null;
+    configurationAppli.userToken = null;
+    configurationAppli.idAgence = null;
+  },
 };
 
 export default configurationAppli;

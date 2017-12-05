@@ -11,6 +11,9 @@ import propTypes from "prop-types";
 import styles from "./styles";
 
 import configurationAppli from "../../configuration/Configuration";
+import configAccueil from "../../configuration/ConfigAccueil";
+import configNews from "../../configuration/ConfigNews";
+import configAnnuaire from "../../configuration/ConfigAnnuaire";
 
 var { height, width } = Dimensions.get("window");
 
@@ -68,9 +71,10 @@ class ContainerHeader extends Component {
   }
 
   deconnexion() {
-    configurationAppli.userID = null;
-    configurationAppli.userToken = null;
-    configurationAppli.idAgence = null;
+    configurationAppli.clean();
+    configNews.clean();
+    configAccueil.clean();
+    configAnnuaire.clean();
     this.afficherEcran("Connexion");
   }
 
