@@ -8,6 +8,10 @@ var configurationAppli = {
     "https://espacecollaborateur.cat-amania.com/espacecollaborateur/connexion.php",
   lienSupportJira:
     "http://jira.svc.cat-amania.com/servicedesk/customer/portal/6",
+  lienAideCRA:
+    "https://espacecollaborateur.cat-amania.com/espacecollaborateur/upload/aide/synthese_CRA.pdf?v=1.2",
+  lienAideConges:
+    "https://espacecollaborateur.cat-amania.com/espacecollaborateur/upload/aide/synthese_conges.pdf?v=1.2",
   clean() {
     configurationAppli.userID = null;
     configurationAppli.userToken = null;

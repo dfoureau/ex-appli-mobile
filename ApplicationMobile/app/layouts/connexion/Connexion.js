@@ -47,6 +47,11 @@ class Connexion extends React.Component {
   }
 
   setInitialValues() {
+    configurationAppli.clean();
+    configNews.clean();
+    configAccueil.clean();
+    configAnnuaire.clean();
+    
     // on vérifie si des paramètres de connexion existent pour l'utilisateur
     var connexionParams =
       service.get(CONNEXION_PARAMS_SCHEMA).length > 0

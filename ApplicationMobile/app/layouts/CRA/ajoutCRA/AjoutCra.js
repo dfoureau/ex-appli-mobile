@@ -8,6 +8,9 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  TouchableHighlight,
+  Image,
+  Linking,
 } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import {
@@ -674,6 +677,25 @@ class AjoutCra extends React.Component {
                   </View>
                 </View>
               )}
+
+              <View style={style.container1}>
+                <TouchableHighlight
+                  underlayColor="white"
+                  onPress={() => Linking.openURL(configurationAppli.lienAideCRA)}
+                >
+                <View>
+                  <View style={style.containerHelpLine}>
+                    <Text style={StyleGeneral.texteLien}>
+                      Aide pour remplir son CRA
+                    </Text>
+                    <Image
+                      style={StyleGeneral.iconeAide}
+                      source={require("../../../images/icons/aide.png")}
+                    />
+                  </View>
+                </View>
+                </TouchableHighlight>
+              </View>
 
               <View style={style.container1}>
                 <View style={style.containerFirstLine}>

@@ -7,6 +7,9 @@ import {
   Alert,
   AsyncStorage,
   ActivityIndicator,
+  TouchableHighlight,
+  Image,
+  Linking,
 } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import {
@@ -451,6 +454,26 @@ class CongesAjout extends React.Component {
           navigation={this.props.navigation}
         >
           <View style={style.container}>
+
+            <View style={style.container1}>
+              <TouchableHighlight
+                underlayColor="white"
+                onPress={() => Linking.openURL(configurationAppli.lienAideConges)}
+              >
+              <View>
+                <View style={style.containerHelpLine}>
+                  <Text style={StyleGeneral.texteLien}>
+                    Récapitulatif des congés
+                  </Text>
+                  <Image
+                    style={StyleGeneral.iconeAide}
+                    source={require("../../../images/icons/aide.png")}
+                  />
+                </View>
+              </View>
+              </TouchableHighlight>
+            </View>
+
             <View style={style.container1}>
               <View style={style.containerStatus}>
                 <Text style={style.text}>Etat : {this.state.status}</Text>
