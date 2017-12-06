@@ -19,6 +19,21 @@ import styles from "./styles";
 
 import Menu from "../menu/Menu";
 
+import moment from "moment";
+
+import configurationAppli from "../../configuration/Configuration";
+import configAccueil from "../../configuration/ConfigAccueil";
+import configNews from "../../configuration/ConfigNews";
+import configAnnuaire from "../../configuration/ConfigAnnuaire";
+
+import {
+  showToast,
+  showNotification,
+  showLoading,
+  hideLoading,
+  hide,
+} from "react-native-notifyer";
+
 var { height, width } = Dimensions.get("window");
 
 export default class ContainerAccueil extends React.Component {
@@ -29,6 +44,12 @@ export default class ContainerAccueil extends React.Component {
       isOpen: false,
       navigationParent: null,
     };
+  }
+
+  componentWillMount() {
+    if (moment().unix() > configurationAppli.expirationToken) {
+      this.deconnexion();
+    }
   }
 
   afficherCloseMenu() {
@@ -57,6 +78,15 @@ export default class ContainerAccueil extends React.Component {
 
   afficherEcranContainer(ecran) {
     this.props.afficherEcran(ecran);
+  }
+
+  deconnexion() {
+    showToast("Token expiré. Veuillez vous reconnecter.");
+    configurationAppli.clean();
+    configNews.clean();
+    configAccueil.clean();
+    configAnnuaire.clean();
+    this.afficherEcranContainer("Connexion");
   }
 
   render() {

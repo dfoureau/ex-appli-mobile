@@ -189,7 +189,6 @@ class AjoutCra extends React.Component {
         }
       }),
     ]).catch(reason => {
-      console.log("Une erreur est survenue : " + reason);
       showToast("Une erreur est survenue.");
       this.props.navigation.dispatch(NavigationActions.back());
     });
