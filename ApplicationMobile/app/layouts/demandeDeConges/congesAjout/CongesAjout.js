@@ -263,9 +263,9 @@ class CongesAjout extends React.Component {
         // Détection des trous.
         // On fait une différence en heures pour éviter de traiter le cas normal
         // où la date de fin est à 23:59:59 et la date de début le jour suivant à 00:00:00
-        let iterationDate = fin1.clone();
+        let iterationDate = fin1.clone().add(1, 'seconds');
 
-        while (isValid && iterationDate.isSameOrBefore(debut2)) {
+        while (isValid && iterationDate.isBefore(debut2)) {
           if (
             iterationDate.day() > 0 &&
             iterationDate.day() < 6 &&
@@ -275,7 +275,7 @@ class CongesAjout extends React.Component {
             reason =
               "Les demandes de congés doivent être consécutives ou séparées par le week end ou un jour férié";
           } else {
-            iterationDate.add(1, "days");
+            iterationDate.add(12, "hours");
           }
         }
       }
