@@ -245,6 +245,40 @@ class CongesController extends Controller
         );
     }
 
+
+/**
+ * Calcule la durée ouvrée d'une période de demande de congés
+ * On itère par demi-journées pour effectuer ce calcul
+ * @param  [type] $periode [description]
+ * @return [type]          [description]
+ */
+protected function calculerDureePeriode($periode) {
+  $debut = $periode['dateDebut'];
+  $fin = $periode['dateFin'];
+  $format = 'Y-m-d H:i:s';
+
+  $dateDebut = DateTime::createFromFormat($format, $periode['dateDebut']);
+  $dateFin = DAtetime::createFromFormat($format, $periode['dateFin']);
+
+  $iterationDate = clone $dateDebut;
+
+  $duree = 0;
+  while ($iterationDate <= $dateFin) {
+    $dayOfWeek = $iterationDate->format('w');
+    $year      = $iterationDate->format('Y');
+    $month     = $iterationDate->format('m');
+    $day       = $iterationDate->format('d');
+
+    if ($dayOfWeek > 0 && $dayOfWeek < 6 && !UtilsController::estJourFerie($day, $month, $year)) {
+      $duree += 0.5;
+    }
+
+    $iterationDate->modify("+12 hours");
+  }
+
+  return $duree;
+}
+
     /**
      * Execute les requetes de creation après vérifiction des parametres
      *
@@ -271,6 +305,11 @@ class CongesController extends Controller
                     'code'    => Response::HTTP_FORBIDDEN,
                 );
             }
+
+          // Calcule la durée en jours ouvrés de chaque période de la demandes de congés
+          foreach($data['lignesDemandes'] as $index => $periode) {
+            $data['lignesDemandes'][$index]['nbJours'] = $this->calculerDureePeriode($periode);
+          }
 
             $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
             $stmt->execute();
