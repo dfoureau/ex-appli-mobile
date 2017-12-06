@@ -680,22 +680,22 @@ class AjoutCra extends React.Component {
               )}
 
               <View style={style.container1}>
-                <View style={style.containerFirstLine}>
-                  <TouchableHighlight
-                    underlayColor="white"
-                    onPress={() => Linking.openURL(configurationAppli.lienAideCRA)}
-                  >
-                  <View>
+                <TouchableHighlight
+                  underlayColor="white"
+                  onPress={() => Linking.openURL(configurationAppli.lienAideCRA)}
+                >
+                <View>
+                  <View style={style.containerHelpLine}>
                     <Text style={StyleGeneral.texteLien}>
                       Aide pour remplir son CRA
                     </Text>
                     <Image
-                      style={StyleGeneral.IconItemMenu}
+                      style={StyleGeneral.iconeAide}
                       source={require("../../../images/icons/aide.png")}
                     />
-                    </View>
-                  </TouchableHighlight>
+                  </View>
                 </View>
+                </TouchableHighlight>
               </View>
 
               <View style={style.container1}>

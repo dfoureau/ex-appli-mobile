@@ -114,4 +114,11 @@ export default StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
   },
+
+  iconeAide: {
+    width: 20,
+    height: 20,
+    marginLeft: 5,
+  },
+
 });
