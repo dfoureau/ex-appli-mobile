@@ -50,8 +50,16 @@ export default StyleSheet.create({
     padding: 2,
   },
 
+  containerHelpLine: {
+    flexDirection: "row",
+    width: width,
+    justifyContent: "center",
+  },
+
   containerFirstLine: {
     flexDirection: "row",
+    marginTop: -3,
+    marginLeft: 9,
   },
 
   containerSecondLine: {
@@ -63,6 +71,7 @@ export default StyleSheet.create({
   containerThirdLine: {
     flexDirection: "row",
     marginTop: -10,
+    marginLeft: 9,
   },
 
   containerFourthLine: {

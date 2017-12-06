@@ -130,4 +130,10 @@ export default StyleSheet.create({
     paddingTop: 3,
     paddingBottom: 3,
   },
+
+  containerHelpLine: {
+    flexDirection: "row",
+    width: width,
+    justifyContent: "center",
+  },
 });
