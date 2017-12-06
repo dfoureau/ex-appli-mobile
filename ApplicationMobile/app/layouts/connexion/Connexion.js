@@ -24,6 +24,8 @@ import Accueil from "../accueil/Accueil";
 import service from "../../realm/service";
 
 import configurationAppli from "../../configuration/Configuration";
+import configAccueil from "../../configuration/ConfigAccueil";
+import configNews from "../../configuration/ConfigNews";
 import configAnnuaire from "../../configuration/ConfigAnnuaire";
 import moment from "moment";
 import jwt_decode from "jwt-decode";
@@ -51,7 +53,7 @@ class Connexion extends React.Component {
     configNews.clean();
     configAccueil.clean();
     configAnnuaire.clean();
-    
+
     // on vérifie si des paramètres de connexion existent pour l'utilisateur
     var connexionParams =
       service.get(CONNEXION_PARAMS_SCHEMA).length > 0
