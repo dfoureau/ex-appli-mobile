@@ -197,8 +197,9 @@ class CongesController extends Controller
             // où fin 1 correspont à 23:59:59 et début 2 à 00:00:00 le lendemain
             elseif ($debut2 > $fin1 && ($debut2->getTimestamp() - $fin1->gettimestamp() > 60)) {
                 $iterationDate = clone $fin1;
+                $iterationDate->modify('+1 seconds'); // On ajoute 1s pour les dates de fin à 23:59:59
 
-                while ($isValid && $iterationDate <= $debut2) {
+                while ($isValid && $iterationDate < $debut2) {
                     $dayOfWeek = $iterationDate->format('w');
                     $year      = $iterationDate->format('Y');
                     $month     = $iterationDate->format('m');
@@ -208,7 +209,7 @@ class CongesController extends Controller
                         $errMessage = "Le tableau des périodes contient des trous";
                     }
 
-                    $iterationDate->modify('+1 days');
+                    $iterationDate->modify('+12 hours');
                 }
             }
             $index++;
