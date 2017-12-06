@@ -26,6 +26,7 @@ import service from "../../realm/service";
 import configurationAppli from "../../configuration/Configuration";
 import configAnnuaire from "../../configuration/ConfigAnnuaire";
 import moment from "moment";
+import jwt_decode from "jwt-decode";
 
 import {
   showToast,
@@ -125,11 +126,17 @@ class Connexion extends React.Component {
     }
 
     if (this.state.isReady === true) {
+      // Décocer le token JWT
+      var tokenDecode = jwt_decode(this.state.data.token);
+      // Expiration - 30 secondes pour éviter les effets de bords
+      var tokenDecodeExpiration = tokenDecode.exp - 30;
+
+      // Enregistrer les données dans l'application, puis naviguer vers la page d'accueil
       configurationAppli.userID = this.state.data.id;
       configurationAppli.userToken = this.state.data.token;
       configurationAppli.idAgence = this.state.data.idAgence;
       configAnnuaire.idAgenceDefaut = this.state.data.idAgence;
-      configurationAppli.expirationToken = moment().unix() + 10;
+      configurationAppli.expirationToken = tokenDecodeExpiration;
       hideLoading();
       BackHandler.removeEventListener("hardwareBackPress", this.backPress);
       this.props.navigation.navigate("Accueil");
