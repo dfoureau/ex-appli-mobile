@@ -1,6 +1,7 @@
 var configurationAppli = {
   userID: null,
   userToken: null,
+  expirationToken: null,
   idAgence: null,
   apiURL: "http://185.57.13.103/rest/web/app_dev.php/",
   lienMdpOublie:
@@ -15,6 +16,7 @@ var configurationAppli = {
     configurationAppli.userID = null;
     configurationAppli.userToken = null;
     configurationAppli.idAgence = null;
+    configurationAppli.expirationToken = null;
   },
 };
 

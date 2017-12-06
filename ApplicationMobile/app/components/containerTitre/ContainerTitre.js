@@ -18,13 +18,21 @@ import styles from "./styles";
 
 import Menu from "../menu/Menu";
 
+import {
+  showToast,
+  showNotification,
+  showLoading,
+  hideLoading,
+  hide,
+} from "react-native-notifyer";
+
 var { height, width } = Dimensions.get("window");
 
 export default class ContainerTitre extends React.Component {
   /**Parametres */
-  static propTypes = {
+  /*static propTypes = {
     title: React.PropTypes.string,
-  };
+  };*/
 
   constructor(props) {
     super(props);

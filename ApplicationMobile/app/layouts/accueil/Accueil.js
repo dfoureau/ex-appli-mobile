@@ -251,5 +251,5 @@ const navigation = StackNavigator({
   },
 });
 
-//Il faut exporteer la na vigation ou bien la classe
+//Il faut exporter la navigation ou bien la classe
 export default navigation;
