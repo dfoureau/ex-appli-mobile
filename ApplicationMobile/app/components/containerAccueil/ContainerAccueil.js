@@ -14,7 +14,6 @@ import {
   Animated,
 } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
-//import style from './Style.js'
 import styles from "./styles";
 
 import Menu from "../menu/Menu";

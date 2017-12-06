@@ -27,7 +27,6 @@ import configurationAppli from "../../configuration/Configuration";
 import configAnnuaire from "../../configuration/ConfigAnnuaire";
 import moment from "moment";
 
-
 import {
   showToast,
   showNotification,
