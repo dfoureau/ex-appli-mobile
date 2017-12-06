@@ -25,6 +25,8 @@ import service from "../../realm/service";
 
 import configurationAppli from "../../configuration/Configuration";
 import configAnnuaire from "../../configuration/ConfigAnnuaire";
+import moment from "moment";
+
 
 import {
   showToast,
@@ -128,6 +130,7 @@ class Connexion extends React.Component {
       configurationAppli.userToken = this.state.data.token;
       configurationAppli.idAgence = this.state.data.idAgence;
       configAnnuaire.idAgenceDefaut = this.state.data.idAgence;
+      configurationAppli.expirationToken = moment().unix() + 10;
       hideLoading();
       BackHandler.removeEventListener("hardwareBackPress", this.backPress);
       this.props.navigation.navigate("Accueil");
