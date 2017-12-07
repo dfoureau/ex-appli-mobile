@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Icon from "react-native-vector-icons/FontAwesome";
 import {
   View,
   Image,
@@ -103,10 +104,7 @@ class ContainerHeader extends Component {
             onPress={() => this.afficherEcran("Accueil")}
           >
             <View style={styles.ItemMenuView}>
-              <Image
-                style={styles.IconItemMenu}
-                source={require("../../images/icons/accueil.png")}
-              />
+              <Icon name="home" size={30} color="#000" />
               <Text style={styles.TextItemMenu}>Accueil</Text>
             </View>
           </TouchableOpacity>
@@ -115,10 +113,7 @@ class ContainerHeader extends Component {
             onPress={() => this.afficherEcran("ActivitesListe")}
           >
             <View style={styles.ItemMenuView}>
-              <Image
-                style={styles.IconItemMenu}
-                source={require("../../images/icons/ActiviteIcon.png")}
-              />
+              <Icon name="briefcase" size={30} color="#000" />
               <Text style={styles.TextItemMenu}>Relevés d'Activité</Text>
             </View>
           </TouchableOpacity>
@@ -127,10 +122,7 @@ class ContainerHeader extends Component {
             onPress={() => this.afficherEcran("FraisListe")}
           >
             <View style={styles.ItemMenuView}>
-              <Image
-                style={styles.IconItemMenu}
-                source={require("../../images/icons/FoodIcon.png")}
-              />
+              <Icon name="cutlery" size={30} color="#000" />
               <Text style={styles.TextItemMenu}>Notes de Frais</Text>
             </View>
           </TouchableOpacity>
@@ -139,10 +131,7 @@ class ContainerHeader extends Component {
             onPress={() => this.afficherEcran("CongesListe")}
           >
             <View style={styles.ItemMenuView}>
-              <Image
-                style={styles.IconItemMenu}
-                source={require("../../images/icons/CongesIcon.png")}
-              />
+              <Icon name="sun-o" size={30} color="#000" />
               <Text style={styles.TextItemMenu}>Congés</Text>
             </View>
           </TouchableOpacity>
@@ -151,10 +140,7 @@ class ContainerHeader extends Component {
             onPress={() => this.afficherEcran("AnnuaireListe")}
           >
             <View style={styles.ItemMenuView}>
-              <Image
-                style={styles.IconItemMenu}
-                source={require("../../images/icons/AnnuaireIcon.png")}
-              />
+              <Icon name="users" size={30} color="#000" />
               <Text style={styles.TextItemMenu}>Annuaire</Text>
             </View>
           </TouchableOpacity>
@@ -163,10 +149,7 @@ class ContainerHeader extends Component {
             onPress={() => this.afficherEcran("News")}
           >
             <View style={styles.ItemMenuView}>
-              <Image
-                style={styles.IconItemMenu}
-                source={require("../../images/icons/calendar.png")}
-              />
+              <Icon name="calendar" size={30} color="#000" />
               <Text style={styles.TextItemMenu}>News</Text>
             </View>
           </TouchableOpacity>
@@ -176,10 +159,7 @@ class ContainerHeader extends Component {
             onPress={() => this.afficherEcran("BugReport")}
           >
             <View style={styles.ItemMenuView}>
-              <Image
-                style={styles.IconItemMenu}
-                source={require("../../images/icons/CogIcon.png")}
-              />
+              <Icon name="bug" size={30} color="#000" />
               <Text style={styles.TextItemMenu}>Rapporter une anomalie</Text>
             </View>
           </TouchableOpacity>
@@ -189,10 +169,7 @@ class ContainerHeader extends Component {
             onPress={() => this.deconnexion()}
           >
             <View style={styles.ItemMenuView}>
-              <Image
-                style={styles.IconItemMenu}
-                source={require("../../images/icons/logout.png")}
-              />
+              <Icon name="sign-out" size={30} color="#000"></Icon>
               <Text style={styles.TextItemMenu}>Déconnexion</Text>
             </View>
           </TouchableOpacity>
@@ -203,10 +180,10 @@ class ContainerHeader extends Component {
           >
             <Text>À Propos</Text>
           </TouchableOpacity>
-          {/* <TouchableOpacity style={[styles.ItemMenu, styles.LastItemMenuRight]} onPress={()=>this.afficherEcran('Reglages')}>							
+          {/* <TouchableOpacity style={[styles.ItemMenu, styles.LastItemMenuRight]} onPress={()=>this.afficherEcran('Reglages')}>
 						<Image style={styles.LastItemMenuIcon}
-								source={require('../../images/icons/CogIcon.png')}
-							/>   
+            source={require('../../images/icons/CogIcon.png')}
+							/>
 					</TouchableOpacity> */}
         </View>
 
