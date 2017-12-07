@@ -68,13 +68,13 @@ class APropos extends React.Component {
             </Text>
 
             <ScrollingMessageView
-              height={100}
-              childrenHeight={80}
+              height={120}
+              childrenHeight={100}
               duration={2000}
-              containerStyle={{ backgroundColor: "transparent" }}
+              containerStyle={{ backgroundColor: "transparent", }}
               childrenStyle={{}}
             >
-              <Text>
+              <Text style={Style.texte}>
                 Zakaria AKLI
                 {"\n"}
                 Jonathan ALAMI
@@ -83,7 +83,7 @@ class APropos extends React.Component {
                 {"\n"}
                 Fabrice CADU
               </Text>
-              <Text>
+              <Text style={Style.texte}>
                 Maxime CHEVALLIER
                 {"\n"}
                 Stéphane DILET
@@ -92,7 +92,7 @@ class APropos extends React.Component {
                 {"\n"}
                 Vianney DUBUS
               </Text>
-              <Text>
+              <Text style={Style.texte}>
                 Célia DUPRAT
                 {"\n"}
                 Axel GALVIER
@@ -101,7 +101,7 @@ class APropos extends React.Component {
                 {"\n"}
                 Franck GAULTIER
               </Text>
-              <Text>
+              <Text style={Style.texte}>
                 Enzo GHEDEBA
                 {"\n"}
                 Salah JAIBER
@@ -110,7 +110,7 @@ class APropos extends React.Component {
                 {"\n"}
                 Rhony LANDRY
               </Text>
-              <Text>
+              <Text style={Style.texte}>
                 Sandrine LAPLACE-TOULOUSE
                 {"\n"}
                 Sophie LIGAN
@@ -119,7 +119,7 @@ class APropos extends React.Component {
                 {"\n"}
                 Ludovic MARMION
               </Text>
-              <Text>
+              <Text style={Style.texte}>
                 Alexis MARTIAL
                 {"\n"}
                 Kathie MARTIN
@@ -128,7 +128,7 @@ class APropos extends React.Component {
                 {"\n"}
                 Samuel MEYER
               </Text>
-              <Text>
+              <Text style={Style.texte}>
                 Etienne MICHEL
                 {"\n"}
                 Valérie MORO
@@ -137,7 +137,7 @@ class APropos extends React.Component {
                 {"\n"}
                 Julien PEREZ
               </Text>
-              <Text>
+              <Text style={Style.texte}>
                 Sylvain PERNOT
                 {"\n"}
                 Julien PINEAU

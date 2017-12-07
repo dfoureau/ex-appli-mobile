@@ -6,6 +6,7 @@ export default StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     textAlign: "justify",
+    color: "#000000",
   },
 
   texteLien: {
