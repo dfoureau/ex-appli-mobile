@@ -391,6 +391,7 @@ class NdfController extends Controller
         $annee  = $data['annee'];
         $etat   = $data['etat']; //Revoir format
 
+        /*
         switch ($data['etat']) {
             case "Brouillon":
                 $etat = 0;
@@ -404,6 +405,7 @@ class NdfController extends Controller
                 return $retour;
                 break;
         }
+        */
 
         //récupérer indemKM depuis table users
         $indemKM = number_format($this->getUserIndemKM($idUser), 3, '.', '');
