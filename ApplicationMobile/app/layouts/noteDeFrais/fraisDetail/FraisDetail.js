@@ -312,17 +312,18 @@ class FraisDetail extends React.Component {
    * où chaque clé est une chaine de caractère représentant une date
    * @return {[type]} [description]
    */
-  convertDates() {
-    //Converti les dates selectionnees stockees sous forme de tableau en objet
-    let datesObject = {};
-    this.state.selectedDatesArray.forEach(date => {
-      datesObject[date] = [
-        { startingDay: true, color: "#355A86" },
-        { endingDay: true, color: "#355A86", textColor: "#ffff" },
-      ];
-    });
-    return datesObject;
-  }
+   convertDates() {
+       //Converti les dates selectionnees stockees sous forme de tableau en objet
+       let datesObject = {};
+       this.state.selectedDatesArray.forEach(date => {
+         datesObject[date] =
+           // { startingDay: true,  },
+           { selected: true, color: "#355A86"}
+         ;
+       });
+       console.log(datesObject);
+       return datesObject;
+     }
 
   showValidateButton() {
     if (this.state.statusId == null || this.state.statusId == 0) {
