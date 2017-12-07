@@ -78,6 +78,7 @@ export default StyleSheet.create({
     fontSize: 16,
     flex: 1,
     marginLeft: 10,
+    color: "#000000",
   },
   itemRow: {
     flex: 1,

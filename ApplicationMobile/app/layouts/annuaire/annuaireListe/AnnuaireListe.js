@@ -19,6 +19,8 @@ import { StackNavigator, NavigationActions } from "react-navigation";
 import styles from "./styles";
 import StyleGeneral from "../../../styles/Styles";
 
+import Icon from "react-native-vector-icons/FontAwesome";
+
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
 import { ContainerHeader } from "../../../components/containerHeader";
@@ -70,10 +72,7 @@ class AnnuaireListe extends React.Component {
     <TouchableHighlight onPress={() => this.afficherContact(item.id)}>
       <View style={styles.item}>
         <View style={styles.itemRow}>
-          <Image
-            style={styles.itemPhoto}
-            source={require("../../../images/imageProfilDefault.png")}
-          />
+          <Icon name="user" size={30} color="#000" />
           <Text style={styles.itemText}>
             {item.nom} {item.prenom}
           </Text>

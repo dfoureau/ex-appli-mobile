@@ -18,6 +18,8 @@ import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "../../../styles/Styles";
 import styles from "./styles";
 
+import Icon from "react-native-vector-icons/FontAwesome";
+
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
 import { ContainerHeader } from "../../../components/containerHeader";
 
@@ -63,10 +65,7 @@ class AnnuaireDetail extends React.Component {
         return (
           <TouchableOpacity onPress={() => Communications.text(tel)}>
             <View>
-              <Image
-                style={styles.icon}
-                source={require("../../../images/icons/bulles.png")}
-              />
+              <Icon name="comment" size={30} color="#000" />
             </View>
           </TouchableOpacity>
         );
@@ -167,10 +166,7 @@ class AnnuaireDetail extends React.Component {
                         )}
                     >
                       <View>
-                        <Image
-                          style={styles.icon}
-                          source={require("../../../images/icons/tel.png")}
-                        />
+                        <Icon name="phone" size={30} color="#000" />
                       </View>
                     </TouchableOpacity>
                   </View>
@@ -201,10 +197,7 @@ class AnnuaireDetail extends React.Component {
                         )}
                     >
                       <View>
-                        <Image
-                          style={styles.icon}
-                          source={require("../../../images/icons/tel.png")}
-                        />
+                        <Icon name="phone" size={30} color="#000" />
                       </View>
                     </TouchableOpacity>
                   </View>
@@ -235,10 +228,7 @@ class AnnuaireDetail extends React.Component {
                         )}
                     >
                       <View>
-                        <Image
-                          style={styles.icon}
-                          source={require("../../../images/icons/email.png")}
-                        />
+                        <Icon name="envelope" size={30} color="#000" />
                       </View>
                     </TouchableOpacity>
                   </View>
@@ -269,10 +259,7 @@ class AnnuaireDetail extends React.Component {
                         )}
                     >
                       <View>
-                        <Image
-                          style={styles.icon}
-                          source={require("../../../images/icons/email.png")}
-                        />
+                        <Icon name="envelope" size={30} color="#000" />
                       </View>
                     </TouchableOpacity>
                   </View>

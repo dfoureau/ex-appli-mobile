@@ -28,6 +28,7 @@ export default StyleSheet.create({
   },
   text: {
     fontSize: 16,
+    color: "#000000",
   },
   containerIcon: {
     marginRight: 10,
