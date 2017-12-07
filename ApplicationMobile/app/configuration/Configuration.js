@@ -3,7 +3,7 @@ var configurationAppli = {
   userToken: null,
   expirationToken: null,
   idAgence: null,
-  apiURL: "http://185.57.13.103/rest/web/app_dev.php/",
+  apiURL: "http://185.57.13.103/rest/web/",
   lienMdpOublie:
     "https://espacecollaborateur.cat-amania.com/espacecollaborateur/connexion.php",
   lienSupportJira:

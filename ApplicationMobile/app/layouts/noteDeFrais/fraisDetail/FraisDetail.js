@@ -218,7 +218,7 @@ class FraisDetail extends React.Component {
     if (this.state.lieu.trim() == "") {
       errMsg +=
         (errMsg != "" ? "\n" : "") +
-        "Veuillez renseigner un lieu de dédéplacement.";
+        "Veuillez renseigner un lieu de déplacement.";
     }
 
     if (errMsg != "") {
@@ -313,16 +313,16 @@ class FraisDetail extends React.Component {
    * @return {[type]} [description]
    */
   convertDates() {
-    //Converti les dates selectionnees stockees sous forme de tableau en objet
-    let datesObject = {};
-    this.state.selectedDatesArray.forEach(date => {
-      datesObject[date] = [
-        { startingDay: true, color: "#355A86" },
-        { endingDay: true, color: "#355A86", textColor: "#ffff" },
-      ];
-    });
-    return datesObject;
-  }
+     //Converti les dates selectionnees stockees sous forme de tableau en objet
+     let datesObject = {};
+     this.state.selectedDatesArray.forEach(date => {
+       datesObject[date] =
+         // { startingDay: true,  },
+         { selected: true, color: "#355A86"}
+       ;
+     });
+     return datesObject;
+   }
 
   showValidateButton() {
     if (this.state.statusId == null || this.state.statusId == 0) {

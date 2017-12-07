@@ -364,7 +364,7 @@ class FraisAjout extends React.Component {
       idUser: idUser,
       mois: mois,
       annee: annee,
-      etatID: statusId,
+      etat: statusId,
       notesDeFrais: [],
     };
 
@@ -391,7 +391,7 @@ class FraisAjout extends React.Component {
       .then(res => {
         var [status, body] = res;
         let success = status == 200;
-        showToast((success ? "Succès" : "Erreur") + "\n" + body.message);
+        showToast((success ? "Succès" : "Erreur") + "\n" + res);
 
         // En cas de succès uniquement, on met à jour le parent et on revient
         // sur la page précédente
