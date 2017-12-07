@@ -160,7 +160,7 @@ class ContainerHeader extends Component {
           >
             <View style={styles.ItemMenuView}>
               <Icon name="bug" size={30} color="#000" />
-              <Text style={styles.TextItemMenu}>Rapporter une anomalie</Text>
+              <Text style={styles.TextItemMenu}>Rapporter une {"\n"}anomalie</Text>
             </View>
           </TouchableOpacity>
 
