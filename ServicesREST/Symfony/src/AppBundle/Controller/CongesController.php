@@ -264,7 +264,7 @@ protected function calculerDureePeriode($periode) {
   $iterationDate = clone $dateDebut;
 
   $duree = 0;
-  while ($iterationDate <= $dateFin) {
+  while ($iterationDate < $dateFin) {
     $dayOfWeek = $iterationDate->format('w');
     $year      = $iterationDate->format('Y');
     $month     = $iterationDate->format('m');
