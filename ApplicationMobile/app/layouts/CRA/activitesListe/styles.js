@@ -132,6 +132,7 @@ export default StyleSheet.create({
     width: 110,
     height: 29,
     alignItems: "center",
+    borderRadius: 5,
   },
 
   containerButton: {

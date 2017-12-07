@@ -316,69 +316,66 @@ class CongesPeriode extends React.Component {
           title={this.state.title}
           navigation={this.props.navigation}
         >
-          <View style={Style.firstView}>
-            <View style={styles.container}>
-              <View style={styles.flexContainer}>
-                <Text style={styles.calendarText}>Du</Text>
-                <Calendar
-                  style={styles.calendarComponent}
-                  date={this.state.date1}
-                  onValueChange={newDate => this.setState({ date1: newDate })}
-                />
-                <View style={styles.pickerContainer}>
-                  <Picker
-                    style={styles.picker}
-                    selectedValue={this.state.moment1}
-                    onValueChange={(itemValue, itemIndex) =>
-                      this.setState({ moment1: itemValue })}
-                  >
-                    <Picker.Item label="Matin" value="1" />
-                    <Picker.Item label="Midi" value="2" />
-                  </Picker>
-                </View>
-              </View>
-              <View style={styles.flexContainer}>
-                <Text style={styles.calendarText}>Au</Text>
-                <Calendar
-                  style={styles.calendarComponent}
-                  date={this.state.date2}
-                  onValueChange={newDate => this.setState({ date2: newDate })}
-                />
-                <View style={styles.pickerContainer}>
-                  <Picker
-                    style={styles.picker}
-                    selectedValue={this.state.moment2}
-                    onValueChange={(itemValue, itemIndex) =>
-                      this.setState({ moment2: itemValue })}
-                  >
-                    <Picker.Item label="Midi" value="1" />
-                    <Picker.Item label="Soir" value="2" />
-                  </Picker>
-                </View>
-              </View>
-            </View>
-            {this.calculNbJours()}
-          </View>
-          <View style={Style.firstView}>
-            <View style={[styles.container, styles.marginTop40]}>
+          <View style={styles.container}>
+            <View style={styles.flexContainer}>
+              <Text style={styles.calendarText}>Du</Text>
+              <Calendar
+                style={styles.calendarComponent}
+                date={this.state.date1}
+                onValueChange={newDate => this.setState({ date1: newDate })}
+              />
               <View style={styles.pickerContainer}>
                 <Picker
-                  style={[styles.picker, styles.pickerAbsences]}
-                  selectedValue={this.state.absence}
+                  style={styles.picker}
+                  selectedValue={this.state.moment1}
                   onValueChange={(itemValue, itemIndex) =>
-                    this.setState({ absence: itemValue })}
+                    this.setState({ moment1: itemValue })}
                 >
-                  <Picker.Item label="- Type d'absence -" value="0" />
-                  {this.getPickerTypeAbsences()}
+                  <Picker.Item label="Matin" value="1" />
+                  <Picker.Item label="Midi" value="2" />
+                </Picker>
+              </View>
+            </View>
+            <View style={styles.flexContainer}>
+              <Text style={styles.calendarText}>Au</Text>
+              <Calendar
+                style={styles.calendarComponent}
+                date={this.state.date2}
+                onValueChange={newDate => this.setState({ date2: newDate })}
+              />
+              <View style={styles.pickerContainer}>
+                <Picker
+                  style={styles.picker}
+                  selectedValue={this.state.moment2}
+                  onValueChange={(itemValue, itemIndex) =>
+                    this.setState({ moment2: itemValue })}
+                >
+                  <Picker.Item label="Midi" value="1" />
+                  <Picker.Item label="Soir" value="2" />
                 </Picker>
               </View>
             </View>
           </View>
-          <View style={Style.firstView}>
-            <View style={styles.containerButton}>
-              {this.showDeleteButton()}
-              {this.showValidateButton()}
+
+          {this.calculNbJours()}
+
+          <View style={[styles.container]}>
+            <View style={styles.pickerContainer}>
+              <Picker
+                style={[styles.picker, styles.pickerAbsences]}
+                selectedValue={this.state.absence}
+                onValueChange={(itemValue, itemIndex) =>
+                  this.setState({ absence: itemValue })}
+              >
+                <Picker.Item label="- Type d'absence -" value="0" />
+                {this.getPickerTypeAbsences()}
+              </Picker>
             </View>
+          </View>
+
+          <View style={styles.containerButton}>
+            {this.showDeleteButton()}
+            {this.showValidateButton()}
           </View>
         </ContainerTitre>
       </View>

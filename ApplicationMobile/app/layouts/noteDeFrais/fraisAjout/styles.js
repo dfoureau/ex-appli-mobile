@@ -71,6 +71,7 @@ export default StyleSheet.create({
     height: 29,
     alignItems: "center",
     backgroundColor: "#f4f4f4",
+    borderRadius: 5,
   },
   containerButton: {
     marginTop: 8,

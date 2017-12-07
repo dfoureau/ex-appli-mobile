@@ -230,7 +230,7 @@ class CongesListe extends React.Component {
               <View style={style.container2}>
                 <View style={style.containerPicker}>
                   <Picker
-                    style={{ width: 110 }}
+                    style={{ width: 110, }}
                     selectedValue={this.state.year}
                     onValueChange={(itemValue, itemIndex) =>
                       this.reloadDemandesConges(itemValue)}

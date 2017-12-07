@@ -635,7 +635,7 @@ class AjoutCra extends React.Component {
     const { params } = this.props.navigation.state;
 
     let title = this.state.newCra
-      ? "Nouveau Cra"
+      ? "Nouveau CRA"
       : moment(
           this.state.yearSelected + "-" + this.state.monthSelected,
           "YYYY-M"

@@ -48,6 +48,7 @@ export default StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#f4f4f4",
     padding: 2,
+    borderRadius: 5,
   },
 
   containerHelpLine: {

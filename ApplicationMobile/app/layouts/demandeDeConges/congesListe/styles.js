@@ -18,6 +18,7 @@ export default StyleSheet.create({
     marginTop: 4,
     textAlign: "center",
     textAlignVertical: "center",
+    borderRadius: 5,
   },
 
   textInputCounter: {
@@ -29,6 +30,7 @@ export default StyleSheet.create({
     marginTop: 4,
     textAlign: "center",
     textAlignVertical: "center",
+    borderRadius: 5,
   },
 
   container: {
@@ -61,6 +63,7 @@ export default StyleSheet.create({
     width: 110,
     height: 29,
     alignItems: "center",
+    borderRadius: 5,
   },
 
   containerButton: {

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, FlatList, ActivityIndicator } from "react-native";
+import { View, Text, FlatList, ActivityIndicator, TextInput } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "./Styles";
 import StyleGeneral from "../../styles/Styles";
@@ -191,19 +191,42 @@ class Accueil extends React.Component {
             <Text style={Style.text}>
               Manager : {this.state.user[0]["responsable"]}
             </Text>
+
+
+          {/* Container avec compteurs des congés*/}
+            <View style={Style.container1}>
+              <View style={Style.containerInfoElement}>
+                <Text style={Style.textConges}>Solde congés au :</Text>
+                <TextInput
+                  style={Style.textInputYear}
+                  value={this.state.conges.datesolde}
+                  editable={false}
+                  underlineColorAndroid="transparent"
+                />
+              </View>
+              <View style={Style.containerInfoElement}>
+                <Text style={Style.textConges}>RTT :</Text>
+                <TextInput
+                  style={Style.textInputCounter}
+                  value={this.state.conges.rtt}
+                  editable={false}
+                  underlineColorAndroid="transparent"
+                />
+              </View>
+              <View style={Style.containerInfoElement}>
+                <Text style={Style.textConges}>CP :</Text>
+                <TextInput
+                  style={Style.textInputCounter}
+                  value={this.state.conges.cp}
+                  editable={false}
+                  underlineColorAndroid="transparent"
+                />
+              </View>
+            </View>
           </Panel>
-          <Panel title="SOLDES CONGES">
-            <Text style={Style.text}>
-              Sur votre bulletin de salaire du {this.state.conges.datesolde},
-              votre solde de congés se compose de la manière suivante :
-            </Text>
-            <Text style={[Style.text, Style.text2]}>
-              - solde CP : {this.state.conges.cp}
-            </Text>
-            <Text style={[Style.text, Style.text2]}>
-              - solde RTT : {this.state.conges.rtt}
-            </Text>
-          </Panel>
+
+
+
           <Panel title="NEWS">{this.renderItemNews()}</Panel>
         </ContainerAccueil>
       );
