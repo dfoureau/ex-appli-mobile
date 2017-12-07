@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, FlatList, ActivityIndicator, TextInput } from "react-native";
+import { View, Text, FlatList, ActivityIndicator, TextInput, Image } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "./Styles";
 import StyleGeneral from "../../styles/Styles";
@@ -200,40 +200,11 @@ class Accueil extends React.Component {
               </Text>.
             </Text>
 
-
-          {/* Container avec compteurs des congés*/}
-            <View style={Style.container1}>
-              <View style={Style.containerInfoElement}>
-                <Text style={Style.textConges}>Solde congés au :</Text>
-                <TextInput
-                  style={Style.textInputYear}
-                  value={this.state.conges.datesolde}
-                  editable={false}
-                  underlineColorAndroid="transparent"
-                />
-              </View>
-              <View style={Style.containerInfoElement}>
-                <Text style={Style.textConges}>RTT :</Text>
-                <TextInput
-                  style={Style.textInputCounter}
-                  value={this.state.conges.rtt}
-                  editable={false}
-                  underlineColorAndroid="transparent"
-                />
-              </View>
-              <View style={Style.containerInfoElement}>
-                <Text style={Style.textConges}>CP :</Text>
-                <TextInput
-                  style={Style.textInputCounter}
-                  value={this.state.conges.cp}
-                  editable={false}
-                  underlineColorAndroid="transparent"
-                />
-              </View>
-            </View>
+            <Text style={Style.text}>
+              Au <Text style={Style.textBold}>{this.state.conges.datesolde}</Text>, vous avez un solde congés de <Text style={Style.textBold}>
+              {this.state.conges.rtt} RTT</Text> et de <Text style={Style.textBold}>{this.state.conges.cp} CP</Text>.
+            </Text>
           </View>
-
-
 
           <View style={Style.containerGeneral}>
             <Text style={Style.textGrand}>News de Cat-Amania</Text>
