@@ -235,7 +235,7 @@ class CongesListe extends React.Component {
                     onValueChange={(itemValue, itemIndex) =>
                       this.reloadDemandesConges(itemValue)}
                   >
-                    {PickerRange(currentYear, oldestYear)}
+                    {PickerRange(currentYear + 1, oldestYear)}
                   </Picker>
                 </View>
                 <View style={style.containerButton}>

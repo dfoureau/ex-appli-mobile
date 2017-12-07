@@ -8,7 +8,6 @@ export default StyleSheet.create({
   scrollView: {
     width: width,
     height: height,
-    backgroundColor: "#fff",
   },
   container: {
     padding: 10,
@@ -47,5 +46,18 @@ export default StyleSheet.create({
     width: 45,
     //borderRadius:50,
     marginTop: 5,
+  },
+
+  textGrand: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#000000",
+    marginTop: 5,
+  },
+
+  bienvenueView: {
+    alignItems: "center",
+    justifyContent: "center",
+    margin: 5,
   },
 });

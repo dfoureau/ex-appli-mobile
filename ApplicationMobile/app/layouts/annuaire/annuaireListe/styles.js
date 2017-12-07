@@ -5,7 +5,7 @@ const bleu1 = "#FFF";
 const bleu2 = "#FFF";
 const bleu3 = "#FFF";
 export default StyleSheet.create({
-  scrollView: { width: width, height: height, backgroundColor: "#fff" },
+  scrollView: { width: width, height: height },
   viewContainer: {
     marginTop: 150,
     width: width,
@@ -55,7 +55,6 @@ export default StyleSheet.create({
     minHeight: height,
   },
   sectionContain: {
-    backgroundColor: "#FFF",
     paddingBottom: 300,
   },
   sectionHeader: {
@@ -63,6 +62,7 @@ export default StyleSheet.create({
     paddingLeft: 25,
     height: 50,
     width: width,
+    backgroundColor: "#ffffff",
   },
   sectionHeaderText: {
     fontSize: 20,
@@ -72,7 +72,6 @@ export default StyleSheet.create({
     padding: 10,
     //height: 44,
     width: width,
-    backgroundColor: "#FFFFFF",
   },
   itemText: {
     fontSize: 16,
