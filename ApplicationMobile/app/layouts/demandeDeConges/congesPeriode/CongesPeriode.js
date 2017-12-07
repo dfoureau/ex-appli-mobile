@@ -51,6 +51,7 @@ class CongesPeriode extends React.Component {
         absence: "",
         workingDays: 0,
         numDemande: params.numDemande == null ? 0 : params.numDemande,
+        statusId: parentState.statusId,
       };
     } else {
       // Récupéré depuis le state du parent
@@ -85,6 +86,7 @@ class CongesPeriode extends React.Component {
         absence: period.absTypeId,
         workingDays: 0,
         numDemande: params.numDemande == null ? 0 : params.numDemande,
+        statusId: parentState.statusId,
       };
     }
 
@@ -278,6 +280,34 @@ class CongesPeriode extends React.Component {
     });
   }
 
+  showValidateButton() {
+    if (this.state.statusId == null || this.state.statusId == 0 || this.state.statusId == 1) {
+      return (
+        <View style={styles.button}>
+          <Button
+            buttonStyles={styles.validateButton}
+            text="Valider"
+            onPress={() => this.handleValidate()}
+          />
+        </View>
+      );
+    }
+  }
+
+  showDeleteButton() {
+    if (this.state.statusId == null || this.state.statusId == 0 || this.state.statusId == 1) {
+      return (
+        <View style={styles.button}>
+          <Button
+            buttonStyles={styles.deleteButton}
+            text="Supprimer"
+            onPress={() => this.handleSupprimer()}
+          />
+        </View>
+      );
+    }
+  }
+
   // TODO : probleme d'affichage dur ios
   render() {
     return (
@@ -346,20 +376,8 @@ class CongesPeriode extends React.Component {
           </View>
           <View style={Style.firstView}>
             <View style={styles.containerButton}>
-              <View style={styles.button}>
-                <Button
-                  buttonStyles={styles.deleteButton}
-                  text="Supprimer"
-                  onPress={() => this.handleSupprimer()}
-                />
-              </View>
-              <View style={styles.button}>
-                <Button
-                  buttonStyles={styles.validateButton}
-                  text="Valider"
-                  onPress={() => this.handleValidate()}
-                />
-              </View>
+              {this.showDeleteButton()}
+              {this.showValidateButton()}
             </View>
           </View>
         </ContainerTitre>

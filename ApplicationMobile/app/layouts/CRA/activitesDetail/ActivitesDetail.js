@@ -305,7 +305,7 @@ class ActivitesDetail extends React.Component {
   }
 
   showValidateButton() {
-    if (this.state.statusId == 1 || this.state.statusId == null) {
+    if (this.state.statusId == 1 || this.state.statusId == null || this.state.statusId == 2) {
       return (
         <View style={styles.stickyFooter}>
           <View style={styles.containerButton}>

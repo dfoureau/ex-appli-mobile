@@ -406,7 +406,7 @@ class FraisAjout extends React.Component {
   }
 
   showDeleteButton() {
-    if (this.state.statusId == 0)
+    if (this.state.statusId == 0 || this.state.statusId == 1)
       return (
         <Button
           buttonStyles={styles.deleteButton}
@@ -425,7 +425,7 @@ class FraisAjout extends React.Component {
   }
 
   showDraftButton() {
-    if (this.state.statusId == null || this.state.statusId == 0)
+    if (this.state.statusId == null || this.state.statusId == 0 || this.state.statusId == 1)
       return (
         <Button
           buttonStyles={styles.draftButton}
@@ -436,7 +436,7 @@ class FraisAjout extends React.Component {
   }
 
   showValidateButton() {
-    if (this.state.statusId == null || this.state.statusId == 0) {
+    if (this.state.statusId == null || this.state.statusId == 0 || this.state.statusId == 1) {
       return <Button text="VALIDER" onPress={() => this.saveNDF(1)} />;
     }
   }

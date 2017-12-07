@@ -540,7 +540,7 @@ class AjoutCra extends React.Component {
   }
 
   showDeleteButton() {
-    if (this.state.statusId == 1)
+    if (this.state.statusId == 1 || this.state.statusId == 2)
       return (
         <Button
           text="SUPPRIMER"
@@ -559,7 +559,7 @@ class AjoutCra extends React.Component {
   }
 
   showDraftButton() {
-    if (this.state.statusId == 1 || this.state.statusId == null)
+    if (this.state.statusId == 1 || this.state.statusId == null || this.state.statusId == 2)
       return (
         <Button
           buttonStyles={style.draftButton}
@@ -570,7 +570,7 @@ class AjoutCra extends React.Component {
   }
 
   showValidateButton() {
-    if (this.state.statusId == 1 || this.state.statusId == null)
+    if (this.state.statusId == 1 || this.state.statusId == null || this.state.statusId == 2)
       return <Button text="VALIDER" onPress={() => this.saveCra(2)} />;
   }
 

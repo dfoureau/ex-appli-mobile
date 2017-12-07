@@ -391,7 +391,7 @@ class CongesAjout extends React.Component {
   }
 
   showDeleteButton() {
-    if (this.state.statusId == 0) {
+    if (this.state.statusId == 0 || this.state.statusId == 1) {
       return (
         <Button
           buttonStyles={style.deleteButton}
@@ -411,7 +411,7 @@ class CongesAjout extends React.Component {
   }
 
   showDraftButton() {
-    if (this.state.statusId == null || this.state.statusId == 0) {
+    if (this.state.statusId == null || this.state.statusId == 0 || this.state.statusId == 1) {
       return (
         <Button
           buttonStyles={style.draftButton}
@@ -423,7 +423,7 @@ class CongesAjout extends React.Component {
   }
 
   showValidateButton() {
-    if (this.state.statusId == null || this.state.statusId == 0) {
+    if (this.state.statusId == null || this.state.statusId == 0 || this.state.statusId == 1) {
       return <Button text="VALIDER" onPress={() => this.saveConge(1)} />;
     }
   }
