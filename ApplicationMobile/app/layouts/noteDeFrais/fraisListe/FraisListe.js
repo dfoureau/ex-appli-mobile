@@ -242,7 +242,7 @@ class FraisListe extends React.Component {
                             Montant : {item.montantTotal} €
                           </Text>
                           <Text style={style.statusText}>
-                            Etat : {item.libelle}
+                            État : {item.libelle}
                             {this.checkItem(item) == true ? (
                               <Text>
                                 {" "}

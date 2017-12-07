@@ -285,10 +285,10 @@ class CongesListe extends React.Component {
                           </View>
                           <View>
                             <Text style={style.dayNumberText}>
-                              Nb jours : {item.nbJour}
+                              Nombre de jours : {item.nbJour}
                             </Text>
                             <Text style={style.statusText}>
-                              Etat : {item.libelleEtat}
+                              État : {item.libelleEtat}
                               {item.etat == 2 ? (
                                 <Text>
                                   {" "}

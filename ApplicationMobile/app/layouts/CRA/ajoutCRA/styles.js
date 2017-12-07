@@ -176,7 +176,7 @@ export default StyleSheet.create({
     flexDirection: "row",
     display: "flex",
     marginTop: 95,
-    marginLeft: -300,
+    marginLeft: -310,
     height: 35,
   },
 
@@ -184,7 +184,7 @@ export default StyleSheet.create({
     flexDirection: "row",
     display: "flex",
     marginTop: 160,
-    marginLeft: -300,
+    marginLeft: -310,
     height: 35,
   },
 

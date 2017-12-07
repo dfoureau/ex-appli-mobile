@@ -45,7 +45,7 @@ export default class CRAItem extends Component {
           </View>
         </View>
         <View>
-          <Text>Etat : {this.state.libelle}</Text>
+          <Text>État : {this.state.libelle}</Text>
         </View>
       </View>
     );

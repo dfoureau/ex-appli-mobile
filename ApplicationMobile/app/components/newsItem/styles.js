@@ -13,6 +13,7 @@ export default StyleSheet.create({
     flexDirection: "row",
     borderWidth: 1,
     backgroundColor: "#FFF",
+    borderRadius: 10,
   },
 
   newsItemL: {
@@ -22,8 +23,8 @@ export default StyleSheet.create({
   },
 
   newsItemLImg: {
-    height: 50,
-    width: 50,
+    height: 55,
+    width: 55,
   },
 
   newsItemR: {
@@ -51,8 +52,8 @@ export default StyleSheet.create({
   },
 
   newsItemRImg: {
-    height: 50,
-    width: 50,
+    height: 40,
+    width: 40,
   },
 
   title: {

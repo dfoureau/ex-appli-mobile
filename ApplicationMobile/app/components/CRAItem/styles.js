@@ -10,6 +10,7 @@ export default StyleSheet.create({
     padding: 5,
     borderWidth: 1,
     backgroundColor: "#FFF",
+    borderRadius: 10,
   },
 
   containerIcon: {
