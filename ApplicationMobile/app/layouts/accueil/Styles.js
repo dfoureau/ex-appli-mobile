@@ -8,6 +8,23 @@ export default StyleSheet.create({
     fontSize: 14,
   },
 
+  textGrand: {
+    color: "#000000",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+
+  textBold: {
+    color: "#000000",
+    fontWeight: "bold",
+  },
+
+  bienvenueView: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 5,
+  },
+
   text2: {
     paddingHorizontal: 25,
   },
@@ -21,6 +38,10 @@ export default StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     paddingBottom: 5,
+  },
+
+  containerGeneral: {
+    margin: 10,
   },
 
   container1: {

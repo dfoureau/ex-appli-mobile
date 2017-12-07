@@ -171,25 +171,33 @@ class Accueil extends React.Component {
     } else {
       return (
         <ContainerAccueil
-          title={this.state.title}
+          title={this.state.user[0]["prenom"] + " " + this.state.user[0]["nom"]}
           afficherEcran={this.afficherEcranParent.bind(this)}
         >
-          <Panel title="INFORMATIONS PERSONNELLES">
+          <View style={Style.containerGeneral}>
+            <View style={Style.bienvenueView}>
+              <Text style={Style.text}>
+                Bienvenue <Text style={Style.textGrand}>
+                  {this.state.user[0]["prenom"]}{" "}
+                  {this.state.user[0]["nom"]}
+                </Text> !
+              </Text>
+            </View>
+
             <Text style={Style.text}>
-              Bienvenue {this.state.user[0]["prenom"]}{" "}
-              {this.state.user[0]["nom"]}
+              Votre entité juridique est <Text style={Style.textBold}>
+              {this.state.user[0]["entite"]}
+              </Text> avec un profil <Text style={Style.textBold}>
+              {this.state.user[0]["profil"]}
+              </Text>.
             </Text>
+
             <Text style={Style.text}>
-              Entité juridique : {this.state.user[0]["entite"]}
-            </Text>
-            <Text style={Style.text}>
-              Profil : {this.state.user[0]["profil"]}
-            </Text>
-            <Text style={Style.text}>
-              Agence : {this.state.user[0]["agence"]}
-            </Text>
-            <Text style={Style.text}>
-              Manager : {this.state.user[0]["responsable"]}
+              Votre manager est <Text style={Style.textBold}>
+              {this.state.user[0]["responsable"]}
+              </Text>, et vous faites partie de l'agence <Text style={Style.textBold}>
+              {this.state.user[0]["agence"]}
+              </Text>.
             </Text>
 
 
@@ -223,11 +231,14 @@ class Accueil extends React.Component {
                 />
               </View>
             </View>
-          </Panel>
+          </View>
 
 
 
-          <Panel title="NEWS">{this.renderItemNews()}</Panel>
+          <View style={Style.containerGeneral}>
+            <Text style={Style.textGrand}>News de Cat-Amania</Text>
+            {this.renderItemNews()}
+          </View>
         </ContainerAccueil>
       );
     }
