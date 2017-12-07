@@ -252,16 +252,20 @@ class ActivitesDetail extends React.Component {
     //Converti les dates selectionnees stockees sous forme de tableau en objet
     let datesObject = {};
     let currentDate = moment(this.state.calendarDate, this.state.calendarDateFormat);
+    const errDay = {key: "errDay", color: 'red'};
+
     this.state.linesToChange.forEach(index => {
+      let dots = [];
 
-      let color = (this.checkDay(index +1, this.state.activiteClicked.code)) ? "#355A86" : "#f44242";
+      if (!this.checkDay(index +1, this.state.activiteClicked.code)) {
+        dots.push(errDay);
+      }
 
-      datesObject[currentDate.date(index +1).format(this.state.calendarDateFormat)] = [
-        { startingDay: true, color: color },
-        { endingDay: true, color: color, textColor: "#ffff" },
-      ];
+      datesObject[currentDate.date(index +1).format(this.state.calendarDateFormat)] = {
+        selected: true,
+        dots: dots,
+      };
     });
-
     return datesObject;
   }
 
@@ -277,7 +281,7 @@ class ActivitesDetail extends React.Component {
             firstDay={1}
             hideArrows={true}
             markedDates={this.convertDates()}
-            markingType={"interactive"}
+            markingType="multi-dot"
             onDayPress={day => this.onDateSelected(day)}
           />
         </View>

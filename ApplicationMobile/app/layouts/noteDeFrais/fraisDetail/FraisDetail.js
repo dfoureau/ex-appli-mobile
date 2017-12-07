@@ -316,12 +316,10 @@ class FraisDetail extends React.Component {
        //Converti les dates selectionnees stockees sous forme de tableau en objet
        let datesObject = {};
        this.state.selectedDatesArray.forEach(date => {
-         datesObject[date] =
-           // { startingDay: true,  },
-           { selected: true, color: "#355A86"}
-         ;
+         datesObject[date] = {
+           selected: true,
+         };
        });
-       console.log(datesObject);
        return datesObject;
      }
 
