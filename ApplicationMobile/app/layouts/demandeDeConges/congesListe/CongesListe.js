@@ -95,9 +95,11 @@ class CongesListe extends React.Component {
     });
   }
 
-  reloadDemandesConges(_year = moment().year()) {
-    this.setState({ year: _year });
+  reloadDemandesConges(_year = null) {
     this.setState({ dataLoaded: false, noData: false });
+    if (_year == null) {
+      _year = this.state.year;
+    }
     this.getDemandesByUserAndYear(_year, true);
   }
 
@@ -232,8 +234,11 @@ class CongesListe extends React.Component {
                   <Picker
                     style={{ width: 110, }}
                     selectedValue={this.state.year}
-                    onValueChange={(itemValue, itemIndex) =>
-                      this.reloadDemandesConges(itemValue)}
+                    onValueChange={(itemValue, itemIndex) => {
+                      this.setState({year: itemValue});
+                      this.reloadDemandesConges(itemValue);
+                    }
+                      }
                   >
                     {PickerRange(currentYear + 1, oldestYear)}
                   </Picker>
