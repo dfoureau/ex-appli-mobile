@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Icon from "react-native-vector-icons/FontAwesome";
 import {
   AppRegistry,
   FlatList,
@@ -34,14 +35,9 @@ export default class CRAItem extends Component {
         <View style={Style.containerPeriod}>
           <Text>Client : {this.state.client}</Text>
           <View style={Style.containerIcon}>
-            <Image
-              style={Style.listIcon}
-              source={
-                this.state.status == 3
-                  ? require("../../images/icons/check2.png")
-                  : null
-              }
-            />
+            {this.state.status == 3 &&
+              <Icon name="check" size={20} color="#2268d8" />
+            }
           </View>
         </View>
         <View>

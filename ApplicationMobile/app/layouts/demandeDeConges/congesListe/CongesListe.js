@@ -1,4 +1,5 @@
 import React from "react";
+import Icon from "react-native-vector-icons/FontAwesome";
 import {
   View,
   Text,
@@ -238,7 +239,7 @@ class CongesListe extends React.Component {
                       this.setState({year: itemValue});
                       this.reloadDemandesConges(itemValue);
                     }
-                      }
+                    }
                   >
                     {PickerRange(currentYear + 1, oldestYear)}
                   </Picker>
@@ -278,14 +279,9 @@ class CongesListe extends React.Component {
                               {item.dateDuMin} au {item.dateAuMax}
                             </Text>
                             <View style={style.containerIcon}>
-                              <Image
-                                style={style.listIcon}
-                                source={
-                                  item.etat == 2
-                                    ? require("../../../images/icons/check2.png")
-                                    : null
-                                }
-                              />
+                              {item.etat == 2 &&
+                                <Icon name="check" size={20} color="#2268d8" />
+                              }
                             </View>
                           </View>
                           <View>
