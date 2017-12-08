@@ -1,4 +1,5 @@
 import React from "react";
+import Icon from "react-native-vector-icons/FontAwesome";
 import {
   View,
   Text,
@@ -460,17 +461,14 @@ class CongesAjout extends React.Component {
                 underlayColor="white"
                 onPress={() => Linking.openURL(configurationAppli.lienAideConges)}
               >
-              <View>
-                <View style={style.containerHelpLine}>
-                  <Text style={StyleGeneral.texteLien}>
-                    Récapitulatif des congés
-                  </Text>
-                  <Image
-                    style={StyleGeneral.iconeAide}
-                    source={require("../../../images/icons/aide.png")}
-                  />
+                <View>
+                  <View style={style.containerHelpLine}>
+                    <Text style={StyleGeneral.texteLien}>
+                      Récapitulatif des congés
+                    </Text>
+                    <Icon style={{marginLeft:4}}name="question-circle-o" size={20} />
+                  </View>
                 </View>
-              </View>
               </TouchableHighlight>
             </View>
 

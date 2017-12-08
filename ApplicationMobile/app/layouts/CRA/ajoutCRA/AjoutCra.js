@@ -1,4 +1,5 @@
 import React from "react";
+import Icon from "react-native-vector-icons/FontAwesome";
 import {
   View,
   Text,
@@ -683,15 +684,12 @@ class AjoutCra extends React.Component {
                   underlayColor="white"
                   onPress={() => Linking.openURL(configurationAppli.lienAideCRA)}
                 >
-                <View>
-                  <View style={style.containerHelpLine}>
-                    <Text style={StyleGeneral.texteLien}>
-                      Aide pour remplir son CRA
-                    </Text>
-                    <Image
-                      style={StyleGeneral.iconeAide}
-                      source={require("../../../images/icons/aide.png")}
-                    />
+                  <View>
+                    <View style={style.containerHelpLine}>
+                      <Text style={StyleGeneral.texteLien}>
+                        Aide pour remplir son CRA
+                      </Text>
+                      <Icon style={{marginLeft: 4}}name="question-circle-o" size={20} />
                   </View>
                 </View>
                 </TouchableHighlight>
