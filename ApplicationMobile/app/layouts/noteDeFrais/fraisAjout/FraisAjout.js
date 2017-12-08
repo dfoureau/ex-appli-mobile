@@ -478,7 +478,7 @@ class FraisAjout extends React.Component {
               <View style={styles.container2}>
                 <View style={styles.containerPicker}>
                   <Picker
-                    style={{ width: 160 }}
+                    style={{ width: 200 }}
                     selectedValue={this.state.monthSelected}
                     onValueChange={(itemValue, itemIndex) => {
                       this.setState({ monthSelected: itemValue }, () =>
