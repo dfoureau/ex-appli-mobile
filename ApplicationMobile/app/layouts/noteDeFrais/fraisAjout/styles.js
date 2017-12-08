@@ -67,7 +67,7 @@ export default StyleSheet.create({
   containerPicker: {
     flexDirection: "row",
     borderWidth: 1,
-    width: 160,
+    width: 200,
     height: 29,
     alignItems: "center",
     backgroundColor: "#f4f4f4",
