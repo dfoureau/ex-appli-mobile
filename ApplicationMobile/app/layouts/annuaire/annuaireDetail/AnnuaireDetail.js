@@ -65,7 +65,7 @@ class AnnuaireDetail extends React.Component {
         return (
           <TouchableOpacity onPress={() => Communications.text(tel)}>
             <View>
-              <Icon name="comment" size={30} color="#000" />
+              <Icon name="comment" size={30} color="#ffa500" />
             </View>
           </TouchableOpacity>
         );
@@ -170,7 +170,7 @@ class AnnuaireDetail extends React.Component {
                       )}
                   >
                     <View>
-                      <Icon name="phone" size={30} color="#000" />
+                      <Icon name="phone" size={30} color="#009a00" />
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -204,7 +204,7 @@ class AnnuaireDetail extends React.Component {
                       )}
                   >
                     <View>
-                      <Icon name="phone" size={30} color="#000" />
+                      <Icon name="phone" size={30} color="#009a00" />
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -238,7 +238,7 @@ class AnnuaireDetail extends React.Component {
                       )}
                   >
                     <View>
-                      <Icon name="phone" size={30} color="#000" />
+                      <Icon name="phone" size={30} color="#009a00" />
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -272,7 +272,7 @@ class AnnuaireDetail extends React.Component {
                       )}
                   >
                     <View>
-                      <Icon name="envelope" size={30} color="#000" />
+                      <Icon name="envelope" size={30} color="#e50000" />
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -306,7 +306,7 @@ class AnnuaireDetail extends React.Component {
                       )}
                   >
                     <View>
-                      <Icon name="envelope" size={30} color="#000" />
+                      <Icon name="envelope" size={30} color="#e50000" />
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -340,7 +340,7 @@ class AnnuaireDetail extends React.Component {
                       )}
                   >
                     <View>
-                      <Icon name="envelope" size={30} color="#000" />
+                      <Icon name="envelope" size={30} color="#e50000" />
                     </View>
                   </TouchableOpacity>
                 </View>
