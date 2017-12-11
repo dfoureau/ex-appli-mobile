@@ -185,25 +185,46 @@ class Accueil extends React.Component {
             </View>
 
             <Text style={Style.text}>
-              Votre entité juridique est <Text style={Style.textBold}>
-              {this.state.user[0]["entite"]}
-              </Text> avec un profil <Text style={Style.textBold}>
-              {this.state.user[0]["profil"]}
+              Votre manager est <Text style={Style.textBold}>
+              {this.state.user[0]["responsable"]}
               </Text>.
             </Text>
 
             <Text style={Style.text}>
-              Votre manager est <Text style={Style.textBold}>
-              {this.state.user[0]["responsable"]}
-              </Text>, et vous faites partie de l'agence <Text style={Style.textBold}>
+              Agence <Text style={Style.textBold}>
+              {this.state.user[0]["entite"]}
+              </Text>, <Text style={Style.textBold}>
               {this.state.user[0]["agence"]}
               </Text>.
             </Text>
 
-            <Text style={Style.text}>
-              Au <Text style={Style.textBold}>{this.state.conges.datesolde}</Text>, vous avez un solde congés de <Text style={Style.textBold}>
-              {this.state.conges.rtt} RTT</Text> et de <Text style={Style.textBold}>{this.state.conges.cp} CP</Text>.
-            </Text>
+            <View style={Style.blocConges}>
+              <Text style={Style.text}>
+                Solde de congés au <Text style={Style.textBold}>{this.state.conges.datesolde}</Text> :
+              </Text>
+
+              <View style={Style.container1}>
+                <View style={Style.containerInfoElement}>
+                  <Text style={Style.textCPRTT}>CP :</Text>
+                  <TextInput
+                    style={Style.textInputCounter}
+                    value={this.state.conges.cp}
+                    editable={false}
+                    underlineColorAndroid="transparent"
+                  />
+                </View>
+
+                <View style={Style.containerInfoElement}>
+                  <Text style={Style.textCPRTT}>RTT :</Text>
+                  <TextInput
+                    style={Style.textInputCounter}
+                    value={this.state.conges.rtt}
+                    editable={false}
+                    underlineColorAndroid="transparent"
+                  />
+                </View>
+              </View>
+            </View>
           </View>
 
           <View style={Style.containerGeneral}>

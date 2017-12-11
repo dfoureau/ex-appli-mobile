@@ -25,6 +25,13 @@ export default StyleSheet.create({
     marginBottom: 5,
   },
 
+  textCPRTT: {
+    color: "#000000",
+    fontSize: 14,
+    margin: 2,
+    padding: 2,
+  },
+
   text2: {
     paddingHorizontal: 25,
   },
@@ -46,9 +53,9 @@ export default StyleSheet.create({
 
   container1: {
     display: "flex",
+    width: width / 2,
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 10,
   },
 
   containerInfoElement: {
@@ -79,6 +86,7 @@ export default StyleSheet.create({
     textAlignVertical: "center",
     fontSize: 14,
     borderRadius: 5,
+    fontWeight: "bold",
   },
 
   textConges: {
@@ -86,5 +94,9 @@ export default StyleSheet.create({
     fontSize: 14,
     padding: 2,
     margin: 2,
+  },
+
+  blocConges: {
+    marginTop: 10,
   },
 });

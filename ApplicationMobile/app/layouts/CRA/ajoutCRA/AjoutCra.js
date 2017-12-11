@@ -701,7 +701,10 @@ class AjoutCra extends React.Component {
                     État : {this.state.data.libelle}
                   </Text>
                 </View>
-                <View style={style.containerFirstLine}>
+              </View>
+
+              <View style={style.container1}>
+                <View style={style.containerThirdLine}>
                   <Text style={style.text}>
                     Jours ouvrés :{" "}
                     {this.state.data.NbJOuvres
