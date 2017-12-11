@@ -264,7 +264,9 @@ class NdfController extends Controller
             return new JsonResponse($retourdelete['message'], $retourdelete['code']);
         }
 
-        $data = json_decode(file_get_contents('php://input'), true);
+        //$data = json_decode(file_get_contents('php://input'), true);
+        $content   = $request->getContent();
+        $data      = json_decode($content, true);
 
         try {
             $retourpost = $this->postNdf($data, $idUserToken);
@@ -373,7 +375,9 @@ class NdfController extends Controller
         }
          */
 
-        $data = json_decode(file_get_contents('php://input'), true);
+        //$data = json_decode(file_get_contents('php://input'), true);
+        $content   = $request->getContent();
+        $data      = json_decode($content, true);
         try {
             $retour = $this->postNdf($data);
         } catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
@@ -410,7 +414,7 @@ class NdfController extends Controller
         //récupérer indemKM depuis table users
         $indemKM = number_format($this->getUserIndemKM($idUser), 3, '.', '');
         //echo $indemKM;
-        $sql = 'INSERT into notedefrais (idUser, jour, mois, annee, etat, client, lieu, facturable, nbkms, peages, forfait, sncf, nbzones, pourcentage,fdr, hotel, repas, invit, essence, parking, taxi, divers, libelle, indemKM, validateur, dateactionetat) VALUES ';
+        $sql = 'INSERT into notedefrais (idUser, jour, mois, annee, etat, client, lieu, facturable, nbkms, peages, forfait, sncf, nbzones, pourcentage, fdr, hotel, repas, invit, essence, parking, taxi, divers, libelle, indemKM, validateur, dateactionetat) VALUES ';
 
         $listNdf = $data['notesDeFrais'];
 
@@ -457,14 +461,17 @@ class NdfController extends Controller
 
     public function getUserIndemKM($idUser)
     {
+        if (($idUser != null) && ($idUser != "")) {
+            $sql = 'SELECT indemKM FROM users WHERE id = ' . $idUser;
 
-        $sql = 'SELECT indemKM FROM users WHERE id = ' . $idUser;
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
 
-        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-        $stmt->execute();
+            $retour = $stmt->fetch();
 
-        $retour = $stmt->fetch();
-
-        return $retour['indemKM'];
+            return $retour['indemKM'];
+        } else {
+            return 0;
+        }
     }
 }

@@ -18,7 +18,6 @@ class CraController extends Controller
      */
     public function getCra(Request $request, $idRA)
     {
-
         //Vérification token
         $log        = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
@@ -262,13 +261,10 @@ class CraController extends Controller
 
     public function addCra($data, $idUserToken)
     {
-
         $idUser = $data['idUser'];
-
         if ($idUser != $idUserToken) {
             $message = array('message' => "Incohérence token/ID");
             return array('message' => $message, 'code' => Response::HTTP_BAD_REQUEST);
-
         }
 
         $mois             = $data['mois'];
@@ -348,7 +344,6 @@ class CraController extends Controller
      */
     public function addCraAction(Request $request)
     {
-
         $log        = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
@@ -356,7 +351,6 @@ class CraController extends Controller
         }
 
         $idUserToken = $retourAuth['id'];
-        //$data = json_decode(file_get_contents('php://input'), true);
 
         try {
             $content   = $request->getContent();
@@ -375,7 +369,6 @@ class CraController extends Controller
      */
     public function updateCra(Request $request, $idRA)
     {
-
         //Vérification token
         $log        = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
@@ -385,34 +378,37 @@ class CraController extends Controller
 
         $idUserToken = $retourAuth['id'];
 
-        //Suppression du CRA
-        $retourDelete = $this->deleteCra($idRA, $idUserToken);
-        if ($retourDelete["code"] != Response::HTTP_OK) {
-            return new JsonResponse($retourDelete['message'], $retourDelete['code']);
-        }
-
         //Création du CRA
-        //$data = json_decode(file_get_contents('php://input'), true);
-
         try {
             $content   = $request->getContent();
             $data      = json_decode($content, true);
             $retourAdd = $this->addCra($data, $idUserToken);
         } catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
-            $message = array('message' => "Modification KO");
+            $message = array('message' => "La modification a échouée");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
+
         //return $retourAdd;
         if ($retourAdd['code'] != Response::HTTP_OK) {
             return new JsonResponse($retourAdd['message'], $retourAdd['code']);
+        } else {
+            //Suppression du CRA
+            $retourDelete = $this->deleteCra($idRA, $idUserToken);
+
+            if ($retourDelete["code"] != Response::HTTP_OK) {
+                return new JsonResponse($retourDelete['message'], $retourDelete['code']);
+            } else {
+                $message = array('message' => "Modification réussie");
+                return new JsonResponse($message, Response::HTTP_OK);
+            }
         }
 
-        //Si tout est ok on envoie un code HTTP 200
+        /* //Si tout est ok on envoie un code HTTP 200
         if ($retourDelete['code'] == Response::HTTP_OK && $retourAdd["code"] == Response::HTTP_OK) {
             $message = array('message' => "Modification réussie");
             return new JsonResponse($message, Response::HTTP_OK);
 
-        }
+        }*/
     }
 
     /**
