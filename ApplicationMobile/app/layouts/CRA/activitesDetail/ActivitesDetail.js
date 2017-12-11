@@ -89,7 +89,7 @@ class ActivitesDetail extends React.Component {
     this.state = {
       title: "Détails jour",
       date: params.date,
-      linesToChange: params.line ? [params.line] : [],
+      linesToChange: (params.line >= 0) ? [params.line] : [],
       isPeriod: (params.line == undefined || params.line == null),
       activitesListe: activitesListe,
       activiteClicked: { code: params.activite, label: params.activite },
@@ -295,6 +295,7 @@ class ActivitesDetail extends React.Component {
     }
     return ret;
   }
+
   //Gère l'affichage du détail d'une activité quand sélectionnée
   renderDetailActivite() {
     let activite = this.state.activiteClicked;

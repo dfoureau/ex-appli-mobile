@@ -22,7 +22,7 @@ class ContainerHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pan: new Animated.ValueXY({ x: -width, y: 0 }),
+      pan: new Animated.ValueXY({ x: -width, y: 0, }),
       isOpen: false,
       navigationParent: null,
       nbNews: 8, //Necessite de mettre une variable globale
@@ -46,6 +46,7 @@ class ContainerHeader extends Component {
       toValue: { x: -width, y: 0 },
       //easing: Easing.back,
       duration: 1000,
+      useNativeDriver: true,
     }).start();
   }
   openView() {
@@ -53,6 +54,7 @@ class ContainerHeader extends Component {
       toValue: { x: 0, y: 0 },
       //easing: Easing.back,
       duration: 1000,
+      useNativeDriver: true,
     }).start();
   }
 

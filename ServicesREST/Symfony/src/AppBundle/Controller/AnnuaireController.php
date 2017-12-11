@@ -78,10 +78,12 @@ class AnnuaireController extends Controller
                         entitesjuridiques.nomEntite,
                         users.idprofil,
                         profils.libelle,
+                        users.tel as tel,
                         telmobile,
                         telclient,
                         mail,
                         mailclient,
+                        mailPerso,
                         societeagence.nomSocieteAgence as agence
                     FROM
                         users,

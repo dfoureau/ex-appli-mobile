@@ -401,7 +401,7 @@ class AjoutCra extends React.Component {
         startDate: item.date,
         actType: actType,
         disabled: disabled,
-        // valeur: item.valeur
+        //valeur: item.valeur,
       };
     });
   }
@@ -580,7 +580,7 @@ class AjoutCra extends React.Component {
       <TouchableOpacity
         key={i}
         onPress={() =>
-          this.modifyItemCRA(i, row.startDate, row.actType, row.valeur)}
+          this.modifyItemCRA(i, row.startDate, row.actType, row.labelAct, row.valeur)}
         disabled={row.disabled}
       >
         <Row

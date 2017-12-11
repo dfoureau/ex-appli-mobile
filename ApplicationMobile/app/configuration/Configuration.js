@@ -4,6 +4,7 @@ var configurationAppli = {
   expirationToken: null,
   idAgence: null,
   apiURL: "http://185.57.13.103/rest/web/",
+  //apiURL: "https://test.cat-amania.com/rest/web/",
   lienMdpOublie:
     "https://espacecollaborateur.cat-amania.com/espacecollaborateur/connexion.php",
   lienSupportJira:
