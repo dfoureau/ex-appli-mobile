@@ -98,12 +98,12 @@ class NdfController extends Controller
                 }
                 $retour = array('idUser' => $id, 'mois' => $mois, 'annee' => $annee, 'libelleEtat' => $libelleEtat, 'etat' => $etat, 'notesDeFrais' => $listNdf);
 
-                array_walk_recursive(
+                /*array_walk_recursive(
                     $retour,
                     function (&$entry) {
-                        $entry = mb_convert_encoding($entry, 'UTF-8', 'ISO-8859-1');
+                        $entry = mb_convert_encoding($entry, 'UTF-8');
                     }
-                );
+                );*/
 
                 return new JsonResponse($retour, Response::HTTP_OK);
             } else {

@@ -474,7 +474,7 @@ class CongesAjout extends React.Component {
 
             <View style={style.container1}>
               <View style={style.containerStatus}>
-                <Text style={style.text}>Etat : {this.state.status}</Text>
+                <Text style={style.text}>État : {this.state.status}</Text>
               </View>
             </View>
             <View style={style.container2}>

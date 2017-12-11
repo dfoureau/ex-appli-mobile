@@ -472,7 +472,7 @@ class FraisAjout extends React.Component {
             <View style={styles.container}>
               <View style={styles.container1}>
                 <View style={styles.containerStatus}>
-                  <Text style={styles.text}>Etat : {this.state.status}</Text>
+                  <Text style={styles.text}>État : {this.state.status}</Text>
                 </View>
               </View>
               <View style={styles.container2}>
