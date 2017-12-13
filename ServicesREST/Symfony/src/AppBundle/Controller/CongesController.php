@@ -290,6 +290,7 @@ protected function calculerDureePeriode($periode) {
     public function createDemandeConges($data, $idUserToken)
     {
         $idUser = $data['idUser'];
+        $etatDemande = $date['etat'];
 
         // Récupere le numéro de la demande à partir de la table
         $sql = "SELECT MAX(numdemande) AS num FROM demandesconges WHERE idUser = " . $idUser;
@@ -373,6 +374,12 @@ protected function calculerDureePeriode($periode) {
                 $stmt->execute();
 
                 $retour = array('message' => "Création réussie", 'code' => Response::HTTP_OK);
+
+                // Envoi mail manager
+                if ($etatDemande == 1) {
+                    // Envoi mail seulement si la demande est pour validation
+                    envoiEmailManager($data);
+                }
                 return $retour;
             }
         }
@@ -876,6 +883,89 @@ protected function calculerDureePeriode($periode) {
         } else {
             $message = array('message' => 'Format paramètres incorrect');
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Envoi un mail de notification au manager quand la demande de congé
+     * est envoyé pour validation
+     *
+     * @param array       $data           Informations de la demande de congé
+     *
+     */
+    private function envoiEmailManager($data) {
+        $id = $data['idUser'];
+
+        $sql = 'select users.id as id,users.nom as nom,users.prenom,profils.libelle as profil,entitesjuridiques.nomEntite as entite,
+        users.mail as mail, societeagence.nomSocieteAgence as agence from users, profils, entitesjuridiques,societeagence
+            where users.id = "' . $id . '"
+            and users.idprofil = profils.idProfil
+            and users.idEntiteJuridique = entitesjuridiques.idEntite
+            and users.idagence = societeagence.idSocieteAgence';
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetchAll();
+
+        $managerData = UtilsController::getUserManager($id);
+        $managerBisData = UtilsController::getUserManagerBis($id);
+
+        if (count($retour) == 0) {
+            // Pas d'envoi de mail car utilisateur non trouvé
+            return;
+        } else  {
+            // Envoi du mail
+            $message = "";
+            $subject = "";
+            $nomcollabo = $retour[0]['prenom'] . ' ' . $retour[0]['nom'];
+            $message .= "Demande de congés du collaborateur : " . $nomcollabo ."<br /><br />";
+
+            foreach ($data['lignesDemandes'] as $ligne) {
+                echo "Valeur courante de \$a: $v.\n";
+                $dateDebut = $ligne['dateDebut'];
+                $dateFin = $ligne['dateFin'];
+                $typeabs = $ligne['typeabs'];
+                $nbJours = $ligne['nbJours'];
+
+                $message .= "<br />Du : " . $dateDebut . "<br />Au : " . $dateFin ."<br /> Nombre de jours : " . $nbJours . "<br /> Type d'absences : " . $typeabs . "<br />";
+            }
+
+            $message .= "<br />En attente de validation par " . $managerData['manager'] . ".";
+            $message = utf8_decode($message);
+
+            $subject = "APPLI - Demande de congés de " . $nomcollabo . " pour la période du " . $dateDebut . " au " . $dateFin . " (Etat: " . utf8_encode(getDescriptionByEtat($retour['etat'])) . ")";
+
+            // Envoi mail au managers
+            $mailtab = array();
+            // Mail du collaborateur
+            $mailtab[1] = $retour[0]['mail'];
+            // Mail du manager
+            $mailtab[1] = $managerData['mail'],
+            // Mail du 2e manager
+            $mailtab[1] = $managerBisData['mail'],
+
+            $envoi_mail = UtilsController::sendEmail($mailtab, $subject, $message);
+        }
+    }
+
+    /**
+     * Retourne la descrition de l'état de la demande de congé
+     *
+     * @param int       $etat           état de la demande
+     *
+     */
+    private function getDescriptionByEtat($etat) {
+        switch ($etat) {
+            case 0:
+                return "Brouillon";
+            case 1:
+                return "En attente de validation";
+            case 2:
+                return "Validé";
+            case 3:
+                return "À modifier";
+            default:
+                return "Non défini";
         }
     }
 }
