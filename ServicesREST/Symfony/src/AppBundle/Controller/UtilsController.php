@@ -3,7 +3,6 @@
 namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use AppBundle\Controller\PHPMailer\PHPMailerAutoload;
 
 class UtilsController extends Controller
 {
@@ -428,87 +427,63 @@ class UtilsController extends Controller
         }
     }
 
-    public static function sendEmail($expediteur, $subject, $message) {
-      $messageHtml = corps_message($message);
-      $subjecthtml = utf8_decode($subject);
+    public static function sendEmail($expediteur, $subject, $message)
+    {
+        $messageHtml = corps_message($message);
+        $subjecthtml = utf8_decode($subject);
 
-      $mail = new PHPMailer();
-      //Tell PHPMailer to use SMTP
-      $mail->isSMTP();
-      //Enable SMTP debugging
-      // 0 = off (for production use)
-      // 1 = client messages
-      // 2 = client and server messages
-      $mail->SMTPDebug = 0;
-      //Ask for HTML-friendly debug output
-      $mail->Debugoutput = 'html';
-      //Set the hostname of the mail server
-      $mail->Host = "mail.cat-amania.com";
-      //Set the SMTP port number - likely to be 25, 465 or 587
-      $mail->Port = 25;
-      //Whether to use SMTP authentication
-      $mail->SMTPAuth = true;
-      $mail->Username = "espacecollaborateur";
-      $mail->Password = "12Sd45";
-      //Set who the message is to be sent from
-      $mail->setFrom('espacecollaborateur@cat-amania.com', 'Espace collaborateur');
-      //Set an alternative reply-to address
-      //$mail->addReplyTo('espacecollaborateur@cat-amania.com', 'Espace collaborateur');
-      //Set who the message is to be sent to
-      $cpt = 0;
-      foreach($expediteur as $element)
-      {
-        $cpt=$cpt+1;
-        
-        $infomail = explode("|",$element);
-           if ($infomail[2] == 'D'){
-             $mail->addAddress($infomail[0], utf8_decode($infomail[1]));
-           }else{
-             $mail->AddCC($infomail[0],  utf8_decode($infomail[1]));
-           }
+        $mail = new PHPMailer();
+        //Tell PHPMailer to use SMTP
+        $mail->isSMTP();
+        //Enable SMTP debugging
+        // 0 = off (for production use)
+        // 1 = client messages
+        // 2 = client and server messages
+        $mail->SMTPDebug = 0;
+        //Ask for HTML-friendly debug output
+        $mail->Debugoutput = 'html';
+        //Set the hostname of the mail server
+        $mail->Host = "mail.cat-amania.com";
+        //Set the SMTP port number - likely to be 25, 465 or 587
+        $mail->Port = 25;
+        //Whether to use SMTP authentication
+        $mail->SMTPAuth = true;
+        $mail->Username = "espacecollaborateur";
+        $mail->Password = "12Sd45";
+        //Set who the message is to be sent from
+        $mail->setFrom('espacecollaborateur@cat-amania.com', 'Espace collaborateur');
+        //Set who the message is to be sent to
+        $cpt = 0;
+        foreach ($expediteur as $element) {
+            $cpt      = $cpt + 1;
+            $infomail = explode("|", $element);
+            if ($infomail[2] == 'D') {
+                $mail->addAddress($infomail[0], utf8_decode($infomail[1]));
+            } else {
+                $mail->AddCC($infomail[0], utf8_decode($infomail[1]));
+            }
+        }
 
-           
-              
-      }
-      //$mail->AddBCC('test_test@cat-amania.com', 'St�phane Daniel');
-      
-      //$mail->addAddress('stephane.daniel@laposte.net', 'st�phane LAPOSTE');
-      //Set the subject line
-      $mail->Subject = $subjecthtml;
-      //Read an HTML message body from an external file, convert referenced images to embedded,
-      //convert HTML into a basic plain-text alternative body
-      $mail->msgHTML($messageHtml);
-      //Replace the plain text body with one created manually
-      //$mail->AltBody = 'This is a plain-text message body';
-      //Attach an image file
-      //$mail->addAttachment('../FrameworkPHP/lib/PHPMailer/exemples/images/phpmailer_mini.png');
+        //Set the subject line
+        $mail->Subject = $subjecthtml;
+        //Read an HTML message body from an external file, convert referenced images to embedded,
+        //convert HTML into a basic plain-text alternative body
+        $mail->msgHTML($messageHtml);
 
-      /* localhost SDA */
-      /*
-      $mail->AddEmbeddedImage('E:/dev/wamp/www/cat3/Site/prod/espacecollaborateur/Ergonomie/images/images/logocatsign.gif', 'logo_cat');
-      $mail->AddEmbeddedImage('E:/dev/wamp/www/cat3/Site/prod/espacecollaborateur/Ergonomie/images/images/picto_twitter__023961700_1607_15072011.gif', 'logo_twitter');
-      $mail->AddEmbeddedImage('E:/dev/wamp/www/cat3/Site/prod/espacecollaborateur/Ergonomie/images/images/picto_facebook__047004300_1607_15072011.gif', 'logo_facebook');
-      $mail->AddEmbeddedImage('E:/dev/wamp/www/cat3/Site/prod/espacecollaborateur/Ergonomie/images/images/picto_viadeo__044324700_1607_15072011.gif', 'logo_viadeo');
-      $mail->AddEmbeddedImage('E:/dev/wamp/www/cat3/Site/prod/espacecollaborateur/Ergonomie/images/images/linkedin__006424100_1100_02112011.jpg', 'logo_linkedin');
+        /*PROD */
+        $mail->AddEmbeddedImage('/var/www/clients/cat3/Site/prod/espacecollaborateur/Ergonomie/images/images/logocatsign.jpg', 'logo_cat');
+        $mail->AddEmbeddedImage('/var/www/clients/cat3/Site/prod/espacecollaborateur/Ergonomie/images/images/picto_twitter__023961700_1607_15072011.gif', 'logo_twitter');
+        $mail->AddEmbeddedImage('/var/www/clients/cat3/Site/prod/espacecollaborateur/Ergonomie/images/images/picto_facebook__047004300_1607_15072011.gif', 'logo_facebook');
+        $mail->AddEmbeddedImage('/var/www/clients/cat3/Site/prod/espacecollaborateur/Ergonomie/images/images/picto_viadeo__044324700_1607_15072011.gif', 'logo_viadeo');
+        $mail->AddEmbeddedImage('/var/www/clients/cat3/Site/prod/espacecollaborateur/Ergonomie/images/images/linkedin__006424100_1100_02112011.jpg', 'logo_linkedin');
 
-      */
-
-
-      /*PROD */
-      $mail->AddEmbeddedImage('/var/www/clients/cat3/Site/prod/espacecollaborateur/Ergonomie/images/images/logocatsign.jpg', 'logo_cat');
-      $mail->AddEmbeddedImage('/var/www/clients/cat3/Site/prod/espacecollaborateur/Ergonomie/images/images/picto_twitter__023961700_1607_15072011.gif', 'logo_twitter');
-      $mail->AddEmbeddedImage('/var/www/clients/cat3/Site/prod/espacecollaborateur/Ergonomie/images/images/picto_facebook__047004300_1607_15072011.gif', 'logo_facebook');
-      $mail->AddEmbeddedImage('/var/www/clients/cat3/Site/prod/espacecollaborateur/Ergonomie/images/images/picto_viadeo__044324700_1607_15072011.gif', 'logo_viadeo');
-      $mail->AddEmbeddedImage('/var/www/clients/cat3/Site/prod/espacecollaborateur/Ergonomie/images/images/linkedin__006424100_1100_02112011.jpg', 'logo_linkedin');
-
-
-      //send the message, check for errors
-      if (!$mail->send()) {
-        return "KO:" . $mail->ErrorInfo;
-      } else {
+        //send the message, check for errors
+        if (!$mail->send()) {
+            return "KO:" . $mail->ErrorInfo;
+        } else {
+            return "OK";
+        }
         return "OK";
-      }
-      return "OK";
 
     }
 }
