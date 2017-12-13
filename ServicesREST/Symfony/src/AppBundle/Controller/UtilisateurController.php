@@ -49,7 +49,8 @@ class UtilisateurController extends Controller
             $stmt->execute();
             $retour = $stmt->fetchAll();
 
-            $manager = UtilsController::getUserManager($id)['manager'];
+            $managerData = $this->getUserManager($id);
+            $manager = $managerData['manager'];
             //$nom=$retour['nom'];
 
             $retour[0]['responsable'] = $manager;
@@ -65,6 +66,30 @@ class UtilisateurController extends Controller
         } else {
             $message = array('message' => 'Paramètre id incorrect: ' . $id);
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    private function getUserManager($id)
+    {
+        $sql = 'SELECT idManager as manager FROM users WHERE id = ' . $id;
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetch();
+
+        if ($retour['manager'] == 0) {
+            $retour = "Non défini";
+            return $retour;
+        } else {
+            $idManager = $retour['manager'];
+
+            $sql = 'SELECT concat(prenom," ",nom) as manager, mail FROM users WHERE id = ' . $idManager;
+
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $retour = $stmt->fetch();
+
+            return $retour;
         }
     }
 }

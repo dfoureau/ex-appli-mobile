@@ -907,8 +907,8 @@ protected function calculerDureePeriode($periode) {
         $stmt->execute();
         $retour = $stmt->fetchAll();
 
-        $managerData = UtilsController::getUserManager($id);
-        $managerBisData = UtilsController::getUserManagerBis($id);
+        $managerData = $this->getUserManager($id);
+        $managerBisData = $this->getUserManagerBis($id);
 
         if (count($retour) == 0) {
             // Pas d'envoi de mail car utilisateur non trouvé
@@ -940,11 +940,11 @@ protected function calculerDureePeriode($periode) {
             // Mail du collaborateur
             $mailtab[1] = $retour[0]['mail'];
             // Mail du manager
-            $mailtab[1] = $managerData['mail'],
+            $mailtab[1] = $managerData['mail'];
             // Mail du 2e manager
-            $mailtab[1] = $managerBisData['mail'],
+            $mailtab[1] = $managerBisData['mail'];
 
-            $envoi_mail = UtilsController::sendEmail($mailtab, $subject, $message);
+            UtilsController::sendEmail($mailtab, $subject, $message);
         }
     }
 
@@ -966,6 +966,58 @@ protected function calculerDureePeriode($periode) {
                 return "À modifier";
             default:
                 return "Non défini";
+        }
+    }
+
+    private function getUserManager($id)
+    {
+        $sql = 'SELECT idManager as manager FROM users WHERE id = ' . $id;
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetch();
+
+        echo $retour;
+
+        echo $retour['manager'];
+
+        if ($retour['manager'] == 0) {
+            $retour = "Non défini";
+            return $retour;
+        } else {
+            $idManager = $retour['manager'];
+
+            $sql = 'SELECT concat(prenom," ",nom) as manager, mail FROM users WHERE id = ' . $idManager;
+
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $retour = $stmt->fetch();
+
+            return $retour;
+        }
+    }
+
+    private function getUserManagerBis($id)
+    {
+        $sql = 'SELECT idManagerBis as manager FROM users WHERE id = ' . $id;
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetch();
+
+        if ($retour['manager'] == 0) {
+            $retour = "Non défini";
+            return $retour;
+        } else {
+            $idManager = $retour['manager'];
+
+            $sql = 'SELECT concat(prenom," ",nom) as manager, mail FROM users WHERE id = ' . $idManager;
+
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $retour = $stmt->fetch();
+
+            return $retour;
         }
     }
 }
