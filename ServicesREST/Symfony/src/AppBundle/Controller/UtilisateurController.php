@@ -69,6 +69,12 @@ class UtilisateurController extends Controller
         }
     }
 
+    /**
+     * Retourne le manager du collaborateur en paramètre
+     *
+     * @param int       $id           id du collaborateur
+     *
+     */
     private function getUserManager($id)
     {
         $sql = 'SELECT idManager as manager FROM users WHERE id = ' . $id;

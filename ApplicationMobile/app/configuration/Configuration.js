@@ -4,7 +4,8 @@ var configurationAppli = {
   expirationToken: null,
   idAgence: null,
   //apiURL: "http://185.57.13.103/rest/web/",
-  apiURL: "http://192.168.1.20/prj-appli-mobile/ServicesREST/Symfony/web/",
+  apiURL: "http://185.57.13.103/rest8/web/",
+  //apiURL: "http://192.168.1.20/prj-appli-mobile/ServicesREST/Symfony/web/",
   //apiURL: "https://test.cat-amania.com/rest/web/",
   lienMdpOublie:
     "https://espacecollaborateur.cat-amania.com/espacecollaborateur/connexion.php",

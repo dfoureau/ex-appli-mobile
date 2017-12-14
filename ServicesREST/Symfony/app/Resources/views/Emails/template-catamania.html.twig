@@ -1,2 +1,27 @@
-{# app/Resources/views/Emails/registration.html.twig #}
-{{ message }}
+{# app/Resources/views/Emails/template-catamania.html.twig #}
+<html>
+<head><style type="text/css">body { font-family : arial; font-size : 12px; color:#2a2a2a; }.tableau{border: 1px solid #000000;height:500px;width:600px;}.tableaubottom{border-bottom: 1px solid #000000;font-family : arial; font-size : 25px; color:#2a2a2a; vertical-align:middle;height:75px;}.tableaucontenu{font-family : arial; font-size : 12px; color:#373737;text-align:left;vertical-align:middle;height:355px;}.tableauRA{font-family : arial; font-size : 12px; color:#373737; text-align:left;vertical-align:middle;border-collapse:collapse;}.tableauRA td{border: 1px solid #000000;}.tableaubas{font-family : arial; font-size : 12px; color:#FFFFFF; text-align:center;vertical-align:middle;height:70px;}.tableaubas img{vertical-align:middle;}.lien:link{color: #FFFFFF; }.lien:visited{color: #FFFFFF; }.lien:hover{color: #FFFFFF; }.lien:active{color: #FFFFFF; }.spanlien{float:right;text-align:right;}.lienspan{font-family : arial; font-size : 25px;
+color:#20A0FF;text-decoration:underline;}.ligneTitre{font-weight: bold;background-color: #7D979F;color: #FFFFFF;</style></head>
+
+<body>
+<table cellspacing="0" cellpadding="10" style="border: 1px solid #000000;width:600px;height:500px;" align="center" class="tableau" width="600px" heigth="500px"> <tr  height="75px"><td bgcolor="#ffffff" colspan="3" class="tableaubottom" style="border-bottom: 1px solid #000000;" ><table width="100%" border="0"><tr><td><a href="http://www.cat-amania.com/" target="_blank" >
+    <img src="{{ logocatsign }}" style="vertical-align:middle;" />
+</a></td><td align="right"><span class="spanlien" style="float:right;text-align:right;font-family:arial;font-size:25px;"><a href="http://espacecollaborateur.cat-amania.com/" target="_blank" class="lienspan" style="color:#20A0FF;text-decoration:underline;float:right;text-align:right;" >Espace collaborateur</a></span></td></tr></table></td></tr><tr><td width="10px" style="width:10px;max-width:10px;" >&nbsp;</td><td width="40px"
+style="width:40px;max-width:40px;" bgcolor="#EFEFEF">&nbsp;</td><td class="tableaucontenu" width="550px" style="width:550px;max-width:550px;">
+Bonjour<br /><br />
+
+{{ message|raw }}
+
+<br /><br />Cordialement.</td></tr><tr bgcolor="#00BBE1" height="70px" valign="middle" class="tableaubas" style="height:70px;text-align:center;vertical-align:middle;"><td bgcolor="#00BBE1" colspan="3" class="tableaubas" style="text-align:center;vertical-align:middle;" valign="middle" height="70px" ><span style="font-family:arial;font-size:12px;color:#FFFFFF;">Restez connect&eacute; :</span>&nbsp;&nbsp;
+    <img alt="picto_twitter" style="vertical-align:middle;" src="{{ logo_twitter }}" />
+    &nbsp;<a href="https://twitter.com/Cat_Amania" target="_blank" title="Twitter" class="lien"
+style="font-family:arial;font-size:12px;color:#ffffff;text-decoration:underline;vertical-align:middle;" >Twitter</a>&nbsp;&nbsp;
+<img alt="picto_facebook" style="vertical-align:middle;" src="{{ logo_facebook }}" />
+&nbsp;<a href="https://www.facebook.com/pages/Groupe-CAT-AMANIA/115424895208537" target="_blank" title="Facebook" class="lien" style="font-family:arial;font-size:12px;color:#ffffff;text-decoration:underline;vertical-align:middle;" >Facebook</a>&nbsp;&nbsp;
+<img alt="picto_viadeo" style="vertical-align:middle;" src="{{ logo_viadeo }}" />
+&nbsp;<a href="http://www.viadeo.com/fr/profile/cat.amania" target="_blank" title="Viad???o" class="lien" style="font-family:arial;font-size:12px;color:#ffffff;text-decoration:underline;vertical-align:middle;" >Viad&eacute;o</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<img alt="Linkedin cat-amania"  style="vertical-align:middle;" src="{{ logo_linkedin }}" />
+&nbsp;<a href="http://fr.linkedin.com/pub/cat-amania/35/175/7b6" target="_blank" title="Viad&eacute;o"
+class="lien" style="font-family:arial;font-size:12px;color:#ffffff;text-decoration:underline;vertical-align:middle;" >Linkedin</a>&nbsp;&nbsp;</td></tr></table>
+</body>
+</html>
