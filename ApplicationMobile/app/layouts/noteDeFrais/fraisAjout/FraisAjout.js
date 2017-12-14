@@ -341,6 +341,9 @@ class FraisAjout extends React.Component {
       showToast("Une erreur est survenue. Impossible d'effectuer l'opération");
       return;
     }
+
+    showLoading("sauvegarde en cours...");
+
     let total = this.state.totalMontant.toFixed(2);
 
     let url = "",
@@ -387,6 +390,7 @@ class FraisAjout extends React.Component {
       body: JSON.stringify(body),
     })
       .then(response => {
+        hideLoading();
         // On récupère le statut de retour, et on parse la requête en tant que JSON
         return Promise.all([response.status, response.json()]);
       })
