@@ -560,47 +560,59 @@ class CraController extends Controller
 
             $nbJoursOuvres = strval(UtilsController::nbJoursOuvresParMois($data['mois'], $data['annee']));
 
-            $message .= "<table style=\"font-family: arial;
-            font-size: 12px;
-            color: #373737;
-            text-align: left;
-            vertical-align: middle;
-            border-collapse: collapse;\">";
-            $message .="<tr style=\"border: 1px solid #000000;\">";
-            $message .="<td bgcolor=\"#7D979F\" style=\"font-weight: bold;background-color: #7D979F;color: #FFFFFF;\">
-            <span style=\"font-weight:bold;color:#FFFFFF;\">Nom Complet</span></td>";
-            $message .="<td style=\"border: 1px solid #000000;\" colspan=\"3\">".$retour[0]['prenom']." ".strtoupper($retour[0]['nom'])."</td>";
-            $message .="</tr>";
-            $message .="<tr style=\"border: 1px solid #000000;\">";
-            $message .="<td bgcolor=\"#7D979F\" style=\"border: 1px solid #000000;\"><span style=\"font-weight: bold;background-color: #7D979F;color: #FFFFFF;\">Mois</span></td>";
-            $message .="<td style=\"border: 1px solid #000000;\">&nbsp;".$this->donneMois($data['mois'])." ". $data['annee']."</td>";
-            $message .="<td bgcolor=\"#7D979F\" style=\"border: 1px solid #000000;\"><span style=\"font-weight: bold;background-color: #7D979F;color: #FFFFFF;\">Nombre de jours ouvrés</span></td>";
-            $message .="<td style=\"border: 1px solid #000000;\">&nbsp;".$nbJoursOuvres."</td>";
-            $message .="</tr>";
-            $message .="<tr style=\"border: 1px solid #000000;\">";
-            $message .="<td bgcolor=\"#7D979F\" style=\"border: 1px solid #000000;font-weight: bold;background-color: #7D979F;color: #FFFFFF;\" nowrap ><span style=\"font-weight:bold;color:#FFFFFF;\">Nombre de jours travaillés</span></td>";
-            $message .="<td style=\"border: 1px solid #000000;\">&nbsp;".str_replace('.',',',$data['nbJourTravailles'])."</td>";
-            $message .="<td bgcolor=\"#7D979F\" style=\"border: 1px solid #000000;font-weight: bold;background-color: #7D979F;color: #FFFFFF;\" nowrap ><span style=\"font-weight:bold;color:#FFFFFF;\">Nombre de jours d'absence</span></td>";
-            $message .="<td style=\"border: 1px solid #000000;\">&nbsp;".str_replace('.',',',$data['nbJourAbs'])."</td>";
-            $message .="</tr>";
-            $message .="<tr style=\"border: 1px solid #000000;\">";
-            $message .="<td bgcolor=\"#7D979F\" style=\"border: 1px solid #000000;font-weight: bold;background-color: #7D979F;color: #FFFFFF;\" colspan=\"4\"><span style=\"font-weight:bold;color:#FFFFFF;\">Informations Complémentaires</span></td></tr>
-            <tr style=\"border: 1px solid #000000;\">";
-            $message .="<td style=\"border: 1px solid #000000;\" colspan=\"4\">&nbsp;".stripslashes($data['commentaires'])."</td>";
-            $message .="</tr>";
-            $message .="<tr style=\"border: 1px solid #000000;\">";
-            $message .="<td style=\"border: 1px solid #000000;font-weight: bold;background-color: #7D979F;color: #FFFFFF;\" bgcolor=\"#7D979F\"><span style=\"font-weight:bold;color:#FFFFFF;\">Client</span></td>";
-            $message .="<td style=\"border: 1px solid #000000;\">&nbsp;".stripslashes($data['client'])."</td>";
-            $message .="<td style=\"border: 1px solid #000000;font-weight: bold;background-color: #7D979F;color: #FFFFFF;\" bgcolor=\"#7D979F\"><span style=\"font-weight:bold;color:#FFFFFF;\">Responsable</span></td>";
-            $message .="<td style=\"border: 1px solid #000000;\">&nbsp;".stripslashes($data['responsable'])."</td>";
-            $message .="</tr>";
-            $message .="<tr>";
-            $message .="<td style=\"border: 1px solid #000000;font-weight: bold;background-color: #7D979F;color: #FFFFFF;\" bgcolor=\"#7D979F\"><span style=\"font-weight:bold;color:#FFFFFF;\">Projet</span></td>";
-            $message .="<td style=\"border: 1px solid #000000;\">&nbsp;".stripslashes($data['projet'])."</td>";
-            $message .="<td style=\"border: 1px solid #000000;font-weight: bold;background-color: #7D979F;color: #FFFFFF;\" bgcolor=\"#7D979F\"><span style=\"font-weight:bold;color:#FFFFFF;\">Etat</span></td>";
-            $message .="<tdstyle=\"border: 1px solid #000000;\"> &nbsp;".$this->getDescriptionByEtat($etat)."</td>";
-            $message .="</tr>";
-            $message .="</table>";
+            $message .= '
+            <style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;border-color:#999;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#999;color:#444;background-color:#F7FDFA;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#999;color:#fff;background-color:#26ADE4;}
+.tg .tg-f3oy{font-size:12px;background-color:#ffffff;vertical-align:top}
+.tg .tg-kohf{font-size:12px;background-color:#d2e4fc;color:#444444}
+.tg .tg-nwzb{background-color:#ffffff;font-size:12px;vertical-align:top}
+.tg .tg-utag{font-size:12px;background-color:#d2e4fc;vertical-align:top}
+.tg .tg-oskr{background-color:#ffffff;vertical-align:top}
+</style>
+<table class="tg">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+  <tr>
+    <th class="tg-kohf">Nom complet<br></th>
+    <th class="tg-f3oy" colspan="3">' . $nomcollabo . '</th>
+  </tr>
+  <tr>
+    <td class="tg-utag">Mois<br></td>
+    <td class="tg-nwzb">' . $this->donneMois($data['mois']) . ' ' . $data['annee'] . '</td>
+    <td class="tg-utag">Nombre de jours ouvrés<br></td>
+    <td class="tg-oskr">' . $nbJoursOuvres . '</td>
+  </tr>
+  <tr>
+    <td class="tg-utag">Nombres de jours travaillés<br></td>
+    <td class="tg-nwzb">' . str_replace('.',',',$data['nbJourTravailles']) . '</td>
+    <td class="tg-utag">Nombre de jours d\'absence<br></td>
+    <td class="tg-oskr">' . str_replace('.',',',$data['nbJourAbs']) . '</td>
+  </tr>
+  <tr>
+    <td class="tg-utag" colspan="4">Informations complémentaires<br></td>
+  </tr>
+  <tr>
+    <td class="tg-f3oy" colspan="4">' . stripslashes($data['commentaires']) . '</td>
+  </tr>
+  <tr>
+    <td class="tg-utag">Client</td>
+    <td class="tg-nwzb">' . stripslashes($data['client']) . '</td>
+    <td class="tg-utag">Responsable</td>
+    <td class="tg-oskr">' . stripslashes($data['responsable']) . '</td>
+  </tr>
+  <tr>
+    <td class="tg-utag">Projet</td>
+    <td class="tg-nwzb">' . stripslashes($data['projet']) . '</td>
+    <td class="tg-utag">État</td>
+    <td class="tg-oskr">' . $this->getDescriptionByEtat($etat) . '</td>
+  </tr>
+</table>';
 
             $message = utf8_decode($message);
 
