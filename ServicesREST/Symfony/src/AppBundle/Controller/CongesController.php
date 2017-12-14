@@ -689,11 +689,11 @@ protected function calculerDureePeriode($periode) {
      */
     public function getTypesAbsences(Request $request)
     {
-        $log=new LoginController();
+        /*$log=new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
-        }
+        }*/
 
         $sql = "SELECT DISTINCT
           idTypeAbs,
