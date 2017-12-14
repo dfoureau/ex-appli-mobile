@@ -25,7 +25,13 @@ import StyleGeneral from "../../../styles/Styles";
 import moment from "moment";
 import { momentConfig } from "../../../configuration/MomentConfig";
 
-import { showToast, showNotification, hide } from "react-native-notifyer";
+import {
+  showToast,
+  showNotification,
+  showLoading,
+  hideLoading,
+  hide,
+} from "react-native-notifyer";
 
 // IMPORT DES COMPOSANTS EXOTIQUE
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
@@ -397,7 +403,7 @@ class FraisAjout extends React.Component {
       .then(res => {
         var [status, body] = res;
         let success = status == 200;
-        showToast((success ? "Succès" : "Erreur") + "\n" + res);
+        showToast((success ? "Succès" : "Erreur") + "\n" + body.message);
 
         // En cas de succès uniquement, on met à jour le parent et on revient
         // sur la page précédente
