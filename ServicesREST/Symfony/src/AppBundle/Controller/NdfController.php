@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use \Swift_Image;
 
 class NdfController extends Controller
 {
@@ -389,7 +390,6 @@ class NdfController extends Controller
 
     public function postNdf($data)
     {
-
         $idUser = $data['idUser'];
         $mois   = $data['mois'];
         $annee  = $data['annee'];
@@ -455,6 +455,12 @@ class NdfController extends Controller
         $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
         $stmt->execute();
 
+        // Envoi mail manager
+        if ($etat == 1) {
+            // Envoi mail seulement si la demande est pour validation
+            $this->envoiEmailManager($data);
+        }
+
         $retour = array('message' => "La note de frais a ete creee", 'code' => Response::HTTP_OK);
         return $retour;
     }
@@ -473,5 +479,189 @@ class NdfController extends Controller
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Envoi un mail de notification au manager quand la note de frais
+     * est envoyée pour validation
+     *
+     * @param array       $data           Informations sur la note de frais
+     *
+     */
+    private function envoiEmailManager($data) {
+        $id = $data['idUser'];
+        $etat = $data['etat'];
+
+        $sql = 'select users.id as id,users.nom as nom,users.prenom,profils.libelle as profil,entitesjuridiques.nomEntite as entite,
+        users.mail as mail, societeagence.nomSocieteAgence as agence from users, profils, entitesjuridiques,societeagence
+            where users.id = "' . $id . '"
+            and users.idprofil = profils.idProfil
+            and users.idEntiteJuridique = entitesjuridiques.idEntite
+            and users.idagence = societeagence.idSocieteAgence';
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetchAll();
+
+        $managerData = $this->getUserManager($id);
+        $managerBisData = $this->getUserManagerBis($id);
+
+        if (count($retour) == 0) {
+            // Pas d'envoi de mail car utilisateur non trouvé
+            return;
+        } else  {
+            // Envoi du mail
+            $message = "";
+            $subject = "";
+            $nomcollabo = $retour[0]['prenom'] . ' ' . $retour[0]['nom'];
+
+            $message .= "<p>Votre note de frais de " . strtoupper($this->donneMois($data['mois'])) . " " . $data['annee'];
+            $message .= " d'un motant de " . $data['total'] . " € euros est " . $this->getDescriptionByEtat($etat) . ".</p>";
+            $message .= "<p>En attente de validation par " . $managerData['manager'] . ".</p>";
+
+            $message = utf8_decode($message);
+
+            $subject = "APPLI - Note de frais de " . strtoupper($this->donneMois($data['mois'])) . " " . $data['annee'] . " pour " . $nomcollabo . " (Etat: " . utf8_encode($this->getDescriptionByEtat($etat)) . ")";
+
+            // Envoi mail au managers
+            $mailtab = array();
+            // Mail du collaborateur
+            $mailtab[1] = $retour[0]['mail'];
+            // Mail du manager
+            $mailtab[1] = $managerData['mail'];
+            // Mail du 2e manager
+            $mailtab[1] = $managerBisData['mail'];
+
+            $this->sendEmail($mailtab, $subject, $message);
+        }
+    }
+
+    /**
+     * Retourne le nom du mois selon son numéro
+     *
+     * @param int       $mois           numéro du mois
+     *
+     */
+    function donneMois($mois) {
+        $liste_mois = array( "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre" );
+        return $liste_mois[$mois-1];
+    }
+
+    /**
+     * Retourne le libellé de l'état de la note de frais
+     *
+     * @param int       $etat           état de la demande
+     *
+     */
+    private function getDescriptionByEtat($etat) {
+        switch ($etat) {
+            case 0:
+                return "Brouillon";
+            case 1:
+                return "En attente de validation";
+            case 2:
+                return "Validé";
+            case 3:
+                return "À modifier";
+            default:
+                return "Non défini";
+        }
+    }
+
+    /**
+     * Retourne le manager du collaborateur en paramètre
+     *
+     * @param int       $id           id du collaborateur
+     *
+     */
+    private function getUserManager($id)
+    {
+        $sql = 'SELECT idManager as manager FROM users WHERE id = ' . $id;
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetch();
+
+        if ($retour['manager'] == 0) {
+            $retour = "Non défini";
+            return $retour;
+        } else {
+            $idManager = $retour['manager'];
+
+            $sql = 'SELECT concat(prenom," ",nom) as manager, mail FROM users WHERE id = ' . $idManager;
+
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $retour = $stmt->fetch();
+
+            return $retour;
+        }
+    }
+
+    /**
+     * Retourne le 2ème manager du collaborateur en paramètre
+     *
+     * @param int       $id           id du collaborateur
+     *
+     */
+    private function getUserManagerBis($id)
+    {
+        $sql = 'SELECT idManagerBis as manager FROM users WHERE id = ' . $id;
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetch();
+
+        if ($retour['manager'] == 0) {
+            $retour = "Non défini";
+            return $retour;
+        } else {
+            $idManager = $retour['manager'];
+
+            $sql = 'SELECT concat(prenom," ",nom) as manager, mail FROM users WHERE id = ' . $idManager;
+
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $retour = $stmt->fetch();
+
+            return $retour;
+        }
+    }
+
+    /**
+     * Envoi un mail aux expéditeurs avec un sujet et un contenu
+     * Le mail est encapsulé dans un template aux couleurs de
+     * l'espace collaborateur et Cat-amania
+     *
+     * @param array       $expediteur         Liste des mails des récepteurs
+     * @param string      $subject            Sujet du mail
+     * @param string      $messageEmail       Contenu du mail
+     *
+     */
+    private function sendEmail($expediteur, $subject, $messageEmail)
+    {
+        $data = array();
+        $message = new \Swift_Message($subject);
+
+        $imgPath = "/var/www/clients/platine/rest8/app/Resources/images/";
+
+        $data['logocatsign'] = $message->embed(Swift_Image::fromPath($imgPath . 'logocatsign.jpg'));
+        $data['logo_facebook'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_facebook.gif'));
+        $data['logo_twitter'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_twitter.gif'));
+        $data['logo_viadeo'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_viadeo.gif'));
+        $data['logo_linkedin'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_linkedin.jpg'));
+        $data['message'] = $messageEmail;
+
+        $message->setFrom('espacecollaborateur@cat-amania.com')
+        ->setTo($expediteur)
+        ->setBody(
+            $this->renderView(
+                'Emails/template-catamania.html.twig',
+                $data
+            ),
+            'text/html'
+        );
+
+        $this->get('mailer')->send($message);
     }
 }

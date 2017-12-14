@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use \DateTime;
+use \Swift_Image;
 
 class CongesController extends Controller
 {
@@ -105,7 +106,7 @@ class CongesController extends Controller
             $data    = json_decode($content, true);
             $retour  = $this->createDemandeConges($data, $idUserToken);
         } catch (ContextErrorException $e) {
-            $message = array('message' => "Problème de paramètres");
+            $message = array('message' => "Problème de paramètres " . $e);
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
 
@@ -290,6 +291,7 @@ protected function calculerDureePeriode($periode) {
     public function createDemandeConges($data, $idUserToken)
     {
         $idUser = $data['idUser'];
+        $etatDemande = $data['etat'];
 
         // Récupere le numéro de la demande à partir de la table
         $sql = "SELECT MAX(numdemande) AS num FROM demandesconges WHERE idUser = " . $idUser;
@@ -373,6 +375,12 @@ protected function calculerDureePeriode($periode) {
                 $stmt->execute();
 
                 $retour = array('message' => "Création réussie", 'code' => Response::HTTP_OK);
+
+                // Envoi mail manager
+                if ($etatDemande == 1) {
+                    // Envoi mail seulement si la demande est pour validation
+                    $this->envoiEmailManager($data);
+                }
                 return $retour;
             }
         }
@@ -681,11 +689,11 @@ protected function calculerDureePeriode($periode) {
      */
     public function getTypesAbsences(Request $request)
     {
-        // $log=new LoginController();
-        // $retourAuth = $log->checkAuthentification($this);
-        // if (array_key_exists("erreur", $retourAuth)) {
-        //     return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
-        // }
+        /*$log=new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
+        }*/
 
         $sql = "SELECT DISTINCT
           idTypeAbs,
@@ -877,5 +885,209 @@ protected function calculerDureePeriode($periode) {
             $message = array('message' => 'Format paramètres incorrect');
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
+    }
+
+    /**
+     * Envoi un mail de notification au manager quand la demande de congé
+     * est envoyé pour validation
+     *
+     * @param array       $data           Informations de la demande de congé
+     *
+     */
+    private function envoiEmailManager($data) {
+        $id = $data['idUser'];
+        $etat = $data['etat'];
+
+        $sql = 'select users.id as id,users.nom as nom,users.prenom,profils.libelle as profil,entitesjuridiques.nomEntite as entite,
+        users.mail as mail, societeagence.nomSocieteAgence as agence from users, profils, entitesjuridiques,societeagence
+            where users.id = "' . $id . '"
+            and users.idprofil = profils.idProfil
+            and users.idEntiteJuridique = entitesjuridiques.idEntite
+            and users.idagence = societeagence.idSocieteAgence';
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetchAll();
+
+        $managerData = $this->getUserManager($id);
+        $managerBisData = $this->getUserManagerBis($id);
+
+        if (count($retour) == 0) {
+            // Pas d'envoi de mail car utilisateur non trouvé
+            return;
+        } else  {
+            // Envoi du mail
+            $message = "";
+            $subject = "";
+            $nomcollabo = $retour[0]['prenom'] . ' ' . $retour[0]['nom'];
+            $message .= "Demande de congés du collaborateur : " . $nomcollabo ."<br /><br />";
+
+            foreach ($data['lignesDemandes'] as $ligne) {
+                $dateDebut = $ligne['dateDebut'];
+                $dateFin = $ligne['dateFin'];
+                $typeabs = $ligne['typeabs'];
+                $nbJours = $ligne['nbJours'];
+
+                $message .= "<br />Du : " . $dateDebut . "<br />Au : " . $dateFin ."<br /> Nombre de jours : " . $nbJours . "<br /> Type d'absences : " . $this->getTypesAbsencesByID($typeabs) . "<br />";
+            }
+
+            $message .= "<br />En attente de validation par " . $managerData['manager'] . ".";
+            $message = utf8_decode($message);
+
+            $subject = "APPLI - Demande de congés de " . $nomcollabo . " pour la période du " . $dateDebut . " au " . $dateFin . " (Etat: " . utf8_encode($this->getDescriptionByEtat($etat)) . ")";
+
+            // Envoi mail au managers
+            $mailtab = array();
+            // Mail du collaborateur
+            $mailtab[1] = $retour[0]['mail'];
+            // Mail du manager
+            $mailtab[1] = $managerData['mail'];
+            // Mail du 2e manager
+            $mailtab[1] = $managerBisData['mail'];
+
+            $this->sendEmail($mailtab, $subject, $message);
+        }
+    }
+
+    /**
+     * Retourne la descrition de l'état de la demande de congé
+     *
+     * @param int       $etat           état de la demande
+     *
+     */
+    private function getDescriptionByEtat($etat) {
+        switch ($etat) {
+            case 0:
+                return "Brouillon";
+            case 1:
+                return "En attente de validation";
+            case 2:
+                return "Validé";
+            case 3:
+                return "À modifier";
+            default:
+                return "Non défini";
+        }
+    }
+
+    /**
+     * Retourne le manager du collaborateur en paramètre
+     *
+     * @param int       $id           id du collaborateur
+     *
+     */
+    private function getUserManager($id)
+    {
+        $sql = 'SELECT idManager as manager FROM users WHERE id = ' . $id;
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetch();
+
+        if ($retour['manager'] == 0) {
+            $retour = "Non défini";
+            return $retour;
+        } else {
+            $idManager = $retour['manager'];
+
+            $sql = 'SELECT concat(prenom," ",nom) as manager, mail FROM users WHERE id = ' . $idManager;
+
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $retour = $stmt->fetch();
+
+            return $retour;
+        }
+    }
+
+    /**
+     * Retourne le 2ème manager du collaborateur en paramètre
+     *
+     * @param int       $id           id du collaborateur
+     *
+     */
+    private function getUserManagerBis($id)
+    {
+        $sql = 'SELECT idManagerBis as manager FROM users WHERE id = ' . $id;
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetch();
+
+        if ($retour['manager'] == 0) {
+            $retour = "Non défini";
+            return $retour;
+        } else {
+            $idManager = $retour['manager'];
+
+            $sql = 'SELECT concat(prenom," ",nom) as manager, mail FROM users WHERE id = ' . $idManager;
+
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $retour = $stmt->fetch();
+
+            return $retour;
+        }
+    }
+
+    /**
+     * Envoi un mail aux expéditeurs avec un sujet et un contenu
+     * Le mail est encapsulé dans un template aux couleurs de
+     * l'espace collaborateur et Cat-amania
+     *
+     * @param array       $expediteur         Liste des mails des récepteurs
+     * @param string      $subject            Sujet du mail
+     * @param string      $messageEmail       Contenu du mail
+     *
+     */
+    private function sendEmail($expediteur, $subject, $messageEmail)
+    {
+        $data = array();
+        $message = new \Swift_Message($subject);
+
+        $imgPath = "/var/www/clients/platine/rest8/app/Resources/images/";
+
+        $data['logocatsign'] = $message->embed(Swift_Image::fromPath($imgPath . 'logocatsign.jpg'));
+        $data['logo_facebook'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_facebook.gif'));
+        $data['logo_twitter'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_twitter.gif'));
+        $data['logo_viadeo'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_viadeo.gif'));
+        $data['logo_linkedin'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_linkedin.jpg'));
+        $data['message'] = $messageEmail;
+
+        $message->setFrom('espacecollaborateur@cat-amania.com')
+        ->setTo($expediteur)
+        ->setBody(
+            $this->renderView(
+                'Emails/template-catamania.html.twig',
+                $data
+            ),
+            'text/html'
+        );
+
+        $this->get('mailer')->send($message);
+    }
+
+    /**
+     * Retourne le libellé du type d'absence dont le code est donné en paramètre
+     *
+     * @param int       $typeabsID           code du type d'absence
+     *
+     */
+    private function getTypesAbsencesByID($typeabsID)
+    {
+        $sql = "SELECT DISTINCT
+            typesabsences.code AS codeTypeAbs,
+            typesabsences.libelle AS libelleTypeAbs
+        FROM
+          typesabsences
+        LEFT JOIN demandesconges ON typesabsences.idTypeAbs = demandesconges.idTypeAbs
+        WHERE typesabsences.idTypeAbs = " . $typeabsID . ";
+        ";
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetchAll();
+
+        return $retour[0]['libelleTypeAbs'];
     }
 }

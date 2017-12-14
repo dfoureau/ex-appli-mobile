@@ -31,7 +31,6 @@ export default StyleSheet.create({
   },
 
   ContainerMenu: {
-    // SALUT
     width: width * 0.6,
     height: height,
     backgroundColor: "#FFFFFF",
@@ -41,18 +40,15 @@ export default StyleSheet.create({
   },
 
   ItemMenu: {
-    // SALUT
     paddingLeft: 10,
   },
 
   IconItemMenu: {
-    // SALUT
     width: 36,
     height: 36,
   },
 
   TextItemMenu: {
-    // SALUT
     color: "#000000",
     fontSize: 16,
     position: "relative",

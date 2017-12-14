@@ -77,6 +77,3 @@ export default class ContainerTitre extends React.Component {
     );
   }
 }
-
-//Il faut exporteer la na vigation ou bien la classe
-//export default ContainerAccueil;

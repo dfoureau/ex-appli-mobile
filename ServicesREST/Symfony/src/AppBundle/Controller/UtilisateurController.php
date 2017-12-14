@@ -49,7 +49,8 @@ class UtilisateurController extends Controller
             $stmt->execute();
             $retour = $stmt->fetchAll();
 
-            $manager = $this->getUserManager($id);
+            $managerData = $this->getUserManager($id);
+            $manager = $managerData['manager'];
             //$nom=$retour['nom'];
 
             $retour[0]['responsable'] = $manager;
@@ -68,6 +69,12 @@ class UtilisateurController extends Controller
         }
     }
 
+    /**
+     * Retourne le manager du collaborateur en paramètre
+     *
+     * @param int       $id           id du collaborateur
+     *
+     */
     private function getUserManager($id)
     {
         $sql = 'SELECT idManager as manager FROM users WHERE id = ' . $id;
@@ -82,13 +89,13 @@ class UtilisateurController extends Controller
         } else {
             $idManager = $retour['manager'];
 
-            $sql = 'SELECT concat(prenom," ",nom) as manager FROM users WHERE id = ' . $idManager;
+            $sql = 'SELECT concat(prenom," ",nom) as manager, mail FROM users WHERE id = ' . $idManager;
 
             $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
             $stmt->execute();
             $retour = $stmt->fetch();
 
-            return $retour['manager'];
+            return $retour;
         }
     }
 }

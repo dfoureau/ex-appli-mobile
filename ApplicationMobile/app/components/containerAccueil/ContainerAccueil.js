@@ -131,6 +131,3 @@ export default class ContainerAccueil extends React.Component {
     );
   }
 }
-
-//Il faut exporteer la navigation ou bien la classe
-//export default ContainerAccueil;

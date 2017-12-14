@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use \Swift_Image;
 
 class CraController extends Controller
 {
@@ -328,11 +329,16 @@ class CraController extends Controller
         $stmt->execute();
         $retour = $stmt->rowCount();
 
-        //if($retour == 0){
         if (empty($retour)) {
             $message = array('message' => "Erreur dans la création");
             return array('message' => $message, 'code' => '400');
         } else {
+            // Envoi mail manager
+            if ($etat == 2) {
+                // Envoi mail seulement si la demande est pour validation
+                $this->envoiEmailManager($data);
+            }
+
             $message = array('message' => "Création réussie");
             return array('message' => $message, 'code' => '200');
         }
@@ -516,5 +522,242 @@ class CraController extends Controller
         $tabjf         = array('premierAn' => $premierAn, 'lundiDePaques' => $lundiDePaques, 'premierMai' => $premierMai, 'huitMai' => $huitMai, 'ascension' => $ascension, 'pentecote' => $pentecote, 'feteNationale' => $feteNationale, 'assomption' => $assomption, 'toussaint' => $toussaint, 'armistice' => $armistice, 'noel' => $noel);
 
         return new JsonResponse($tabjf, Response::HTTP_OK);
+    }
+
+    /**
+     * Envoi un mail de notification au manager quand le CRA
+     * est envoyé pour validation
+     *
+     * @param array       $data           Informations sur le CRA
+     *
+     */
+    private function envoiEmailManager($data) {
+        $id = $data['idUser'];
+        $etat = $data['etat'];
+
+        $sql = 'select users.id as id,users.nom as nom,users.prenom,profils.libelle as profil,entitesjuridiques.nomEntite as entite,
+        users.mail as mail, societeagence.nomSocieteAgence as agence from users, profils, entitesjuridiques,societeagence
+            where users.id = "' . $id . '"
+            and users.idprofil = profils.idProfil
+            and users.idEntiteJuridique = entitesjuridiques.idEntite
+            and users.idagence = societeagence.idSocieteAgence';
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetchAll();
+
+        $managerData = $this->getUserManager($id);
+        $managerBisData = $this->getUserManagerBis($id);
+
+        if (count($retour) == 0) {
+            // Pas d'envoi de mail car utilisateur non trouvé
+            return;
+        } else  {
+            // Envoi du mail
+            $message = "";
+            $subject = "";
+            $nomcollabo = $retour[0]['prenom'] . ' ' . $retour[0]['nom'];
+
+            $nbJoursOuvres = strval(UtilsController::nbJoursOuvresParMois($data['mois'], $data['annee']));
+
+            $message .= '
+            <style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;border-color:#999;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#999;color:#444;background-color:#F7FDFA;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#999;color:#fff;background-color:#26ADE4;}
+.tg .tg-f3oy{font-size:12px;background-color:#ffffff;vertical-align:top}
+.tg .tg-kohf{font-size:12px;background-color:#d2e4fc;color:#444444}
+.tg .tg-nwzb{background-color:#ffffff;font-size:12px;vertical-align:top}
+.tg .tg-utag{font-size:12px;background-color:#d2e4fc;vertical-align:top}
+.tg .tg-oskr{background-color:#ffffff;vertical-align:top}
+</style>
+<table class="tg">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+  <tr>
+    <th class="tg-kohf">Nom complet<br></th>
+    <th class="tg-f3oy" colspan="3">' . $nomcollabo . '</th>
+  </tr>
+  <tr>
+    <td class="tg-utag">Mois<br></td>
+    <td class="tg-nwzb">' . $this->donneMois($data['mois']) . ' ' . $data['annee'] . '</td>
+    <td class="tg-utag">Nombre de jours ouvrés<br></td>
+    <td class="tg-oskr">' . $nbJoursOuvres . '</td>
+  </tr>
+  <tr>
+    <td class="tg-utag">Nombres de jours travaillés<br></td>
+    <td class="tg-nwzb">' . str_replace('.',',',$data['nbJourTravailles']) . '</td>
+    <td class="tg-utag">Nombre de jours d\'absence<br></td>
+    <td class="tg-oskr">' . str_replace('.',',',$data['nbJourAbs']) . '</td>
+  </tr>
+  <tr>
+    <td class="tg-utag" colspan="4">Informations complémentaires<br></td>
+  </tr>
+  <tr>
+    <td class="tg-f3oy" colspan="4">' . stripslashes($data['commentaires']) . '</td>
+  </tr>
+  <tr>
+    <td class="tg-utag">Client</td>
+    <td class="tg-nwzb">' . stripslashes($data['client']) . '</td>
+    <td class="tg-utag">Responsable</td>
+    <td class="tg-oskr">' . stripslashes($data['responsable']) . '</td>
+  </tr>
+  <tr>
+    <td class="tg-utag">Projet</td>
+    <td class="tg-nwzb">' . stripslashes($data['projet']) . '</td>
+    <td class="tg-utag">État</td>
+    <td class="tg-oskr">' . $this->getDescriptionByEtat($etat) . '</td>
+  </tr>
+</table>';
+
+            $message = utf8_decode($message);
+
+            $subject = "APPLI - Relevé Activité " . strtoupper($this->donneMois($data['mois'])) . " " . $data['annee'] . " pour " . $nomcollabo . " (Etat: " . utf8_encode($this->getDescriptionByEtat($etat)) . ")";
+
+            // Envoi mail au managers
+            $mailtab = array();
+            // Mail du collaborateur
+            $mailtab[1] = $retour[0]['mail'];
+            // Mail du manager
+            $mailtab[1] = $managerData['mail'];
+            // Mail du 2e manager
+            $mailtab[1] = $managerBisData['mail'];
+
+            $this->sendEmail($mailtab, $subject, $message);
+        }
+    }
+
+    /**
+     * Retourne le nom du mois selon son numéro
+     *
+     * @param int       $mois           numéro du mois
+     *
+     */
+    function donneMois($mois) {
+        $liste_mois = array( "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre" );
+        return $liste_mois[$mois-1];
+    }
+
+    /**
+     * Retourne le libellé de l'état du CRA
+     *
+     * @param int       $etat           état de la demande
+     *
+     */
+    private function getDescriptionByEtat($etat) {
+        $sql = "SELECT DISTINCT
+            id,
+            libelle
+        FROM
+          etatra
+        WHERE id = " . $etat . ";
+        ";
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetchAll();
+
+        return $retour[0]['libelle'];
+    }
+
+    /**
+     * Retourne le manager du collaborateur en paramètre
+     *
+     * @param int       $id           id du collaborateur
+     *
+     */
+    private function getUserManager($id)
+    {
+        $sql = 'SELECT idManager as manager FROM users WHERE id = ' . $id;
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetch();
+
+        if ($retour['manager'] == 0) {
+            $retour = "Non défini";
+            return $retour;
+        } else {
+            $idManager = $retour['manager'];
+
+            $sql = 'SELECT concat(prenom," ",nom) as manager, mail FROM users WHERE id = ' . $idManager;
+
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $retour = $stmt->fetch();
+
+            return $retour;
+        }
+    }
+
+    /**
+     * Retourne le 2ème manager du collaborateur en paramètre
+     *
+     * @param int       $id           id du collaborateur
+     *
+     */
+    private function getUserManagerBis($id)
+    {
+        $sql = 'SELECT idManagerBis as manager FROM users WHERE id = ' . $id;
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetch();
+
+        if ($retour['manager'] == 0) {
+            $retour = "Non défini";
+            return $retour;
+        } else {
+            $idManager = $retour['manager'];
+
+            $sql = 'SELECT concat(prenom," ",nom) as manager, mail FROM users WHERE id = ' . $idManager;
+
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $retour = $stmt->fetch();
+
+            return $retour;
+        }
+    }
+
+    /**
+     * Envoi un mail aux expéditeurs avec un sujet et un contenu
+     * Le mail est encapsulé dans un template aux couleurs de
+     * l'espace collaborateur et Cat-amania
+     *
+     * @param array       $expediteur         Liste des mails des récepteurs
+     * @param string      $subject            Sujet du mail
+     * @param string      $messageEmail       Contenu du mail
+     *
+     */
+    private function sendEmail($expediteur, $subject, $messageEmail)
+    {
+        $data = array();
+        $message = new \Swift_Message($subject);
+
+        $imgPath = "/var/www/clients/platine/rest8/app/Resources/images/";
+
+        $data['logocatsign'] = $message->embed(Swift_Image::fromPath($imgPath . 'logocatsign.jpg'));
+        $data['logo_facebook'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_facebook.gif'));
+        $data['logo_twitter'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_twitter.gif'));
+        $data['logo_viadeo'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_viadeo.gif'));
+        $data['logo_linkedin'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_linkedin.jpg'));
+        $data['message'] = $messageEmail;
+
+        $message->setFrom('espacecollaborateur@cat-amania.com')
+        ->setTo($expediteur)
+        ->setBody(
+            $this->renderView(
+                'Emails/template-catamania.html.twig',
+                $data
+            ),
+            'text/html'
+        );
+
+        $this->get('mailer')->send($message);
     }
 }

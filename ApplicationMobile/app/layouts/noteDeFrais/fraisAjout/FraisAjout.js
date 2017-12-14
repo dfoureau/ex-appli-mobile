@@ -342,6 +342,10 @@ class FraisAjout extends React.Component {
       return;
     }
 
+    showLoading("sauvegarde en cours...");
+
+    let total = this.state.totalMontant.toFixed(2);
+
     let url = "",
       method = "",
       idUser = configurationAppli.userID,
@@ -365,6 +369,7 @@ class FraisAjout extends React.Component {
       mois: mois,
       annee: annee,
       etat: statusId,
+      total: total,
       notesDeFrais: [],
     };
 
@@ -385,6 +390,7 @@ class FraisAjout extends React.Component {
       body: JSON.stringify(body),
     })
       .then(response => {
+        hideLoading();
         // On récupère le statut de retour, et on parse la requête en tant que JSON
         return Promise.all([response.status, response.json()]);
       })

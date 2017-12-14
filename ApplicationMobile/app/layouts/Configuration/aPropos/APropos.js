@@ -141,6 +141,8 @@ class APropos extends React.Component {
                 Sylvain PERNOT
                 {"\n"}
                 Julien PINEAU
+                {"\n"}
+                Yannick SERRA
               </Text>
             </ScrollingMessageView>
           </View>
