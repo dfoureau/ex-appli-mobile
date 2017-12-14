@@ -341,6 +341,7 @@ class FraisAjout extends React.Component {
       showToast("Une erreur est survenue. Impossible d'effectuer l'opération");
       return;
     }
+    let total = this.state.totalMontant.toFixed(2);
 
     let url = "",
       method = "",
@@ -365,6 +366,7 @@ class FraisAjout extends React.Component {
       mois: mois,
       annee: annee,
       etat: statusId,
+      total: total,
       notesDeFrais: [],
     };
 

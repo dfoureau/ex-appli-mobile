@@ -616,7 +616,7 @@ class CraController extends Controller
 
             $message = utf8_decode($message);
 
-            $subject = "APPLI - Relevé Activité " . strtoupper($this->donneMois($data['mois'])) . " pour " . $nomcollabo . " (Etat: " . utf8_encode($this->getDescriptionByEtat($etat)) . ")";
+            $subject = "APPLI - Relevé Activité " . strtoupper($this->donneMois($data['mois'])) . " " . $data['annee'] . " pour " . $nomcollabo . " (Etat: " . utf8_encode($this->getDescriptionByEtat($etat)) . ")";
 
             // Envoi mail au managers
             $mailtab = array();
