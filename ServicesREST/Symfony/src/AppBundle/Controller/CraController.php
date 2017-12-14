@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use \Swift_Image;
 
 class CraController extends Controller
 {
@@ -328,11 +329,16 @@ class CraController extends Controller
         $stmt->execute();
         $retour = $stmt->rowCount();
 
-        //if($retour == 0){
         if (empty($retour)) {
             $message = array('message' => "Erreur dans la création");
             return array('message' => $message, 'code' => '400');
         } else {
+            // Envoi mail manager
+            if ($etat == 2) {
+                // Envoi mail seulement si la demande est pour validation
+                $this->envoiEmailManager($data);
+            }
+
             $message = array('message' => "Création réussie");
             return array('message' => $message, 'code' => '200');
         }
@@ -516,5 +522,230 @@ class CraController extends Controller
         $tabjf         = array('premierAn' => $premierAn, 'lundiDePaques' => $lundiDePaques, 'premierMai' => $premierMai, 'huitMai' => $huitMai, 'ascension' => $ascension, 'pentecote' => $pentecote, 'feteNationale' => $feteNationale, 'assomption' => $assomption, 'toussaint' => $toussaint, 'armistice' => $armistice, 'noel' => $noel);
 
         return new JsonResponse($tabjf, Response::HTTP_OK);
+    }
+
+    /**
+     * Envoi un mail de notification au manager quand le CRA
+     * est envoyé pour validation
+     *
+     * @param array       $data           Informations sur le CRA
+     *
+     */
+    private function envoiEmailManager($data) {
+        $id = $data['idUser'];
+        $etat = $data['etat'];
+
+        $sql = 'select users.id as id,users.nom as nom,users.prenom,profils.libelle as profil,entitesjuridiques.nomEntite as entite,
+        users.mail as mail, societeagence.nomSocieteAgence as agence from users, profils, entitesjuridiques,societeagence
+            where users.id = "' . $id . '"
+            and users.idprofil = profils.idProfil
+            and users.idEntiteJuridique = entitesjuridiques.idEntite
+            and users.idagence = societeagence.idSocieteAgence';
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetchAll();
+
+        $managerData = $this->getUserManager($id);
+        $managerBisData = $this->getUserManagerBis($id);
+
+        if (count($retour) == 0) {
+            // Pas d'envoi de mail car utilisateur non trouvé
+            return;
+        } else  {
+            // Envoi du mail
+            $message = "";
+            $subject = "";
+            $nomcollabo = $retour[0]['prenom'] . ' ' . $retour[0]['nom'];
+
+            $nbJoursOuvres = strval(UtilsController::nbJoursOuvresParMois($data['mois'], $data['annee']));
+
+            $message .= "<table style=\"font-family: arial;
+            font-size: 12px;
+            color: #373737;
+            text-align: left;
+            vertical-align: middle;
+            border-collapse: collapse;\">";
+            $message .="<tr style=\"border: 1px solid #000000;\">";
+            $message .="<td bgcolor=\"#7D979F\" style=\"font-weight: bold;background-color: #7D979F;color: #FFFFFF;\">
+            <span style=\"font-weight:bold;color:#FFFFFF;\">Nom Complet</span></td>";
+            $message .="<td style=\"border: 1px solid #000000;\" colspan=\"3\">".$retour[0]['prenom']." ".strtoupper($retour[0]['nom'])."</td>";
+            $message .="</tr>";
+            $message .="<tr style=\"border: 1px solid #000000;\">";
+            $message .="<td bgcolor=\"#7D979F\" style=\"border: 1px solid #000000;\"><span style=\"font-weight: bold;background-color: #7D979F;color: #FFFFFF;\">Mois</span></td>";
+            $message .="<td style=\"border: 1px solid #000000;\">&nbsp;".$this->donneMois($data['mois'])." ". $data['annee']."</td>";
+            $message .="<td bgcolor=\"#7D979F\" style=\"border: 1px solid #000000;\"><span style=\"font-weight: bold;background-color: #7D979F;color: #FFFFFF;\">Nombre de jours ouvrés</span></td>";
+            $message .="<td style=\"border: 1px solid #000000;\">&nbsp;".$nbJoursOuvres."</td>";
+            $message .="</tr>";
+            $message .="<tr style=\"border: 1px solid #000000;\">";
+            $message .="<td bgcolor=\"#7D979F\" style=\"border: 1px solid #000000;font-weight: bold;background-color: #7D979F;color: #FFFFFF;\" nowrap ><span style=\"font-weight:bold;color:#FFFFFF;\">Nombre de jours travaillés</span></td>";
+            $message .="<td style=\"border: 1px solid #000000;\">&nbsp;".str_replace('.',',',$data['nbJourTravailles'])."</td>";
+            $message .="<td bgcolor=\"#7D979F\" style=\"border: 1px solid #000000;font-weight: bold;background-color: #7D979F;color: #FFFFFF;\" nowrap ><span style=\"font-weight:bold;color:#FFFFFF;\">Nombre de jours d'absence</span></td>";
+            $message .="<td style=\"border: 1px solid #000000;\">&nbsp;".str_replace('.',',',$data['nbJourAbs'])."</td>";
+            $message .="</tr>";
+            $message .="<tr style=\"border: 1px solid #000000;\">";
+            $message .="<td bgcolor=\"#7D979F\" style=\"border: 1px solid #000000;font-weight: bold;background-color: #7D979F;color: #FFFFFF;\" colspan=\"4\"><span style=\"font-weight:bold;color:#FFFFFF;\">Informations Complémentaires</span></td></tr>
+            <tr style=\"border: 1px solid #000000;\">";
+            $message .="<td style=\"border: 1px solid #000000;\" colspan=\"4\">&nbsp;".stripslashes($data['commentaires'])."</td>";
+            $message .="</tr>";
+            $message .="<tr style=\"border: 1px solid #000000;\">";
+            $message .="<td style=\"border: 1px solid #000000;font-weight: bold;background-color: #7D979F;color: #FFFFFF;\" bgcolor=\"#7D979F\"><span style=\"font-weight:bold;color:#FFFFFF;\">Client</span></td>";
+            $message .="<td style=\"border: 1px solid #000000;\">&nbsp;".stripslashes($data['client'])."</td>";
+            $message .="<td style=\"border: 1px solid #000000;font-weight: bold;background-color: #7D979F;color: #FFFFFF;\" bgcolor=\"#7D979F\"><span style=\"font-weight:bold;color:#FFFFFF;\">Responsable</span></td>";
+            $message .="<td style=\"border: 1px solid #000000;\">&nbsp;".stripslashes($data['responsable'])."</td>";
+            $message .="</tr>";
+            $message .="<tr>";
+            $message .="<td style=\"border: 1px solid #000000;font-weight: bold;background-color: #7D979F;color: #FFFFFF;\" bgcolor=\"#7D979F\"><span style=\"font-weight:bold;color:#FFFFFF;\">Projet</span></td>";
+            $message .="<td style=\"border: 1px solid #000000;\">&nbsp;".stripslashes($data['projet'])."</td>";
+            $message .="<td style=\"border: 1px solid #000000;font-weight: bold;background-color: #7D979F;color: #FFFFFF;\" bgcolor=\"#7D979F\"><span style=\"font-weight:bold;color:#FFFFFF;\">Etat</span></td>";
+            $message .="<tdstyle=\"border: 1px solid #000000;\"> &nbsp;".$this->getDescriptionByEtat($etat)."</td>";
+            $message .="</tr>";
+            $message .="</table>";
+
+            $message = utf8_decode($message);
+
+            $subject = "APPLI - Relevé Activité " . strtoupper($this->donneMois($data['mois'])) . " pour " . $nomcollabo . " (Etat: " . utf8_encode($this->getDescriptionByEtat($etat)) . ")";
+
+            // Envoi mail au managers
+            $mailtab = array();
+            // Mail du collaborateur
+            $mailtab[1] = $retour[0]['mail'];
+            // Mail du manager
+            $mailtab[1] = $managerData['mail'];
+            // Mail du 2e manager
+            $mailtab[1] = $managerBisData['mail'];
+
+            $this->sendEmail($mailtab, $subject, $message);
+        }
+    }
+
+    /**
+     * Retourne le nom du mois selon son numéro
+     *
+     * @param int       $mois           numéro du mois
+     *
+     */
+    function donneMois($mois) {
+        $liste_mois = array( "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre" );
+        return $liste_mois[$mois-1];
+    }
+
+    /**
+     * Retourne le libellé de l'état du CRA
+     *
+     * @param int       $etat           état de la demande
+     *
+     */
+    private function getDescriptionByEtat($etat) {
+        $sql = "SELECT DISTINCT
+            id,
+            libelle
+        FROM
+          etatra
+        WHERE id = " . $etat . ";
+        ";
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetchAll();
+
+        return $retour[0]['libelle'];
+    }
+
+    /**
+     * Retourne le manager du collaborateur en paramètre
+     *
+     * @param int       $id           id du collaborateur
+     *
+     */
+    private function getUserManager($id)
+    {
+        $sql = 'SELECT idManager as manager FROM users WHERE id = ' . $id;
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetch();
+
+        if ($retour['manager'] == 0) {
+            $retour = "Non défini";
+            return $retour;
+        } else {
+            $idManager = $retour['manager'];
+
+            $sql = 'SELECT concat(prenom," ",nom) as manager, mail FROM users WHERE id = ' . $idManager;
+
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $retour = $stmt->fetch();
+
+            return $retour;
+        }
+    }
+
+    /**
+     * Retourne le 2ème manager du collaborateur en paramètre
+     *
+     * @param int       $id           id du collaborateur
+     *
+     */
+    private function getUserManagerBis($id)
+    {
+        $sql = 'SELECT idManagerBis as manager FROM users WHERE id = ' . $id;
+
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $retour = $stmt->fetch();
+
+        if ($retour['manager'] == 0) {
+            $retour = "Non défini";
+            return $retour;
+        } else {
+            $idManager = $retour['manager'];
+
+            $sql = 'SELECT concat(prenom," ",nom) as manager, mail FROM users WHERE id = ' . $idManager;
+
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $retour = $stmt->fetch();
+
+            return $retour;
+        }
+    }
+
+    /**
+     * Envoi un mail aux expéditeurs avec un sujet et un contenu
+     * Le mail est encapsulé dans un template aux couleurs de
+     * l'espace collaborateur et Cat-amania
+     *
+     * @param array       $expediteur         Liste des mails des récepteurs
+     * @param string      $subject            Sujet du mail
+     * @param string      $messageEmail       Contenu du mail
+     *
+     */
+    private function sendEmail($expediteur, $subject, $messageEmail)
+    {
+        $data = array();
+        $message = new \Swift_Message($subject);
+
+        $imgPath = "/var/www/clients/platine/rest8/app/Resources/images/";
+
+        $data['logocatsign'] = $message->embed(Swift_Image::fromPath($imgPath . 'logocatsign.jpg'));
+        $data['logo_facebook'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_facebook.gif'));
+        $data['logo_twitter'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_twitter.gif'));
+        $data['logo_viadeo'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_viadeo.gif'));
+        $data['logo_linkedin'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_linkedin.jpg'));
+        $data['message'] = $messageEmail;
+
+        $message->setFrom('espacecollaborateur@cat-amania.com')
+        ->setTo($expediteur)
+        ->setBody(
+            $this->renderView(
+                'Emails/template-catamania.html.twig',
+                $data
+            ),
+            'text/html'
+        );
+
+        $this->get('mailer')->send($message);
     }
 }
