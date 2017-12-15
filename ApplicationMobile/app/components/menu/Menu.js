@@ -22,7 +22,7 @@ class ContainerHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pan: new Animated.ValueXY({ x: -width, y: 0, }),
+      pan: new Animated.ValueXY({ x: -width, y: 0 }),
       navigationParent: null,
       isOpen: false,
       nbNews: 8, //Necessite de mettre une variable globale
@@ -141,7 +141,9 @@ class ContainerHeader extends Component {
           >
             <View style={styles.ItemMenuView}>
               <Icon name="bug" size={30} color="#000" />
-              <Text style={styles.TextItemMenu}>Rapporter une {"\n"}anomalie</Text>
+              <Text style={styles.TextItemMenu}>
+                Rapporter une {"\n"}anomalie
+              </Text>
             </View>
           </TouchableOpacity>
 
@@ -150,7 +152,7 @@ class ContainerHeader extends Component {
             onPress={() => this.deconnexion()}
           >
             <View style={styles.ItemMenuView}>
-              <Icon name="sign-out" size={30} color="#000"></Icon>
+              <Icon name="sign-out" size={30} color="#000" />
               <Text style={styles.TextItemMenu}>Déconnexion</Text>
             </View>
           </TouchableOpacity>
@@ -160,7 +162,7 @@ class ContainerHeader extends Component {
             onPress={() => this.afficherEcran("APropos")}
           >
             <View style={styles.ItemMenuView}>
-              <Icon name="info" size={30} color="#000"></Icon>
+              <Icon name="info" size={30} color="#000" />
               <Text style={styles.TextItemMenu}>À Propos</Text>
             </View>
           </TouchableOpacity>

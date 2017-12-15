@@ -111,7 +111,8 @@ class Connexion extends React.Component {
         let error = "Erreur : Login et/ou mot de passe incorrect";
         throw error;
       } else {
-        let error = "Erreur de connexion aux services de l'espace collaborateur";
+        let error =
+          "Erreur de connexion aux services de l'espace collaborateur";
         throw error;
       }
     } catch (error) {

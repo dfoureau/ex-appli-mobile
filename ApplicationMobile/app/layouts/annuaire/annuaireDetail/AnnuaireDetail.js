@@ -114,31 +114,28 @@ class AnnuaireDetail extends React.Component {
             title={this.state.titre}
             navigation={this.props.navigation}
           >
-
-          <View style={styles.bienvenueView}>
-            <Text style={styles.textGrand}>
-              {this.state.list[0]["prenom"]}{" "}{this.state.list[0]["nom"]}
-            </Text>
-          </View>
+            <View style={styles.bienvenueView}>
+              <Text style={styles.textGrand}>
+                {this.state.list[0]["prenom"]} {this.state.list[0]["nom"]}
+              </Text>
+            </View>
 
             {/*DESCRIPTION PROFILE*/}
             <View style={Style.firstView}>
-                <View style={styles.container}>
-                  <View style={styles.containerRow}>
-                    <Text style={styles.text}>
-                      Entité : {this.state.list[0]["nomEntite"]}
-                    </Text>
-                    <Text style={styles.text}>
-                      Fonction : {this.state.list[0]["libelle"]}
-                    </Text>
-                    <Text style={styles.text}>
-                      Agence : {this.state.list[0]["agence"]}
-                    </Text>
-                  </View>
-
+              <View style={styles.container}>
+                <View style={styles.containerRow}>
+                  <Text style={styles.text}>
+                    Entité : {this.state.list[0]["nomEntite"]}
+                  </Text>
+                  <Text style={styles.text}>
+                    Fonction : {this.state.list[0]["libelle"]}
+                  </Text>
+                  <Text style={styles.text}>
+                    Agence : {this.state.list[0]["agence"]}
+                  </Text>
                 </View>
-              <View style={styles.containerIcon}>
               </View>
+              <View style={styles.containerIcon} />
             </View>
 
             {/*TELEPHONE 1*/}
@@ -147,9 +144,7 @@ class AnnuaireDetail extends React.Component {
                 <View style={Style.secondView}>
                   <View style={styles.container}>
                     <View style={styles.containerRow}>
-                      <Text style={styles.text}>
-                        Téléphone mobile
-                      </Text>
+                      <Text style={styles.text}>Téléphone mobile</Text>
                       <Text style={styles.text}>
                         {this.state.list[0]["telmobile"]}
                       </Text>
@@ -181,9 +176,7 @@ class AnnuaireDetail extends React.Component {
                 <View style={Style.secondView}>
                   <View style={styles.container}>
                     <View style={styles.containerRow}>
-                      <Text style={styles.text}>
-                        Téléphone client
-                      </Text>
+                      <Text style={styles.text}>Téléphone client</Text>
                       <Text style={styles.text}>
                         {this.state.list[0]["telclient"]}
                       </Text>
@@ -209,15 +202,13 @@ class AnnuaireDetail extends React.Component {
               </View>
             )}
 
-          {/*TELEPHONE 3*/}
+            {/*TELEPHONE 3*/}
             {this.state.list[0]["tel"] != "" && (
               <View style={[Style.firstView, styles.secondSection]}>
                 <View style={Style.secondView}>
                   <View style={styles.container}>
                     <View style={styles.containerRow}>
-                     <Text style={styles.text}>
-                        Téléphone
-                      </Text>
+                      <Text style={styles.text}>Téléphone</Text>
                       <Text style={styles.text}>
                         {this.state.list[0]["tel"]}
                       </Text>
@@ -230,10 +221,7 @@ class AnnuaireDetail extends React.Component {
                 <View style={styles.containerIcon}>
                   <TouchableOpacity
                     onPress={() =>
-                      Communications.phonecall(
-                        this.state.list[0]["tel"],
-                        true
-                      )}
+                      Communications.phonecall(this.state.list[0]["tel"], true)}
                   >
                     <View>
                       <Icon name="phone" size={30} color="#009a00" />
@@ -249,9 +237,7 @@ class AnnuaireDetail extends React.Component {
                 <View style={Style.secondView}>
                   <View style={styles.container}>
                     <View style={styles.containerRow}>
-                      <Text style={styles.text}>
-                        Email
-                      </Text>
+                      <Text style={styles.text}>Email</Text>
                       <Text style={styles.text}>
                         {this.state.list[0]["mail"]}
                       </Text>
@@ -283,9 +269,7 @@ class AnnuaireDetail extends React.Component {
                 <View style={Style.secondView}>
                   <View style={styles.container}>
                     <View style={styles.containerRow}>
-                      <Text style={styles.text}>
-                        Email client
-                      </Text>
+                      <Text style={styles.text}>Email client</Text>
                       <Text style={styles.text}>
                         {this.state.list[0]["mailclient"]}
                       </Text>
@@ -317,9 +301,7 @@ class AnnuaireDetail extends React.Component {
                 <View style={Style.secondView}>
                   <View style={styles.container}>
                     <View style={styles.containerRow}>
-                      <Text style={styles.text}>
-                        Email personnel
-                      </Text>
+                      <Text style={styles.text}>Email personnel</Text>
                       <Text style={styles.text}>
                         {this.state.list[0]["mailPerso"]}
                       </Text>
@@ -344,7 +326,6 @@ class AnnuaireDetail extends React.Component {
                 </View>
               </View>
             )}
-
           </ContainerTitre>
         </View>
       );

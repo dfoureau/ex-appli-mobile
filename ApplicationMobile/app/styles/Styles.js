@@ -116,5 +116,4 @@ export default StyleSheet.create({
     height: 20,
     marginLeft: 5,
   },
-
 });

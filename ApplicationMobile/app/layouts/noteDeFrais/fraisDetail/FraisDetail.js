@@ -312,19 +312,23 @@ class FraisDetail extends React.Component {
    * où chaque clé est une chaine de caractère représentant une date
    * @return {[type]} [description]
    */
-   convertDates() {
-       //Converti les dates selectionnees stockees sous forme de tableau en objet
-       let datesObject = {};
-       this.state.selectedDatesArray.forEach(date => {
-         datesObject[date] = {
-           selected: true,
-         };
-       });
-       return datesObject;
-     }
+  convertDates() {
+    //Converti les dates selectionnees stockees sous forme de tableau en objet
+    let datesObject = {};
+    this.state.selectedDatesArray.forEach(date => {
+      datesObject[date] = {
+        selected: true,
+      };
+    });
+    return datesObject;
+  }
 
   showValidateButton() {
-    if (this.state.statusId == null || this.state.statusId == 0 || this.state.statusId == 1) {
+    if (
+      this.state.statusId == null ||
+      this.state.statusId == 0 ||
+      this.state.statusId == 1
+    ) {
       return (
         /*Bouton validera affiché que si c'est une NDF en brouillon ou une nouvelle NDF*/
         <Button onPress={() => this.handleValidate()} text="VALIDER" />
@@ -334,7 +338,9 @@ class FraisDetail extends React.Component {
 
   showDeleteButton() {
     if (
-      (this.state.statusId == null || this.state.statusId == 0 || this.state.statusId == 1) &&
+      (this.state.statusId == null ||
+        this.state.statusId == 0 ||
+        this.state.statusId == 1) &&
       !this.state.isforfait
     ) {
       return (

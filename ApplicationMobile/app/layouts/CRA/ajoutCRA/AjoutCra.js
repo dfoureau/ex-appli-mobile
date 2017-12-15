@@ -131,11 +131,11 @@ class AjoutCra extends React.Component {
     let travaille = 0;
     // On cherche le jour dans jourouvre, puis dans jourwe
     let typeAct = this.state.activitesListe.jourouvre.find(element => {
-      return element.code.replace(',', '.') == code.replace(',', '.');
+      return element.code.replace(",", ".") == code.replace(",", ".");
     });
     if (typeAct == undefined) {
       typeAct = this.state.activitesListe.jourwe.find(element => {
-        return element.code.replace(',', '.') == code.replace(',', '.');
+        return element.code.replace(",", ".") == code.replace(",", ".");
       });
     }
     if (typeAct == undefined) {
@@ -559,7 +559,11 @@ class AjoutCra extends React.Component {
   }
 
   showDraftButton() {
-    if (this.state.statusId == 1 || this.state.statusId == null || this.state.statusId == 2)
+    if (
+      this.state.statusId == 1 ||
+      this.state.statusId == null ||
+      this.state.statusId == 2
+    )
       return (
         <Button
           buttonStyles={style.draftButton}
@@ -570,7 +574,11 @@ class AjoutCra extends React.Component {
   }
 
   showValidateButton() {
-    if (this.state.statusId == 1 || this.state.statusId == null || this.state.statusId == 2)
+    if (
+      this.state.statusId == 1 ||
+      this.state.statusId == null ||
+      this.state.statusId == 2
+    )
       return <Button text="VALIDER" onPress={() => this.saveCra(2)} />;
   }
 
@@ -579,7 +587,13 @@ class AjoutCra extends React.Component {
       <TouchableOpacity
         key={i}
         onPress={() =>
-          this.modifyItemCRA(i, row.startDate, row.actType, row.labelAct, row.valeur)}
+          this.modifyItemCRA(
+            i,
+            row.startDate,
+            row.actType,
+            row.labelAct,
+            row.valeur
+          )}
         disabled={row.disabled}
       >
         <Row
@@ -681,16 +695,21 @@ class AjoutCra extends React.Component {
               <View style={style.container1}>
                 <TouchableHighlight
                   underlayColor="white"
-                  onPress={() => Linking.openURL(configurationAppli.lienAideCRA)}
+                  onPress={() =>
+                    Linking.openURL(configurationAppli.lienAideCRA)}
                 >
                   <View>
                     <View style={style.containerHelpLine}>
                       <Text style={StyleGeneral.texteLien}>
                         Aide pour remplir son CRA
                       </Text>
-                      <Icon style={{marginLeft: 4}}name="question-circle-o" size={20} />
+                      <Icon
+                        style={{ marginLeft: 4 }}
+                        name="question-circle-o"
+                        size={20}
+                      />
+                    </View>
                   </View>
-                </View>
                 </TouchableHighlight>
               </View>
 

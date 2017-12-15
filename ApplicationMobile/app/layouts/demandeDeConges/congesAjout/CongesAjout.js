@@ -263,7 +263,7 @@ class CongesAjout extends React.Component {
         // Détection des trous.
         // On fait une différence en heures pour éviter de traiter le cas normal
         // où la date de fin est à 23:59:59 et la date de début le jour suivant à 00:00:00
-        let iterationDate = fin1.clone().add(1, 'seconds');
+        let iterationDate = fin1.clone().add(1, "seconds");
 
         while (isValid && iterationDate.isBefore(debut2)) {
           if (
@@ -411,7 +411,11 @@ class CongesAjout extends React.Component {
   }
 
   showDraftButton() {
-    if (this.state.statusId == null || this.state.statusId == 0 || this.state.statusId == 1) {
+    if (
+      this.state.statusId == null ||
+      this.state.statusId == 0 ||
+      this.state.statusId == 1
+    ) {
       return (
         <Button
           buttonStyles={style.draftButton}
@@ -423,7 +427,11 @@ class CongesAjout extends React.Component {
   }
 
   showValidateButton() {
-    if (this.state.statusId == null || this.state.statusId == 0 || this.state.statusId == 1) {
+    if (
+      this.state.statusId == null ||
+      this.state.statusId == 0 ||
+      this.state.statusId == 1
+    ) {
       return <Button text="VALIDER" onPress={() => this.saveConge(1)} />;
     }
   }
@@ -454,18 +462,22 @@ class CongesAjout extends React.Component {
           navigation={this.props.navigation}
         >
           <View style={style.container}>
-
             <View style={style.container1}>
               <TouchableHighlight
                 underlayColor="white"
-                onPress={() => Linking.openURL(configurationAppli.lienAideConges)}
+                onPress={() =>
+                  Linking.openURL(configurationAppli.lienAideConges)}
               >
                 <View>
                   <View style={style.containerHelpLine}>
                     <Text style={StyleGeneral.texteLien}>
                       Récapitulatif des congés
                     </Text>
-                    <Icon style={{marginLeft:4}}name="question-circle-o" size={20} />
+                    <Icon
+                      style={{ marginLeft: 4 }}
+                      name="question-circle-o"
+                      size={20}
+                    />
                   </View>
                 </View>
               </TouchableHighlight>

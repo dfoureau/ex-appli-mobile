@@ -225,9 +225,9 @@ class FraisListe extends React.Component {
                             }).format("MMMM YYYY")}
                           </Text>
                           <View style={style.containerIcon}>
-                            {item.etat == 2 &&
+                            {item.etat == 2 && (
                               <Icon name="check" size={20} color="#2268d8" />
-                            }
+                            )}
                           </View>
                         </View>
                         <View>

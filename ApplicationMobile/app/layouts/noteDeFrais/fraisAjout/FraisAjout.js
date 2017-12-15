@@ -228,7 +228,7 @@ class FraisAjout extends React.Component {
   }
 
   componentWillMount() {
-  let that = this;
+    let that = this;
 
     // let initListAndTotals = this.initListAndTotals();
     this.getNDF(this.state.yearSelected, this.state.monthSelected);
@@ -433,7 +433,11 @@ class FraisAjout extends React.Component {
   }
 
   showDraftButton() {
-    if (this.state.statusId == null || this.state.statusId == 0 || this.state.statusId == 1)
+    if (
+      this.state.statusId == null ||
+      this.state.statusId == 0 ||
+      this.state.statusId == 1
+    )
       return (
         <Button
           buttonStyles={styles.draftButton}
@@ -444,7 +448,11 @@ class FraisAjout extends React.Component {
   }
 
   showValidateButton() {
-    if (this.state.statusId == null || this.state.statusId == 0 || this.state.statusId == 1) {
+    if (
+      this.state.statusId == null ||
+      this.state.statusId == 0 ||
+      this.state.statusId == 1
+    ) {
       return <Button text="VALIDER" onPress={() => this.saveNDF(1)} />;
     }
   }

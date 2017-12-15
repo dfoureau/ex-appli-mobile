@@ -230,13 +230,12 @@ class CongesListe extends React.Component {
               <View style={style.container2}>
                 <View style={style.containerPicker}>
                   <Picker
-                    style={{ width: 110, }}
+                    style={{ width: 110 }}
                     selectedValue={this.state.year}
                     onValueChange={(itemValue, itemIndex) => {
-                      this.setState({year: itemValue});
+                      this.setState({ year: itemValue });
                       this.reloadDemandesConges(itemValue);
-                    }
-                    }
+                    }}
                   >
                     {PickerRange(currentYear + 1, oldestYear)}
                   </Picker>
@@ -276,9 +275,9 @@ class CongesListe extends React.Component {
                               {item.dateDuMin} au {item.dateAuMax}
                             </Text>
                             <View style={style.containerIcon}>
-                              {item.etat == 2 &&
+                              {item.etat == 2 && (
                                 <Icon name="check" size={20} color="#2268d8" />
-                              }
+                              )}
                             </View>
                           </View>
                           <View>

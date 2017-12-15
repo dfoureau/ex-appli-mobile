@@ -1,5 +1,12 @@
 import React, { Component } from "react";
-import { View, Text, FlatList, ActivityIndicator, TextInput, Image } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  ActivityIndicator,
+  TextInput,
+  Image,
+} from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "./Styles";
 import StyleGeneral from "../../styles/Styles";
@@ -174,30 +181,38 @@ class Accueil extends React.Component {
           <View style={Style.containerGeneral}>
             <View style={Style.bienvenueView}>
               <Text style={Style.text}>
-                Bienvenue <Text style={Style.textGrand}>
-                  {this.state.user[0]["prenom"]}{" "}
-                  {this.state.user[0]["nom"]}
-                </Text> !
+                Bienvenue{" "}
+                <Text style={Style.textGrand}>
+                  {this.state.user[0]["prenom"]} {this.state.user[0]["nom"]}
+                </Text>{" "}
+                !
               </Text>
             </View>
 
             <Text style={Style.text}>
-              Votre manager est <Text style={Style.textBold}>
-              {this.state.user[0]["responsable"]}
+              Votre manager est{" "}
+              <Text style={Style.textBold}>
+                {this.state.user[0]["responsable"]}
               </Text>.
             </Text>
 
             <Text style={Style.text}>
-              Agence <Text style={Style.textBold}>
-              {this.state.user[0]["entite"]}
-              </Text>, <Text style={Style.textBold}>
-              {this.state.user[0]["agence"]}
+              Agence{" "}
+              <Text style={Style.textBold}>
+                {this.state.user[0]["entite"]}
+              </Text>,{" "}
+              <Text style={Style.textBold}>
+                {this.state.user[0]["agence"]}
               </Text>.
             </Text>
 
             <View style={Style.blocConges}>
               <Text style={Style.text}>
-                Solde de congés au <Text style={Style.textBold}>{this.state.conges.datesolde}</Text> :
+                Solde de congés au{" "}
+                <Text style={Style.textBold}>
+                  {this.state.conges.datesolde}
+                </Text>{" "}
+                :
               </Text>
 
               <View style={Style.container1}>

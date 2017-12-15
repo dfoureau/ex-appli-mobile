@@ -71,7 +71,7 @@ class APropos extends React.Component {
               height={120}
               childrenHeight={100}
               duration={2000}
-              containerStyle={{ backgroundColor: "transparent", }}
+              containerStyle={{ backgroundColor: "transparent" }}
               childrenStyle={{}}
             >
               <Text style={Style.texte}>

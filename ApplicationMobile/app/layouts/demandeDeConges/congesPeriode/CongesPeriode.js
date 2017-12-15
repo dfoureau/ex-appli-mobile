@@ -281,7 +281,11 @@ class CongesPeriode extends React.Component {
   }
 
   showValidateButton() {
-    if (this.state.statusId == null || this.state.statusId == 0 || this.state.statusId == 1) {
+    if (
+      this.state.statusId == null ||
+      this.state.statusId == 0 ||
+      this.state.statusId == 1
+    ) {
       return (
         <View style={styles.button}>
           <Button
@@ -295,7 +299,11 @@ class CongesPeriode extends React.Component {
   }
 
   showDeleteButton() {
-    if (this.state.statusId == null || this.state.statusId == 0 || this.state.statusId == 1) {
+    if (
+      this.state.statusId == null ||
+      this.state.statusId == 0 ||
+      this.state.statusId == 1
+    ) {
       return (
         <View style={styles.button}>
           <Button
