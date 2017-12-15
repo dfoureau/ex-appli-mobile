@@ -71,6 +71,7 @@ swiftmailer:
     password:  "%mailer_password%"
     port:      "%mailer_port%"
     spool:     { type: memory }
+    delivery_addresses: ['a.noureddine@cat-amania.com']
 
 lexik_jwt_authentication:
     private_key_path: "%jwt_private_key_path%"
