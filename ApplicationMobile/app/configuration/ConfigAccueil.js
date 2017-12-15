@@ -1,4 +1,4 @@
-var configAccueil = {
+let configAccueil = {
   user: null,
   conges: null,
   news: null,

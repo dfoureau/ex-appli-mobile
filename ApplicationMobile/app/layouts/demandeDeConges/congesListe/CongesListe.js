@@ -17,9 +17,6 @@ import StyleGeneral from "../../../styles/Styles";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
-import { ContainerFilters } from "../../../components/containerFilters";
-import { SearchFilter } from "../../../components/searchFilter";
-import { OptionFilter } from "../../../components/optionFilter";
 import { Button } from "../../../components/Buttons";
 import Accueil from "../../accueil/Accueil";
 import CongesAjout from "../congesAjout/CongesAjout";
@@ -65,8 +62,8 @@ class CongesListe extends React.Component {
   }
 
   componentWillMount() {
-    var today = new Date();
-    var year = today.getFullYear();
+    let today = new Date();
+    let year = today.getFullYear();
     this.getDemandesByUserAndYear(year, false);
     this.getDemandeCongesByUserId();
   }
@@ -107,7 +104,7 @@ class CongesListe extends React.Component {
   // Retourne le dernier solde congés et le dernier solde RTT de l'utilisateur en paramère
   getDemandeCongesByUserId() {
     try {
-      var that = this;
+      let that = this;
       fetch(this.state.WSLinkSolde, this.state.obj)
         .then(function(response) {
           if (response.status >= 400) {
@@ -140,7 +137,7 @@ class CongesListe extends React.Component {
     }
 
     try {
-      var that = this;
+      let that = this;
       fetch(this.state.WSLinkList + year, this.state.obj)
         .then(function(response) {
           if (response.status == 400) {

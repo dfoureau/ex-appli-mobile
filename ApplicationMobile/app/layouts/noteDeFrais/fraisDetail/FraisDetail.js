@@ -60,7 +60,7 @@ class FraisDetail extends React.Component {
       calendarDate = moment(params.idFrais, "DD-MM-YYYY");
 
       // Recherche du fraisJour dans la listFrais du parent
-      var frais = params.parent.state.listFrais.find(
+      let frais = params.parent.state.listFrais.find(
         this.findFraisJour(params.idFrais)
       );
 
@@ -230,8 +230,8 @@ class FraisDetail extends React.Component {
     // à partir du state
     let fraisJourData = this.getFraisJourData();
 
-    var parent = this.props.navigation.state.params.parent;
-    var listFrais = Array.from(parent.state.listFrais);
+    let parent = this.props.navigation.state.params.parent;
+    let listFrais = Array.from(parent.state.listFrais);
     // Pour chaque date sélectionnée, on récupère le fraisJour correspondant
     // dans la listeFrais du parent, et on lui mappe les données de notre state
     this.state.selectedDatesArray.forEach(date => {
@@ -271,8 +271,8 @@ class FraisDetail extends React.Component {
  * @return {[type]} [description]
  */
   handleDelete() {
-    var parent = this.props.navigation.state.params.parent;
-    var listFrais = Array.from(parent.state.listFrais);
+    let parent = this.props.navigation.state.params.parent;
+    let listFrais = Array.from(parent.state.listFrais);
 
     this.state.selectedDatesArray.forEach(date => {
       //recherche du jour dans le tableau parent

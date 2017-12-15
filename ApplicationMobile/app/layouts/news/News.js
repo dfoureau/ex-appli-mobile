@@ -43,7 +43,7 @@ class News extends React.Component {
       });
       return;
     } else {
-      var that = this;
+      let that = this;
       fetch(this.state.webServiceLien, this.state.obj)
         .then(function(response) {
           if (response.status >= 400) {

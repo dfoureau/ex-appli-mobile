@@ -1,4 +1,4 @@
-var configNews = {
+let configNews = {
   newsList: null,
   clean() {
     configNews.newsList = null;

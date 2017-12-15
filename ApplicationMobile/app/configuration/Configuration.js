@@ -1,4 +1,4 @@
-var configurationAppli = {
+let configurationAppli = {
   userID: null,
   userToken: null,
   expirationToken: null,

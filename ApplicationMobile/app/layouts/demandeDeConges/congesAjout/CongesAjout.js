@@ -39,7 +39,6 @@ import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
 import { Button } from "../../../components/Buttons";
 import Accueil from "../../accueil/Accueil";
 import CongesPeriode from "../congesPeriode/CongesPeriode";
-import CongesConfirmation from "../congesConfirmation/CongesConfirmation";
 
 import configurationAppli from "../../../configuration/Configuration";
 import moment from "moment";
@@ -110,7 +109,7 @@ class CongesAjout extends React.Component {
   }
 
   componentWillMount() {
-    var that = this;
+    let that = this;
     //Récupération des paramètres de navigation
     const { params } = this.props.navigation.state;
 
@@ -129,7 +128,7 @@ class CongesAjout extends React.Component {
 
   // Retourne toutes les périodes de congés de l'utilisateur et du numéro de demande en paramètre
   getPeriodeCongesByUserIdNumDemande(numDemande) {
-    var that = this;
+    let that = this;
 
     fetch(this.state.WSLinkPeriode + numDemande, {
       method: "GET",
@@ -542,14 +541,8 @@ const navigation = StackNavigator({
     screen: CongesAjout,
     navigationOptions: { header: null },
   },
-
   CongesPeriode: {
     screen: CongesPeriode,
-    navigationOptions: { header: null },
-  },
-
-  CongesConfirmation: {
-    screen: CongesConfirmation,
     navigationOptions: { header: null },
   },
 });

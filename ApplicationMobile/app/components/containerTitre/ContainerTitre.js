@@ -26,7 +26,7 @@ import {
   hide,
 } from "react-native-notifyer";
 
-var { height, width } = Dimensions.get("window");
+let { height, width } = Dimensions.get("window");
 
 export default class ContainerTitre extends React.Component {
   /**Parametres */

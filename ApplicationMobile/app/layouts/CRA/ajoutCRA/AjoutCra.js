@@ -41,7 +41,6 @@ import ContainerAccueil from "../../../components/containerAccueil/ContainerAccu
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
 import { Button } from "../../../components/Buttons";
 import ActivitesDetail from "../activitesDetail/ActivitesDetail";
-import CraConfirmation from "../craConfirmation/CraConfirmation";
 import StyleGeneral from "../../../styles/Styles";
 import style from "./styles";
 import Panel from "../../../components/Panel/Panel";
@@ -199,7 +198,7 @@ class AjoutCra extends React.Component {
   }
 
   componentWillMount() {
-    var that = this;
+    let that = this;
     //Récupération des paramètres de navigation
     const { params } = this.props.navigation.state;
 
@@ -285,7 +284,7 @@ class AjoutCra extends React.Component {
     let date = moment(year + "-" + month, "YYYY-M");
     let nbJours = date.daysInMonth();
 
-    var valeurSaisie = null;
+    let valeurSaisie = null;
     for (let i = 1; i <= nbJours; i++) {
       date.set("date", i);
 
@@ -334,7 +333,7 @@ class AjoutCra extends React.Component {
   }
 
   getCRAInfosByID(idCRA, typesActions, conges) {
-    var that = this;
+    let that = this;
     fetch(this.state.WSLinkCRA + "/" + idCRA, {
       method: "GET",
       headers: this.state.fetchHeaders,
@@ -841,11 +840,6 @@ const navigation = StackNavigator({
   },
   ActivitesDetail: {
     screen: ActivitesDetail,
-    navigationOptions: { header: null },
-  },
-
-  CraConfirmation: {
-    screen: CraConfirmation,
     navigationOptions: { header: null },
   },
 });

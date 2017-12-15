@@ -1,9 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
 
-var { height, width } = Dimensions.get("window");
-const bleu1 = "#2298AA";
-const bleu2 = "#2ABBDD";
-const bleu3 = "#355A86";
 export default StyleSheet.create({
   containerList: {
     margin: 5,

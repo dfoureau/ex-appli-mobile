@@ -12,7 +12,7 @@ import Menu from "../menu/Menu";
 
 import styles from "./styles";
 
-var { height, width } = Dimensions.get("window");
+let { height, width } = Dimensions.get("window");
 
 class ContainerHeader extends Component {
   constructor(props) {

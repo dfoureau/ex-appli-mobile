@@ -30,9 +30,6 @@ import feries from "moment-ferie-fr";
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
-import { ContainerFilters } from "../../../components/containerFilters";
-import { SearchFilter } from "../../../components/searchFilter";
-import { OptionFilter } from "../../../components/optionFilter";
 import { Button } from "../../../components/Buttons";
 import Accueil from "../../accueil/Accueil";
 import { Calendar } from "react-native-calendars";
@@ -155,7 +152,7 @@ class ActivitesDetail extends React.Component {
 
   handleValidate() {
     const { params } = this.props.navigation.state;
-    var parent = params.parent;
+    let parent = params.parent;
 
     // En cas de période, on parcourt tous les jours sélectionnés, et on vérifie
     // qu'ils ont tous un code valide.

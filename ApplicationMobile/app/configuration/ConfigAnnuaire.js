@@ -1,4 +1,4 @@
-var configAnnuaire = {
+let configAnnuaire = {
   annuaireAgenceDefaut: null,
   idAgenceDefaut: null,
   clean() {

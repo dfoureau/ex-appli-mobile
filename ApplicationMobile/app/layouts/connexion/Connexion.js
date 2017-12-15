@@ -40,8 +40,6 @@ import {
 
 const CONNEXION_PARAMS_SCHEMA = "ConnexionParams";
 
-var { height, width } = Dimensions.get("window");
-
 class Connexion extends React.Component {
   constructor(props) {
     super(props);
@@ -55,7 +53,7 @@ class Connexion extends React.Component {
     configAnnuaire.clean();
 
     // on vérifie si des paramètres de connexion existent pour l'utilisateur
-    var connexionParams =
+    let connexionParams =
       service.get(CONNEXION_PARAMS_SCHEMA).length > 0
         ? service.get(CONNEXION_PARAMS_SCHEMA)[0]
         : null;
@@ -115,14 +113,14 @@ class Connexion extends React.Component {
       }
     } catch (error) {
       hideLoading();
-      var id = showToast("Erreur : Login et/ou mot de passe incorrect");
+      let id = showToast("Erreur : Login et/ou mot de passe incorrect");
     }
 
     // On supprime automatiquement les paramètres de connexion en cache
     service.delete(CONNEXION_PARAMS_SCHEMA);
 
     if (this.state.saveIdChecked) {
-      var connexionParams = {
+      let connexionParams = {
         login: this.state.login != null ? this.state.login : "",
         mdp: this.state.mdp != null ? this.state.mdp : "",
         // TODO récupérer le token après appel au service REST
@@ -134,9 +132,9 @@ class Connexion extends React.Component {
 
     if (this.state.isReady === true) {
       // Décocer le token JWT
-      var tokenDecode = jwt_decode(this.state.data.token);
+      let tokenDecode = jwt_decode(this.state.data.token);
       // Expiration - 30 secondes pour éviter les effets de bords
-      var tokenDecodeExpiration = tokenDecode.exp - 30;
+      let tokenDecodeExpiration = tokenDecode.exp - 30;
 
       // Enregistrer les données dans l'application, puis naviguer vers la page d'accueil
       configurationAppli.userID = this.state.data.id;

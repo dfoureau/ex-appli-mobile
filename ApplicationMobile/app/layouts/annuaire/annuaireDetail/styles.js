@@ -1,9 +1,7 @@
 import { StyleSheet, Dimensions } from "react-native";
 
-var { height, width } = Dimensions.get("window");
-const bleu1 = "#2298AA";
-const bleu2 = "#2ABBDD";
-const bleu3 = "#355A86";
+let { height, width } = Dimensions.get("window");
+
 export default StyleSheet.create({
   scrollView: {
     width: width,

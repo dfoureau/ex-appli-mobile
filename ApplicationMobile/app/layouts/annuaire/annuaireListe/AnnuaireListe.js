@@ -26,7 +26,6 @@ import ContainerAccueil from "../../../components/containerAccueil/ContainerAccu
 import { ContainerHeader } from "../../../components/containerHeader";
 import { ContainerFilters } from "../../../components/containerFilters";
 import { SearchFilter } from "../../../components/searchFilter";
-import { OptionFilter } from "../../../components/optionFilter";
 
 // IMPORT DES LAYOUTS NAVIGABLES
 import { AnnuaireDetail } from "../annuaireDetail";
@@ -138,7 +137,7 @@ class AnnuaireListe extends React.Component {
       return Promise.resolve(configAnnuaire.annuaireAgenceDefaut);
     } else {
       let requestURL = configurationAppli.apiURL + "annuaire/" + agenceId;
-      var that = this;
+      let that = this;
       return fetch(requestURL, this.state.obj).then(response =>
         response.json().then(responseJson => {
           if (agenceId == configAnnuaire.idAgenceDefaut) {
@@ -179,7 +178,7 @@ class AnnuaireListe extends React.Component {
   }
 
   reloadAnnuaireByName(_searchedName) {
-    var annuaire2 = this.state.annuaireComplet;
+    let annuaire2 = this.state.annuaireComplet;
 
     annuaire2 = annuaire2.filter(item => {
       return (

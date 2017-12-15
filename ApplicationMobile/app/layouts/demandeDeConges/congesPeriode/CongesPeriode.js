@@ -36,7 +36,7 @@ class CongesPeriode extends React.Component {
 
   setInitialValues() {
     const { params } = this.props.navigation.state;
-    var parentState = params.parent.state;
+    let parentState = params.parent.state;
 
     if (params.idPeriod == null) {
       let now = moment().format("DD/MM/YYYY");
@@ -68,7 +68,7 @@ class CongesPeriode extends React.Component {
       let moment1 = date1.hours() == 0 ? "1" : "2";
       let moment2 = date2.hours() == 12 ? "1" : "2";
 
-      var period = {
+      let period = {
         numDemande: parentState.numDemande,
         startDate: parentState.periods[params.idPeriod].dateDuFormated,
         startPeriod: moment1,
@@ -120,9 +120,9 @@ class CongesPeriode extends React.Component {
 
   savePeriod(idPeriod) {
     const { params } = this.props.navigation.state;
-    var parent = params.parent;
-    var hour1 = "";
-    var hour2 = "";
+    let parent = params.parent;
+    let hour1 = "";
+    let hour2 = "";
     if (params.idPeriod == null) {
       parent.state.nbPeriode =
         parent.state.nbPeriode == 0 ? 1 : parent.state.nbPeriode + 1;

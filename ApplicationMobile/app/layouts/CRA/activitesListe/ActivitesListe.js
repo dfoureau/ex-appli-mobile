@@ -18,15 +18,11 @@ import CRAItem from "../../../components/CRAItem/CRAItem";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
-import { ContainerFilters } from "../../../components/containerFilters";
-import { SearchFilter } from "../../../components/searchFilter";
-import { OptionFilter } from "../../../components/optionFilter";
 import { PickerRange } from "../../../components/PickerRange";
 import Accueil from "../../accueil/Accueil";
 import { Button } from "../../../components/Buttons";
 import ActivitesDetail from "../activitesDetail/ActivitesDetail";
 import AjoutCra from "../ajoutCRA/AjoutCra";
-import ActivitesConfirmation from "../activitesConfirmation/ActivitesConfirmation";
 
 import configurationAppli from "../../../configuration/Configuration";
 
@@ -74,7 +70,7 @@ class ActivitesListe extends React.Component {
     }
 
     this.resetData();
-    var that = this;
+    let that = this;
     fetch(this.state.webServiceLien + _annee, {
       method: "GET",
       headers: this.state.fetchHeaders,
@@ -277,7 +273,6 @@ const navigation = StackNavigator({
     screen: ActivitesListe,
     navigationOptions: { header: null },
   },
-
   AjoutCra: {
     screen: AjoutCra,
     navigationOptions: { header: null },

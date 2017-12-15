@@ -16,7 +16,6 @@ import { AnnuaireListe } from "../annuaire/annuaireListe";
 import { News } from "../news";
 import { APropos } from "../Configuration/aPropos";
 import { BugReport } from "../Configuration/bugReport";
-import { Reglages } from "../Configuration/reglages";
 
 import configurationAppli from "../../configuration/Configuration";
 import configAccueil from "../../configuration/ConfigAccueil";
@@ -83,7 +82,7 @@ class Accueil extends React.Component {
       });
       return;
     } else {
-      var that = this;
+      let that = this;
       fetch(this.state.webServiceLien1, this.state.obj)
         .then(function(response) {
           if (response.status >= 400) {
@@ -102,7 +101,6 @@ class Accueil extends React.Component {
           return console.log(error);
         });
 
-      var that = this;
       fetch(this.state.webServiceLien2, this.state.obj)
         .then(function(response) {
           if (response.status >= 400) {
@@ -115,7 +113,6 @@ class Accueil extends React.Component {
           that.setState({ conges: fonconges, isReadyw2: true });
         });
 
-      var that = this;
       fetch(this.state.webServiceLien3, this.state.obj)
         .then(function(response) {
           if (response.status >= 400) {
@@ -269,10 +266,6 @@ const navigation = StackNavigator({
   },
   APropos: {
     screen: APropos,
-    navigationOptions: { header: null },
-  },
-  Reglages: {
-    screen: Reglages,
     navigationOptions: { header: null },
   },
 });

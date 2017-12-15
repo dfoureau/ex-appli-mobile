@@ -33,7 +33,7 @@ import {
   hide,
 } from "react-native-notifyer";
 
-var { height, width } = Dimensions.get("window");
+let { height, width } = Dimensions.get("window");
 
 export default class ContainerAccueil extends React.Component {
   constructor(props) {

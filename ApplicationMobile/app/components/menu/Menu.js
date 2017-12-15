@@ -16,15 +16,15 @@ import configAccueil from "../../configuration/ConfigAccueil";
 import configNews from "../../configuration/ConfigNews";
 import configAnnuaire from "../../configuration/ConfigAnnuaire";
 
-var { height, width } = Dimensions.get("window");
+let { height, width } = Dimensions.get("window");
 
 class ContainerHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
       pan: new Animated.ValueXY({ x: -width, y: 0, }),
-      isOpen: false,
       navigationParent: null,
+      isOpen: false,
       nbNews: 8, //Necessite de mettre une variable globale
     };
   }
@@ -34,24 +34,14 @@ class ContainerHeader extends Component {
   }
 
   afficherCloseMenu() {
+    let xValue = 0;
     if (this.state.isOpen) {
-      this.closeView();
-    } else {
-      this.openView();
+      xValue = -width;
+      this.state.isOpen = !this.state.isOpen;
     }
-    this.state.isOpen = !this.state.isOpen;
-  }
-  closeView() {
+
     Animated.timing(this.state.pan, {
-      toValue: { x: -width, y: 0 },
-      //easing: Easing.back,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
-  }
-  openView() {
-    Animated.timing(this.state.pan, {
-      toValue: { x: 0, y: 0 },
+      toValue: { x: xValue, y: 0 },
       //easing: Easing.back,
       duration: 1000,
       useNativeDriver: true,
@@ -60,17 +50,6 @@ class ContainerHeader extends Component {
 
   fermerMenu() {
     this.props.fermerMenu();
-  }
-
-  afficherNews(news) {
-    return news > 0 ? (
-      <Text
-        style={styles.TextItemNews}
-        onLayout={event => console.log(event.nativeEvent.layout.height)}
-      >
-        {news}
-      </Text>
-    ) : null;
   }
 
   deconnexion() {
@@ -185,11 +164,6 @@ class ContainerHeader extends Component {
               <Text style={styles.TextItemMenu}>À Propos</Text>
             </View>
           </TouchableOpacity>
-          {/* <TouchableOpacity style={[styles.ItemMenu, styles.LastItemMenuRight]} onPress={()=>this.afficherEcran('Reglages')}>
-						<Image style={styles.LastItemMenuIcon}
-            source={require('../../images/icons/CogIcon.png')}
-							/>
-					</TouchableOpacity> */}
         </View>
 
         <View style={styles.ContainerOpaque}>

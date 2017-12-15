@@ -36,13 +36,9 @@ import {
 // IMPORT DES COMPOSANTS EXOTIQUE
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
 import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
-import { ContainerFilters } from "../../../components/containerFilters";
-import { SearchFilter } from "../../../components/searchFilter";
-import { OptionFilter } from "../../../components/optionFilter";
 import { Button } from "../../../components/Buttons";
 import Accueil from "../../accueil/Accueil";
 import FraisDetail from "../fraisDetail/FraisDetail";
-import FraisConfirmation from "../fraisConfirmation/FraisConfirmation";
 
 import FraisJour from "../utils/FraisJour";
 
@@ -62,7 +58,7 @@ class FraisAjout extends React.Component {
   });
 
   setInitialValues() {
-    // var initListAndTotals = this.initListAndTotals();
+    // let initListAndTotals = this.initListAndTotals();
 
     // Initialisation du mois et de l'année sélectionnés.
     // S'ils sont vides, on prend le mois et l'année courants
@@ -134,7 +130,7 @@ class FraisAjout extends React.Component {
    * @return {[type]}       [description]
    */
   getNDF(year, month, forceReload = false) {
-    var that = this;
+    let that = this;
     let listFrais = this.initFraisVides(year, month);
 
     // éléments du state représentant un mois vide
@@ -149,7 +145,7 @@ class FraisAjout extends React.Component {
 
     // On vérifie que le mois à chercher est bien dans le tableau des mois contenant une NDF
     // Sinon, on affiche directement une table vide
-    var parent = that.props.navigation.state.params.parent;
+    let parent = that.props.navigation.state.params.parent;
     if (!parent.state.monthsWithNDF.includes(month) && !forceReload) {
       that.setState(ndfEmptyState);
     } else {
@@ -177,11 +173,11 @@ class FraisAjout extends React.Component {
         .then(function(ndf) {
           if (ndf.isEmpty !== true) {
             //Construction du tableau de la note de frais
-            var frais = ndf["notesDeFrais"];
+            let frais = ndf["notesDeFrais"];
 
             // intialisation des totaux globaux
-            var totalAReglerAllFrais = 0;
-            var totalClientAllFrais = 0;
+            let totalAReglerAllFrais = 0;
+            let totalClientAllFrais = 0;
 
             if (frais != null) {
               frais.forEach(function(item) {
@@ -232,9 +228,9 @@ class FraisAjout extends React.Component {
   }
 
   componentWillMount() {
-    var that = this;
+  let that = this;
 
-    // var initListAndTotals = this.initListAndTotals();
+    // let initListAndTotals = this.initListAndTotals();
     this.getNDF(this.state.yearSelected, this.state.monthSelected);
   }
 
@@ -309,8 +305,8 @@ class FraisAjout extends React.Component {
    * @return {[type]} [description]
    */
   deleteNDF() {
-    var that = this;
-    var parent = this.props.navigation.state.params.parent;
+    let that = this;
+    let parent = this.props.navigation.state.params.parent;
     let userId = configurationAppli.userID,
       year = this.state.yearSelected,
       month = this.state.monthSelected;
@@ -370,7 +366,7 @@ class FraisAjout extends React.Component {
     }
 
     // On construit un objet POST
-    var body = {
+    let body = {
       idUser: idUser,
       mois: mois,
       annee: annee,
@@ -401,7 +397,7 @@ class FraisAjout extends React.Component {
         return Promise.all([response.status, response.json()]);
       })
       .then(res => {
-        var [status, body] = res;
+        let [status, body] = res;
         let success = status == 200;
         showToast((success ? "Succès" : "Erreur") + "\n" + body.message);
 
@@ -560,10 +556,6 @@ const navigation = StackNavigator({
   },
   FraisDetail: {
     screen: FraisDetail,
-    navigationOptions: { header: null },
-  },
-  FraisConfirmation: {
-    screen: FraisConfirmation,
     navigationOptions: { header: null },
   },
 });

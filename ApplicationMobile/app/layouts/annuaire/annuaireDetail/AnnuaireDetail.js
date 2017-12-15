@@ -27,8 +27,6 @@ import Communications from "react-native-communications";
 
 import configurationAppli from "../../../configuration/Configuration";
 
-var { height, width } = Dimensions.get("window");
-
 class AnnuaireDetail extends React.Component {
   constructor(props) {
     super(props);

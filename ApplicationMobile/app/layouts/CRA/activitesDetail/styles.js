@@ -1,9 +1,7 @@
 import { StyleSheet, Dimensions } from "react-native";
 
-var { height, width } = Dimensions.get("window");
-const bleu1 = "#FFF";
-const bleu2 = "#FFF";
-const bleu3 = "#FFF";
+let { height, width } = Dimensions.get("window");
+
 export default StyleSheet.create({
   text: {
     color: "black",

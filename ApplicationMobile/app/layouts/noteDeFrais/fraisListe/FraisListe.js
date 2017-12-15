@@ -16,9 +16,6 @@ import StyleGeneral from "../../../styles/Styles";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
 import ContainerAccueil from "../../../components/containerAccueil/ContainerAccueil";
-import { ContainerFilters } from "../../../components/containerFilters";
-import { SearchFilter } from "../../../components/searchFilter";
-import { OptionFilter } from "../../../components/optionFilter";
 import { Button } from "../../../components/Buttons";
 import { PickerRange } from "../../../components/PickerRange";
 import Accueil from "../../accueil/Accueil";
@@ -71,8 +68,8 @@ class FraisListe extends React.Component {
   }
 
   componentDidMount() {
-    var today = new Date();
-    var year = today.getFullYear();
+    let today = new Date();
+    let year = today.getFullYear();
     this.getNDFByUser(year, false);
   }
 
@@ -81,7 +78,7 @@ class FraisListe extends React.Component {
       showLoading("Récupération des données. Veuillez patienter...");
     }
 
-    var that = this;
+    let that = this;
     // this.state.year = _annee;
     fetch(
       this.state.webServiceLien + _annee + "/" + configurationAppli.userID,

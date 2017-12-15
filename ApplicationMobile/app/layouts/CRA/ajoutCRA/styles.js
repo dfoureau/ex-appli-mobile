@@ -1,6 +1,6 @@
 import { StyleSheet, Dimensions } from "react-native";
 
-var { height, width } = Dimensions.get("window");
+let { height, width } = Dimensions.get("window");
 
 export default StyleSheet.create({
   container1: {
@@ -27,18 +27,6 @@ export default StyleSheet.create({
     marginRight: 45,
     marginTop: 3,
   },
-
-  // containerPicker: {
-  //   flexDirection: "row",
-  //   width: 162,
-  //   height: 29,
-  //   alignItems: "center",
-  //   padding: 2,
-  //   marginTop: -27,
-  //   marginLeft: -160,
-  //   borderWidth: 1,
-  //   backgroundColor: "#f4f4f4",
-  // },
 
   containerPicker: {
     flexDirection: "row",
