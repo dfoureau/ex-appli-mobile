@@ -15,6 +15,7 @@ let configurationAppli = {
     "https://espacecollaborateur.cat-amania.com/espacecollaborateur/upload/aide/synthese_CRA.pdf?v=1.2",
   lienAideConges:
     "https://espacecollaborateur.cat-amania.com/espacecollaborateur/upload/aide/synthese_conges.pdf?v=1.2",
+  lienEspaceCollaborateur: "https://espacecollaborateur.cat-amania.com",
   clean() {
     configurationAppli.userID = null;
     configurationAppli.userToken = null;

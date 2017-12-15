@@ -311,6 +311,8 @@ class FraisAjout extends React.Component {
       year = this.state.yearSelected,
       month = this.state.monthSelected;
 
+    showLoading("Suppression en cours...");
+
     fetch(that.state.webServiceLien + userId + "/" + year + "/" + month, {
       method: "DELETE",
       headers: that.state.fetchOptions.headers,
@@ -319,6 +321,7 @@ class FraisAjout extends React.Component {
         return Promise.all([response.status, response.json()]);
       })
       .then(res => {
+        hideLoading();
         let [status, body] = res;
         let success = status == 200;
         showToast((success ? "Succès" : "Erreur") + "\n" + body.message);

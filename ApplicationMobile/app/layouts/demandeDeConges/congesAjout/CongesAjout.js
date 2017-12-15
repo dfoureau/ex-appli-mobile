@@ -61,7 +61,7 @@ class CongesAjout extends React.Component {
 
     this.state = {
       title: "Demande de congés",
-      statusId: 0,
+      statusId: null,
       status: "En attente de validation",
       header: ["Date du", "Date au", "Type d'abs", "Nb. jours"],
       periods: [],
@@ -189,7 +189,9 @@ class CongesAjout extends React.Component {
 
     const numDemande = navigation.state.params.numDemande,
       idUser = configurationAppli.userID;
-    showLoading();
+
+    showLoading("Suppression en cours...");
+
     fetch(this.state.WSLinkDelete + "/" + idUser + "/" + numDemande, {
       method: "DELETE",
       headers: this.state.fetchHeaders,

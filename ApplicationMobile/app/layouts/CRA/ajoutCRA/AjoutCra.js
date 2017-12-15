@@ -416,6 +416,8 @@ class AjoutCra extends React.Component {
 
     let that = this;
 
+    showLoading("Suppression en cours...");
+
     fetch(this.state.WSLinkCRA + "/" + idCra, {
       method: "DELETE",
       headers: this.state.fetchHeaders,
@@ -424,6 +426,7 @@ class AjoutCra extends React.Component {
         return Promise.all([response.status, response.json()]);
       })
       .then(res => {
+        hideLoading();
         let [status, body] = res;
 
         let success = status == 200;

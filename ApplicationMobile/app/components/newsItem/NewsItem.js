@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "./styles";
+import configurationAppli from "../../configuration/Configuration";
 
 export default class NewsItem extends React.Component {
   constructor(props) {
@@ -19,14 +20,14 @@ export default class NewsItem extends React.Component {
   }
 
   render() {
-    let URLEspaceCollaborateur = "https://espacecollaborateur.cat-amania.com";
+    let lienEspaceCollaborateur = configurationAppli.lienEspaceCollaborateur;
 
     //récupération de l'image ouaffichage par defaut
     let imgSrc;
     if (this.props.news_photo == null) {
       imgSrc = require("../../images/imageNewsDefault.png");
     } else {
-      imgSrc = { uri: URLEspaceCollaborateur + this.props.news_photo };
+      imgSrc = { uri: lienEspaceCollaborateur + this.props.news_photo };
     }
 
     //Affichage d'un lien si existant
@@ -36,7 +37,7 @@ export default class NewsItem extends React.Component {
         <View style={Style.newsItemRBR}>
           <TouchableHighlight
             onPress={() =>
-              Linking.openURL(URLEspaceCollaborateur + this.props.news_file)}
+              Linking.openURL(lienEspaceCollaborateur + this.props.news_file)}
           >
             <Image
               style={Style.newsItemRImg}
@@ -46,6 +47,7 @@ export default class NewsItem extends React.Component {
         </View>
       );
     }
+
     return (
       <View style={Style.newsItem}>
         <View style={Style.newsItemL}>
