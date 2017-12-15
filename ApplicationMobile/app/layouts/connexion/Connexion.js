@@ -107,13 +107,16 @@ class Connexion extends React.Component {
           isReady: true,
           data: res,
         });
+      } else if (response.status == 400) {
+        let error = "Erreur : Login et/ou mot de passe incorrect";
+        throw error;
       } else {
-        let error = res;
+        let error = "Erreur de connexion aux services de l'espace collaborateur";
         throw error;
       }
     } catch (error) {
       hideLoading();
-      let id = showToast("Erreur : Login et/ou mot de passe incorrect");
+      let id = showToast(error);
     }
 
     // On supprime automatiquement les paramètres de connexion en cache

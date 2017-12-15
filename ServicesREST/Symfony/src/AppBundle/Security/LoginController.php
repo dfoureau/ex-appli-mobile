@@ -34,7 +34,7 @@ class LoginController extends Controller
 
         $list = $stmt->fetchAll();
         if (empty($list)) {
-            $message = array('message' => 'Login et/ou mdp incorrect');
+            $message = array('message' => 'Login et/ou mot de passe incorrect');
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
 
