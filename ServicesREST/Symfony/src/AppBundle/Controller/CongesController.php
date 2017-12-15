@@ -938,12 +938,18 @@ protected function calculerDureePeriode($periode) {
 
             // Envoi mail au managers
             $mailtab = array();
+
             // Mail du collaborateur
-            $mailtab[1] = $retour[0]['mail'];
+            if (filter_var($retour[0]['mail'], FILTER_VALIDATE_EMAIL))
+                $mailtab[] = $retour[0]['mail'];
+
             // Mail du manager
-            $mailtab[1] = $managerData['mail'];
+            if (filter_var($managerData['mail'], FILTER_VALIDATE_EMAIL))
+                $mailtab[] = $managerData['mail'];
+
             // Mail du 2e manager
-            $mailtab[1] = $managerBisData['mail'];
+            if (filter_var($managerBisData['mail'], FILTER_VALIDATE_EMAIL))
+                $mailtab[] = $managerBisData['mail'];
 
             $this->sendEmail($mailtab, $subject, $message);
         }
