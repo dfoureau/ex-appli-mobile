@@ -100,10 +100,10 @@ class NdfController extends Controller
                 $retour = array('idUser' => $id, 'mois' => $mois, 'annee' => $annee, 'libelleEtat' => $libelleEtat, 'etat' => $etat, 'notesDeFrais' => $listNdf);
 
                 /*array_walk_recursive(
-                    $retour,
-                    function (&$entry) {
-                        $entry = mb_convert_encoding($entry, 'UTF-8');
-                    }
+                $retour,
+                function (&$entry) {
+                $entry = mb_convert_encoding($entry, 'UTF-8');
+                }
                 );*/
 
                 return new JsonResponse($retour, Response::HTTP_OK);
@@ -266,8 +266,8 @@ class NdfController extends Controller
         }
 
         //$data = json_decode(file_get_contents('php://input'), true);
-        $content   = $request->getContent();
-        $data      = json_decode($content, true);
+        $content = $request->getContent();
+        $data    = json_decode($content, true);
 
         try {
             $retourpost = $this->postNdf($data, $idUserToken);
@@ -377,8 +377,8 @@ class NdfController extends Controller
          */
 
         //$data = json_decode(file_get_contents('php://input'), true);
-        $content   = $request->getContent();
-        $data      = json_decode($content, true);
+        $content = $request->getContent();
+        $data    = json_decode($content, true);
         try {
             $retour = $this->postNdf($data);
         } catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
@@ -397,19 +397,19 @@ class NdfController extends Controller
 
         /*
         switch ($data['etat']) {
-            case "Brouillon":
-                $etat = 0;
-                break;
-            case "En attente validation":
-                $etat = 1;
-                break;
-            //Etats validés ou A modifier interdits, autres états inconnus
-            default:
-                $retour = array('message' => 'Etat invalide', 'code' => Response::HTTP_BAD_REQUEST);
-                return $retour;
-                break;
+        case "Brouillon":
+        $etat = 0;
+        break;
+        case "En attente validation":
+        $etat = 1;
+        break;
+        //Etats validés ou A modifier interdits, autres états inconnus
+        default:
+        $retour = array('message' => 'Etat invalide', 'code' => Response::HTTP_BAD_REQUEST);
+        return $retour;
+        break;
         }
-        */
+         */
 
         //récupérer indemKM depuis table users
         $indemKM = number_format($this->getUserIndemKM($idUser), 3, '.', '');
@@ -488,8 +488,9 @@ class NdfController extends Controller
      * @param array       $data           Informations sur la note de frais
      *
      */
-    private function envoiEmailManager($data) {
-        $id = $data['idUser'];
+    private function envoiEmailManager($data)
+    {
+        $id   = $data['idUser'];
         $etat = $data['etat'];
 
         $sql = 'select users.id as id,users.nom as nom,users.prenom,profils.libelle as profil,entitesjuridiques.nomEntite as entite,
@@ -503,16 +504,16 @@ class NdfController extends Controller
         $stmt->execute();
         $retour = $stmt->fetchAll();
 
-        $managerData = $this->getUserManager($id);
+        $managerData    = $this->getUserManager($id);
         $managerBisData = $this->getUserManagerBis($id);
 
         if (count($retour) == 0) {
             // Pas d'envoi de mail car utilisateur non trouvé
             return;
-        } else  {
+        } else {
             // Envoi du mail
-            $message = "";
-            $subject = "";
+            $message    = "";
+            $subject    = "";
             $nomcollabo = $retour[0]['prenom'] . ' ' . $retour[0]['nom'];
 
             $message .= "<p>Votre note de frais de " . strtoupper($this->donneMois($data['mois'])) . " " . $data['annee'];
@@ -527,16 +528,19 @@ class NdfController extends Controller
             $mailtab = array();
 
             // Mail du collaborateur
-            if (filter_var($retour[0]['mail'], FILTER_VALIDATE_EMAIL))
+            if (filter_var($retour[0]['mail'], FILTER_VALIDATE_EMAIL)) {
                 $mailtab[] = $retour[0]['mail'];
+            }
 
             // Mail du manager
-            if (filter_var($managerData['mail'], FILTER_VALIDATE_EMAIL))
+            if (filter_var($managerData['mail'], FILTER_VALIDATE_EMAIL)) {
                 $mailtab[] = $managerData['mail'];
+            }
 
             // Mail du 2e manager
-            if (filter_var($managerBisData['mail'], FILTER_VALIDATE_EMAIL))
+            if (filter_var($managerBisData['mail'], FILTER_VALIDATE_EMAIL)) {
                 $mailtab[] = $managerBisData['mail'];
+            }
 
             $this->sendEmail($mailtab, $subject, $message);
         }
@@ -548,9 +552,10 @@ class NdfController extends Controller
      * @param int       $mois           numéro du mois
      *
      */
-    function donneMois($mois) {
-        $liste_mois = array( "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre" );
-        return $liste_mois[$mois-1];
+    public function donneMois($mois)
+    {
+        $liste_mois = array("Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre");
+        return $liste_mois[$mois - 1];
     }
 
     /**
@@ -559,7 +564,8 @@ class NdfController extends Controller
      * @param int       $etat           état de la demande
      *
      */
-    private function getDescriptionByEtat($etat) {
+    private function getDescriptionByEtat($etat)
+    {
         switch ($etat) {
             case 0:
                 return "Brouillon";
@@ -646,27 +652,27 @@ class NdfController extends Controller
      */
     private function sendEmail($expediteur, $subject, $messageEmail)
     {
-        $data = array();
+        $data    = array();
         $message = new \Swift_Message($subject);
 
         $imgPath = "/var/www/clients/platine/rest8/app/Resources/images/";
 
-        $data['logocatsign'] = $message->embed(Swift_Image::fromPath($imgPath . 'logocatsign.jpg'));
+        $data['logocatsign']   = $message->embed(Swift_Image::fromPath($imgPath . 'logocatsign.jpg'));
         $data['logo_facebook'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_facebook.gif'));
-        $data['logo_twitter'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_twitter.gif'));
-        $data['logo_viadeo'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_viadeo.gif'));
+        $data['logo_twitter']  = $message->embed(Swift_Image::fromPath($imgPath . 'logo_twitter.gif'));
+        $data['logo_viadeo']   = $message->embed(Swift_Image::fromPath($imgPath . 'logo_viadeo.gif'));
         $data['logo_linkedin'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_linkedin.jpg'));
-        $data['message'] = $messageEmail;
+        $data['message']       = $messageEmail;
 
         $message->setFrom('espacecollaborateur@cat-amania.com')
-        ->setTo($expediteur)
-        ->setBody(
-            $this->renderView(
-                'Emails/template-catamania.html.twig',
-                $data
-            ),
-            'text/html'
-        );
+            ->setTo($expediteur)
+            ->setBody(
+                $this->renderView(
+                    'Emails/template-catamania.html.twig',
+                    $data
+                ),
+                'text/html'
+            );
 
         $this->get('mailer')->send($message);
     }

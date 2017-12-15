@@ -410,11 +410,11 @@ class CraController extends Controller
         }
 
         /* //Si tout est ok on envoie un code HTTP 200
-        if ($retourDelete['code'] == Response::HTTP_OK && $retourAdd["code"] == Response::HTTP_OK) {
-            $message = array('message' => "Modification réussie");
-            return new JsonResponse($message, Response::HTTP_OK);
+    if ($retourDelete['code'] == Response::HTTP_OK && $retourAdd["code"] == Response::HTTP_OK) {
+    $message = array('message' => "Modification réussie");
+    return new JsonResponse($message, Response::HTTP_OK);
 
-        }*/
+    }*/
     }
 
     /**
@@ -531,8 +531,9 @@ class CraController extends Controller
      * @param array       $data           Informations sur le CRA
      *
      */
-    private function envoiEmailManager($data) {
-        $id = $data['idUser'];
+    private function envoiEmailManager($data)
+    {
+        $id   = $data['idUser'];
         $etat = $data['etat'];
 
         $sql = 'select users.id as id,users.nom as nom,users.prenom,profils.libelle as profil,entitesjuridiques.nomEntite as entite,
@@ -546,16 +547,16 @@ class CraController extends Controller
         $stmt->execute();
         $retour = $stmt->fetchAll();
 
-        $managerData = $this->getUserManager($id);
+        $managerData    = $this->getUserManager($id);
         $managerBisData = $this->getUserManagerBis($id);
 
         if (count($retour) == 0) {
             // Pas d'envoi de mail car utilisateur non trouvé
             return;
-        } else  {
+        } else {
             // Envoi du mail
-            $message = "";
-            $subject = "";
+            $message    = "";
+            $subject    = "";
             $nomcollabo = $retour[0]['prenom'] . ' ' . $retour[0]['nom'];
 
             $nbJoursOuvres = strval(UtilsController::nbJoursOuvresParMois($data['mois'], $data['annee']));
@@ -590,9 +591,9 @@ class CraController extends Controller
   </tr>
   <tr>
     <td class="tg-utag">Nombres de jours travaillés<br></td>
-    <td class="tg-nwzb">' . str_replace('.',',',$data['nbJourTravailles']) . '</td>
+    <td class="tg-nwzb">' . str_replace('.', ',', $data['nbJourTravailles']) . '</td>
     <td class="tg-utag">Nombre de jours d\'absence<br></td>
-    <td class="tg-oskr">' . str_replace('.',',',$data['nbJourAbs']) . '</td>
+    <td class="tg-oskr">' . str_replace('.', ',', $data['nbJourAbs']) . '</td>
   </tr>
   <tr>
     <td class="tg-utag" colspan="4">Informations complémentaires<br></td>
@@ -622,16 +623,19 @@ class CraController extends Controller
             $mailtab = array();
 
             // Mail du collaborateur
-            if (filter_var($retour[0]['mail'], FILTER_VALIDATE_EMAIL))
+            if (filter_var($retour[0]['mail'], FILTER_VALIDATE_EMAIL)) {
                 $mailtab[] = $retour[0]['mail'];
+            }
 
             // Mail du manager
-            if (filter_var($managerData['mail'], FILTER_VALIDATE_EMAIL))
+            if (filter_var($managerData['mail'], FILTER_VALIDATE_EMAIL)) {
                 $mailtab[] = $managerData['mail'];
+            }
 
             // Mail du 2e manager
-            if (filter_var($managerBisData['mail'], FILTER_VALIDATE_EMAIL))
+            if (filter_var($managerBisData['mail'], FILTER_VALIDATE_EMAIL)) {
                 $mailtab[] = $managerBisData['mail'];
+            }
 
             $this->sendEmail($mailtab, $subject, $message);
         }
@@ -643,9 +647,10 @@ class CraController extends Controller
      * @param int       $mois           numéro du mois
      *
      */
-    function donneMois($mois) {
-        $liste_mois = array( "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre" );
-        return $liste_mois[$mois-1];
+    public function donneMois($mois)
+    {
+        $liste_mois = array("Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre");
+        return $liste_mois[$mois - 1];
     }
 
     /**
@@ -654,7 +659,8 @@ class CraController extends Controller
      * @param int       $etat           état de la demande
      *
      */
-    private function getDescriptionByEtat($etat) {
+    private function getDescriptionByEtat($etat)
+    {
         $sql = "SELECT DISTINCT
             id,
             libelle
@@ -742,27 +748,27 @@ class CraController extends Controller
      */
     private function sendEmail($expediteur, $subject, $messageEmail)
     {
-        $data = array();
+        $data    = array();
         $message = new \Swift_Message($subject);
 
         $imgPath = "/var/www/clients/platine/rest8/app/Resources/images/";
 
-        $data['logocatsign'] = $message->embed(Swift_Image::fromPath($imgPath . 'logocatsign.jpg'));
+        $data['logocatsign']   = $message->embed(Swift_Image::fromPath($imgPath . 'logocatsign.jpg'));
         $data['logo_facebook'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_facebook.gif'));
-        $data['logo_twitter'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_twitter.gif'));
-        $data['logo_viadeo'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_viadeo.gif'));
+        $data['logo_twitter']  = $message->embed(Swift_Image::fromPath($imgPath . 'logo_twitter.gif'));
+        $data['logo_viadeo']   = $message->embed(Swift_Image::fromPath($imgPath . 'logo_viadeo.gif'));
         $data['logo_linkedin'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_linkedin.jpg'));
-        $data['message'] = $messageEmail;
+        $data['message']       = $messageEmail;
 
         $message->setFrom('espacecollaborateur@cat-amania.com')
-        ->setTo($expediteur)
-        ->setBody(
-            $this->renderView(
-                'Emails/template-catamania.html.twig',
-                $data
-            ),
-            'text/html'
-        );
+            ->setTo($expediteur)
+            ->setBody(
+                $this->renderView(
+                    'Emails/template-catamania.html.twig',
+                    $data
+                ),
+                'text/html'
+            );
 
         $this->get('mailer')->send($message);
     }

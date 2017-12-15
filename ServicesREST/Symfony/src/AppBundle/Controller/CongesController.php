@@ -247,39 +247,39 @@ class CongesController extends Controller
         );
     }
 
-
 /**
  * Calcule la durée ouvrée d'une période de demande de congés
  * On itère par demi-journées pour effectuer ce calcul
  * @param  [type] $periode [description]
  * @return [type]          [description]
  */
-protected function calculerDureePeriode($periode) {
-  $debut = $periode['dateDebut'];
-  $fin = $periode['dateFin'];
-  $format = 'Y-m-d H:i:s';
+    protected function calculerDureePeriode($periode)
+    {
+        $debut  = $periode['dateDebut'];
+        $fin    = $periode['dateFin'];
+        $format = 'Y-m-d H:i:s';
 
-  $dateDebut = DateTime::createFromFormat($format, $periode['dateDebut']);
-  $dateFin = DAtetime::createFromFormat($format, $periode['dateFin']);
+        $dateDebut = DateTime::createFromFormat($format, $periode['dateDebut']);
+        $dateFin   = DAtetime::createFromFormat($format, $periode['dateFin']);
 
-  $iterationDate = clone $dateDebut;
+        $iterationDate = clone $dateDebut;
 
-  $duree = 0;
-  while ($iterationDate < $dateFin) {
-    $dayOfWeek = $iterationDate->format('w');
-    $year      = $iterationDate->format('Y');
-    $month     = $iterationDate->format('m');
-    $day       = $iterationDate->format('d');
+        $duree = 0;
+        while ($iterationDate < $dateFin) {
+            $dayOfWeek = $iterationDate->format('w');
+            $year      = $iterationDate->format('Y');
+            $month     = $iterationDate->format('m');
+            $day       = $iterationDate->format('d');
 
-    if ($dayOfWeek > 0 && $dayOfWeek < 6 && !UtilsController::estJourFerie($day, $month, $year)) {
-      $duree += 0.5;
+            if ($dayOfWeek > 0 && $dayOfWeek < 6 && !UtilsController::estJourFerie($day, $month, $year)) {
+                $duree += 0.5;
+            }
+
+            $iterationDate->modify("+12 hours");
+        }
+
+        return $duree;
     }
-
-    $iterationDate->modify("+12 hours");
-  }
-
-  return $duree;
-}
 
     /**
      * Execute les requetes de creation après vérifiction des parametres
@@ -290,7 +290,7 @@ protected function calculerDureePeriode($periode) {
      */
     public function createDemandeConges($data, $idUserToken)
     {
-        $idUser = $data['idUser'];
+        $idUser      = $data['idUser'];
         $etatDemande = $data['etat'];
 
         // Récupere le numéro de la demande à partir de la table
@@ -309,10 +309,10 @@ protected function calculerDureePeriode($periode) {
                 );
             }
 
-          // Calcule la durée en jours ouvrés de chaque période de la demandes de congés
-          foreach($data['lignesDemandes'] as $index => $periode) {
-            $data['lignesDemandes'][$index]['nbJours'] = $this->calculerDureePeriode($periode);
-          }
+            // Calcule la durée en jours ouvrés de chaque période de la demandes de congés
+            foreach ($data['lignesDemandes'] as $index => $periode) {
+                $data['lignesDemandes'][$index]['nbJours'] = $this->calculerDureePeriode($periode);
+            }
 
             $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
             $stmt->execute();
@@ -692,7 +692,7 @@ protected function calculerDureePeriode($periode) {
         /*$log=new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
-            return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
+        return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
         }*/
 
         $sql = "SELECT DISTINCT
@@ -894,8 +894,9 @@ protected function calculerDureePeriode($periode) {
      * @param array       $data           Informations de la demande de congé
      *
      */
-    private function envoiEmailManager($data) {
-        $id = $data['idUser'];
+    private function envoiEmailManager($data)
+    {
+        $id   = $data['idUser'];
         $etat = $data['etat'];
 
         $sql = 'select users.id as id,users.nom as nom,users.prenom,profils.libelle as profil,entitesjuridiques.nomEntite as entite,
@@ -909,26 +910,26 @@ protected function calculerDureePeriode($periode) {
         $stmt->execute();
         $retour = $stmt->fetchAll();
 
-        $managerData = $this->getUserManager($id);
+        $managerData    = $this->getUserManager($id);
         $managerBisData = $this->getUserManagerBis($id);
 
         if (count($retour) == 0) {
             // Pas d'envoi de mail car utilisateur non trouvé
             return;
-        } else  {
+        } else {
             // Envoi du mail
-            $message = "";
-            $subject = "";
+            $message    = "";
+            $subject    = "";
             $nomcollabo = $retour[0]['prenom'] . ' ' . $retour[0]['nom'];
-            $message .= "Demande de congés du collaborateur : " . $nomcollabo ."<br /><br />";
+            $message .= "Demande de congés du collaborateur : " . $nomcollabo . "<br /><br />";
 
             foreach ($data['lignesDemandes'] as $ligne) {
                 $dateDebut = $ligne['dateDebut'];
-                $dateFin = $ligne['dateFin'];
-                $typeabs = $ligne['typeabs'];
-                $nbJours = $ligne['nbJours'];
+                $dateFin   = $ligne['dateFin'];
+                $typeabs   = $ligne['typeabs'];
+                $nbJours   = $ligne['nbJours'];
 
-                $message .= "<br />Du : " . $dateDebut . "<br />Au : " . $dateFin ."<br /> Nombre de jours : " . $nbJours . "<br /> Type d'absences : " . $this->getTypesAbsencesByID($typeabs) . "<br />";
+                $message .= "<br />Du : " . $dateDebut . "<br />Au : " . $dateFin . "<br /> Nombre de jours : " . $nbJours . "<br /> Type d'absences : " . $this->getTypesAbsencesByID($typeabs) . "<br />";
             }
 
             $message .= "<br />En attente de validation par " . $managerData['manager'] . ".";
@@ -940,16 +941,19 @@ protected function calculerDureePeriode($periode) {
             $mailtab = array();
 
             // Mail du collaborateur
-            if (filter_var($retour[0]['mail'], FILTER_VALIDATE_EMAIL))
+            if (filter_var($retour[0]['mail'], FILTER_VALIDATE_EMAIL)) {
                 $mailtab[] = $retour[0]['mail'];
+            }
 
             // Mail du manager
-            if (filter_var($managerData['mail'], FILTER_VALIDATE_EMAIL))
+            if (filter_var($managerData['mail'], FILTER_VALIDATE_EMAIL)) {
                 $mailtab[] = $managerData['mail'];
+            }
 
             // Mail du 2e manager
-            if (filter_var($managerBisData['mail'], FILTER_VALIDATE_EMAIL))
+            if (filter_var($managerBisData['mail'], FILTER_VALIDATE_EMAIL)) {
                 $mailtab[] = $managerBisData['mail'];
+            }
 
             $this->sendEmail($mailtab, $subject, $message);
         }
@@ -961,7 +965,8 @@ protected function calculerDureePeriode($periode) {
      * @param int       $etat           état de la demande
      *
      */
-    private function getDescriptionByEtat($etat) {
+    private function getDescriptionByEtat($etat)
+    {
         switch ($etat) {
             case 0:
                 return "Brouillon";
@@ -1048,27 +1053,27 @@ protected function calculerDureePeriode($periode) {
      */
     private function sendEmail($expediteur, $subject, $messageEmail)
     {
-        $data = array();
+        $data    = array();
         $message = new \Swift_Message($subject);
 
         $imgPath = "/var/www/clients/platine/rest8/app/Resources/images/";
 
-        $data['logocatsign'] = $message->embed(Swift_Image::fromPath($imgPath . 'logocatsign.jpg'));
+        $data['logocatsign']   = $message->embed(Swift_Image::fromPath($imgPath . 'logocatsign.jpg'));
         $data['logo_facebook'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_facebook.gif'));
-        $data['logo_twitter'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_twitter.gif'));
-        $data['logo_viadeo'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_viadeo.gif'));
+        $data['logo_twitter']  = $message->embed(Swift_Image::fromPath($imgPath . 'logo_twitter.gif'));
+        $data['logo_viadeo']   = $message->embed(Swift_Image::fromPath($imgPath . 'logo_viadeo.gif'));
         $data['logo_linkedin'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_linkedin.jpg'));
-        $data['message'] = $messageEmail;
+        $data['message']       = $messageEmail;
 
         $message->setFrom('espacecollaborateur@cat-amania.com')
-        ->setTo($expediteur)
-        ->setBody(
-            $this->renderView(
-                'Emails/template-catamania.html.twig',
-                $data
-            ),
-            'text/html'
-        );
+            ->setTo($expediteur)
+            ->setBody(
+                $this->renderView(
+                    'Emails/template-catamania.html.twig',
+                    $data
+                ),
+                'text/html'
+            );
 
         $this->get('mailer')->send($message);
     }

@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-
 class UtilsController extends Controller
 {
     /**
@@ -383,15 +382,15 @@ class UtilsController extends Controller
     public static function sendEmail($expediteur, $subject, $message)
     {
         $message = (new \Swift_Message($subject))
-        ->setFrom('espacecollaborateur@cat-amania.com')
-        ->setTo($expediteur)
-        ->setBody(
-            $this->renderView(
-                'Emails/template-catamania.html.twig',
-                array('message' => $message)
-            ),
-            'text/html'
-        );
+            ->setFrom('espacecollaborateur@cat-amania.com')
+            ->setTo($expediteur)
+            ->setBody(
+                $this->renderView(
+                    'Emails/template-catamania.html.twig',
+                    array('message' => $message)
+                ),
+                'text/html'
+            );
 
         $this->get('mailer')->send($message);
 

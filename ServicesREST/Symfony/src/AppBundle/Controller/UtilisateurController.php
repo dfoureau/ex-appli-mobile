@@ -50,7 +50,7 @@ class UtilisateurController extends Controller
             $retour = $stmt->fetchAll();
 
             $managerData = $this->getUserManager($id);
-            $manager = $managerData['manager'];
+            $manager     = $managerData['manager'];
             //$nom=$retour['nom'];
 
             $retour[0]['responsable'] = $manager;
