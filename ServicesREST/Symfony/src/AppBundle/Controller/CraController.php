@@ -565,7 +565,7 @@ class CraController extends Controller
 .tg  {border-collapse:collapse;border-spacing:0;border-color:#999;}
 .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#999;color:#444;background-color:#F7FDFA;}
 .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#999;color:#fff;background-color:#26ADE4;}
-.tg .tg-f3oy{font-size:12px;background-color:#ffffff;vertical-align:top}
+.tg .tg-f3oy{font-size:12px;background-color:#ffffff;vertical-align:top;color:#444}
 .tg .tg-kohf{font-size:12px;background-color:#d2e4fc;color:#444444}
 .tg .tg-nwzb{background-color:#ffffff;font-size:12px;vertical-align:top}
 .tg .tg-utag{font-size:12px;background-color:#d2e4fc;vertical-align:top}
