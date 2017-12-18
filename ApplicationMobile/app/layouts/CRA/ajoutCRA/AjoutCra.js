@@ -210,6 +210,7 @@ class AjoutCra extends React.Component {
       )
     ).then(result => {
       let [typesActions, conges] = result;
+      console.log(conges);
 
       if (params.idCRA != null) {
         // Récupération du CRA
@@ -543,7 +544,7 @@ class AjoutCra extends React.Component {
   }
 
   showDeleteButton() {
-    if (this.state.statusId == 1 || this.state.statusId == 2)
+    if (this.state.statusId == 1 || this.state.statusId == 2 || this.state.statusId == 4)
       return (
         <Button
           text="SUPPRIMER"
@@ -565,7 +566,8 @@ class AjoutCra extends React.Component {
     if (
       this.state.statusId == 1 ||
       this.state.statusId == null ||
-      this.state.statusId == 2
+      this.state.statusId == 2 ||
+      this.state.statusId == 4
     )
       return (
         <Button
@@ -580,12 +582,14 @@ class AjoutCra extends React.Component {
     if (
       this.state.statusId == 1 ||
       this.state.statusId == null ||
-      this.state.statusId == 2
+      this.state.statusId == 2 ||
+      this.state.statusId == 4
     )
       return <Button text="VALIDER" onPress={() => this.saveCra(2)} />;
   }
 
   afficherRows() {
+    //console.log(this.state.listItemsCRA);
     return this.state.listItemsCRA.map((row, i) => (
       <TouchableOpacity
         key={i}

@@ -328,7 +328,8 @@ class FraisDetail extends React.Component {
     if (
       this.state.statusId == null ||
       this.state.statusId == 0 ||
-      this.state.statusId == 1
+      this.state.statusId == 1 ||
+      this.state.statusId == 3
     ) {
       return (
         /*Bouton validera affiché que si c'est une NDF en brouillon ou une nouvelle NDF*/
@@ -341,7 +342,8 @@ class FraisDetail extends React.Component {
     if (
       (this.state.statusId == null ||
         this.state.statusId == 0 ||
-        this.state.statusId == 1) &&
+        this.state.statusId == 1 ||
+      this.state.statusId == 3) &&
       !this.state.isforfait
     ) {
       return (

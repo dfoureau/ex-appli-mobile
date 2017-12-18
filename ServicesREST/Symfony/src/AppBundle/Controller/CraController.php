@@ -122,7 +122,6 @@ class CraController extends Controller
      */
     public function getListCraByCollaborateur(Request $request, $id, $annee)
     {
-
         //Vérification token
         $log        = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
@@ -246,7 +245,6 @@ class CraController extends Controller
      */
     public function deleteCraAction(Request $request, $idRA)
     {
-
         //Vérification token
         $log        = new LoginController();
         $retourAuth = $log->checkAuthentification($this);

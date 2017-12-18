@@ -146,7 +146,6 @@ class NdfController extends Controller
 
     public function deleteNdf($id, $annee, $mois)
     {
-
         //on commence par vérifier les variables en entrée de la request
         $etat = null;
 

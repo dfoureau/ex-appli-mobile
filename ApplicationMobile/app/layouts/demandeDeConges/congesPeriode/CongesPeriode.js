@@ -284,7 +284,8 @@ class CongesPeriode extends React.Component {
     if (
       this.state.statusId == null ||
       this.state.statusId == 0 ||
-      this.state.statusId == 1
+      this.state.statusId == 1 ||
+      this.state.statusId == 3
     ) {
       return (
         <View style={styles.button}>
@@ -302,7 +303,8 @@ class CongesPeriode extends React.Component {
     if (
       this.state.statusId == null ||
       this.state.statusId == 0 ||
-      this.state.statusId == 1
+      this.state.statusId == 1 ||
+      this.state.statusId == 3
     ) {
       return (
         <View style={styles.button}>

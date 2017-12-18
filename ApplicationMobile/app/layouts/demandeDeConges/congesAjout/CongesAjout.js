@@ -84,15 +84,20 @@ class CongesAjout extends React.Component {
       dataSaved: false,
       numDemande: params.numDemande,
       isReady: false,
-      //  WSLinkTypeAbs: "http://localhost:8000/conges/typesabsences",
       WSLinkTypeAbs: configurationAppli.apiURL + "conges/typesabsences",
       arrTypeAbs: [],
+      obj: {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + configurationAppli.userToken,
+        },
+      },
     };
   }
 
   // Retourne les types absences congés
   getTypesAbsences() {
-    fetch(this.state.WSLinkTypeAbs)
+    fetch(this.state.WSLinkTypeAbs, this.state.obj)
       .then(function(response) {
         if (response.status >= 400) {
           console.log("TypesAbsences : Bad response from server");
@@ -334,6 +339,8 @@ class CongesAjout extends React.Component {
         body.numDemande = this.state.numDemande;
       }
 
+      console.log(JSON.stringify(body));
+
       fetch(url, {
         method: method,
         headers: this.state.fetchHeaders,
@@ -393,7 +400,7 @@ class CongesAjout extends React.Component {
   }
 
   showDeleteButton() {
-    if (this.state.statusId == 0 || this.state.statusId == 1) {
+    if (this.state.statusId == 0 || this.state.statusId == 1 || this.state.statusId == 3) {
       return (
         <Button
           buttonStyles={style.deleteButton}
@@ -416,7 +423,8 @@ class CongesAjout extends React.Component {
     if (
       this.state.statusId == null ||
       this.state.statusId == 0 ||
-      this.state.statusId == 1
+      this.state.statusId == 1 ||
+      this.state.statusId == 3
     ) {
       return (
         <Button
@@ -432,7 +440,8 @@ class CongesAjout extends React.Component {
     if (
       this.state.statusId == null ||
       this.state.statusId == 0 ||
-      this.state.statusId == 1
+      this.state.statusId == 1 ||
+      this.state.statusId == 3
     ) {
       return <Button text="VALIDER" onPress={() => this.saveConge(1)} />;
     }

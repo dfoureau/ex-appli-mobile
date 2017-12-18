@@ -416,7 +416,83 @@ class CongesController extends Controller
 
         // Test les valeurs en entrée
         if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numRequest)) {
+            // Vérifie si la ligne existe
+            $sql = "SELECT
+              numdemande
+            FROM
+              demandesconges
+            WHERE idUser = '$userId'
+            AND numDemande = '$numRequest' and etat in ('0','1','3')";
 
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+
+            $list = $stmt->fetchAll();
+
+            // La ligne existe
+            if (count($list) != 0) {
+                // Sauvegarde de l'ancienne demande
+                $sql = "CREATE TEMPORARY TABLE IF NOT EXISTS demandescongesTMP AS (
+                    SELECT
+                      *
+                    FROM
+                      demandesconges
+                    WHERE idUser = '$userId'
+                    AND numDemande = '$numRequest' and etat in ('0','1','3')
+                )";
+
+                $stmtTmp = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                $stmtTmp->execute();
+
+                // Suppression de l'ancienne demande
+                $sql = "DELETE
+                  FROM
+                    demandesconges
+                  WHERE idUser = '$userId'
+                  AND numDemande = '$numRequest'";
+
+                $stmtSupp   = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                $stmtSupp->execute();
+
+                // Ajout de la nouvelle demande
+                // Appel la fonction postCongés
+                try {
+                    $content    = $request->getContent();
+                    $data       = json_decode($content, true);
+                    $retourpost = $this->createDemandeConges($data, $idUserToken);
+
+                     if ($retourpost['code'] != Response::HTTP_OK) {
+                        return new JsonResponse($retourpost['message'], $retourpost['code']);
+                    }
+
+                    //Si tout est ok on envoie un code HTTP 200
+                    if ($retourpost["code"] == Response::HTTP_OK) {
+                        $message = array('message' => "Modification réussie");
+                        return new JsonResponse($message, Response::HTTP_OK);
+                    }
+                } catch (ContextErrorException $e) {
+                    // Si erreur dans ajout, alors réinstallation de l'ancienne demande
+                    $sql = "INSERT INTO demandesconges
+                        SELECT
+                          *
+                        FROM
+                          demandescongesTMP
+                        WHERE idUser = '$userId'
+                        AND numDemande = '$numRequest' and etat in ('0','1','3')";
+
+                    $stmtUpd = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                    $stmtUpd->execute();
+
+                    // Retour message erreur
+                    return new JsonResponse("Modification échouée" . $e, Response::HTTP_BAD_REQUEST);
+                }
+            } else {
+                // La ligne n'existe pas, on le signale et on ne la supprime pas
+                $message = array('message' => 'Mise à jour échoué. Demande n\'existe pas');
+                return array('message' => $message, 'code' => Response::HTTP_BAD_REQUEST);
+            }
+
+            /*
             // Appel la fonction deleteCongés
             $retourdelete = $this->deleteDemandeConges((int) $userId, (int) $numRequest);
             if ($retourdelete['code'] != Response::HTTP_OK) {
@@ -440,8 +516,8 @@ class CongesController extends Controller
             if ($retourdelete['code'] == Response::HTTP_OK && $retourpost["code"] == Response::HTTP_OK) {
                 $message = array('message' => "Modification réussie");
                 return new JsonResponse($message, Response::HTTP_OK);
-
             }
+            */
         } else {
             $message = array('message' => 'Format paramètres incorrect');
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
@@ -462,19 +538,20 @@ class CongesController extends Controller
      */
     public function deleteDemandeCongesAction(Request $request, $userId, $numRequest)
     {
-        /*$log = new LoginController();
+        //Vérification token
+        $log        = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
-        return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
+            return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
 
         // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
         $idUserToken = $retourAuth['id'];
 
         if ($userId != $idUserToken) {
-        $message = array('message' => "Incohérence token/ID");
-        return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
-        }*/
+            $message = array('message' => "Incohérence token/ID");
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
 
         // Test les valeurs en entrée
         if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numRequest)) {
@@ -689,11 +766,11 @@ class CongesController extends Controller
      */
     public function getTypesAbsences(Request $request)
     {
-        /*$log=new LoginController();
+        $log=new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
         return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
-        }*/
+        }
 
         $sql = "SELECT DISTINCT
           idTypeAbs,
@@ -832,7 +909,7 @@ class CongesController extends Controller
                                 $code2Carac = substr($valueC["code"], 0, 2);
                                 $arrDay     = array(
                                     "jour" => $i,
-                                    "code" => $code2Carac,
+                                    "code" => $valueC["code"],
                                     "etat" => $valueC["etat"],
                                 );
 

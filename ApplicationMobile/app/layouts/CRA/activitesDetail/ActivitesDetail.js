@@ -313,7 +313,8 @@ class ActivitesDetail extends React.Component {
     if (
       this.state.statusId == 1 ||
       this.state.statusId == null ||
-      this.state.statusId == 2
+      this.state.statusId == 2 ||
+      this.state.statusId == 4
     ) {
       return (
         <View style={styles.stickyFooter}>
