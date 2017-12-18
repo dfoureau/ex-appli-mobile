@@ -52,6 +52,7 @@ class FraisDetail extends React.Component {
     let isNewFrais = true;
     let calendarDateFormat = "YYYY-MM-DD";
     let calendarDate = moment().format(calendarDateFormat);
+    let frais = null;
 
     const params = this.props.navigation.state.params;
 
@@ -60,7 +61,7 @@ class FraisDetail extends React.Component {
       calendarDate = moment(params.idFrais, "DD-MM-YYYY");
 
       // Recherche du fraisJour dans la listFrais du parent
-      let frais = params.parent.state.listFrais.find(
+      frais = params.parent.state.listFrais.find(
         this.findFraisJour(params.idFrais)
       );
 
