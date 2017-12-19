@@ -362,21 +362,21 @@ class NdfController extends Controller
                 //si la ligne existe mais validee
                 else if ($etat == 2) {
                     $message = array('message' => 'Mise à jour échouée : la note de frais est validée');
-                    return array('message' => $message, 'code' => Response::HTTP_NOT_FOUND);
+                    return new JsonResponse($message, Response::HTTP_NOT_FOUND);
                 }
                 //si la ligne n'existe pas, alors on le dit et on ne supprime pas
                 else {
                     $message = array('message' => 'Mise à jour échouée : pas de lignes à supprimer');
-                    return array('message' => $message, 'code' => Response::HTTP_NOT_FOUND);
+                    return new JsonResponse($message, Response::HTTP_NOT_FOUND);
                 }
             } else {
                 $message = array('message' => 'Mise à jour échouée : format paramètres incorrect');
-                return array('message' => $message, 'code' => Response::HTTP_BAD_REQUEST);
+                return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
             }
         } catch (ContextErrorException $e) {
             // La ligne n'existe pas, on le signale et on ne la supprime pas
             $message = array('message' => 'Mise à jour échouée');
-            return array('message' => $message, 'code' => Response::HTTP_BAD_REQUEST);
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
     }
 

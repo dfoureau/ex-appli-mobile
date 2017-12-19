@@ -220,22 +220,40 @@ class CraController extends Controller
 
     public function deleteCra($idRA, $idUserToken)
     {
-
-        $sql = 'DELETE FROM relevesactivites WHERE etat in ("1","2","4") and idRA = ' . $idRA . ' and idUser = ' . $idUserToken . ';';
+        // Vérifie si la ligne existe
+        $sql = "SELECT
+          idRA
+        FROM
+          relevesactivites
+        WHERE idUser = '$idUserToken'
+        AND idRA = '$idRA' and etat in ('1','2','4')";
 
         $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
         $stmt->execute();
 
-        $retour = $stmt->rowCount();
+        $list = $stmt->fetchAll();
 
-        if (empty($retour)) {
-            //if($retour == 0){
-            $message = array('message' => "Erreur dans la suppression");
-            return array('message' => $message, 'code' => Response::HTTP_BAD_REQUEST);
+        // La ligne existe
+        if (count($list) != 0) {
+            $sql = 'DELETE FROM relevesactivites WHERE etat in ("1","2","4") and idRA = ' . $idRA . ' and idUser = ' . $idUserToken . ';';
+
+            $stmtSupp = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmtSupp->execute();
+
+            $retour = $stmtSupp->rowCount();
+
+            if (empty($retour)) {
+                //if($retour == 0){
+                $message = array('message' => "Erreur dans la suppression");
+                return array('message' => $message, 'code' => Response::HTTP_BAD_REQUEST);
+            } else {
+                $message = array('message' => "Suppression reussie");
+                return array('message' => $message, 'code' => Response::HTTP_OK);
+            }
         } else {
-            $message = array('message' => "Suppression reussie");
-            return array('message' => $message, 'code' => Response::HTTP_OK);
-
+            // La ligne n'existe pas, on le signale et on ne la supprime pas
+            $message = array('message' => 'Mise à jour échouée. La demande n\'existe pas');
+            return array('message' => $message, 'code' => Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -382,37 +400,110 @@ class CraController extends Controller
 
         $idUserToken = $retourAuth['id'];
 
-        //Création du CRA
         try {
-            $content   = $request->getContent();
-            $data      = json_decode($content, true);
-            $retourAdd = $this->addCra($data, $idUserToken);
-        } catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
-            $message = array('message' => "La modification a échouée");
+            // Vérifie si la ligne existe
+            $sql = "SELECT
+              idRA
+            FROM
+              relevesactivites
+            WHERE idUser = '$idUserToken'
+            AND idRA = '$idRA' and etat in ('1','2','4')";
+
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+
+            $list = $stmt->fetchAll();
+
+            // La ligne existe
+            if (count($list) != 0) {
+                // Sauvegarde de l'ancienne demande
+                $sql = "CREATE TEMPORARY TABLE IF NOT EXISTS relevesactivitesTMP AS (
+                    SELECT
+                      *
+                    FROM
+                      relevesactivites
+                    WHERE idUser = '$idUserToken'
+                    AND idRA = '$idRA' and etat in ('1','2','4')
+                )";
+
+                $stmtTmp = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                $stmtTmp->execute();
+
+                // Suppression de l'ancienne demande
+                $sql = "DELETE
+                  FROM
+                    relevesactivites
+                  WHERE idUser = '$idUserToken'
+                  AND idRA = '$idRA'
+                  AND etat in ('1', '2', '3')";
+
+                $stmtSupp = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                $stmtSupp->execute();
+
+                // Ajout de la nouvelle demande
+                try {
+                    $content    = $request->getContent();
+                    $data       = json_decode($content, true);
+                    $retourpost = $this->addCra($data, $idUserToken);
+
+                    if ($retourpost['code'] != Response::HTTP_OK) {
+                        // Si erreur dans ajout, alors ré-ajout de l'ancienne demande
+                        $sql = "INSERT INTO relevesactivites
+                                SELECT
+                                  *
+                                FROM
+                                  relevesactivitesTMP
+                                WHERE idUser = '$idUserToken'
+                                AND idRA = '$idRA' and etat in ('1','2','4')";
+
+                        $stmtUpd = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                        $stmtUpd->execute();
+
+                        // Puis on drop la table temporaire
+                        $sql      = "DROP TABLE relevesactivitesTMP";
+                        $stmtDrop = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                        $stmtDrop->execute();
+
+                        // Retour message erreur
+                        return new JsonResponse("Modification échouée " . $retourpost['message'], $retourpost['code']);
+                    }
+
+                    //Si tout est ok on envoie un code HTTP 200
+                    if ($retourpost["code"] == Response::HTTP_OK) {
+                        $message = array('message' => "Modification réussie");
+                        return new JsonResponse($message, Response::HTTP_OK);
+                    }
+                } catch (ContextErrorException $e) {
+                    // Si erreur dans ajout, alors ré-ajout de l'ancienne demande
+                    $sql = "INSERT INTO relevesactivites
+                            SELECT
+                              *
+                            FROM
+                              relevesactivitesTMP
+                            WHERE idUser = '$idUserToken'
+                            AND idRA = '$idRA' and etat in ('1','2','4')";
+
+                    $stmtUpd = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                    $stmtUpd->execute();
+
+                    // Puis on drop la table temporaire
+                    $sql      = "DROP TABLE relevesactivitesTMP";
+                    $stmtDrop = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                    $stmtDrop->execute();
+
+                    // Retour message erreur
+                    return new JsonResponse("Modification échouée " . $e, Response::HTTP_BAD_REQUEST);
+                }
+            } else {
+                // La ligne n'existe pas, on le signale et on ne la supprime pas
+                $message = array('message' => 'Mise à jour échouée. La demande n\'existe pas');
+                return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+            }
+        } catch (ContextErrorException $e) {
+            // La ligne n'existe pas, on le signale et on ne la supprime pas
+            $message = array('message' => 'Mise à jour échouée');
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
-
-        //return $retourAdd;
-        if ($retourAdd['code'] != Response::HTTP_OK) {
-            return new JsonResponse($retourAdd['message'], $retourAdd['code']);
-        } else {
-            //Suppression du CRA
-            $retourDelete = $this->deleteCra($idRA, $idUserToken);
-
-            if ($retourDelete["code"] != Response::HTTP_OK) {
-                return new JsonResponse($retourDelete['message'], $retourDelete['code']);
-            } else {
-                $message = array('message' => "Modification réussie");
-                return new JsonResponse($message, Response::HTTP_OK);
-            }
-        }
-
-        /* //Si tout est ok on envoie un code HTTP 200
-    if ($retourDelete['code'] == Response::HTTP_OK && $retourAdd["code"] == Response::HTTP_OK) {
-    $message = array('message' => "Modification réussie");
-    return new JsonResponse($message, Response::HTTP_OK);
-
-    }*/
     }
 
     /**

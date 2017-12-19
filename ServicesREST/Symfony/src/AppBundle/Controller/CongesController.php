@@ -510,12 +510,12 @@ class CongesController extends Controller
                 } else {
                     // La ligne n'existe pas, on le signale et on ne la supprime pas
                     $message = array('message' => 'Mise à jour échouée. La demande n\'existe pas');
-                    return array('message' => $message, 'code' => Response::HTTP_BAD_REQUEST);
+                    return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
                 }
             } catch (ContextErrorException $e) {
                 // La ligne n'existe pas, on le signale et on ne la supprime pas
                 $message = array('message' => 'Mise à jour échouée');
-                return array('message' => $message, 'code' => Response::HTTP_BAD_REQUEST);
+                return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
             }
         } else {
             $message = array('message' => 'Format paramètres incorrect');
