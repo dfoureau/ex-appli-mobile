@@ -3,7 +3,7 @@ let configurationAppli = {
   userToken: null,
   expirationToken: null,
   idAgence: null,
-  apiURL: "https://test.cat-amania.com/rest8/web/",
+  apiURL: "https://test.cat-amania.com/rest/web/",
   lienMdpOublie:
     "https://espacecollaborateur.cat-amania.com/espacecollaborateur/connexion.php",
   lienSupportJira:
