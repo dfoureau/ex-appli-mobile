@@ -180,22 +180,22 @@ class NdfController extends Controller
                 $stmt   = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
                 $retour = $stmt->execute();
 
-                $message = array('message' => 'Delete OK: Note de frais supprimee');
+                $message = array('message' => 'Note de frais supprimée');
 
                 return array('message' => $message, 'code' => Response::HTTP_OK);
             }
             //si la ligne existe mais validee
             else if ($etat == 2) {
-                $message = array('message' => 'Delete KO: La note de frais est validee');
+                $message = array('message' => 'Suppression échouée : la note de frais est validée');
                 return array('message' => $message, 'code' => Response::HTTP_NOT_FOUND);
             }
             //si la ligne n'existe pas, alors on le dit et on ne supprime pas
             else {
-                $message = array('message' => 'Delete KO: Pas de ligne à supprimer');
+                $message = array('message' => 'Suppression échouée : pas de lignes à supprimer');
                 return array('message' => $message, 'code' => Response::HTTP_NOT_FOUND);
             }
         } else {
-            $message = array('message' => 'Delete KO: Format parametres incorrect mon gars');
+            $message = array('message' => 'Suppression échouée : format paramètres incorrect');
             return array('message' => $message, 'code' => Response::HTTP_BAD_REQUEST);
         }
     }
@@ -255,33 +255,128 @@ class NdfController extends Controller
         ]
         }
          */
-        //on verifie que les données en entrée
-        // Get the entity manager
-
-        //on appelle la fonction deleteNDF
-        $retourdelete = $this->deleteNdf($id, $annee, $mois);
-        if ($retourdelete['code'] != Response::HTTP_OK) {
-            return new JsonResponse($retourdelete['message'], $retourdelete['code']);
-        }
-
-        //$data = json_decode(file_get_contents('php://input'), true);
-        $content = $request->getContent();
-        $data    = json_decode($content, true);
 
         try {
-            $retourpost = $this->postNdf($data, $idUserToken);
-        } catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
-            return new JsonResponse("Modification échouée" . $e, Response::HTTP_BAD_REQUEST);
-        }
+            //on commence par vérifier les variables en entrée de la request
+            $etat = null;
 
-        if ($retourpost['code'] != Response::HTTP_OK) {
-            return new JsonResponse($retourpost['message'], $retourpost['code']);
-        }
+            if (ctype_digit($id) && ctype_digit($annee) && ctype_digit($mois)) {
+                $id    = (int) $id;
+                $annee = (int) $annee;
+                $mois  = (int) $mois;
+                //on vérifie si la ligne existe
+                $sql  = 'select etat FROM notedefrais WHERE  idUser = "' . $id . '" AND mois = "' . $mois . '" AND annee = "' . $annee . '" group by etat';
+                $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                $stmt->execute();
 
-        if ($retourdelete['code'] == Response::HTTP_OK && $retourpost["code"] == Response::HTTP_OK) {
-            $message = array('message' => "Modification réussie");
-            return new JsonResponse($message, Response::HTTP_OK);
+                $list = $stmt->fetchAll();
 
+                //si la ligne existe, alors on la supprime
+
+                for ($i = 0; $i < count($list); $i++) {
+                    $row  = $list[$i];
+                    $etat = $row['etat'];
+                }
+
+                if ($etat == '0' || $etat == '1' || $etat == '3') {
+                    /*
+                    when etat="3" then "A modifier"
+                    when etat="2" then "Validé"
+                    when etat="1" then "En attente validation"
+                    when etat="0" then "Brouillon" */
+
+                    // Sauvegarde de l'ancienne demande
+                    $sql = "CREATE TEMPORARY TABLE IF NOT EXISTS notedefraisTMP AS (
+                        SELECT
+                          *
+                        FROM
+                          notedefrais
+                        WHERE idUser = '$id'
+                        AND mois = '$mois' AND annee =  '$annee'
+                    )";
+
+                    $stmtTmp = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                    $stmtTmp->execute();
+
+                    // Suppression de l'ancienne demande
+                    $sql = 'DELETE FROM notedefrais WHERE  idUser = "' . $id . '" AND mois = "' . $mois . '" AND annee = "' . $annee . '"';
+
+                    $stmtSupp = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                    $stmtSupp->execute();
+
+                    // Ajout de la nouvelle demande
+                    try {
+                        $content    = $request->getContent();
+                        $data       = json_decode($content, true);
+                        $retourpost = $this->postNdf($data, $idUserToken);
+
+                        if ($retourpost['code'] != Response::HTTP_OK) {
+                            // Si erreur dans ajout, alors ré-ajout de l'ancienne demande
+                            $sql = "INSERT INTO notedefrais
+                            SELECT
+                              *
+                            FROM
+                              notedefraisTMP
+                            WHERE idUser = '$id'
+                            AND mois = '$mois' AND annee =  '$annee'";
+
+                            $stmtUpd = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                            $stmtUpd->execute();
+
+                            // Puis on drop la table temporaire
+                            $sql      = "DROP TABLE notedefraisTMP";
+                            $stmtDrop = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                            $stmtDrop->execute();
+
+                            // Retour message erreur
+                            return new JsonResponse("Modification échouée " . $retourpost['message'], $retourpost['code']);
+                        }
+
+                        //Si tout est ok on envoie un code HTTP 200
+                        if ($retourpost["code"] == Response::HTTP_OK) {
+                            $message = array('message' => "Modification réussie");
+                            return new JsonResponse($message, Response::HTTP_OK);
+                        }
+                    } catch (ContextErrorException $e) {
+                        // Si erreur dans ajout, alors ré-ajout de l'ancienne demande
+                        $sql = "INSERT INTO notedefrais
+                            SELECT
+                              *
+                            FROM
+                              notedefraisTMP
+                            WHERE idUser = '$id'
+                            AND mois = '$mois' AND annee =  '$annee'";
+
+                        $stmtUpd = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                        $stmtUpd->execute();
+
+                        // Puis on drop la table temporaire
+                        $sql      = "DROP TABLE notedefraisTMP";
+                        $stmtDrop = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                        $stmtDrop->execute();
+
+                        // Retour message erreur
+                        return new JsonResponse("Modification échouée " . $e, Response::HTTP_BAD_REQUEST);
+                    }
+                }
+                //si la ligne existe mais validee
+                else if ($etat == 2) {
+                    $message = array('message' => 'Mise à jour échouée : la note de frais est validée');
+                    return array('message' => $message, 'code' => Response::HTTP_NOT_FOUND);
+                }
+                //si la ligne n'existe pas, alors on le dit et on ne supprime pas
+                else {
+                    $message = array('message' => 'Mise à jour échouée : pas de lignes à supprimer');
+                    return array('message' => $message, 'code' => Response::HTTP_NOT_FOUND);
+                }
+            } else {
+                $message = array('message' => 'Mise à jour échouée : format paramètres incorrect');
+                return array('message' => $message, 'code' => Response::HTTP_BAD_REQUEST);
+            }
+        } catch (ContextErrorException $e) {
+            // La ligne n'existe pas, on le signale et on ne la supprime pas
+            $message = array('message' => 'Mise à jour échouée');
+            return array('message' => $message, 'code' => Response::HTTP_BAD_REQUEST);
         }
     }
 
