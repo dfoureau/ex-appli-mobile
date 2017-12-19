@@ -450,7 +450,7 @@ class CongesController extends Controller
                       WHERE idUser = '$userId'
                       AND numDemande = '$numRequest'";
 
-                    $stmtSupp   = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                    $stmtSupp = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
                     $stmtSupp->execute();
 
                     // Ajout de la nouvelle demande
@@ -473,7 +473,7 @@ class CongesController extends Controller
                             $stmtUpd->execute();
 
                             // Puis on drop la table temporaire
-                            $sql = "DROP TABLE demandescongesTMP";
+                            $sql      = "DROP TABLE demandescongesTMP";
                             $stmtDrop = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
                             $stmtDrop->execute();
 
@@ -500,7 +500,7 @@ class CongesController extends Controller
                         $stmtUpd->execute();
 
                         // Puis on drop la table temporaire
-                        $sql = "DROP TABLE demandescongesTMP";
+                        $sql      = "DROP TABLE demandescongesTMP";
                         $stmtDrop = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
                         $stmtDrop->execute();
 
@@ -765,10 +765,10 @@ class CongesController extends Controller
      */
     public function getTypesAbsences(Request $request)
     {
-        $log=new LoginController();
+        $log        = new LoginController();
         $retourAuth = $log->checkAuthentification($this);
         if (array_key_exists("erreur", $retourAuth)) {
-        return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
+            return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
         }
 
         $sql = "SELECT DISTINCT
