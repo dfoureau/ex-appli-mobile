@@ -906,9 +906,15 @@ class CongesController extends Controller
                             // La date est comprise dans l'intervalle du congé en cours de traitement
                             if (empty($arrDay) && $processedDate >= $dateDu[$keyC] && $processedDate <= $dateAu[$keyC]) {
                                 $code2Carac = substr($valueC["code"], 0, 2);
+
+                                // Deux caractères sauf pour CMA/CPA
+                                $valueCodeCarac = $code2Carac;
+                                if ($valueC["code"] == "CMA" || $valueC["code"] == "CMA") {
+                                    $valueCodeCarac = $valueC["code"];
+                                }
                                 $arrDay     = array(
                                     "jour" => $i,
-                                    "code" => $valueC["code"],
+                                    "code" => $valueCodeCarac,
                                     "etat" => $valueC["etat"],
                                 );
 
