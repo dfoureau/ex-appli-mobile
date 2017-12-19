@@ -321,11 +321,9 @@ class CongesController extends Controller
 
             if (count($retour) == 0) {
                 // Il n'existe pas de ligne; il n'y a jamais eu de demande de congés, donc on la met à 1
-
                 $numDemande = '1';
             } else {
                 // S'il existe une ligne, on récupère et on incrémente d'1
-
                 foreach ($retour as $key => $value) {
                     $numDemande = $value['num'] + 1;
                 }
@@ -416,108 +414,109 @@ class CongesController extends Controller
 
         // Test les valeurs en entrée
         if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numRequest)) {
-            // Vérifie si la ligne existe
-            $sql = "SELECT
-              numdemande
-            FROM
-              demandesconges
-            WHERE idUser = '$userId'
-            AND numDemande = '$numRequest' and etat in ('0','1','3')";
+            try {
+                // Vérifie si la ligne existe
+                $sql = "SELECT
+                  numdemande
+                FROM
+                  demandesconges
+                WHERE idUser = '$userId'
+                AND numDemande = '$numRequest' and etat in ('0','1','3')";
 
-            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-            $stmt->execute();
+                $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                $stmt->execute();
 
-            $list = $stmt->fetchAll();
+                $list = $stmt->fetchAll();
 
-            // La ligne existe
-            if (count($list) != 0) {
-                // Sauvegarde de l'ancienne demande
-                $sql = "CREATE TEMPORARY TABLE IF NOT EXISTS demandescongesTMP AS (
-                    SELECT
-                      *
-                    FROM
-                      demandesconges
-                    WHERE idUser = '$userId'
-                    AND numDemande = '$numRequest' and etat in ('0','1','3')
-                )";
-
-                $stmtTmp = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-                $stmtTmp->execute();
-
-                // Suppression de l'ancienne demande
-                $sql = "DELETE
-                  FROM
-                    demandesconges
-                  WHERE idUser = '$userId'
-                  AND numDemande = '$numRequest'";
-
-                $stmtSupp   = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-                $stmtSupp->execute();
-
-                // Ajout de la nouvelle demande
-                // Appel la fonction postCongés
-                try {
-                    $content    = $request->getContent();
-                    $data       = json_decode($content, true);
-                    $retourpost = $this->createDemandeConges($data, $idUserToken);
-
-                     if ($retourpost['code'] != Response::HTTP_OK) {
-                        return new JsonResponse($retourpost['message'], $retourpost['code']);
-                    }
-
-                    //Si tout est ok on envoie un code HTTP 200
-                    if ($retourpost["code"] == Response::HTTP_OK) {
-                        $message = array('message' => "Modification réussie");
-                        return new JsonResponse($message, Response::HTTP_OK);
-                    }
-                } catch (ContextErrorException $e) {
-                    // Si erreur dans ajout, alors réinstallation de l'ancienne demande
-                    $sql = "INSERT INTO demandesconges
+                // La ligne existe
+                if (count($list) != 0) {
+                    // Sauvegarde de l'ancienne demande
+                    $sql = "CREATE TEMPORARY TABLE IF NOT EXISTS demandescongesTMP AS (
                         SELECT
                           *
                         FROM
-                          demandescongesTMP
+                          demandesconges
                         WHERE idUser = '$userId'
-                        AND numDemande = '$numRequest' and etat in ('0','1','3')";
+                        AND numDemande = '$numRequest' and etat in ('0','1','3')
+                    )";
 
-                    $stmtUpd = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
-                    $stmtUpd->execute();
+                    $stmtTmp = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                    $stmtTmp->execute();
 
-                    // Retour message erreur
-                    return new JsonResponse("Modification échouée" . $e, Response::HTTP_BAD_REQUEST);
+                    // Suppression de l'ancienne demande
+                    $sql = "DELETE
+                      FROM
+                        demandesconges
+                      WHERE idUser = '$userId'
+                      AND numDemande = '$numRequest'";
+
+                    $stmtSupp   = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                    $stmtSupp->execute();
+
+                    // Ajout de la nouvelle demande
+                    try {
+                        $content    = $request->getContent();
+                        $data       = json_decode($content, true);
+                        $retourpost = $this->createDemandeConges($data, $idUserToken);
+
+                        if ($retourpost['code'] != Response::HTTP_OK) {
+                            // Si erreur dans ajout, alors ré-ajout de l'ancienne demande
+                            $sql = "INSERT INTO demandesconges
+                                SELECT
+                                  *
+                                FROM
+                                  demandescongesTMP
+                                WHERE idUser = '$userId'
+                                AND numDemande = '$numRequest' and etat in ('0','1','3')";
+
+                            $stmtUpd = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                            $stmtUpd->execute();
+
+                            // Puis on drop la table temporaire
+                            $sql = "DROP TABLE demandescongesTMP";
+                            $stmtDrop = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                            $stmtDrop->execute();
+
+                            // Retour message erreur
+                            return new JsonResponse("Modification échouée " . $retourpost['message'], $retourpost['code']);
+                        }
+
+                        //Si tout est ok on envoie un code HTTP 200
+                        if ($retourpost["code"] == Response::HTTP_OK) {
+                            $message = array('message' => "Modification réussie");
+                            return new JsonResponse($message, Response::HTTP_OK);
+                        }
+                    } catch (ContextErrorException $e) {
+                        // Si erreur dans ajout, alors ré-ajout de l'ancienne demande
+                        $sql = "INSERT INTO demandesconges
+                            SELECT
+                              *
+                            FROM
+                              demandescongesTMP
+                            WHERE idUser = '$userId'
+                            AND numDemande = '$numRequest' and etat in ('0','1','3')";
+
+                        $stmtUpd = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                        $stmtUpd->execute();
+
+                        // Puis on drop la table temporaire
+                        $sql = "DROP TABLE demandescongesTMP";
+                        $stmtDrop = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+                        $stmtDrop->execute();
+
+                        // Retour message erreur
+                        return new JsonResponse("Modification échouée " . $e, Response::HTTP_BAD_REQUEST);
+                    }
+                } else {
+                    // La ligne n'existe pas, on le signale et on ne la supprime pas
+                    $message = array('message' => 'Mise à jour échouée. La demande n\'existe pas');
+                    return array('message' => $message, 'code' => Response::HTTP_BAD_REQUEST);
                 }
-            } else {
+            } catch (ContextErrorException $e) {
                 // La ligne n'existe pas, on le signale et on ne la supprime pas
-                $message = array('message' => 'Mise à jour échoué. Demande n\'existe pas');
+                $message = array('message' => 'Mise à jour échouée');
                 return array('message' => $message, 'code' => Response::HTTP_BAD_REQUEST);
             }
-
-            /*
-            // Appel la fonction deleteCongés
-            $retourdelete = $this->deleteDemandeConges((int) $userId, (int) $numRequest);
-            if ($retourdelete['code'] != Response::HTTP_OK) {
-                return new JsonResponse($retourdelete['message'], $retourdelete['code']);
-            }
-
-            // Appel la fonction postCongés
-            try {
-                $content    = $request->getContent();
-                $data       = json_decode($content, true);
-                $retourpost = $this->createDemandeConges($data, $idUserToken);
-            } catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
-                return new JsonResponse("Modification échouée" . $e, Response::HTTP_BAD_REQUEST);
-            }
-
-            if ($retourpost['code'] != Response::HTTP_OK) {
-                return new JsonResponse($retourpost['message'], $retourpost['code']);
-            }
-
-            //Si tout est ok on envoie un code HTTP 200
-            if ($retourdelete['code'] == Response::HTTP_OK && $retourpost["code"] == Response::HTTP_OK) {
-                $message = array('message' => "Modification réussie");
-                return new JsonResponse($message, Response::HTTP_OK);
-            }
-            */
         } else {
             $message = array('message' => 'Format paramètres incorrect');
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
