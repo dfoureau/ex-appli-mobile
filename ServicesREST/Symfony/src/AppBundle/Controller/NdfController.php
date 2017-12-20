@@ -487,7 +487,7 @@ class NdfController extends Controller
         $idUser = $data['idUser'];
         $mois   = $data['mois'];
         $annee  = $data['annee'];
-        $etat   = $data['etat']; //Revoir format
+        $etat   = $data['etat'];
 
         /*
         switch ($data['etat']) {
@@ -512,11 +512,13 @@ class NdfController extends Controller
 
         $listNdf = $data['notesDeFrais'];
 
+        $connection = $this->getDoctrine()->getManager()->getConnection();
+
         $i = 0;
         foreach ($listNdf as $key => $row) {
             $jour       = $row['jour'];
-            $client     = $row['client'];
-            $lieu       = $row['lieu'];
+            $client     = addslashes($row['client']);
+            $lieu       = addslashes($row['lieu']);
             $facturable = $row['facturable'];
             $nbKM       = $row['nbKM'];
             //$indemKM = $row['indemKM']; //non saisi par l'utilisateur
@@ -533,7 +535,7 @@ class NdfController extends Controller
             $montantEssence     = $row['montantEssence'];
             $montantParking     = $row['montantParking'];
             $montantDivers      = $row['montantDivers'];
-            $libelleDivers      = $row['libelleDivers'];
+            $libelleDivers      = addslashes($row['libelleDivers']);
 
             if ($i > 0) {
                 $sql .= ',';
@@ -546,7 +548,7 @@ class NdfController extends Controller
 
         $sql .= ';';
 
-        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+        $stmt = $connection->prepare($sql);
         $stmt->execute();
 
         // Envoi mail manager

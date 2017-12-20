@@ -289,10 +289,10 @@ class CraController extends Controller
         $etat             = $data['etat'];
         $nbJourTravailles = $data['nbJourTravailles'];
         $nbJourAbs        = $data['nbJourAbs'];
-        $client           = $data['client'];
-        $responsable      = $data['responsable'];
-        $projet           = $data['projet'];
-        $commentaires     = $data['commentaires'];
+        $client           = addslashes($data['client']);
+        $responsable      = addslashes($data['responsable']);
+        $projet           = addslashes($data['projet']);
+        $commentaires     = addslashes($data['commentaires']);
         $tableauCRA       = $data['valeursSaisies'];
 
         /*switch ($libelle){
