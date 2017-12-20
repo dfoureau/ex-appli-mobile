@@ -20,9 +20,10 @@ class LoginController extends Controller
     public function ConnexionAction(Request $request)
     {
         //On récupère les identifiants
-        $login    = $request->request->get('login');
+        $login    = addslashes($request->request->get('login'));
         $password = $request->request->get('password');
-        //On parse le mdp
+
+        // Mot de passe chiffré en md5
         $passMd5 = md5($password);
 
         $sql = 'SELECT id,login,idAgence,mail,pass_crypt, nom, prenom, dateEntree
@@ -43,11 +44,11 @@ class LoginController extends Controller
         $this->ajouterDerniereConnexion($user['id']);
 
         //On définit les valeurs dans le token
-        $time = time() + 3600;
+        $time = time() + 1800; // Token valide pour 30 minutes
         $data = array(
             'id'       => $user['id'],
             'idAgence' => $user['idAgence'],
-            'exp'      => $time, // 1 hour expiration
+            'exp'      => $time, // Expiration du token
         );
 
         //Génération du token
