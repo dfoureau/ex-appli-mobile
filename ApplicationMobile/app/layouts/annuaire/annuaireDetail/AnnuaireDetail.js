@@ -294,38 +294,6 @@ class AnnuaireDetail extends React.Component {
                 </View>
               </View>
             )}
-
-            {/*EMAIL 3 */}
-            {this.state.list[0]["mailPerso"] != "" && (
-              <View style={[Style.firstView, styles.secondSection]}>
-                <View style={Style.secondView}>
-                  <View style={styles.container}>
-                    <View style={styles.containerRow}>
-                      <Text style={styles.text}>Email personnel</Text>
-                      <Text style={styles.text}>
-                        {this.state.list[0]["mailPerso"]}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-                <View style={styles.containerIcon}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      Communications.email(
-                        [this.state.list[0]["mailPerso"]],
-                        null,
-                        null,
-                        null,
-                        null
-                      )}
-                  >
-                    <View>
-                      <Icon name="envelope" size={30} color="#e50000" />
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
           </ContainerTitre>
         </View>
       );

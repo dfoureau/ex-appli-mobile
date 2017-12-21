@@ -83,7 +83,7 @@ class AnnuaireController extends Controller
                         telclient,
                         mail,
                         mailclient,
-                        mailPerso,
+                        "" AS mailPerso,
                         societeagence.nomSocieteAgence as agence
                     FROM
                         users,
