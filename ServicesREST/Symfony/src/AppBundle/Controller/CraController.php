@@ -378,7 +378,7 @@ class CraController extends Controller
             $content   = $request->getContent();
             $data      = json_decode($content, true);
             $retourAdd = $this->addCra($data, $idUserToken);
-        } catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
+        } catch (Exception $e) {
             $message = array('message' => "Problème de paramètres");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
@@ -473,7 +473,7 @@ class CraController extends Controller
                         $message = array('message' => "Modification réussie");
                         return new JsonResponse($message, Response::HTTP_OK);
                     }
-                } catch (ContextErrorException $e) {
+                } catch (Exception $e) {
                     // Si erreur dans ajout, alors ré-ajout de l'ancienne demande
                     $sql = "INSERT INTO relevesactivites
                             SELECT
@@ -499,7 +499,7 @@ class CraController extends Controller
                 $message = array('message' => 'Mise à jour échouée. La demande n\'existe pas');
                 return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
             }
-        } catch (ContextErrorException $e) {
+        } catch (Exception $e) {
             // La ligne n'existe pas, on le signale et on ne la supprime pas
             $message = array('message' => 'Mise à jour échouée');
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);

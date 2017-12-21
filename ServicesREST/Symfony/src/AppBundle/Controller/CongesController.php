@@ -105,7 +105,7 @@ class CongesController extends Controller
             $content = $request->getContent();
             $data    = json_decode($content, true);
             $retour  = $this->createDemandeConges($data, $idUserToken);
-        } catch (ContextErrorException $e) {
+        } catch (Exception $e) {
             $message = array('message' => "Problème de paramètres " . $e);
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
@@ -486,7 +486,7 @@ class CongesController extends Controller
                             $message = array('message' => "Modification réussie");
                             return new JsonResponse($message, Response::HTTP_OK);
                         }
-                    } catch (ContextErrorException $e) {
+                    } catch (Exception $e) {
                         // Si erreur dans ajout, alors ré-ajout de l'ancienne demande
                         $sql = "INSERT INTO demandesconges
                             SELECT
@@ -512,7 +512,7 @@ class CongesController extends Controller
                     $message = array('message' => 'Mise à jour échouée. La demande n\'existe pas');
                     return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
                 }
-            } catch (ContextErrorException $e) {
+            } catch (Exception $e) {
                 // La ligne n'existe pas, on le signale et on ne la supprime pas
                 $message = array('message' => 'Mise à jour échouée');
                 return new JsonResponse($message, Response::HTTP_BAD_REQUEST);

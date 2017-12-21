@@ -337,7 +337,7 @@ class NdfController extends Controller
                             $message = array('message' => "Modification réussie");
                             return new JsonResponse($message, Response::HTTP_OK);
                         }
-                    } catch (ContextErrorException $e) {
+                    } catch (Exception $e) {
                         // Si erreur dans ajout, alors ré-ajout de l'ancienne demande
                         $sql = "INSERT INTO notedefrais
                             SELECT
@@ -373,7 +373,7 @@ class NdfController extends Controller
                 $message = array('message' => 'Mise à jour échouée : format paramètres incorrect');
                 return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
             }
-        } catch (ContextErrorException $e) {
+        } catch (Exception $e) {
             // La ligne n'existe pas, on le signale et on ne la supprime pas
             $message = array('message' => 'Mise à jour échouée');
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
@@ -475,7 +475,7 @@ class NdfController extends Controller
         $data    = json_decode($content, true);
         try {
             $retour = $this->postNdf($data);
-        } catch (\Symfony\Component\Debug\Exception\ContextErrorException $e) {
+        } catch (Exception $e) {
             $message = array('message' => "Problème de paramètres");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
