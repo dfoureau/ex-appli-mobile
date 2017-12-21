@@ -544,7 +544,7 @@ class AjoutCra extends React.Component {
   }
 
   showDeleteButton() {
-    if (this.state.statusId == 1 || this.state.statusId == 2 || this.state.statusId == 4)
+    if (this.state.statusId == 1 || this.state.statusId == 4)
       return (
         <Button
           text="SUPPRIMER"
@@ -566,7 +566,6 @@ class AjoutCra extends React.Component {
     if (
       this.state.statusId == 1 ||
       this.state.statusId == null ||
-      this.state.statusId == 2 ||
       this.state.statusId == 4
     )
       return (
@@ -582,7 +581,6 @@ class AjoutCra extends React.Component {
     if (
       this.state.statusId == 1 ||
       this.state.statusId == null ||
-      this.state.statusId == 2 ||
       this.state.statusId == 4
     )
       return <Button text="VALIDER" onPress={() => this.saveCra(2)} />;
