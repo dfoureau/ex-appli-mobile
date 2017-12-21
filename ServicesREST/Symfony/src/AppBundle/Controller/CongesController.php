@@ -61,7 +61,7 @@ class CongesController extends Controller
             soldesconges
           WHERE users.numMat = soldesconges.nummat
           AND users.id = " . $tUserId . "
-          ORDER BY concat(annee, mois) DESC limit 1";
+          ORDER BY annee DESC, mois DESC limit 1";
 
             $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
             $stmt->execute();

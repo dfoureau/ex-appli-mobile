@@ -34,7 +34,7 @@ class NewsController extends Controller
             }
 
             //Désormais l'idAgence est fourni lors de la vérification du token, donc on le récupère
-            $idAgence = $retourAuth['idAgence'];
+            //$idAgence = $retourAuth['idAgence'];
 
             $chemin_photo = '/espacecollaborateur/upload/news/photo/';
             $chemin_pdf   = '/espacecollaborateur/upload/news/doc/';
@@ -48,8 +48,8 @@ class NewsController extends Controller
                         CONCAT("' . $chemin_pdf . '", newstable.news_file) AS news_file
                     FROM
                         newstable
-                    WHERE news_publier = 1  and (news_entite = 0 OR news_entite = ' . $idAgence . ')
                     ORDER BY news_date DESC Limit ' . $tNombre;
+            // WHERE news_publier = 1  and (news_entite = 0 OR news_entite = 1 OR news_entite = ' . $idAgence . ')
 
             $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
             $stmt->execute();
