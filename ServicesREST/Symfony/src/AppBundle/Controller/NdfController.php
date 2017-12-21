@@ -613,12 +613,12 @@ class NdfController extends Controller
             $nomcollabo = $retour[0]['prenom'] . ' ' . $retour[0]['nom'];
 
             $message .= "<p>Votre note de frais de " . strtoupper($this->donneMois($data['mois'])) . " " . $data['annee'];
-            $message .= " d'un motant de " . $data['total'] . " € euros est " . $this->getDescriptionByEtat($etat) . ".</p>";
+            $message .= " d'un motant de " . $data['total'] . " &#8364; euros est " . $this->getDescriptionByEtat($etat) . ".</p>";
             $message .= "<p>En attente de validation par " . $managerData['manager'] . ".</p>";
 
             $message = utf8_decode($message);
 
-            $subject = "APPLI - Note de frais de " . strtoupper($this->donneMois($data['mois'])) . " " . $data['annee'] . " pour " . $nomcollabo . " (Etat: " . utf8_encode($this->getDescriptionByEtat($etat)) . ")";
+            $subject = "APPLI - Note de frais de " . strtoupper($this->donneMois($data['mois'])) . " " . $data['annee'] . " pour " . $nomcollabo . " (État: " . utf8_encode($this->getDescriptionByEtat($etat)) . ")";
 
             // Envoi mail au managers
             $mailtab = array();

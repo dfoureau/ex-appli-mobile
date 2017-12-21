@@ -675,17 +675,17 @@ class CraController extends Controller
   <tr>
     <td class="tg-utag">Mois<br></td>
     <td class="tg-nwzb">' . $this->donneMois($data['mois']) . ' ' . $data['annee'] . '</td>
-    <td class="tg-utag">Nombre de jours ouvrés<br></td>
+    <td class="tg-utag">Nombre de jours ouvr&eacute;s<br></td>
     <td class="tg-oskr">' . $nbJoursOuvres . '</td>
   </tr>
   <tr>
-    <td class="tg-utag">Nombres de jours travaillés<br></td>
+    <td class="tg-utag">Nombres de jours travaill&eacute;s<br></td>
     <td class="tg-nwzb">' . str_replace('.', ',', $data['nbJourTravailles']) . '</td>
     <td class="tg-utag">Nombre de jours d\'absence<br></td>
     <td class="tg-oskr">' . str_replace('.', ',', $data['nbJourAbs']) . '</td>
   </tr>
   <tr>
-    <td class="tg-utag" colspan="4">Informations complémentaires<br></td>
+    <td class="tg-utag" colspan="4">Informations compl&eacute;mentaires<br></td>
   </tr>
   <tr>
     <td class="tg-f3oy" colspan="4">' . stripslashes($data['commentaires']) . '</td>
@@ -699,14 +699,14 @@ class CraController extends Controller
   <tr>
     <td class="tg-utag">Projet</td>
     <td class="tg-nwzb">' . stripslashes($data['projet']) . '</td>
-    <td class="tg-utag">État</td>
+    <td class="tg-utag">&Eacute;tat</td>
     <td class="tg-oskr">' . $this->getDescriptionByEtat($etat) . '</td>
   </tr>
 </table>';
 
             $message = utf8_decode($message);
 
-            $subject = "APPLI - Relevé Activité " . strtoupper($this->donneMois($data['mois'])) . " " . $data['annee'] . " pour " . $nomcollabo . " (Etat: " . utf8_encode($this->getDescriptionByEtat($etat)) . ")";
+            $subject = "APPLI - Relevé Activité " . strtoupper($this->donneMois($data['mois'])) . " " . $data['annee'] . " pour " . $nomcollabo . " (État: " . utf8_encode($this->getDescriptionByEtat($etat)) . ")";
 
             // Envoi mail au managers
             $mailtab = array();

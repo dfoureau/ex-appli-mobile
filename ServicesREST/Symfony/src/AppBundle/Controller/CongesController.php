@@ -1003,7 +1003,7 @@ class CongesController extends Controller
             $message    = "";
             $subject    = "";
             $nomcollabo = $retour[0]['prenom'] . ' ' . $retour[0]['nom'];
-            $message .= "Demande de congés du collaborateur : " . $nomcollabo . "<br /><br />";
+            $message .= "Demande de cong&eacute;s du collaborateur : " . $nomcollabo . "<br /><br />";
 
             foreach ($data['lignesDemandes'] as $ligne) {
                 $dateDebut = $ligne['dateDebut'];
@@ -1017,7 +1017,7 @@ class CongesController extends Controller
             $message .= "<br />En attente de validation par " . $managerData['manager'] . ".";
             $message = utf8_decode($message);
 
-            $subject = "APPLI - Demande de congés de " . $nomcollabo . " pour la période du " . $dateDebut . " au " . $dateFin . " (Etat: " . utf8_encode($this->getDescriptionByEtat($etat)) . ")";
+            $subject = "APPLI - Demande de congés de " . $nomcollabo . " pour la période du " . $dateDebut . " au " . $dateFin . " (État: " . utf8_encode($this->getDescriptionByEtat($etat)) . ")";
 
             // Envoi mail au managers
             $mailtab = array();
