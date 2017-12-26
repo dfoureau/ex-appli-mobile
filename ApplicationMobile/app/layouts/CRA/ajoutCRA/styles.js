@@ -260,4 +260,8 @@ export default StyleSheet.create({
   draftButton: {
     backgroundColor: "#808080",
   },
+
+  disabledButton: {
+    backgroundColor: 'rgba(53,90,134,0.7)',
+  },
 });

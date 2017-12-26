@@ -85,6 +85,8 @@ class FraisDetail extends React.Component {
       .set("date", calendarDate.daysInMonth())
       .format(calendarDateFormat);
 
+      console.log(params.parent.state.statusId);
+
     this.state = {
       statusId: params.parent.state.statusId,
       title: "Note de frais",
@@ -95,7 +97,7 @@ class FraisDetail extends React.Component {
       client: isNewFrais ? "" : frais.detail.client,
       lieu: isNewFrais ? "" : frais.detail.lieu,
       nbKMS: isNewFrais ? "0" : frais.detail.nbKMS.toString(),
-      indemKM: (params.parent.state.statusId == null) ? configurationAppli.indemKM : frais.detail.indemKM.toString(),
+      indemKM: (params.parent.state.statusId == null || this.props.navigation.state.params.forfait) ? configurationAppli.indemKM : frais.detail.indemKM.toString(),
       forfait: isNewFrais ? "0.00" : frais.detail.forfait.toFixed(2),
       sncf: isNewFrais ? "0.00" : frais.detail.sncf.toFixed(2),
       peages: isNewFrais ? "0.00" : frais.detail.peages.toFixed(2),

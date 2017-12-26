@@ -3,8 +3,8 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import PropTypes from "prop-types";
 import styles from "./styles";
 
-const Button = ({ textStyles, buttonStyles, text, onPress }) => (
-  <TouchableOpacity style={styles.container} onPress={onPress}>
+const Button = ({ textStyles, buttonStyles, text, onPress, disabled }) => (
+  <TouchableOpacity style={styles.container} onPress={onPress} disabled={disabled}>
     <View style={[styles.view, buttonStyles]}>
       <Text style={[styles.text, textStyles]}>{text}</Text>
     </View>

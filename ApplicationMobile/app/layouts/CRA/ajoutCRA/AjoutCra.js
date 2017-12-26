@@ -210,7 +210,6 @@ class AjoutCra extends React.Component {
       )
     ).then(result => {
       let [typesActions, conges] = result;
-      console.log(conges);
 
       if (params.idCRA != null) {
         // Récupération du CRA
@@ -652,6 +651,10 @@ class AjoutCra extends React.Component {
   render() {
     //Décralation du params transmis à l'écran courante.
     const { params } = this.props.navigation.state;
+    
+    let disabledValue = (this.state.statusId == 3 || this.state.statusId == 5)
+      ? true
+      : false;
 
     let title = this.state.newCra
       ? "Nouveau CRA"
@@ -754,6 +757,8 @@ class AjoutCra extends React.Component {
               <View style={style.containerButtonPeriod}>
                 <Button
                   text="ÉDITER UNE PÉRIODE"
+                  disabled={(this.state.statusId == 3 || this.state.statusId == 5) ? true : false}
+                  buttonStyles={(this.state.statusId == 3 || this.state.statusId == 5) ? style.disabledButton : ''}
                   onPress={() => this.modifyPeriodeCRA()}
                 >
                   {" "}
