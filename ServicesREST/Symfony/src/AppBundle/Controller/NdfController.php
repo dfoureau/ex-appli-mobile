@@ -482,7 +482,7 @@ class NdfController extends Controller
         return new JsonResponse($retour['message'], $retour['code']);
     }
 
-    public function postNdf($data)
+    private function postNdf($data)
     {
         $idUser = $data['idUser'];
         $mois   = $data['mois'];
@@ -561,7 +561,7 @@ class NdfController extends Controller
         return $retour;
     }
 
-    public function getUserIndemKM($idUser)
+    private function getUserIndemKM($idUser)
     {
         if (($idUser != null) && ($idUser != "")) {
             $sql = 'SELECT indemKM FROM users WHERE id = ' . $idUser;

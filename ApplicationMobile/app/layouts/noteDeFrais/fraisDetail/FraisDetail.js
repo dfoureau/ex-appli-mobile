@@ -23,9 +23,9 @@ import { momentConfig } from "../../../configuration/MomentConfig";
 import { showToast, showNotification, hide } from "react-native-notifyer";
 
 // IMPORT DES COMPOSANTS EXOTIQUES
-//import ContainerTitre from "../../../components/containerTitre/ContainerTitre";
 import { Button } from "../../../components/Buttons";
 import Panel from "../../../components/Panel/Panel";
+import configurationAppli from "../../../configuration/Configuration";
 
 import FraisJour from "../utils/FraisJour";
 
@@ -95,7 +95,7 @@ class FraisDetail extends React.Component {
       client: isNewFrais ? "" : frais.detail.client,
       lieu: isNewFrais ? "" : frais.detail.lieu,
       nbKMS: isNewFrais ? "0" : frais.detail.nbKMS.toString(),
-      indemKM: isNewFrais ? "0.00" : frais.detail.indemKM.toString(),
+      indemKM: (params.parent.state.statusId == null) ? configurationAppli.indemKM : frais.detail.indemKM.toString(),
       forfait: isNewFrais ? "0.00" : frais.detail.forfait.toFixed(2),
       sncf: isNewFrais ? "0.00" : frais.detail.sncf.toFixed(2),
       peages: isNewFrais ? "0.00" : frais.detail.peages.toFixed(2),

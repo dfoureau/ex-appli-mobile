@@ -3,6 +3,7 @@ let configurationAppli = {
   userToken: null,
   expirationToken: null,
   idAgence: null,
+  indemKM: 0.0,
   apiURL: "https://test.cat-amania.com/rest/web/",
   lienMdpOublie:
     "https://espacecollaborateur.cat-amania.com/espacecollaborateur/connexion.php",
@@ -18,6 +19,7 @@ let configurationAppli = {
     configurationAppli.userToken = null;
     configurationAppli.idAgence = null;
     configurationAppli.expirationToken = null;
+    indemKM = 0.0;
   },
 };
 

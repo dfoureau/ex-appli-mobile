@@ -26,7 +26,7 @@ class LoginController extends Controller
         // Mot de passe chiffré en md5
         $passMd5 = md5($password);
 
-        $sql = 'SELECT id,login,idAgence,mail,pass_crypt, nom, prenom, dateEntree
+        $sql = 'SELECT id,login,idAgence,mail,pass_crypt, nom, prenom, indemKM, dateEntree
                FROM users
                where archive !="O" AND login="' . $login . '" AND pass_crypt = "' . $passMd5 . '"';
 
@@ -58,6 +58,7 @@ class LoginController extends Controller
         //Tableau retourné
         $retour = array('id' => $user['id'],
             'idAgence'           => $user['idAgence'],
+            'indemKM' => $user['indemKM'],
             'token'              => $token);
 
         //$retour = array("token"=>$token);

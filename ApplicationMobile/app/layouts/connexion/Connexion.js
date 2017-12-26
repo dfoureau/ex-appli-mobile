@@ -144,6 +144,7 @@ class Connexion extends React.Component {
       configurationAppli.userID = this.state.data.id;
       configurationAppli.userToken = this.state.data.token;
       configurationAppli.idAgence = this.state.data.idAgence;
+      configurationAppli.indemKM = this.state.data.indemKM;
       configAnnuaire.idAgenceDefaut = this.state.data.idAgence;
       configurationAppli.expirationToken = tokenDecodeExpiration;
       hideLoading();

@@ -324,7 +324,7 @@ class FraisAjout extends React.Component {
         hideLoading();
         let [status, body] = res;
         let success = status == 200;
-        showToast((success ? "Succès" : "Erreur") + "\n" + body.message);
+        showToast((success ? "Succès" : "Erreur") + "\n" + (success ? "Note de frais supprimée" : body.message));
 
         // On redirige vers la page précédente uniquement en cas de succès
         if (success) {
@@ -402,7 +402,7 @@ class FraisAjout extends React.Component {
       .then(res => {
         let [status, body] = res;
         let success = status == 200;
-        showToast((success ? "Succès" : "Erreur") + "\n" + body.message);
+        showToast((success ? "Succès" : "Erreur") + "\n" + (success ? "Note de frais sauvegardée" : body.message));
 
         // En cas de succès uniquement, on met à jour le parent et on revient
         // sur la page précédente
