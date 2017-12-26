@@ -542,6 +542,8 @@ class CongesAjout extends React.Component {
               <View>
                 <Button
                   text="AJOUTER NOUVELLE PERIODE"
+                  disabled={(this.state.statusId == 2) ? true : false}
+                  buttonStyles={(this.state.statusId == 2) ? style.disabledButton : ''}
                   onPress={() => this.addNewPeriod()}
                 />
               </View>

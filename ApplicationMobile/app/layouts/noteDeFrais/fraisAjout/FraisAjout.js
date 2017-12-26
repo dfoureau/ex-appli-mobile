@@ -523,12 +523,13 @@ class FraisAjout extends React.Component {
                   <View style={styles.containerButton}>
                     <Button
                       text="AJOUTER FORFAIT"
+                      disabled={(this.state.statusId == 2) ? true : false}
+                      buttonStyles={(this.state.statusId == 2) ? styles.disabledButton : ''}
                       onPress={() =>
                         this.addNDF(
                           this.state.monthSelected,
                           this.state.statusId
                         )}
-                      buttonStyles={Style.addButton}
                     />
                   </View>
                 </View>

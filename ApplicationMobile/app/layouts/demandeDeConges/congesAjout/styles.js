@@ -139,4 +139,8 @@ export default StyleSheet.create({
     width: width,
     justifyContent: "center",
   },
+
+  disabledButton: {
+    backgroundColor: 'rgba(53,90,134,0.7)',
+  },
 });

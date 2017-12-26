@@ -132,4 +132,8 @@ export default StyleSheet.create({
     paddingTop: 3,
     paddingBottom: 3,
   },
+
+  disabledButton: {
+    backgroundColor: 'rgba(53,90,134,0.7)',
+  },
 });
