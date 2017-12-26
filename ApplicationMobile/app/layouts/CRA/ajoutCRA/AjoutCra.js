@@ -652,10 +652,6 @@ class AjoutCra extends React.Component {
     //Décralation du params transmis à l'écran courante.
     const { params } = this.props.navigation.state;
     
-    let disabledValue = (this.state.statusId == 3 || this.state.statusId == 5)
-      ? true
-      : false;
-
     let title = this.state.newCra
       ? "Nouveau CRA"
       : moment(
