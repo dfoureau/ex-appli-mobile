@@ -339,8 +339,6 @@ class CongesAjout extends React.Component {
         body.numDemande = this.state.numDemande;
       }
 
-      console.log(JSON.stringify(body));
-
       fetch(url, {
         method: method,
         headers: this.state.fetchHeaders,
