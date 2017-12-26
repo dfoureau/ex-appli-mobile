@@ -243,7 +243,7 @@ class AnnuaireListe extends React.Component {
                   style={styles.OptionFilter}
                   selectedValue={this.state.idAgence}
                   onValueChange={(itemValue, itemIndex) => {
-                    this.setState({ idAgence: itemValue });
+                    this.setState({ idAgence: itemValue, searchName: '' });
                     this.reloadAnnuaireByAgence(itemValue, true);
                   }}
                 >
@@ -268,6 +268,7 @@ class AnnuaireListe extends React.Component {
                   placeholder="Rechercher"
                   placeholderTextColor="#000000"
                   underlineColorAndroid={"transparent"}
+                  value={this.state.searchName}
                   onChangeText={searchName =>
                     this.realoadAnnuaireByNameOnChange(searchName)}
                   onSubmitEditing={searchName =>
