@@ -6,10 +6,12 @@ import {
   FlatList,
   Linking,
   TouchableHighlight,
+  StyleSheet,
 } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import Style from "./styles";
 import configurationAppli from "../../configuration/Configuration";
+import HTMLView from 'react-native-htmlview';
 
 export default class NewsItem extends React.Component {
   constructor(props) {
@@ -48,6 +50,15 @@ export default class NewsItem extends React.Component {
       );
     }
 
+    // Corrige liens relatifs dans certaines news de l'espace collaborateur
+    let contenuNews = "<div>" + this.props.news_contenu.replace("../../", lienEspaceCollaborateur + "/espacecollaborateur/").trim() + "</div>";
+
+    const stylesContent = StyleSheet.create({
+      div: {
+        color: "black",
+      }
+    });
+
     return (
       <View style={Style.newsItem}>
         <View style={Style.newsItemL}>
@@ -62,7 +73,11 @@ export default class NewsItem extends React.Component {
 
           <View style={Style.newsItemRB}>
             <View style={Style.newsItemRBL}>
-              <Text style={Style.content}>{this.props.news_contenu}</Text>
+              <HTMLView
+                value={contenuNews}
+                stylesheet={stylesContent}
+              />
+              {/*<Text style={Style.content}>{this.props.news_contenu}</Text>*/}
             </View>
 
             {linkElement}

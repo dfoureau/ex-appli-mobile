@@ -55,11 +55,14 @@ export default StyleSheet.create({
   title: {
     fontWeight: "bold",
     color: "black",
+    width: 175,
   },
 
   content: {
     color: "black",
   },
 
-  date: {},
+  date: {
+    width: 80,
+  },
 });
