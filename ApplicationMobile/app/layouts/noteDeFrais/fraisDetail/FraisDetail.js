@@ -687,7 +687,7 @@ class FraisDetail extends React.Component {
                       keyboardType="numeric"
                     />
                   </View>
-                  <View style={styles.inputGroup}>
+                  <View style={styles.inputGroupCol}>
                     <Text
                       style={[
                         styles.text,
@@ -700,8 +700,7 @@ class FraisDetail extends React.Component {
                     <TextInput
                       style={[
                         styles.inputComponent,
-                        styles.inputComponentRow,
-                        styles.inputComponentSmall,
+                        styles.inputComponentBigHeight,
                       ]}
                       value={this.state.libelle}
                       onChangeText={text => this.setState({ libelle: text })}

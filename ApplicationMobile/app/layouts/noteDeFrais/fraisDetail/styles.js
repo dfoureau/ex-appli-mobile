@@ -53,9 +53,18 @@ export default StyleSheet.create({
   inputComponentSmall: {
     width: 152,
   },
+  inputComponentBigHeight: {
+    height: 100,
+    width: 300,
+    textAlignVertical: "top",
+  },
   inputGroup: {
     flex: 1,
     flexDirection: "row",
+  },
+  inputGroupCol: {
+    flex: 1,
+    flexDirection: "column",
   },
   inputText: {
     width: 125,
