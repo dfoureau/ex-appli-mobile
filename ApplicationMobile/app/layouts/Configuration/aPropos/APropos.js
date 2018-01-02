@@ -100,7 +100,7 @@ class APropos extends React.Component {
                 Tous droits réservés &copy; 2017 Cat-Amania
               </Text>
 
-              <Text style={Style.texte}>Version : 1.0.0 BETA</Text>
+              <Text style={Style.texte}>Version : 1.0.0 BETA 2</Text>
               <Text style={Style.texte}>Dernière version disponible : {this.state.appversion.appversion}</Text>
 
               <TouchableHighlight
