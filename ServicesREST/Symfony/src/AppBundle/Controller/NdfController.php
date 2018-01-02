@@ -6,6 +6,7 @@
  */
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\StatsController;
 use AppBundle\Security\LoginController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -40,6 +41,8 @@ class NdfController extends Controller
             $message = array('message' => "Incohérence token/ID");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
+
+        StatsController::ajouterStats($retourAuth['id'], "NdfController" . "/getNdf", time());
 
         if (ctype_digit($id) && ctype_digit($annee) && ctype_digit($mois)) {
             $id    = (int) $id;
@@ -128,6 +131,8 @@ class NdfController extends Controller
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
+
+        StatsController::ajouterStats($retourAuth['id'], "NdfController" . "/deleteNdfAction", time());
 
         // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
         $idUserToken = $retourAuth['id'];
@@ -222,6 +227,8 @@ class NdfController extends Controller
             $message = array('message' => "Incohérence token/ID");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
+
+        StatsController::ajouterStats($retourAuth['id'], "NdfController" . "/putNdfAction", time());
 
         /* Exemple de Jason
         {
@@ -403,6 +410,8 @@ class NdfController extends Controller
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
 
+        StatsController::ajouterStats($retourAuth['id'], "NdfController" . "/getNdfByUser", time());
+
         if (ctype_digit($annee) && ctype_digit($idUser)) {
             $idUser = (int) $idUser;
             $annee  = (int) $annee;
@@ -437,6 +446,8 @@ class NdfController extends Controller
             return new JsonResponse($retourAuth, 400);
         }
 
+        StatsController::ajouterStats($retourAuth['id'], "NdfController" . "/postNdfAction", time());
+
         /* Exemple de Jason
         {
         "idUser": "124124251",
@@ -470,7 +481,6 @@ class NdfController extends Controller
         }
          */
 
-        //$data = json_decode(file_get_contents('php://input'), true);
         $content = $request->getContent();
         $data    = json_decode($content, true);
         try {

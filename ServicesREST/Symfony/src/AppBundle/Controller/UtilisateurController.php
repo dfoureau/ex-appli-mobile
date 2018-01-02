@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\StatsController;
 use AppBundle\Controller\UtilsController;
 use AppBundle\Security\LoginController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -35,6 +36,8 @@ class UtilisateurController extends Controller
             $message = array('message' => "Incohérence token/ID");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
+
+        StatsController::ajouterStats($retourAuth['id'], "UtilisateurController" . "/utilisateur", time());
 
         if (UtilsController::isPositifInt($id)) {
             $id = (int) $id;

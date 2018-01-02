@@ -2,6 +2,7 @@
 
 namespace AppBundle\Security;
 
+use AppBundle\Controller\StatsController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -60,6 +61,8 @@ class LoginController extends Controller
             'idAgence'           => $user['idAgence'],
             'indemKM' => $user['indemKM'],
             'token'              => $token);
+        
+        StatsController::ajouterStats($user['id'], "LoginController" . "/ConnexionAction", time());
 
         //$retour = array("token"=>$token);
         return new JsonResponse($retour, Response::HTTP_OK);

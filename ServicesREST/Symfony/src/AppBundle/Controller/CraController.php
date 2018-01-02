@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\StatsController;
 use AppBundle\Security\LoginController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -25,6 +26,8 @@ class CraController extends Controller
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
+
+        StatsController::ajouterStats($retourAuth['id'], "CraController" . "/getCra", time());
 
         // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
         $idUserToken = $retourAuth['id'];
@@ -138,6 +141,8 @@ class CraController extends Controller
             $message = array('message' => "Incohérence token/ID");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
+
+        StatsController::ajouterStats($retourAuth['id'], "CraController" . "/getListCraByCollaborateur", time());
 
         //Test si le paramètre année est valorisé, si non on le valorise par l'année en cours
 
@@ -270,6 +275,8 @@ class CraController extends Controller
             return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
 
+        StatsController::ajouterStats($retourAuth['id'], "CraController" . "/deleteCraAction", time());
+
         $idUserToken = $retourAuth['id'];
 
         $retourDelete = $this->deleteCra($idRA, $idUserToken);
@@ -372,6 +379,8 @@ class CraController extends Controller
             return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
 
+        StatsController::ajouterStats($retourAuth['id'], "CraController" . "/addCraAction", time());
+
         $idUserToken = $retourAuth['id'];
 
         try {
@@ -397,6 +406,8 @@ class CraController extends Controller
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
         }
+
+        StatsController::ajouterStats($retourAuth['id'], "CraController" . "/updateCra", time());
 
         $idUserToken = $retourAuth['id'];
 
@@ -524,6 +535,8 @@ class CraController extends Controller
             return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
         }
 
+        StatsController::ajouterStats($retourAuth['id'], "CraController" . "/getTypesActivites", time());
+
         //On définit un tableau de correspondances entre codes et libellés
         $tablabel = array('CP' => "Congé Payé", 'RT' => "RTT", 'AM' => "Arrêt maladie", 'FO' => "Formation", 'AB' => "Absence diverse", '0,5+CP' => "0,5 + Congé Payé", '0,5+RT' => "0,5 + RTT", '0,5+AM' => "0,5 + Arrêt maladie", '0,5+FO' => "0,5 + Formation", '0,5+AB' => "0,5 + Absence diverse", 'CS' => "Congé sans solde", '0,5+CS' => "0,5 + Congé sans solde", 'IC' => "Intercontrat", '0,5RT+0,5CP' => "0,5 RTT+ 0,5 Congé Payé", '0,5RT+0,5IC' => "0,5 RTT+ 0,5 Intercontrat", 'CPA' => "Congé de paternité", 'CMA' => "Congé de maternité", '1,0' => "Jour travaillé", '0,5' => "Demie journée");
 
@@ -596,6 +609,8 @@ class CraController extends Controller
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
         }
+
+        StatsController::ajouterStats($retourAuth['id'], "CraController" . "/getJourFerie", time());
 
         $premierAn     = "01/01";
         $lundiDePaques = UtilsController::lundiDePaques($year);

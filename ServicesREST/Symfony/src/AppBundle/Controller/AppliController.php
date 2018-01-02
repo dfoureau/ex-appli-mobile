@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\StatsController;
 use AppBundle\Security\LoginController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -23,6 +24,8 @@ class AppliController extends Controller
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
         }
+
+        StatsController::ajouterStats($retourAuth['id'], "AppliController" . "/appVersion", time());
 
         $retour = array('appversion' => '1.0.0 Beta 2');
         return new JsonResponse($retour, Response::HTTP_OK);

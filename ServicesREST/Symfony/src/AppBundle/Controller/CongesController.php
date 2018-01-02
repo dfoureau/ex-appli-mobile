@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\StatsController;
 use AppBundle\Controller\UtilsController;
 use AppBundle\Security\LoginController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -46,6 +47,8 @@ class CongesController extends Controller
             $message = array('message' => "Incohérence token/ID");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
+
+        StatsController::ajouterStats($retourAuth['id'], "CongesController" . "/getDemandeCongesByUserId", time());
 
         // Test valeur en entrée
         if (UtilsController::isPositifInt($userId)) {
@@ -99,7 +102,7 @@ class CongesController extends Controller
 
         $idUserToken = $retourAuth['id'];
 
-        //$data = json_decode(file_get_contents('php://input'), true);
+        StatsController::ajouterStats($retourAuth['id'], "CongesController" . "/createDemandeCongesAction", time());
 
         try {
             $content = $request->getContent();
@@ -247,12 +250,12 @@ class CongesController extends Controller
         );
     }
 
-/**
- * Calcule la durée ouvrée d'une période de demande de congés
- * On itère par demi-journées pour effectuer ce calcul
- * @param  [type] $periode [description]
- * @return [type]          [description]
- */
+    /**
+     * Calcule la durée ouvrée d'une période de demande de congés
+     * On itère par demi-journées pour effectuer ce calcul
+     * @param  [type] $periode [description]
+     * @return [type]          [description]
+     */
     protected function calculerDureePeriode($periode)
     {
         $debut  = $periode['dateDebut'];
@@ -412,6 +415,8 @@ class CongesController extends Controller
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
 
+        StatsController::ajouterStats($retourAuth['id'], "CongesController" . "/putDemandeCongesAction", time());
+
         // Test les valeurs en entrée
         if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numRequest)) {
             try {
@@ -552,6 +557,8 @@ class CongesController extends Controller
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
 
+        StatsController::ajouterStats($retourAuth['id'], "CongesController" . "/deleteDemandeCongesAction", time());
+
         // Test les valeurs en entrée
         if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numRequest)) {
             $retourdelete = $this->deleteDemandeConges((int) $userId, (int) $numRequest);
@@ -634,6 +641,8 @@ class CongesController extends Controller
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
 
+        StatsController::ajouterStats($retourAuth['id'], "CongesController" . "/getFindDemandesByUserAndYear", time());
+
         // Test les valeurs en entrée
         if (UtilsController::isPositifInt($userId) && ctype_digit($year) && (int) $year > 1995 && (int) $year < 2050) {
             $tUserId = (int) $userId;
@@ -708,6 +717,8 @@ class CongesController extends Controller
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
 
+        StatsController::ajouterStats($retourAuth['id'], "CongesController" . "/getFindPeriodesByUserAndNumDemande", time());
+
         // Test les valeurs en entrée
         if (UtilsController::isPositifInt($userId) && UtilsController::isPositifInt($numDemande)) {
             $tUserId     = (int) $userId;
@@ -771,6 +782,8 @@ class CongesController extends Controller
             return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
         }
 
+        StatsController::ajouterStats($retourAuth['id'], "CongesController" . "/getTypesAbsences", time());
+
         $sql = "SELECT DISTINCT
           idTypeAbs,
           code,
@@ -814,6 +827,8 @@ class CongesController extends Controller
             $message = array('message' => "Incohérence token/ID");
             return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
         }
+
+        StatsController::ajouterStats($retourAuth['id'], "CongesController" . "/getInfosCongesDuMois", time());
 
         // Test les valeurs en entrée
         if (UtilsController::isPositifInt($userId) && ctype_digit($year) && ctype_digit($month)

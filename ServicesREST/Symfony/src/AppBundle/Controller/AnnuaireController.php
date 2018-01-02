@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\StatsController;
 use AppBundle\Security\LoginController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -23,6 +24,8 @@ class AnnuaireController extends Controller
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
         }
+
+        StatsController::ajouterStats($retourAuth['id'], "AnnuaireController" . "/annuaire", time());
 
         // Test valeur en entrée
         if (UtilsController::isPositifInt($idAgence)) {
@@ -66,6 +69,8 @@ class AnnuaireController extends Controller
         if (array_key_exists("erreur", $retourAuth)) {
             return new JsonResponse($retourAuth, Response::HTTP_FORBIDDEN);
         }
+
+        StatsController::ajouterStats($retourAuth['id'], "AnnuaireController" . "/infos_collab", time());
 
         // Test valeur en entrée
         if (UtilsController::isPositifInt($userId)) {
