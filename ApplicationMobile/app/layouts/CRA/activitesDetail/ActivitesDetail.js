@@ -82,20 +82,19 @@ class ActivitesDetail extends React.Component {
       activitesListe = parent.state.activitesListe.jourouvre;
     }
 
+    const codesOuvres = parent.state.activitesListe.jourouvre;
+    let index = codesOuvres.findIndex(item => {
+      return Boolean(item.code == params.activite);
+    });
+    let labelActiviteClickeDefault = codesOuvres[index].label;
+
     this.state = {
       title: "Détails jour",
       date: params.date,
       linesToChange: params.line >= 0 ? [params.line] : [],
       isPeriod: params.line == undefined || params.line == null,
       activitesListe: activitesListe,
-      activiteClicked: { code: params.activite, label: params.activite },
-      webServiceLien1: configurationAppli.apiURL + "CRA/typesactivites",
-      obj: {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + configurationAppli.userToken,
-        },
-      },
+      activiteClicked: { code: params.activite, label: labelActiviteClickeDefault },
       statusId: parent.state.statusId,
       calendarDate: calendarDate,
       calendarMinDate: calendarMinDate,
@@ -199,9 +198,16 @@ class ActivitesDetail extends React.Component {
             styleButton = [styles.btnChoixDetail, styles.btnChoixClicked];
           }
 
+          let disabledStatus = false;
+          if (code.includes("CP") || code.includes("RT")) {
+            disabledStatus = true;
+            styleButton = [styles.btnChoixDetail, styles.btnChoixDisabled];
+          }
+
           button.push(
             <View key={nb}>
               <TouchableOpacity
+              disabled={disabledStatus}
                 onPress={() => {
                   this.setState({
                     activiteClicked: activite,

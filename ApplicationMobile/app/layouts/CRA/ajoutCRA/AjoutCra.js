@@ -604,9 +604,13 @@ class AjoutCra extends React.Component {
           style={[
             style.row,
             i % 2 && { backgroundColor: "#FFFFFF" },
+            // Colorier samedi (6) et dimanche (0)
             (moment(row.startDate, "DD/MM/YYYY").day() == 0 ||
               moment(row.startDate, "DD/MM/YYYY").day() == 6) && {
               backgroundColor: "#b4deea",
+            },
+            (row.disabled == true) && {
+              backgroundColor: "#ffb2b2",
             },
           ]}
           borderStyle={{ borderWidth: 1, borderColor: "#EEEEEE" }}

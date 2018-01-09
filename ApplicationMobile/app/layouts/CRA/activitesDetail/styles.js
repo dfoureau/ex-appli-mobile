@@ -55,6 +55,10 @@ export default StyleSheet.create({
     backgroundColor: "#99C6E7",
   },
 
+  btnChoixDisabled: {
+    backgroundColor: "#e0e0e0",
+  },
+
   activitesText: {
     fontWeight: "400",
     fontSize: 15.5,
