@@ -82,11 +82,14 @@ class ActivitesDetail extends React.Component {
       activitesListe = parent.state.activitesListe.jourouvre;
     }
 
-    const codesOuvres = parent.state.activitesListe.jourouvre;
-    let index = codesOuvres.findIndex(item => {
-      return Boolean(item.code == params.activite);
-    });
-    let labelActiviteClickeDefault = codesOuvres[index].label;
+    let labelActiviteClickeDefault = params.activite;
+    if (params.date != undefined && params.date != null) {
+      const codesOuvres = parent.state.activitesListe.jourouvre;
+      let index = codesOuvres.findIndex(item => {
+        return Boolean(item.code == params.activite);
+      });
+      labelActiviteClickeDefault = codesOuvres[index].label;
+    }
 
     this.state = {
       title: "Détails jour",

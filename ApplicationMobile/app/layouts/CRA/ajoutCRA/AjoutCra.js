@@ -757,8 +757,8 @@ class AjoutCra extends React.Component {
               <View style={style.containerButtonPeriod}>
                 <Button
                   text="ÉDITER UNE PÉRIODE"
-                  disabled={(this.state.statusId == 3 || this.state.statusId == 5) ? true : false}
-                  buttonStyles={(this.state.statusId == 3 || this.state.statusId == 5) ? style.disabledButton : ''}
+                  disabled={(this.state.statusId == 2 || this.state.statusId == 3 || this.state.statusId == 5) ? true : false}
+                  buttonStyles={(this.state.statusId == 2 || this.state.statusId == 3 || this.state.statusId == 5) ? style.disabledButton : ''}
                   onPress={() => this.modifyPeriodeCRA()}
                 >
                   {" "}
