@@ -94,7 +94,7 @@ class ActivitesDetail extends React.Component {
     this.state = {
       title: "Détails jour",
       date: params.date,
-      linesToChange: params.line >= 0 ? [params.line] : [],
+      linesToChange: (params.line != null && params.line >= 0) ? [params.line] : [],
       isPeriod: params.line == undefined || params.line == null,
       activitesListe: activitesListe,
       activiteClicked: { code: params.activite, label: labelActiviteClickeDefault },
@@ -161,7 +161,6 @@ class ActivitesDetail extends React.Component {
 
     if (codeOk) {
       let listItemsCRA = Array.from(parent.state.listItemsCRA);
-
       for (item of this.state.linesToChange) {
         listItemsCRA[item].actType = this.state.activiteClicked.code;
       }
@@ -289,6 +288,7 @@ class ActivitesDetail extends React.Component {
             maxDate={this.state.calendarMaxDate}
             firstDay={1}
             hideArrows={true}
+            hideExtraDays={true}
             markedDates={this.convertDates()}
             markingType="multi-dot"
             onDayPress={day => this.onDateSelected(day)}

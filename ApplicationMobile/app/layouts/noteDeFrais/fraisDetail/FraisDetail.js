@@ -413,6 +413,7 @@ class FraisDetail extends React.Component {
                     maxDate={this.state.calendarMaxDate}
                     firstDay={1}
                     hideArrows={true}
+                    hideExtraDays={true}
                     markedDates={this.convertDates()}
                     markingType={"interactive"}
                     onDayPress={day => this.onDateSelected(day)}
