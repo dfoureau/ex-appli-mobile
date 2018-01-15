@@ -27,7 +27,7 @@ class AppliController extends Controller
 
         StatsController::ajouterStats($retourAuth['id'], "AppliController" . "/appVersion", time());
 
-        $retour = array('appversion' => '1.0.0 Beta 2');
+        $retour = array('appversion' => '1.0.0');
         return new JsonResponse($retour, Response::HTTP_OK);
     }
 }
