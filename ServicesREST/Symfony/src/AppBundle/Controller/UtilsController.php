@@ -381,8 +381,8 @@ class UtilsController extends Controller
 
     public static function sendEmail($expediteur, $subject, $message)
     {
-        $message = (new \Swift_Message($subject))
-            ->setFrom('espacecollaborateur@cat-amania.com')
+        $messageObj = new \Swift_Message($subject);
+        $message = $messageObj->setFrom('espacecollaborateur@cat-amania.com')
             ->setTo($expediteur)
             ->setBody(
                 $this->renderView(
