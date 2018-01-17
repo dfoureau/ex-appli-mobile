@@ -1030,7 +1030,7 @@ class CongesController extends Controller
             }
 
             $message .= "<br />En attente de validation par " . $managerData['manager'] . ".";
-            $message = utf8_decode($message);
+            $message = mb_convert_encoding($message, 'UTF-8', 'UTF-8');
 
             $subject = "APPLI - Demande de congés de " . $nomcollabo . " pour la période du " . $dateDebut . " au " . $dateFin . " (État: " . utf8_encode($this->getDescriptionByEtat($etat)) . ")";
 
@@ -1153,7 +1153,7 @@ class CongesController extends Controller
         $data    = array();
         $message = new \Swift_Message($subject);
 
-        $imgPath = "/var/www/clients/platine/rest8/app/Resources/images/";
+        $imgPath = "/var/www/clients/cat3/Site/prod/espacecollaborateur/rest/api/v1/app/Resources/images/";
 
         $data['logocatsign']   = $message->embed(Swift_Image::fromPath($imgPath . 'logocatsign.jpg'));
         $data['logo_facebook'] = $message->embed(Swift_Image::fromPath($imgPath . 'logo_facebook.gif'));
