@@ -619,6 +619,27 @@ paths:
       security:
       - Bearer: []
 
+  /app/version:
+    get:
+      tags:
+        - appversion
+      summary: Retourne la dernière version de l'application mobile
+      description: Retourne la dernière version de l'application mobile
+      operationId: appVersion
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: ""
+          schema:
+            type: object
+            properties :
+              appversion :
+                type : string
+                example: '1.0.0'
+      security:
+      - Bearer: []
+
 securityDefinitions:
     Bearer:
         type: "apiKey"
