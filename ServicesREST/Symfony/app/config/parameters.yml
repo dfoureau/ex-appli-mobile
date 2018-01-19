@@ -7,8 +7,8 @@ parameters:
     database_password: root
     mailer_transport: smtp
     mailer_host: mail.cat-amania.com
-    mailer_user: espacecollaborateur
-    mailer_password: 12Sd45
+    mailer_user: ec
+    mailer_password: password
     mailer_port: 587
     locale: fr
     secret: ThisTokenIsNotSoSecretChangeIt
@@ -18,4 +18,4 @@ parameters:
     jwt_private_key_path: '%kernel.root_dir%/var/jwt/private.pem'
     jwt_public_key_path: '%kernel.root_dir%/var/jwt/public.pem'
     jwt_key_pass_phrase: catamania
-    jwt_token_ttl: 86400
+    jwt_token_ttl: 1800
