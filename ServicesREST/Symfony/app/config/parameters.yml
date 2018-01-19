@@ -1,0 +1,21 @@
+parameters:
+    database_driver: pdo_mysql
+    database_host: localhost
+    database_port: null
+    database_name: cat_recette
+    database_user: root
+    database_password: root
+    mailer_transport: smtp
+    mailer_host: mail.cat-amania.com
+    mailer_user: ec
+    mailer_password: password
+    mailer_port: 587
+    locale: fr
+    secret: ThisTokenIsNotSoSecretChangeIt
+    debug_toolbar: true
+    debug_redirects: false
+    use_assetic_controller: true
+    jwt_private_key_path: '%kernel.root_dir%/var/jwt/private.pem'
+    jwt_public_key_path: '%kernel.root_dir%/var/jwt/public.pem'
+    jwt_key_pass_phrase: catamania
+    jwt_token_ttl: 1800
