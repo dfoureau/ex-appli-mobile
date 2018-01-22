@@ -16,7 +16,7 @@ class StatsController extends Controller
      */
     public static function ajouterStats($utilisateur, $serviceREST, $timestamp)
     {
-        $fichier = fopen("../app/logs/stats.txt", "a");
+        $fichier = fopen("../app/logs/stats.csv", "a");
         if (! $fichier) {
             // Erreur d'ouverture du fichier de stats
             return;
@@ -26,7 +26,7 @@ class StatsController extends Controller
             $date->setTimestamp($timestamp);
             $formattedDate = $date->format($datetimeFormat);
 
-            $donnees = $utilisateur . ";" . $serviceREST . ";" . $timestamp . ";" . $formattedDate . "\n";
+            $donnees = $utilisateur . "," . $serviceREST . "," . $timestamp . "," . $formattedDate . "\n";
             fwrite($fichier, $donnees);
             fclose($fichier);
             return;
