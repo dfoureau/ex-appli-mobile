@@ -542,7 +542,7 @@ class CraController extends Controller
          '0,5+CP' => "0,5 + Congé Payé", '0,5+RT' => "0,5 + RTT", '0,5+AM' => "0,5 + Arrêt maladie", '0,5+FO' => "0,5 + Formation", 
          '0,5+AB' => "0,5 + Absence diverse", 'CS' => "Congé sans solde", '0,5+CS' => "0,5 + Congé sans solde", 'IC' => "Intercontrat", 
          '0,5RT+0,5CP' => "0,5 RTT+ 0,5 Congé Payé", '0,5RT+0,5IC' => "0,5 RTT+ 0,5 Intercontrat", 'DLG' => "Jour de délégation", 
-         '0,5+DLG' => "Jour de délégation", 'Jour férié' => "Jour de délégation", 'CPA' => "Congé de paternité", 
+         '0,5+DLG' => "0,5 + Jour de délégation", 'FER' => "Jour férié", 'CPA' => "Congé de paternité", 
          'CMA' => "Congé de maternité", '1,0' => "Jour travaillé", '0,5' => "Demie journée");
 
         //On va rechercher les codes disponibles dans la table valeurjourouvre
