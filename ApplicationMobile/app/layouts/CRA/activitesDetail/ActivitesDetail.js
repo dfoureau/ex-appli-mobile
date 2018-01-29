@@ -88,7 +88,9 @@ class ActivitesDetail extends React.Component {
       let index = codesOuvres.findIndex(item => {
         return Boolean(item.code == params.activite);
       });
-      labelActiviteClickeDefault = codesOuvres[index].label;
+      if (index >= 0) {
+        labelActiviteClickeDefault = codesOuvres[index].label;
+      }
     }
 
     this.state = {
