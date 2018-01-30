@@ -736,15 +736,8 @@ class CraController extends Controller
                 $mailtab[] = $retour[0]['mail'];
             }
 
-            // Mail du manager
-            if (filter_var($managerData['mail'], FILTER_VALIDATE_EMAIL)) {
-                $mailtab[] = $managerData['mail'];
-            }
-
-            // Mail du 2e manager
-            if (filter_var($managerBisData['mail'], FILTER_VALIDATE_EMAIL)) {
-                $mailtab[] = $managerBisData['mail'];
-            }
+            // Mail de production
+            $mailtab[] = "production.cat@cat-amania.com";
 
             $this->sendEmail($mailtab, $subject, $message);
         }
