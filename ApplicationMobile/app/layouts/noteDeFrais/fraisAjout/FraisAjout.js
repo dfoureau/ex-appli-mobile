@@ -548,6 +548,10 @@ class FraisAjout extends React.Component {
                     {this.afficherRow()}
                   </Table>
                 </View>
+                <Text style={styles.textNotePJ}>
+                  L'application ne gère pas encore l'ajout de pièces justificatifs.
+                  Pour cela, veuillez éditer cette note de frais et ajouter les fichiers sur le site web de l'espace collaborateur.
+                </Text>
               </View>
               <View style={styles.containerButtons}>
                 {this.showDeleteButton()}

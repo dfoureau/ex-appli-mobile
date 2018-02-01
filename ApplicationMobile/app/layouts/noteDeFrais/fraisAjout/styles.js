@@ -136,4 +136,9 @@ export default StyleSheet.create({
   disabledButton: {
     backgroundColor: 'rgba(53,90,134,0.7)',
   },
+
+  textNotePJ: {
+    color: "black",
+    fontSize: 12,
+  },
 });
