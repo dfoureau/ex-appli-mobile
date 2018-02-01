@@ -95,7 +95,7 @@ class AjoutCra extends React.Component {
       WSLinkCRA: configurationAppli.apiURL + "CRA/RA",
       isReady: false,
       data: [],
-      pickerNewCraValue: null,
+      pickerNewCraValue: moment().format("YYYY-MM"),
     };
   }
 
@@ -368,6 +368,7 @@ class AjoutCra extends React.Component {
           TextProjet: cra.projet,
           TextComment: cra.commentaires,
           activitesListe: typesActions,
+          pickerNewCraValue: null,
         });
       });
   }
@@ -638,7 +639,7 @@ class AjoutCra extends React.Component {
     const now = moment();
     let pickerArray = [];
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = -1; i < 3; i++) {
       let currentDate = now.clone().subtract(i, "months");
       pickerArray.push(
         <Picker.Item
@@ -653,6 +654,7 @@ class AjoutCra extends React.Component {
   }
 
   render() {
+    console.log(this.state.pickerNewCraValue);
     //Décralation du params transmis à l'écran courante.
     const { params } = this.props.navigation.state;
     
