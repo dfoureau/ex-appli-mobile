@@ -35,6 +35,8 @@ Pour installer les dépendances :
 
 ```
 npm install
+ou
+yarn install
 ```
 
 ## Lancement
