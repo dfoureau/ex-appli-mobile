@@ -5,7 +5,8 @@ let configurationAppli = {
   idAgence: null,
   indemKM: 0.0,
   appversion: null,
-  apiURL: "https://espacecollaborateur.cat-amania.com/espacecollaborateur/rest/api/v1/web/app.php/",
+  // apiURL: "https://espacecollaborateur.cat-amania.com/espacecollaborateur/rest/api/v1/web/app.php/", // API PROD
+  apiURL: "https://test.cat-amania.com/rest/web/", // API TEST
   lienMdpOublie:
     "https://espacecollaborateur.cat-amania.com/espacecollaborateur/connexion.php",
   lienSupportJira:
