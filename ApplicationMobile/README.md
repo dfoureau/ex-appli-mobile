@@ -21,18 +21,16 @@ choco install -y nodejs.install python2 jdk8 yarn
 npm install -g react-native-cli
 ```
 
-* Android Studio et Android SDK, en particulier choisir Platform 23.0.1 
-```
-Onglet SDK Platforms :
-    Google APIs
-    Android SDK Platform 23
-    Intel x86 Atom_64 System Image
-    Google APIs Intel x86 Atom_64 System Image
+* Android Studio et Android SDK, en particulier choisir Platform 23.0.1
+* * Onglet SDK Platforms :
+* * * Google APIs
+* * * Android SDK Platform 23
+* * * Intel x86 Atom_64 System Image
+* * * Google APIs Intel x86 Atom_64 System Image
+* * Onglet SDK Tools :
+* * * Sélectionner l'option de choisir le détail des package, puis :
+* * * Choisir 23.0.1
 
-Onglet SDK Tools :
-    Sélectionner l'option de choisir le détail des package, puis :
-    Choisir 23.0.1
-```
 
 * Création d'un émulateur Android ou utiliser un smartphone Android. Pour l'émulateur, il faut télécharger et choisir ces modules : ```x86 image, Marshmallow API Level 23, x86_64 ABI image avec Android 6.0 (Google APIs) en target```
 
