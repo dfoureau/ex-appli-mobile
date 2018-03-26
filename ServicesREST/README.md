@@ -14,7 +14,9 @@ MySQL 5.1.73
 PHP 5.3.3
 ```
 
-Dans le répertoire Symfony, il suffit d'installer les dépendances avec ```composer``` :
+Une version compatible de EasyPHP est disponible ici : https://sourceforge.net/projects/quickeasyphp/files/OldFiles/EasyPHP-OBSOLETE/5.3.3/
+
+Dans le répertoire Symfony, il suffit d'installer les dépendances avec ```composer``` (https://getcomposer.org/) :
 ```
 composer install
 ou

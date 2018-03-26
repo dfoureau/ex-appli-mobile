@@ -21,13 +21,38 @@ choco install -y nodejs.install python2 jdk8 yarn
 npm install -g react-native-cli
 ```
 
-* Android Studio et Android SDK, en particulier choisir Platform 23.0.1 dans l'onglet SDK Tools, puis choisir dans SDK Platforms : ```Google APIs, Android SDK Platform 23, Intel x86 Atom_64 System Image, Google APIs Intel x86 Atom_64 System Image```
+### Configuration Android Studio
 
+Installer Android Studio : https://developer.android.com/studio/index.html
 
-* Création d'un émulateur Android ou utiliser un smartphone Android. Pour l'émulateur, il faut télécharger et choisir ces modules : ```x86 image, Marshmallow API Level 23, x86_64 ABI image avec Android 6.0 (Google APIs) en target```
+Android Studio installe la dernière version d'Android SDK, cependant nous avons besoin de la version pour Android 6.0
+Ainsi, dans Android Studio, ouvrir les options de configuration, puis le manager SDK et choisir les options suivantes :
 
+Onglet SDK Platforms :
+* Google APIs
+* Android SDK Platform 23
+* Intel x86 Atom_64 System Image
+* Google APIs Intel x86 Atom_64 System Image
+
+Onglet SDK Tools :
+* Sélectionner l'option de choisir le détail des package, puis choisir 23.0.1
+
+Puis :
 
 * Ajouter une variable d'environnement dans windows avec le nom ANDROID_HOME qui pointe vers le lieu d'installation du SDK Android. Par déaut c'est dans : ```c:\Users\YOUR_USERNAME\AppData\Local\Android\Sdk```
+
+### Création d'un émulateur Android (optionnel)
+
+Dans Android Studio, lancer le gestionnaire Android Virtual Devices (AVDs). Créer une nouvelle AVD (Si dans le champs "tools" vous ne voyez pas Android > AVD Manager, cliquez en bas à gauche sur le champs "Terminal" et cliquez sur les liens proposés afin de télécharger les modules (le téléchargement des modules se fait de manière automatique)), et choisir les options :
+
+* x86 image, Marshmallow API Level 23, x86_64 ABI image avec Android 6.0 (Google APIs) en target
+
+Si Intel HAXM n'est pas installé et qu'il est supporté par la machine, alors installation : https://software.intel.com/en-us/android/articles/installation-instructions-for-intel-hardware-accelerated-execution-manager-windows
+
+### Lancement sur un smartphone Android
+
+Aucune configuration supplémentaire à faire
+
 
 ## Compilation
 
