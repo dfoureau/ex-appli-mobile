@@ -51,7 +51,7 @@ Si Intel HAXM n'est pas installé et qu'il est supporté par la machine, alors i
 
 ### Lancement sur un smartphone Android
 
-Aucune configuration supplémentaire à faire
+Aucune configuration supplémentaire à faire.
 
 
 ## Compilation
