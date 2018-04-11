@@ -11,7 +11,7 @@ Sur un environnement vierge, le plus simple est d'installer :
 @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
 ```
 
-* Node JS, Pyhton 2, Yarn, Java JDK (Sur Windows avec Choco :
+* Node JS, Pyhton 2, Yarn, Java JDK (Sur Windows avec Choco) :
 ```
 choco install -y nodejs.install python2 jdk8 yarn
 ```
@@ -39,7 +39,7 @@ Onglet SDK Tools :
 
 Puis :
 
-* Ajouter une variable d'environnement dans windows avec le nom ANDROID_HOME qui pointe vers le lieu d'installation du SDK Android. Par déaut c'est dans : ```c:\Users\YOUR_USERNAME\AppData\Local\Android\Sdk```
+* Ajouter une variable d'environnement dans windows avec le nom ANDROID_HOME qui pointe vers le lieu d'installation du SDK Android. Par défaut c'est dans : ```c:\Users\YOUR_USERNAME\AppData\Local\Android\Sdk```
 
 ### Création d'un émulateur Android (optionnel)
 
