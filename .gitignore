@@ -2,3 +2,5 @@ ApplicationMobile/.vscode/launch.json
 .idea/
 .vscode/
 .scannerwork/
+.kdev4/
+prj-appli-mobile.kdev4
