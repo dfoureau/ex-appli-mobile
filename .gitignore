@@ -4,3 +4,5 @@ ApplicationMobile/.vscode/launch.json
 .scannerwork/
 .kdev4/
 prj-appli-mobile.kdev4
+ApplicationMobile/package-lock.json
+ApplicationMobile/yarn.lock
