@@ -343,6 +343,46 @@ paths:
       security:
       - Bearer: []     
 
+  /conges/{userId}/{annee}/{mois}:
+    get:
+      tags:
+      - "conges"
+      summary: "Retourne toutes les demandes de congés de l'utilisateur en paramètre pour le mois et l'année en paramètre"
+      description: "Retourne toutes les demandes de congés de l'utilisateur en paramètre pour le mois et l'année en paramètre"
+      operationId: "findDemandesByUserAndYear"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "ID utilisateur"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "annee"
+        in: "path"
+        description: "annee des demandes"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "mois"
+        in: "path"
+        description: "mois des demandes"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description : ""
+          schema: 
+            $ref: "#/definitions/listeDemandesConges"
+        400:
+          description: "Format paramètres incorrect"
+        404:
+          description: "Utilisateur non trouve"
+      security:
+      - Bearer: []  
+
   /conges/typesabsences:
     get:
       tags:
