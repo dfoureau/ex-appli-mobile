@@ -101,4 +101,54 @@ class UtilisateurController extends Controller
             return $retour;
         }
     }
+    
+    
+    /**
+     * Retoure détails d'un collaborateur, pour les besoins de l'outil OSCO
+     * @Route("/utilisateur/osco/{id}", name="utilisateurosco")
+     * @Method({"GET"})
+     */
+    public function utilisateurOSCO(Request $request, $id)
+    {
+        //Vérification token
+        $log        = new LoginController();
+        $retourAuth = $log->checkAuthentification($this);
+        if (array_key_exists("erreur", $retourAuth)) {
+            return new JsonResponse($retourAuth, Response::HTTP_BAD_REQUEST);
+        }
+
+        // On récupère l'iDuser du Token afin de l'utiliser et vérifier la cohérence de l'appel dans la requête sql
+        $idUserToken = $retourAuth['id'];
+
+        //On compare l'idUserToken et l'id fourni en paramètre
+
+        if ($id != $idUserToken) {
+            $message = array('message' => "Incohérence token/ID");
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
+
+        StatsController::ajouterStats($retourAuth['id'], "UtilisateurController" . "/utilisateur/osco", time());
+
+        if (UtilsController::isPositifInt($id)) {
+            $id = (int) $id;
+
+            $sql = 'select id, nom, prenom, login, idProfil, idEntiteJuridique, idAgence, idManager, idManagerBis, idManagerTer, mail
+            from users
+            where users.id = "' . $id . '"';
+
+            $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $retour = $stmt->fetchAll();
+
+            if (count($retour) == 0) {
+                $message = array('message' => 'Utilisateur non trouvé ' . $id);
+                return new JsonResponse($message, 400);
+            } else {
+                return new JsonResponse($retour);
+            }
+        } else {
+            $message = array('message' => 'Paramètre id incorrect: ' . $id);
+            return new JsonResponse($message, Response::HTTP_BAD_REQUEST);
+        }
+    }
 }
