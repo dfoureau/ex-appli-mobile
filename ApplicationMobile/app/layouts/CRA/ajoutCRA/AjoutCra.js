@@ -583,7 +583,18 @@ class AjoutCra extends React.Component {
       this.state.statusId == null ||
       this.state.statusId == 4
     )
-      return <Button text="VALIDER" onPress={() => this.saveCra(2)} />;
+      return ( <Button
+           text="VALIDER"
+            onPress={() =>
+              Alert.alert(
+               "! ATTENTION !",
+               "Votre saisie est-elle cohérente avec la saisie chez le client ?",
+               [
+                 { text: "Non" , onPress: () => console.log("Cancel Pressed!") },
+                 { text: "Oui", onPress: () => this.saveCra(2)},
+               ]
+             )}
+         />);
   }
 
   afficherRows() {
@@ -657,7 +668,7 @@ class AjoutCra extends React.Component {
     console.log(this.state.pickerNewCraValue);
     //Décralation du params transmis à l'écran courante.
     const { params } = this.props.navigation.state;
-    
+
     let title = this.state.newCra
       ? "Nouveau CRA"
       : moment(

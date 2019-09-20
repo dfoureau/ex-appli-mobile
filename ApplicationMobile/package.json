@@ -16,7 +16,7 @@
     "react-native": "0.48.1",
     "react-native-auto-scrolling-message": "^0.0.2",
     "react-native-bottom-toolbar": "^3.0.0",
-    "react-native-calendars": "^1.6.2",
+    "react-native-calendars": "1.6.2",
     "react-native-check-box": "^2.0.1",
     "react-native-communications": "^2.2.1",
     "react-native-datepicker": "^1.6.0",
