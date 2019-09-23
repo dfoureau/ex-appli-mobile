@@ -23,7 +23,7 @@ import CongesAjout from "../congesAjout/CongesAjout";
 import { PickerRange } from "../../../components/PickerRange";
 
 import configurationAppli from "../../../configuration/Configuration";
-
+import GestionDesConges from "../GestionConges/GestionDesConges";
 import moment from "moment";
 
 import {
@@ -80,6 +80,13 @@ class CongesListe extends React.Component {
     });
   }
 
+
+gestionDesConges() {
+  this.props.navigation.navigate("GestionDesConges", {
+    numDemande: null,
+    parent: this,
+  });
+}
   getConge(num, dateDem, dateD, dateA, nbj, etat, libEtat) {
     this.props.navigation.navigate("CongesAjout", {
       numDemande: num,
@@ -106,7 +113,7 @@ class CongesListe extends React.Component {
     try {
       let that = this;
       fetch(this.state.WSLinkSolde, this.state.obj)
-        .then(function(response) {
+        .then(function (response) {
           if (response.status >= 400) {
             that.setState({
               dateSolde: "",
@@ -117,7 +124,7 @@ class CongesListe extends React.Component {
           }
           return response.json();
         })
-        .then(function(solde) {
+        .then(function (solde) {
           that.setState({
             dateSolde: solde.datesolde,
             soldeRTT: solde.rtt,
@@ -139,7 +146,7 @@ class CongesListe extends React.Component {
     try {
       let that = this;
       fetch(this.state.WSLinkList + year, this.state.obj)
-        .then(function(response) {
+        .then(function (response) {
           if (response.status == 400) {
             that.setState({ data: [], isReady: true });
             //throw new Error("Bad response from server");
@@ -163,7 +170,7 @@ class CongesListe extends React.Component {
             isReady: true,
           })
         );
-    } catch (error) {}
+    } catch (error) { }
   }
 
   render() {
@@ -296,6 +303,9 @@ class CongesListe extends React.Component {
                                 </Text>
                               ) : null}
                             </Text>
+                            <View style={style.containerButtonhistory}>
+                              <Button text="..." onPress={() => this.gestionDesConges()} />
+                            </View>
                           </View>
                         </View>
                       </TouchableOpacity>
@@ -319,6 +329,10 @@ const navigation = StackNavigator({
   },
   CongesAjout: {
     screen: CongesAjout,
+    navigationOptions: { header: null },
+  },
+  GestionDesConges: {
+    screen: GestionDesConges,
     navigationOptions: { header: null },
   },
 });

@@ -23,7 +23,6 @@ import { AnnuaireListe } from "../annuaire/annuaireListe";
 import { News } from "../news";
 import { APropos } from "../Configuration/aPropos";
 import { BugReport } from "../Configuration/bugReport";
-
 import configurationAppli from "../../configuration/Configuration";
 import configAccueil from "../../configuration/ConfigAccueil";
 
@@ -283,7 +282,9 @@ const navigation = StackNavigator({
     screen: APropos,
     navigationOptions: { header: null },
   },
-});
+ 
+})
+
 
 //Il faut exporter la navigation ou bien la classe
 export default navigation;

@@ -73,6 +73,14 @@ export default StyleSheet.create({
     marginRight: 5,
   },
 
+  containerButtonhistory: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    left: 105,
+    bottom: 35
+    
+  },
+
   container3: {
     flex: 1,
     margin: 0,
