@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  Linking,
 } from "react-native";
 import { StackNavigator, NavigationActions } from "react-navigation";
 import style from "./styles";
@@ -177,8 +178,10 @@ class FraisListe extends React.Component {
             afficherEcran={this.afficherEcranParent.bind(this)}
           >
             <View style={style.container}>
+             <Text style={{textAlign:'center'}}>Les notes de frais fonctionnent maintenant avec l'application Expensya</Text>
               {/* Container filtre et ajout de NDF*/}
               <View style={style.container1}>
+              {/*
                 <View style={style.containerPicker}>
                   <Picker
                     style={{ width: 110 }}
@@ -189,21 +192,27 @@ class FraisListe extends React.Component {
                     {PickerRange(currentYear, oldestYear)}
                   </Picker>
                 </View>
+                */}
+
                 <View style={style.containerButton}>
                   {/* Le bouton AJOUTER renvoie en fait vers la fonction getNDF, qui pointe sur la date courante*/}
+                  {/*onPress={() =>
+                    this.getNDF(
+                      configurationAppli.userID,
+                      moment().month() + 1,
+                      moment().year()
+                    )}*/
+                    //Le bouton EXPENSYA renvoie vers Google Play pour telecharger Expensya
+                  }
                   <Button
-                    text="AJOUTER"
-                    onPress={() =>
-                      this.getNDF(
-                        configurationAppli.userID,
-                        moment().month() + 1,
-                        moment().year()
-                      )}
+                    text="EXPENSYA APP"
+                    onPress={() =>Linking.openURL('https://play.google.com/store/apps/details?id=com.expensyaandroid.expensyaandroid')} //Permet d'acceder au PlayStore d'EXPENSYA
                   />
                 </View>
               </View>
             </View>
             {/* Container liste des NDF */}
+            {/*
             <View style={style.container2}>
               {textePasDeDonnes}
 
@@ -254,6 +263,8 @@ class FraisListe extends React.Component {
                 />
               )}
             </View>
+
+            */}
           </ContainerAccueil>
         </View>
       );

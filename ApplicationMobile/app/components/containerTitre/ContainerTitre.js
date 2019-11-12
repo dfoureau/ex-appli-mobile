@@ -43,10 +43,28 @@ export default class ContainerTitre extends React.Component {
     };
   }
 
+  popup()
+  {
+    if(this.props.popup == true)
+    {
+      Alert.alert(
+                    "! ATTENTION !",
+                    "Votre CRA sera perdu. Voulez-vous continuer ?",
+                    [
+                      { text: "Non" , onPress: () => console.log("Cancel Pressed!") },
+                      { text: "Oui", onPress: () =>   this.retour()},
+                    ]
+                  )
+                }
+    else {
+      this.retour()
+    }
+  }
+
   /**Retour vers la page précédente */
   retour() {
-    const backAction = NavigationActions.back();
-    this.props.navigation.dispatch(backAction);
+      const backAction = NavigationActions.back();
+      this.props.navigation.dispatch(backAction);
   }
 
   render() {
@@ -56,7 +74,7 @@ export default class ContainerTitre extends React.Component {
           <View style={styles.ContainerHeader}>
             <TouchableHighlight
               style={styles.MenuIconLink}
-              onPress={() => this.retour()}
+              onPress={() => this.popup()}
             >
               <Image
                 style={styles.MenuIcon}

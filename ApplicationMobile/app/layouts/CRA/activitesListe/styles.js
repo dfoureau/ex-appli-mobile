@@ -187,4 +187,9 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+
+  ajoutButton: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
 });

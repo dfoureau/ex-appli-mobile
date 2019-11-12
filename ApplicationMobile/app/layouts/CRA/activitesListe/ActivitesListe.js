@@ -23,6 +23,7 @@ import Accueil from "../../accueil/Accueil";
 import { Button } from "../../../components/Buttons";
 import ActivitesDetail from "../activitesDetail/ActivitesDetail";
 import AjoutCra from "../ajoutCRA/AjoutCra";
+import AjoutCraMulti from "../ajoutCRAMulti/AjoutCraMulti";
 
 import configurationAppli from "../../../configuration/Configuration";
 
@@ -80,6 +81,7 @@ class ActivitesListe extends React.Component {
       })
       .then(function(response) {
         let [status, cra] = response;
+		console.log(cra)
         if (status > 200) {
           that.setState({
             isReady: true,
@@ -150,16 +152,26 @@ class ActivitesListe extends React.Component {
    * @param {int} year  Année du CRA à modifier
    * @param {int} month Mois du CRA à modifier
    */
-  SendDataCRA(id, year, month) {
-    this.props.navigation.navigate("AjoutCra", {
-      idCRA: id,
-      month: month,
-      year: year,
-      parent: this,
-    });
+  SendDataCRA(id, year, month, idMulti) {	  
+	if(idMulti == null){  
+		this.props.navigation.navigate("AjoutCra", {
+		  idCRA: id,
+		  month: month,
+		  year: year,
+		  parent: this,
+		});
+	}else{
+		this.props.navigation.navigate("AjoutCraMulti", {
+			idCRA: null,
+			idMulti: idMulti,  
+			month: month,
+			year: year,
+			parent: this,
+		});		
+	}
   }
 
-  AfficherAjoutCRa() {
+  AfficherAjoutCra() {
     this.props.navigation.navigate("AjoutCra", {
       idCRA: null,
       year: moment().year(),
@@ -167,6 +179,18 @@ class ActivitesListe extends React.Component {
       newCra: true,
       parent: this,
     });
+  }
+  
+  AfficherAjoutCraMulti() {	  
+	this.props.navigation.navigate("AjoutCraMulti", {
+	  idCRA: null,
+	  idMulti: null,
+	  year: moment().year(),
+	  month: moment().month() + 1,
+	  newCra: true,
+	  parent: this,
+	});
+	  
   }
 
   afficherCra(item) {
@@ -177,7 +201,7 @@ class ActivitesListe extends React.Component {
         </Text>
         <TouchableOpacity
           key={item.key}
-          onPress={() => this.SendDataCRA(item.Id, item.annee, item.mois)}
+          onPress={() => this.SendDataCRA(item.Id, item.annee, item.mois, item.idMulti)}
         >
           <CRAItem
             date={item.date}
@@ -236,10 +260,12 @@ class ActivitesListe extends React.Component {
                     {PickerRange(currentYear, oldestYear)}
                   </Picker>
                 </View>
+
                 <View style={style.containerButton}>
                   <Button
+                    style={style.ajoutButton}
                     text="AJOUTER"
-                    onPress={() => this.AfficherAjoutCRa()}
+                    onPress={() => this.AfficherAjoutCraMulti()}
                   />
                 </View>
               </View>
@@ -275,6 +301,10 @@ const navigation = StackNavigator({
   },
   AjoutCra: {
     screen: AjoutCra,
+    navigationOptions: { header: null },
+  },
+  AjoutCraMulti: {
+    screen: AjoutCraMulti,
     navigationOptions: { header: null },
   },
 });

@@ -109,6 +109,7 @@ class AjoutCra extends React.Component {
  * @return {[type]} [description]
  */
   getNbJoursTravailles() {
+	  
     return this.state.listItemsCRA.reduce((result, element) => {
       return result + this.getValeurJour(element.actType);
     }, 0);
@@ -129,10 +130,13 @@ class AjoutCra extends React.Component {
    */
   getValeurJour(code) {
     let travaille = 0;
+	
     // On cherche le jour dans jourouvre, puis dans jourwe
     let typeAct = this.state.activitesListe.jourouvre.find(element => {
       return element.code.replace(",", ".") == code.replace(",", ".");
     });
+	
+	
     if (typeAct == undefined) {
       typeAct = this.state.activitesListe.jourwe.find(element => {
         return element.code.replace(",", ".") == code.replace(",", ".");
@@ -148,7 +152,7 @@ class AjoutCra extends React.Component {
   }
 
   /**
-   * On appelle le service pour récuéprer les éléments suivants :
+   * On appelle le service pour récupérer les éléments suivants :
    *  - liste des Types Action et leurs libellés
    *  - Liste des jours de CP posés dans le mois
    * @return {Promise} On renvoie un tableau Promise.all, où chaque élément correspond à un retour de webservice
@@ -213,7 +217,9 @@ class AjoutCra extends React.Component {
 
       if (params.idCRA != null) {
         // Récupération du CRA
-        this.getCRAInfosByID(params.idCRA, typesActions, conges);
+				
+        this.getCRAInfosByID(params.idCRA, typesActions, conges);	
+		
       } else if (this.state.newCra) {
         // Initialisation des jours avec les valeurs par défaut
         this.initDefaultCra(
@@ -234,7 +240,7 @@ class AjoutCra extends React.Component {
 
   reloadNewCra(date) {
     let year = moment(date, "YYYY-MM").year(),
-      month = moment(date, "YYYY-MM").month() + 1;
+    month = moment(date, "YYYY-MM").month() + 1;
     showLoading("Chargement des informations...");
 
     this.getServiceGeneralData(year, month)
@@ -355,9 +361,7 @@ class AjoutCra extends React.Component {
       })
       .then(function(cra) {
         cra.NbJOuvres = parseFloat(cra.NbJOuvres);
-        // cra.nbJourTravailles = parseFloat(cra.nbJourTravailles);
-        // cra.nbJourAbs = parseFloat(cra.nbJourAbs);
-
+		
         that.setState({
           isReady: true,
           data: cra,
@@ -374,6 +378,7 @@ class AjoutCra extends React.Component {
   }
 
   getItemsCRA(valeursSaisies, conges) {
+	  	  
     return valeursSaisies.map(item => {
       let actType = item.activité;
       let disabled = false;
@@ -451,6 +456,7 @@ class AjoutCra extends React.Component {
  * @return {void}      La méthode affiche une notification, et redirige vers la page de liste en cas de succès
  */
   saveCra(statusId) {
+	  	  
     if (statusId != 1 && statusId != 2) {
       showToast("Une erreur est survenue.");
       return;
@@ -473,8 +479,8 @@ class AjoutCra extends React.Component {
     }
 
     showLoading("sauvegarde en cours...");
-    let that = this;
-
+    let that = this;	
+	
     let method = this.state.newCra ? "POST" : "PUT", // La méthode varie selon qu'on crée ou qu'on modifie un CRA
       url = this.state.newCra
         ? this.state.WSLinkCRA
@@ -484,6 +490,7 @@ class AjoutCra extends React.Component {
 
     let body = {
       idUser: configurationAppli.userID,
+	  idMulti: "NULL",
       mois: this.state.monthSelected,
       annee: annee,
       etat: statusId,
@@ -504,7 +511,7 @@ class AjoutCra extends React.Component {
       body: JSON.stringify(body),
     })
       .then(response => {
-        hideLoading();
+        hideLoading();		
         return Promise.all([Promise.resolve(response.status), response.json()]);
       })
       .then(res => {
@@ -598,7 +605,6 @@ class AjoutCra extends React.Component {
   }
 
   afficherRows() {
-    //console.log(this.state.listItemsCRA);
     return this.state.listItemsCRA.map((row, i) => (
       <TouchableOpacity
         key={i}
@@ -665,7 +671,6 @@ class AjoutCra extends React.Component {
   }
 
   render() {
-    console.log(this.state.pickerNewCraValue);
     //Décralation du params transmis à l'écran courante.
     const { params } = this.props.navigation.state;
 
