@@ -24,7 +24,7 @@ export default StyleSheet.create({
   containerButton: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: "center",
     alignItems: "center",
     marginRight: 5,
   },
