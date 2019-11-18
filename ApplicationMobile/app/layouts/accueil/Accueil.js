@@ -30,7 +30,13 @@ import configAccueil from "../../configuration/ConfigAccueil";
 class Accueil extends React.Component {
   constructor(props) {
     super(props);
+	
+	const { params } = this.props.navigation.state;
+	
     this.state = {
+		
+		messinfo: params.mess_info,
+		
       //On définit les différentes variables
       title: "Cat-Amania",
       user: configAccueil.user,
@@ -148,8 +154,16 @@ class Accueil extends React.Component {
       ));
     }
   }
-
+  
+  renderWarningMessage(){
+	if(this.state.messinfo != null){
+		return <Text style={{color: "red"}} > { this.state.messinfo } </Text>
+	}
+  }
+  
+  
   render() {
+	  
     if (
       !this.state.isReadyw1 ||
       !this.state.isReadyw2 ||
@@ -180,6 +194,9 @@ class Accueil extends React.Component {
         >
           <View style={Style.containerGeneral}>
             <View style={Style.bienvenueView}>
+
+			  { this.renderWarningMessage() }
+			
               <Text style={Style.text}>
                 Bienvenue{" "}
                 <Text style={Style.textGrand}>
@@ -187,6 +204,7 @@ class Accueil extends React.Component {
                 </Text>{" "}
                 !
               </Text>
+			  			  
             </View>
 
             <Text style={Style.text}>

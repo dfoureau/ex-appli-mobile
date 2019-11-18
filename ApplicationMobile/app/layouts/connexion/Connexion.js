@@ -119,7 +119,8 @@ class Connexion extends React.Component {
       hideLoading();
       let id = showToast(error);
     }
-
+	
+	
     // On supprime automatiquement les paramètres de connexion en cache
     service.delete(CONNEXION_PARAMS_SCHEMA);
 
@@ -149,7 +150,7 @@ class Connexion extends React.Component {
       configurationAppli.expirationToken = tokenDecodeExpiration;
       hideLoading();
       BackHandler.removeEventListener("hardwareBackPress", this.backPress);
-      this.props.navigation.navigate("Accueil");
+      this.props.navigation.navigate("Accueil", { mess_info: this.state.data.mess_info } );
     }
   }
 
