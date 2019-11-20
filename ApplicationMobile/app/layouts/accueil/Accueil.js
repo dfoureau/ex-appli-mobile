@@ -29,13 +29,11 @@ import configAccueil from "../../configuration/ConfigAccueil";
 
 class Accueil extends React.Component {
   constructor(props) {
-    super(props);
-	
-	const { params } = this.props.navigation.state;
+    super(props);	
 	
     this.state = {
 		
-		messinfo: params.mess_info,
+		messinfo: configAccueil.messinfo,
 		
       //On définit les différentes variables
       title: "Cat-Amania",
@@ -95,7 +93,9 @@ class Accueil extends React.Component {
       });
       return;
     } else {
-      let that = this;
+		
+      let that = this;	  
+	  	  
       fetch(this.state.webServiceLien1, this.state.obj)
         .then(function(response) {
           if (response.status >= 400) {
@@ -117,7 +117,7 @@ class Accueil extends React.Component {
       fetch(this.state.webServiceLien2, this.state.obj)
         .then(function(response) {
           if (response.status >= 400) {
-            throw new Error("GetConges : Bad response from server");
+            throw new Error("GetConges : Bad response from server ");
           }
           return response.json();
         })
@@ -155,7 +155,7 @@ class Accueil extends React.Component {
     }
   }
   
-  renderWarningMessage(){
+  renderWarningMessage(){	  
 	if(this.state.messinfo != null){
 		return <Text style={{color: "red"}} > { this.state.messinfo } </Text>
 	}
@@ -167,7 +167,7 @@ class Accueil extends React.Component {
     if (
       !this.state.isReadyw1 ||
       !this.state.isReadyw2 ||
-      !this.state.isReadyw2
+      !this.state.isReadyw3
     ) {
       return (
         <View>

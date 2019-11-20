@@ -96,19 +96,20 @@ class Connexion extends React.Component {
     try {
       // Récupérer login/mdp
       this.state.obj.body =
-        "login=" + this.state.login + "&password=" + this.state.mdp;
-
-      // On se connecte
-      let response = await fetch(this.state.webServiceLien1, this.state.obj);
+        "login=" + this.state.login + "&password=" + encodeURIComponent(this.state.mdp);
+				
+      // On se connecte	  
+	  let response = await fetch(this.state.webServiceLien1, this.state.obj);
       let res = await response.json();
+	  	  	  
       if (response.status >= 200 && response.status < 300) {
         this.setState({
           error: "",
           isReady: true,
           data: res,
         });
-      } else if (response.status == 400) {
-        let error = "Erreur : Login et/ou mot de passe incorrect";
+      } else if (response.status == 400) {		  
+        let error = "Erreur : Login et/ou mot de passe";
         throw error;
       } else {
         let error =
@@ -150,7 +151,10 @@ class Connexion extends React.Component {
       configurationAppli.expirationToken = tokenDecodeExpiration;
       hideLoading();
       BackHandler.removeEventListener("hardwareBackPress", this.backPress);
-      this.props.navigation.navigate("Accueil", { mess_info: this.state.data.mess_info } );
+	  
+	  configAccueil.messinfo = this.state.data.mess_info;
+	  
+      this.props.navigation.navigate("Accueil");
     }
   }
 
