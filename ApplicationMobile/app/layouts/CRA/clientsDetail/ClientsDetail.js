@@ -198,71 +198,73 @@ class ClientsDetail extends React.Component {
     }
 
 
-//Points pour les dates en cours de séléction
-this.state.linesToChange.forEach(index => {
-    const stillWorked = {key:'stillWorked', color: "#255b9c", selectedDotColor: 'blue'};
-    if(arrayStillWorked.includes(index)){
-      datesObject[
-        currentDate.date(index + 1).format(format)
-      ] = {
-        selected: true,
-          dots: [stillWorked],
-      };
-    }
-    else{
-      datesObject[
-        currentDate.date(index + 1).format(format)
-      ] = {
-        selected: true,
-      };
-    }
-  }
-);
+	
 
-//Petits points sur le calendrier poour les dates non disponible
-if(this.state.paramActualCalendar!= null)
-{
-  const vacation = {key:'vacation', color: "#d43d3d", selectedDotColor: 'blue'};
-  const other = {key:'oter', color: 'orange', selectedDotColor: 'blue'};
-  let i = 1;
-  this.state.listItem.forEach(day => {
-    if(vacationItemsCopy.includes(day.actType)) //Si l'element fait parti des elements de vacationItems
-    {
-      datesObject[ currentDate.date(i).format(format) ] = {
-        dots: [vacation],
-      }
-    }
-    else if(day.actType.includes("1.0")){
-      //Ne rien faire
-    }
-    else {
-      datesObject[ currentDate.date(i).format(format) ] = {
-        dots: [other],
-      }
-    }
-    i++;
-  }
-)
-}
+	//Petits points sur le calendrier poour les dates non disponible
+	if(this.state.paramActualCalendar!= null)
+	{
+		  const vacation = {key:'vacation', color: "#d43d3d", selectedDotColor: 'blue'};
+		  const other = {key:'oter', color: 'orange', selectedDotColor: 'blue'};
+		  let i = 1;
+		  this.state.listItem.forEach(day => {
+			if(vacationItemsCopy.includes(day.actType)) //Si l'element fait parti des elements de vacationItems
+			{
+			  datesObject[ currentDate.date(i).format(format) ] = {
+				dots: [vacation],
+			  }
+			}
+			else if(day.actType.includes("1.0")){
+			  //Ne rien faire
+			}
+			else {
+			  datesObject[ currentDate.date(i).format(format) ] = {
+				dots: [other],
+			  }
+			}
+			i++;
+		  }
+		)
+	}
+	
+	//Points pour les dates en cours de séléction
+	this.state.linesToChange.forEach(index => {
+		const stillWorked = {key:'stillWorked', color: "#255b9c", selectedDotColor: 'blue'};
+		if(arrayStillWorked.includes(index)){
+		  datesObject[
+			currentDate.date(index + 1).format(format)
+		  ] = {
+			selected: true,
+			  dots: [stillWorked],
+		  };
+		}
+		else{
+		  datesObject[
+			currentDate.date(index + 1).format(format)
+		  ] = {
+			selected: true,
+		  };
+		}
+	  }
+	);
 
-return datesObject;
+	return datesObject;
 }
 
 renderDate() {
   let ret = null;
     ret = (
       <View style={styles.containerCalendar}>
-      <Calendar
-      current={this.state.calendarDate}
-      minDate={this.state.calendarMinDate}
-      maxDate={this.state.calendarMaxDate}
-      firstDay={1}
-      hideArrows={true}
-      hideExtraDays={true}
-      markedDates={this.convertDates()}
-      markingType="multi-dot"
-      onDayPress={day => this.onDateSelected(day)}
-      />
+		  <Calendar
+		  current={this.state.calendarDate}
+		  minDate={this.state.calendarMinDate}
+		  maxDate={this.state.calendarMaxDate}
+		  firstDay={1}
+		  hideArrows={true}
+		  hideExtraDays={true}
+		  markedDates={this.convertDates()}
+		  markingType="multi-dot"
+		  onDayPress={day => this.onDateSelected(day)}
+		  />
       </View>
     )
   return ret;

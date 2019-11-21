@@ -51,7 +51,7 @@ class ActivitesDetail extends React.Component {
     const parent = params.parent;
 
     const calendarDateFormat = "YYYY-MM-DD";
-
+	
     let calendarDate = null,
       calendarMinDate = null,
       calendarMaxDate = null;

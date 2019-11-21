@@ -81,7 +81,6 @@ class ActivitesListe extends React.Component {
       })
       .then(function(response) {
         let [status, cra] = response;
-		console.log(cra)
         if (status > 200) {
           that.setState({
             isReady: true,
