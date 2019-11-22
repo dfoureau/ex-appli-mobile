@@ -29,8 +29,12 @@ import configAccueil from "../../configuration/ConfigAccueil";
 
 class Accueil extends React.Component {
   constructor(props) {
-    super(props);
+    super(props);	
+	
     this.state = {
+		
+		messinfo: configAccueil.messinfo,
+		
       //On définit les différentes variables
       title: "Cat-Amania",
       user: configAccueil.user,
@@ -62,6 +66,7 @@ class Accueil extends React.Component {
       isReadyw1: false,
       isReadyw2: false,
       isReadyw3: false,
+	  idEntiteJuridique: null,
       webServiceLien1:
         configurationAppli.apiURL + "utilisateur/" + configurationAppli.userID,
       webServiceLien2:
@@ -89,7 +94,9 @@ class Accueil extends React.Component {
       });
       return;
     } else {
-      let that = this;
+		
+      let that = this;	  
+	  	  
       fetch(this.state.webServiceLien1, this.state.obj)
         .then(function(response) {
           if (response.status >= 400) {
@@ -111,13 +118,14 @@ class Accueil extends React.Component {
       fetch(this.state.webServiceLien2, this.state.obj)
         .then(function(response) {
           if (response.status >= 400) {
-            throw new Error("GetConges : Bad response from server");
+            throw new Error("GetConges : Bad response from server ");
           }
           return response.json();
         })
         .then(function(fonconges) {
+						
           configAccueil.conges = fonconges;
-          that.setState({ conges: fonconges, isReadyw2: true });
+          that.setState({ conges: fonconges, isReadyw2: true, idEntiteJuridique:fonconges.idEntiteJuridique });
         });
 
       fetch(this.state.webServiceLien3, this.state.obj)
@@ -148,12 +156,37 @@ class Accueil extends React.Component {
       ));
     }
   }
-
+  
+  renderWarningMessage(){	  
+	if(this.state.messinfo != null){
+		return <Text style={{color: "red"}} > { this.state.messinfo } </Text>
+	}
+  }
+  
+  renderRtt(){		
+	if(this.state.idEntiteJuridique != 12){
+	
+		return(		
+			<View style={Style.containerInfoElement}>
+				<Text style={Style.textCPRTT}>RTT :</Text>
+				<TextInput
+				style={Style.textInputCounter}
+				value={this.state.conges.rtt}
+				editable={false}
+				underlineColorAndroid="transparent"
+				/>
+			</View> 			
+		)
+	}
+	  
+  }
+  
   render() {
+	  
     if (
       !this.state.isReadyw1 ||
       !this.state.isReadyw2 ||
-      !this.state.isReadyw2
+      !this.state.isReadyw3
     ) {
       return (
         <View>
@@ -180,6 +213,9 @@ class Accueil extends React.Component {
         >
           <View style={Style.containerGeneral}>
             <View style={Style.bienvenueView}>
+
+			  { this.renderWarningMessage() }
+			
               <Text style={Style.text}>
                 Bienvenue{" "}
                 <Text style={Style.textGrand}>
@@ -187,6 +223,7 @@ class Accueil extends React.Component {
                 </Text>{" "}
                 !
               </Text>
+			  			  
             </View>
 
             <Text style={Style.text}>
@@ -226,15 +263,8 @@ class Accueil extends React.Component {
                   />
                 </View>
 
-                <View style={Style.containerInfoElement}>
-                  <Text style={Style.textCPRTT}>RTT :</Text>
-                  <TextInput
-                    style={Style.textInputCounter}
-                    value={this.state.conges.rtt}
-                    editable={false}
-                    underlineColorAndroid="transparent"
-                  />
-                </View>
+				{ this.renderRtt() }
+				
               </View>
             </View>
           </View>

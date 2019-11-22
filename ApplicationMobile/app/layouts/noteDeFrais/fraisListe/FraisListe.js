@@ -38,7 +38,7 @@ class FraisListe extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: "Note de frais",
+      title: "Notes de frais",
       data: [],
       monthsWithNDF: [],
       year: moment().format("YYYY"),

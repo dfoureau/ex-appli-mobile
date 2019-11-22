@@ -39,7 +39,7 @@ class CongesListe extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: "Demande de congés",
+      title: "Demandes de congés",
       data: [],
       year: moment().format("YYYY"),
       dateSolde: "",
