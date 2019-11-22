@@ -66,6 +66,7 @@ class Accueil extends React.Component {
       isReadyw1: false,
       isReadyw2: false,
       isReadyw3: false,
+	  idEntiteJuridique: null,
       webServiceLien1:
         configurationAppli.apiURL + "utilisateur/" + configurationAppli.userID,
       webServiceLien2:
@@ -122,8 +123,9 @@ class Accueil extends React.Component {
           return response.json();
         })
         .then(function(fonconges) {
+						
           configAccueil.conges = fonconges;
-          that.setState({ conges: fonconges, isReadyw2: true });
+          that.setState({ conges: fonconges, isReadyw2: true, idEntiteJuridique:fonconges.idEntiteJuridique });
         });
 
       fetch(this.state.webServiceLien3, this.state.obj)
@@ -161,6 +163,23 @@ class Accueil extends React.Component {
 	}
   }
   
+  renderRtt(){		
+	if(this.state.idEntiteJuridique != 12){
+	
+		return(		
+			<View style={Style.containerInfoElement}>
+				<Text style={Style.textCPRTT}>RTT :</Text>
+				<TextInput
+				style={Style.textInputCounter}
+				value={this.state.conges.rtt}
+				editable={false}
+				underlineColorAndroid="transparent"
+				/>
+			</View> 			
+		)
+	}
+	  
+  }
   
   render() {
 	  
@@ -244,15 +263,8 @@ class Accueil extends React.Component {
                   />
                 </View>
 
-                <View style={Style.containerInfoElement}>
-                  <Text style={Style.textCPRTT}>RTT :</Text>
-                  <TextInput
-                    style={Style.textInputCounter}
-                    value={this.state.conges.rtt}
-                    editable={false}
-                    underlineColorAndroid="transparent"
-                  />
-                </View>
+				{ this.renderRtt() }
+				
               </View>
             </View>
           </View>
