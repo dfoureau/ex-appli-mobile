@@ -216,6 +216,7 @@ class AjoutCraMulti extends React.Component {
   * Surcharge de la méthode appelé à la création du composant dans le cycle de vie de ce dernier
   */
   componentWillMount() {
+	  
     let that = this;
     //Récupération des paramètres de navigation
     const { params } = this.props.navigation.state;
@@ -257,7 +258,7 @@ class AjoutCraMulti extends React.Component {
   {
 	const idMulti = "" + configurationAppli.userID + year + month;				  
 	let that = this;
-	  
+	  	  
 	fetch(this.state.WSLinkCRA + "/isMulti/" + idMulti, {
 		method: "GET",
 		headers: this.state.fetchHeaders,
@@ -268,7 +269,9 @@ class AjoutCraMulti extends React.Component {
 	.then(function(response){		
 		let [status, body] = response;		
 		if(body){			
-			that.getCRAInfosByID(idMulti, typesActions, conges);			
+			that.getCRAInfosByID(idMulti, typesActions, conges);		
+			console.log("picker value after get : " + that.state.pickerNewCraValue);
+			
 		}else{		
 			that.initDefaultCra(year, month, typesActions, conges);
 		}
@@ -279,6 +282,8 @@ class AjoutCraMulti extends React.Component {
   * @param date
   */
   reloadNewCra(date) {
+	  console.log("date : " + date);
+	  
     let year = moment(date, "YYYY-MM").year(),
     month = moment(date, "YYYY-MM").month() + 1;
     showLoading("Chargement des informations...");
@@ -439,8 +444,12 @@ class AjoutCraMulti extends React.Component {
 		}
 		
 		let joinItemCRA = that.getJoinItemCRAFunction(listItemsCRAArray);
+				
+		const month = craMulti[0].mois.startsWith('1') ? craMulti[0].mois : '0' + craMulti[0].mois			
 		
-		let pickerValue = craMulti[0].annee + "-" + craMulti[0].mois;
+		let pickerValue = craMulti[0].annee + "-" + month;
+		
+		console.log("pickerValue : " + pickerValue);
 		
 		that.setState({
 			isReady: true,
@@ -759,6 +768,12 @@ class AjoutCraMulti extends React.Component {
 	}		
 	
   }
+  
+  
+  componentWillUnmount() {
+	() => this.props.navigation.state.params.onBack();
+  }
+  
   
   /**
   * Fonction appelé pour changer la valeur d'un jour sur le calendrier global du cra

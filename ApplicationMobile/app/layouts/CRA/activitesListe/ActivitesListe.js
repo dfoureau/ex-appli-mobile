@@ -179,6 +179,7 @@ class ActivitesListe extends React.Component {
       parent: this,
     });
   }
+
   
   AfficherAjoutCraMulti() {	  
 	this.props.navigation.navigate("AjoutCraMulti", {
@@ -188,6 +189,7 @@ class ActivitesListe extends React.Component {
 	  month: moment().month() + 1,
 	  newCra: true,
 	  parent: this,
+	  onBack: this.getDemandesByUserAndYear(this.state.annee, true),
 	});
 	  
   }
