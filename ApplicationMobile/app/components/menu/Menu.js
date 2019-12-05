@@ -95,7 +95,7 @@ class ContainerHeader extends Component {
           >
             <View style={styles.ItemMenuView}>
               <Icon name="briefcase" size={30} color="#000" />
-              <Text style={styles.TextItemMenu}>Relevés d'Activité</Text>
+              <Text style={styles.TextItemMenu}>Relevés d'Activités</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity

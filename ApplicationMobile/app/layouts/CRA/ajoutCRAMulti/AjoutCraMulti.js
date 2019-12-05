@@ -216,6 +216,7 @@ class AjoutCraMulti extends React.Component {
   * Surcharge de la méthode appelé à la création du composant dans le cycle de vie de ce dernier
   */
   componentWillMount() {
+	  
     let that = this;
     //Récupération des paramètres de navigation
     const { params } = this.props.navigation.state;
@@ -257,7 +258,7 @@ class AjoutCraMulti extends React.Component {
   {
 	const idMulti = "" + configurationAppli.userID + year + month;				  
 	let that = this;
-	  
+	  	  
 	fetch(this.state.WSLinkCRA + "/isMulti/" + idMulti, {
 		method: "GET",
 		headers: this.state.fetchHeaders,
@@ -268,7 +269,9 @@ class AjoutCraMulti extends React.Component {
 	.then(function(response){		
 		let [status, body] = response;		
 		if(body){			
-			that.getCRAInfosByID(idMulti, typesActions, conges);			
+			that.getCRAInfosByID(idMulti, typesActions, conges);		
+			console.log("picker value after get : " + that.state.pickerNewCraValue);
+			
 		}else{		
 			that.initDefaultCra(year, month, typesActions, conges);
 		}
@@ -279,6 +282,8 @@ class AjoutCraMulti extends React.Component {
   * @param date
   */
   reloadNewCra(date) {
+	  console.log("date : " + date);
+	  
     let year = moment(date, "YYYY-MM").year(),
     month = moment(date, "YYYY-MM").month() + 1;
     showLoading("Chargement des informations...");
@@ -434,13 +439,17 @@ class AjoutCraMulti extends React.Component {
 			
 			calendarClientArray[numClient] = that.getClientJourTravaille(craMulti[numClient].valeursSaisies, conges);			
 			listItemsCRAArray[numClient] = that.getItemsCRA(craMulti[numClient].valeursSaisies, conges);
-			
+
 			idCraMonoArray[numClient] = craMulti[numClient].idRA;
 		}
 		
 		let joinItemCRA = that.getJoinItemCRAFunction(listItemsCRAArray);
+				
+		const month = craMulti[0].mois.startsWith('1') ? craMulti[0].mois : '0' + craMulti[0].mois			
 		
-		let pickerValue = craMulti[0].annee + "-" + craMulti[0].mois;
+		let pickerValue = craMulti[0].annee + "-" + month;
+		
+		console.log("pickerValue : " + pickerValue);
 		
 		that.setState({
 			isReady: true,
@@ -470,11 +479,7 @@ class AjoutCraMulti extends React.Component {
 	getClientJourTravaille(valeursSaisies, conges){	 
 		let tabRet = [];   
 		
-		console.log("conges : " + JSON.stringify(conges));
-		console.log("valeursSaisies : " + JSON.stringify(valeursSaisies));
-		
-		let i = 0;
-		
+		let i = 0;		
 		for(const val of valeursSaisies){
 			
 			if (conges.length == 0 || conges[i].etat == "") {			
@@ -484,6 +489,7 @@ class AjoutCraMulti extends React.Component {
 			}
 			i++;
 		}		
+		
 		return tabRet;
 	}
   
@@ -499,15 +505,21 @@ class AjoutCraMulti extends React.Component {
 			
 			let i = 0;
 			for(const item of client){			
-				if(itemCraAll[i] == null){ 
-					itemCraAll[i] = item;
+				if(itemCraAll[i] == null){ 	
+					itemCraAll[i] = item;		
+				}else if(itemCraAll[i].actType == "0.0" && item.actType != "0.0"){
+					itemCraAll[i].actType = item.actType;
+				}else if(itemCraAll[i].actType == "AB" && item.actType != "0.0"){
+					itemCraAll[i].actType = item.actType;
 				}else if(itemCraAll[i].actType == "0.5+AB" && item.actType == "0.5+AB"){
 					itemCraAll[i].actType = "1.0";
 				}else if(itemCraAll[i].actType == "AB" && item.actType == "1.0"){
 					itemCraAll[i].actType = "1.0";
 				}else if(itemCraAll[i].actType == "1.0" && item.actType == "AB"){
 					itemCraAll[i].actType = "1.0";
-				}
+				}else if(itemCraAll[i].actType == "0.0" && item.actType == "0.5+AB"){
+					itemCraAll[i].actType = "0.5+AB";
+				}								
 				i++;
 			}			
 			
@@ -641,12 +653,29 @@ class AjoutCraMulti extends React.Component {
           errMsg += (errMsg != "" ? "\n" : "") + "Le Jour " + (i+1) + " n'a pas de client attribué alors qu'il est indiqué comme travaillé";
         }
         else if(nbCalendrierContenant>2) {
-          errMsg += (errMsg != "" ? "\n" : "") + "Le Jour " + (i+1) + "est travaillé pour plus de 2 clients";
+          errMsg += (errMsg != "" ? "\n" : "") + "Le Jour " + (i+1) + "est  travaillé pour plus de 2 clients";
         }
         if(nbCalendrierContenant==2) {
           day.actType = "0.5+AB"
         }
       }
+	  
+	  if(day.actType.startsWith("0.5") || day.actType.startsWith("0,5") ){
+		  let nbCalendrierContenant = 0
+		   allCalendarClient.forEach(calendar => {
+            if(calendar.includes(i)) {
+              nbCalendrierContenant++
+            }
+          }
+        )
+		
+		if(nbCalendrierContenant != 1){
+			errMsg += (errMsg != "" ? "\n" : "") + "Le Jour " + (i+1) + " recquiert 1 seul client";
+		}
+		
+	  }
+	  
+	  
       i++
     })
     if (errMsg != "") {
@@ -745,6 +774,12 @@ class AjoutCraMulti extends React.Component {
 	}		
 	
   }
+  
+  
+  componentWillUnmount() {
+	() => this.props.navigation.state.params.onBack();
+  }
+  
   
   /**
   * Fonction appelé pour changer la valeur d'un jour sur le calendrier global du cra
@@ -982,9 +1017,9 @@ class AjoutCraMulti extends React.Component {
     for(i = 0; i<31; i++)
     {
       let Clients = this.state.Clients
-	  
+	  	  
       this.state.CalendarClient.forEach(function(Cal,index) { 
-		  		  
+		  		  				  
         if(Cal && Cal.includes(i))
         {
           dataClient[i] = (dataClient[i])? dataClient[i] + ", " + Clients[index] : Clients[index];
