@@ -431,9 +431,10 @@ class AjoutCraMulti extends React.Component {
 			clientArray[numClient] = craMulti[numClient].client;
 			responsableArray[numClient] = craMulti[numClient].responsable;
 			projetsArray[numClient] = craMulti[numClient].projet;			
-			calendarClientArray[numClient] = that.getClientJourTravaille(craMulti[numClient].valeursSaisies);
 			
+			calendarClientArray[numClient] = that.getClientJourTravaille(craMulti[numClient].valeursSaisies, conges);			
 			listItemsCRAArray[numClient] = that.getItemsCRA(craMulti[numClient].valeursSaisies, conges);
+			
 			idCraMonoArray[numClient] = craMulti[numClient].idRA;
 		}
 		
@@ -466,12 +467,22 @@ class AjoutCraMulti extends React.Component {
 		@param valeursSaisies contient la liste des jours travaillés au format jour/mois/année
 		@return la liste des jours où l'utilisateur a travaillé pendant le mois, pour un client
 	*/	
-	getClientJourTravaille(valeursSaisies){	 
+	getClientJourTravaille(valeursSaisies, conges){	 
 		let tabRet = [];   
+		
+		console.log("conges : " + JSON.stringify(conges));
+		console.log("valeursSaisies : " + JSON.stringify(valeursSaisies));
+		
+		let i = 0;
+		
 		for(const val of valeursSaisies){
-			if(val.activité == '1.0' || val.activité == '0.5+AB' ){
-			  tabRet.push(parseInt(val.date.split('/')[0]) - 1); //je recupere le jour du mois
+			
+			if (conges.length == 0 || conges[i].etat == "") {			
+				if(val.activité == '1.0' || val.activité == '0.5+AB' ){
+				  tabRet.push(parseInt(val.date.split('/')[0]) - 1); //je recupere le jour du mois
+				}
 			}
+			i++;
 		}		
 		return tabRet;
 	}
@@ -685,8 +696,6 @@ class AjoutCraMulti extends React.Component {
           return { date: item.startDate, activité: item.actType };
         }),
       };
-
-	  console.log(body);
 	  
       let i = 0;
       //Modification des éléments pour qu'ils corréspondent au client
