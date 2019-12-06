@@ -485,7 +485,7 @@ class AjoutCraMulti extends React.Component {
 
 			console.log(JSON.stringify(val));
 				
-			//probleme sur cette ligne	
+			//probleme sur cette ligne car faut faire une différenciation entre les congés d'avant et nouveau	
 			if (conges.length == 0 || conges[i].etat == "" || conges[i].code.startsWith("0,5") || conges[i].code.startsWith("0.5")) {	
 		
 				if(val.activité == '1.0' || val.activité.startsWith('0.5') || val.activité.startsWith('0,5') ) {					
