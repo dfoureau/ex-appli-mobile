@@ -482,15 +482,19 @@ class AjoutCraMulti extends React.Component {
 				
 		let i = 0;		
 		for(const val of valeursSaisies){	
-
-			console.log(JSON.stringify(val));
-				
-			//probleme sur cette ligne car faut faire une différenciation entre les congés d'avant et nouveau	
-			if (conges.length == 0 || conges[i].etat == "" || conges[i].code.startsWith("0,5") || conges[i].code.startsWith("0.5")) {	
-		
+			
+			if( (this.state.statusId == 1 || this.state.statusId == null || this.state.statusId == 4) ){ //si edition
+			
+				if (conges.length == 0 || conges[i].etat == "" || conges[i].code.startsWith("0,5") || conges[i].code.startsWith("0.5")) {			
+					if(val.activité == '1.0' || val.activité.startsWith('0.5') || val.activité.startsWith('0,5') ) {					
+					  tabRet.push(parseInt(val.date.split('/')[0]) - 1);
+					}
+				}				
+			}else{ //si consultation				
+			
 				if(val.activité == '1.0' || val.activité.startsWith('0.5') || val.activité.startsWith('0,5') ) {					
-				  tabRet.push(parseInt(val.date.split('/')[0]) - 1); //je recupere le jour du mois
-				}
+				  tabRet.push(parseInt(val.date.split('/')[0]) - 1);
+				}				
 			}
 			i++;
 		}		
@@ -505,7 +509,7 @@ class AjoutCraMulti extends React.Component {
 	getJoinItemCRAFunction(listItemsCRAArray, conges){				
 							
 		let itemCraAll = [];
-		
+				
 		for(const client of listItemsCRAArray){
 			
 			let i = 0;
@@ -517,7 +521,27 @@ class AjoutCraMulti extends React.Component {
 					itemCraAll[i] = item;
 					itemCraAll[i].actType = conges[i].code;
 					itemCraAll[i].disabled = true;
-				}else{			
+				}else{
+
+					const vacationItems = ["CP", "CA", "CS", "AE", "RTT", "CPA", "CMA", "DLG", "FER", "JC", "JFM"];
+					
+					let itemCraAllRightValue = null;
+					let itemCraDayRightValue = null;
+									
+					if(itemCraAll[i] != null && (itemCraAll[i].actType.startsWith("0.5") || itemCraAll[i].actType.startsWith("0,5"))){
+						itemCraAllRightValue = itemCraAll[i].actType.split('+')[1];
+					}
+					
+					if(item.actType.startsWith("0.5") || item.actType.startsWith("0,5")){
+						itemCraDayRightValue = item.actType.split('+')[1];
+					} 
+							  
+					if(itemCraAll[i] != null && vacationItems.includes(itemCraAllRightValue) || vacationItems.includes(itemCraDayRightValue) 
+						&& (this.state.statusId == 2 ||	this.state.statusId == 3 || this.state.statusId == 5) ){			
+						itemCraAll[i].disabled = true;
+					}
+										
+				
 					if(itemCraAll[i] == null){ 	
 						itemCraAll[i] = item;		
 					}else if(itemCraAll[i].actType == "0.0" && item.actType != "0.0"){
@@ -532,7 +556,8 @@ class AjoutCraMulti extends React.Component {
 						itemCraAll[i].actType = "1.0";
 					}else if(itemCraAll[i].actType == "0.0" && item.actType == "0.5+AB"){
 						itemCraAll[i].actType = "0.5+AB";
-					}	
+					}
+					
 				}				
 				i++;
 			}			
@@ -553,6 +578,9 @@ class AjoutCraMulti extends React.Component {
       let actType = item.activité;
       let disabled = false;
       let date = moment(item.date, "DD/MM/YYYY");
+	  
+	  const vacationItems = ["CP", "CA", "CS", "AE", "RTT", "CPA", "CMA", "DLG", "FER", "JC", "JFM"];
+	  
       if (date.isFerie()) {
         disabled = true;
         actType = "0.0";
@@ -566,14 +594,25 @@ class AjoutCraMulti extends React.Component {
             congeData != undefined &&
             congeData.code != "1,0" &&
             congeData.code != "1.0" && (this.state.statusId == 1 ||
-        this.state.statusId == null || this.state.statusId == 4)
+				this.state.statusId == null || this.state.statusId == 4)
           ) {
             disabled = true;
             actType = congeData.code;
           }
         }
+		
+		let isConge = actType;
+		if(actType.startsWith("0.5") || actType.startsWith("0,5")){
+			isConge = actType.split('+')[1];
+		}
+		  		  
+		if(vacationItems.includes(isConge) && (this.state.statusId == 2 ||
+        this.state.statusId == 3 || this.state.statusId == 5) ){			
+			disabled = true;
+		}	
+		
       }
-
+	  
       return {
         startDate: item.date,
         actType: actType,
