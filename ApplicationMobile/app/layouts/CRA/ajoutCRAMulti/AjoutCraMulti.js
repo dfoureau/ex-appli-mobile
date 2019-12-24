@@ -523,7 +523,7 @@ class AjoutCraMulti extends React.Component {
 					itemCraAll[i].disabled = true;
 				}else{
 
-					const vacationItems = ["CP", "CA", "CS", "AE", "RTT", "CPA", "CMA", "DLG", "FER", "JC", "JFM"];
+					const vacationItems = ["CP", "CA", "CS", "AE", "RTT", "RT", "CPA", "CMA", "DLG", "FER", "JC", "JFM"];
 					
 					let itemCraAllRightValue = null;
 					let itemCraDayRightValue = null;
@@ -558,7 +558,8 @@ class AjoutCraMulti extends React.Component {
 						itemCraAll[i].actType = "0.5+AB";
 					}
 					
-					if( vacationItems.includes(itemCraAll[i].actType) && ( (conges.length == 0) || (conges.length != 0  && conges[i].etat == "") ) ){
+					if( vacationItems.includes(itemCraAll[i].actType) && ( (conges.length == 0) || (conges.length != 0  && conges[i].etat == "") ) 
+						&& (this.state.statusId == "" ||	this.state.statusId == 1 || this.state.statusId == 4) ){
 						itemCraAll[i].actType = "1.0";
 					}
 					
@@ -583,7 +584,7 @@ class AjoutCraMulti extends React.Component {
       let disabled = false;
       let date = moment(item.date, "DD/MM/YYYY");
 	  
-	  const vacationItems = ["CP", "CA", "CS", "AE", "RTT", "CPA", "CMA", "DLG", "FER", "JC", "JFM"];
+	  const vacationItems = ["CP", "CA", "CS", "AE", "RTT", "RT", "CPA", "CMA", "DLG", "FER", "JC", "JFM"];
 	  
       if (date.isFerie()) {
         disabled = true;
@@ -677,7 +678,7 @@ class AjoutCraMulti extends React.Component {
 	let succesAll = true;
 
     //const vacationItems = ["RT","CS","AM","CPA"];
-	const vacationItems = ["CP", "CA", "CS", "AE", "RTT", "CPA", "CMA", "DLG", "FER", "JC", "JFM"];
+	const vacationItems = ["CP", "CA", "CS", "AE", "RTT", "RT", "CPA", "CMA", "DLG", "FER", "JC", "JFM"];
 
     if (statusId != 1 && statusId != 2) {
       showToast("Une erreur est survenue.");
@@ -790,7 +791,7 @@ class AjoutCraMulti extends React.Component {
       let i = 0;
       //Modification des éléments pour qu'ils corréspondent au client
       body.valeursSaisies.forEach( elements => {
-		  		  
+		  		  				  
           if (vacationItems.includes(elements.activité)) {
             //L'element fait parti des activités à inclure dans tous les CRA : donc à ne pas modifier
           }
@@ -799,13 +800,13 @@ class AjoutCraMulti extends React.Component {
             elements.activité = "AB"
           }
           else {
-            //L'element a été séléctionné par ce collab
+            //L'element a été séléctionné par ce collab			
             elements.activité = itemsCRA[i].actType
           }
           i++
         }
       )
-	  	  
+	  	  		  
       fetch(url, {
         method: method,
         headers: this.state.fetchHeaders,

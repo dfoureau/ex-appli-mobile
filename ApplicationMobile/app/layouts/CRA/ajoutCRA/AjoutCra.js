@@ -361,6 +361,10 @@ class AjoutCra extends React.Component {
       })
       .then(function(cra) {
         cra.NbJOuvres = parseFloat(cra.NbJOuvres);
+				
+		that.setState({
+			statusId: cra.etat,
+		});
 		
         that.setState({
           isReady: true,
@@ -383,10 +387,14 @@ class AjoutCra extends React.Component {
       let actType = item.activité;
       let disabled = false;
       let date = moment(item.date, "DD/MM/YYYY");
+	  
+	  const vacationItems = ["CP", "CA", "CS", "AE", "RTT", "RT", "CPA", "CMA", "DLG", "FER", "JC", "JFM"];
+	  
       if (date.isFerie()) {
         disabled = true;
         actType = "0.0";
       } else {
+		  		  
         if (date.day() > 0 && date.day() < 6) {
           // On vérifie qu'on est un jour en semaine
           let congeData = conges.find(item => item.jour == date.date()); // On récupère la ligne de congé pour vérifier si un CP a été posé ou pas
@@ -394,12 +402,26 @@ class AjoutCra extends React.Component {
             congeData != null &&
             congeData != undefined &&
             congeData.code != "1,0" &&
-            congeData.code != "1.0"
+            congeData.code != "1.0" && (this.state.statusId == 1 ||
+				this.state.statusId == null || this.state.statusId == 4)
           ) {
             disabled = true;
             actType = congeData.code;
           }
         }
+				
+		let jour = item.date.split('/')[0];	
+		
+		let isConge = actType;
+		if(actType.startsWith("0.5") || actType.startsWith("0,5")){
+			isConge = actType.split('+')[1];
+		}
+		  		  
+		if(vacationItems.includes(isConge) && (this.state.statusId == 2 ||
+        this.state.statusId == 3 || this.state.statusId == 5) ){			
+			disabled = true;
+		}	
+				
       }
 
       return {
