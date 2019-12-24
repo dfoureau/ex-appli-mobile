@@ -558,6 +558,10 @@ class AjoutCraMulti extends React.Component {
 						itemCraAll[i].actType = "0.5+AB";
 					}
 					
+					if( vacationItems.includes(itemCraAll[i].actType) && ( (conges.length == 0) || (conges.length != 0  && conges[i].etat == "") ) ){
+						itemCraAll[i].actType = "1.0";
+					}
+					
 				}				
 				i++;
 			}			
